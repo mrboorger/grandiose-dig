@@ -1,0 +1,6 @@
+.idea/*
+.vim/*
+.vimrc
+.clang-format
+.clang-tidy
+*build*
