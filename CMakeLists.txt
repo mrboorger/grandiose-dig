@@ -38,7 +38,11 @@ set(REQUIRED_LIBS_QUALIFIED Qt5::Core Qt5::Widgets Qt5::Multimedia Qt5::WebSocke
 find_package(Qt${QT_VERSION} COMPONENTS ${REQUIRED_LIBS} REQUIRED)
 
 set(SOURCES
-  main.cpp
+        main.cpp
+        controller/abstract_controller.h controller/abstract_controller.cpp
+        controller/controller.h controller/controller.cpp
+        model/model.h model/model.cpp view/view.h view/view.cpp
+        model/constants.h
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${RESOURCES})
