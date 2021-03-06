@@ -24,8 +24,10 @@ void View::paintEvent(QPaintEvent* event) {
       QPointF point(x, y);
       point -= camera_.GetPoint();
 
-      point.setX(point.x() * constants::kBlockSz + (size().width() - constants::kBlockSz) / 2.0);
-      point.setY(point.y() * constants::kBlockSz + (size().height() - constants::kBlockSz) / 2.0);
+      point.setX(point.x() * constants::kBlockSz +
+          (size().width() - constants::kBlockSz) / 2.0);
+      point.setY(point.y() * constants::kBlockSz +
+          (size().height() - constants::kBlockSz) / 2.0);
 
       BlockDrawer::DrawBlock(&painter, point, map->GetBlock(x, y));
     }

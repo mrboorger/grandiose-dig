@@ -12,7 +12,7 @@ class Block {
     kTypesCount,
   };
 
-  Block(Type type);
+  explicit Block(Type type);
 
   bool IsVisible() const;
   static bool IsVisible(Type type);

@@ -5,7 +5,7 @@
 
 class Camera {
  public:
-  Camera(QPointF point);
+  explicit Camera(QPointF point);
 
   QPointF GetPoint() const;
   void SetPoint(QPointF point);
