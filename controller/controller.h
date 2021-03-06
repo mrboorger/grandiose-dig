@@ -3,9 +3,14 @@
 
 #include "abstract_controller.h"
 
+#include "model/abstract_map_generator.h"
+#include "model/model.h"
+
 class Controller : public AbstractController {
  public:
   static Controller* GetInstance();
+
+  void SetMap(AbstractMapGenerator* generator);
  private:
   Controller() = default;
 };

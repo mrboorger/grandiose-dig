@@ -37,6 +37,10 @@ set(REQUIRED_LIBS Core Widgets Multimedia WebSockets)
 set(REQUIRED_LIBS_QUALIFIED Qt5::Core Qt5::Widgets Qt5::Multimedia Qt5::WebSockets)
 find_package(Qt${QT_VERSION} COMPONENTS ${REQUIRED_LIBS} REQUIRED)
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set(RESOURCES resources.qrc)
+
 set(SOURCES
         main.cpp
         controller/abstract_controller.h controller/abstract_controller.cpp
@@ -45,6 +49,8 @@ set(SOURCES
         model/constants.h model/block.h model/block.cpp model/map.h model/map.cpp
         model/abstract_map_generator.h model/abstract_map_generator.cpp
         model/flat_map_generator.h model/flat_map_generator.cpp
+        view/camera.h view/camera.cpp view/block_drawer.h view/block_drawer.cpp
+
         )
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${RESOURCES})
