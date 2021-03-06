@@ -42,8 +42,8 @@ set(SOURCES
         controller/abstract_controller.h controller/abstract_controller.cpp
         controller/controller.h controller/controller.cpp
         model/model.h model/model.cpp view/view.h view/view.cpp
-        model/constants.h
-)
+        model/constants.h model/block.h model/block.cpp
+        )
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${RESOURCES})
 target_link_libraries(${PROJECT_NAME} ${REQUIRED_LIBS_QUALIFIED})
