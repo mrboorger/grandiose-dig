@@ -9,7 +9,7 @@ Controller* Controller::GetInstance() {
   return &controller;
 }
 
-void Controller::SetMap(AbstractMapGenerator* generator) {
+void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
   Model::GetInstance()->SetMap(std::make_shared<Map>(generator->GenerateMap()));
 }
 

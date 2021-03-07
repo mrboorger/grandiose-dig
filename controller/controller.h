@@ -23,7 +23,7 @@ class Controller : public QWidget {
   Controller& operator=(const Controller&) = delete;
   Controller& operator=(Controller&&) = delete;
 
-  void SetMap(AbstractMapGenerator* generator);
+  void SetGeneratedMap(AbstractMapGenerator* generator);
 
   bool IsPressed(int key);
 

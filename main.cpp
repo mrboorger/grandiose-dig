@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
   // TODO(Wind-Eagle): delete. {
   Controller* controller(Controller::GetInstance());
   FlatMapGenerator generator;
-  controller->SetMap(&generator);
+  controller->SetGeneratedMap(&generator);
   // }
   view->show();
   return QApplication::exec();
