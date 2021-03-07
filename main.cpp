@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <iostream>
 
 #include "controller/controller.h"
 #include "model/flat_map_generator.h"
@@ -7,6 +8,7 @@
 int main(int argc, char* argv[]) {
   QApplication application(argc, argv);
   View* view(View::GetInstance());
+
   // TODO(Wind-Eagle): delete. {
   Controller* controller(Controller::GetInstance());
   FlatMapGenerator generator;

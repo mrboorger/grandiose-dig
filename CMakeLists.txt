@@ -42,6 +42,7 @@ set(SOURCES
         model/abstract_map_generator.h
         model/flat_map_generator.h model/flat_map_generator.cpp
         view/camera.h view/camera.cpp view/block_drawer.h view/block_drawer.cpp
+        model/player.h model/player.cpp
         )
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${RESOURCES})
