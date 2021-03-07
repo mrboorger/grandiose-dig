@@ -10,10 +10,10 @@ class MoveVector {
   MoveVector(double speedX, double speedY, double momentumX, double momentumY,
              bool is_momentum_locked = false);
 
-  void TranslateSpeed(QPointF point) { speed_ += point; }
-  void TranslateSpeed(double x, double y) { speed_ += QPointF(x, y); }
-  void SetSpeed(QPointF point) { speed_ = point; }
-  void SetSpeed(double x, double y) { speed_ = QPointF(x, y); }
+  void TranslateSpeed(QPointF point);
+  void TranslateSpeed(double x, double y);
+  void SetSpeed(QPointF point);
+  void SetSpeed(double x, double y);
   QPointF GetSpeed() const;
   double GetSpeedX() const;
   double GetSpeedY() const;

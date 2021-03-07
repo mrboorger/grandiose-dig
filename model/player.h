@@ -5,16 +5,6 @@
 
 #include "model/moving_object.h"
 
-/*
- double size_x_;
-  double size_y_;
-  double walk_acceleration_;
-  double walk_max_speed_;
-  double gravity_speed_;
-  double jump_speed_;
-  double jump_momentum_;
-*/
-
 class Player : public MovingObject {
  public:
   Player(QPointF pos);

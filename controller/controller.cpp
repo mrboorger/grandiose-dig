@@ -23,6 +23,7 @@ Controller::Controller() : timer_id_(startTimer(constants::kTick)) {}
 
 void Controller::timerEvent(QTimerEvent* event) {
   Q_UNUSED(event);
+  Model::GetInstance()->MoveObjects(pressed_keys_);
   View::GetInstance()->repaint();
 }
 

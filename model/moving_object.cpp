@@ -1,9 +1,11 @@
 #include "moving_object.h"
 
+#include "model.h"
+
 MovingObject::MovingObject(QPointF pos, double size_x, double size_y,
                            double walk_acceleration, double walk_max_speed,
-                           double gravity_speed, double jump_speed,
-                           double jump_momentum, State state)
+                           double gravity_speed, double jump_speed, State state,
+                           int state_ticks, MoveVector move_vector)
     : pos_(pos),
       size_x_(size_x),
       size_y_(size_y),
@@ -11,8 +13,9 @@ MovingObject::MovingObject(QPointF pos, double size_x, double size_y,
       walk_max_speed_(walk_max_speed),
       gravity_speed_(gravity_speed),
       jump_speed_(jump_speed),
-      jump_momentum_(jump_momentum),
-      state_(state) {
+      state_(state),
+      state_ticks_(state_ticks),
+      move_vector_(move_vector) {
   pushes_ground_ = false;
   pushes_ceil_ = false;
   pushes_left_ = false;
@@ -32,3 +35,11 @@ double MovingObject::GetGravitySpeed() const { return gravity_speed_; }
 double MovingObject::GetJumpSpeed() const { return jump_speed_; }
 
 QPointF MovingObject::GetPosition() const { return pos_; }
+
+void MovingObject::Move(const std::unordered_set<int>& pressed_keys) {
+  UpdateState(pressed_keys);
+}
+
+void MovingObject::UpdateState(const std::unordered_set<int>& pressed_keys) {
+  Q_UNUSED(pressed_keys);
+}

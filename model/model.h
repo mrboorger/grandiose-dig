@@ -2,6 +2,7 @@
 #define MODEL_MODEL_H_
 
 #include <memory>
+#include <unordered_set>
 
 #include "model/map.h"
 #include "model/player.h"
@@ -18,6 +19,8 @@ class Model {
 
   std::shared_ptr<const Player> GetPlayer() const;
   void SetPlayer(std::shared_ptr<Player> player);
+
+  void MoveObjects(const std::unordered_set<int>& pressed_keys);
 
  private:
   Model() = default;
