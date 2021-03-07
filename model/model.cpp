@@ -5,6 +5,6 @@ Model* Model::GetInstance() {
   return &model;
 }
 
-const Map* Model::GetMap() const { return map_; }
+std::shared_ptr<const Map> Model::GetMap() const { return map_; }
 
-void Model::SetMap(Map* map) { map_ = map; }
+void Model::SetMap(std::shared_ptr<Map> map) { map_ = map; }

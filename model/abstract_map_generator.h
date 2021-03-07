@@ -1,7 +1,7 @@
 #ifndef MODEL_ABSTRACT_MAP_GENERATOR_H_
 #define MODEL_ABSTRACT_MAP_GENERATOR_H_
 
-#include "map.h"
+#include "model/map.h"
 
 class AbstractMapGenerator {
  public:

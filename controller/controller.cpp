@@ -1,11 +1,13 @@
 #include "controller.h"
 
+#include <memory>
+
 Controller* Controller::GetInstance() {
   static Controller controller;
   return &controller;
 }
 
 void Controller::SetMap(AbstractMapGenerator* generator) {
-  delete Model::GetInstance()->GetMap();
-  Model::GetInstance()->SetMap(new Map(generator->GenerateMap()));
+  Model::GetInstance()->SetMap(
+      std::make_shared<Map>(Map(generator->GenerateMap())));
 }

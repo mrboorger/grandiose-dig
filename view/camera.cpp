@@ -2,7 +2,7 @@
 
 Camera::Camera(QPointF point) : point_(point) {}
 
-QPointF Camera::GetPoint() const { return point_; }
+const QPointF& Camera::GetPoint() const { return point_; }
 
 void Camera::SetPoint(QPointF point) { point_ = point; }
 

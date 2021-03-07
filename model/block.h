@@ -12,16 +12,16 @@ class Block {
     kTypesCount,
   };
 
+  static constexpr int kTypesCount = static_cast<int>(Type::kTypesCount);
+
   explicit Block(Type type);
 
   bool IsVisible() const;
   static bool IsVisible(Type type);
 
-  Type GetType();
+  Type GetType() const;
 
-  int32_t GetId();
-
-  static constexpr int kTypesCount = static_cast<int>(Type::kTypesCount);
+  int32_t GetId() const;
 
  private:
   Type type_;

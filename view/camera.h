@@ -1,13 +1,13 @@
 #ifndef VIEW_CAMERA_H_
 #define VIEW_CAMERA_H_
 
-#include "QPointF"
+#include <QPointF>
 
 class Camera {
  public:
   explicit Camera(QPointF point);
 
-  QPointF GetPoint() const;
+  const QPointF& GetPoint() const;
   void SetPoint(QPointF point);
 
   void Translate(QPointF delta);

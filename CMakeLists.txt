@@ -36,14 +36,12 @@ set(RESOURCES resources.qrc)
 
 set(SOURCES
         main.cpp
-        controller/abstract_controller.h controller/abstract_controller.cpp
         controller/controller.h controller/controller.cpp
         model/model.h model/model.cpp view/view.h view/view.cpp
         model/constants.h model/block.h model/block.cpp model/map.h model/map.cpp
-        model/abstract_map_generator.h model/abstract_map_generator.cpp
+        model/abstract_map_generator.h
         model/flat_map_generator.h model/flat_map_generator.cpp
         view/camera.h view/camera.cpp view/block_drawer.h view/block_drawer.cpp
-
         )
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${RESOURCES})

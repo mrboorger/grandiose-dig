@@ -16,18 +16,14 @@ void View::paintEvent(QPaintEvent* event) {
   //
   Q_UNUSED(event);
   QPainter painter(this);
-  const Map* map = Model::GetInstance()->GetMap();
-  for (int y = static_cast<int>(camera_.GetPoint().y() - 50);
-       y <= camera_.GetPoint().y() + 50; ++y) {
-    for (int x = static_cast<int>(camera_.GetPoint().x() - 50);
-         x <= camera_.GetPoint().x() + 50; ++x) {
-      QPointF point(x, y);
-      point -= camera_.GetPoint();
-
-      point.setX(point.x() * constants::kBlockSz +
-                 (size().width() - constants::kBlockSz) / 2.0);
-      point.setY(point.y() * constants::kBlockSz +
-                 (size().height() - constants::kBlockSz) / 2.0);
+  auto map = Model::GetInstance()->GetMap();
+  for (int y = static_cast<int>(camera_.GetPoint().y() - kRenderDistance);
+       y <= camera_.GetPoint().y() + kRenderDistance; ++y) {
+    for (int x = static_cast<int>(camera_.GetPoint().x() - kRenderDistance);
+         x <= camera_.GetPoint().x() + kRenderDistance; ++x) {
+      QPointF point =
+          (QPointF(x, y) - camera_.GetPoint()) * constants::kBlockSz +
+          rect().center();
 
       BlockDrawer::DrawBlock(&painter, point, map->GetBlock(x, y));
     }

@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "block.h"
+#include "model/block.h"
 
 class Map {
   friend class AbstractMapGenerator;
@@ -22,10 +22,10 @@ class Map {
  private:
   Map(int width, int height);
 
+  std::vector<Block> blocks_;
+
   const int kWidth;
   const int kHeight;
-
-  std::vector<Block> blocks_;
 };
 
 #endif  // MODEL_MAP_H_

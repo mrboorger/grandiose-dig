@@ -4,14 +4,19 @@
 #include <QHBoxLayout>
 #include <QMainWindow>
 
-#include "camera.h"
 #include "model/model.h"
+#include "view/camera.h"
 
 class View : public QWidget {
  public:
   static View* GetInstance();
 
+  View(const View&) = delete;
+  View(View&&) = delete;
+
  private:
+  constexpr static int kRenderDistance = 70;
+
   View();
 
   void paintEvent(QPaintEvent* event) override;
