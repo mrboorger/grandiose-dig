@@ -7,6 +7,7 @@
 
 #include "model/abstract_map_generator.h"
 #include "model/model.h"
+#include "model/player.h"
 #include "view/view.h"
 
 class Controller : public QWidget {
@@ -18,6 +19,8 @@ class Controller : public QWidget {
   Controller(Controller&&) = delete;
 
   void SetMap(AbstractMapGenerator* generator);
+
+  void SetPlayer();
 
   bool IsPressed(int key);
 

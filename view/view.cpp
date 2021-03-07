@@ -28,4 +28,11 @@ void View::paintEvent(QPaintEvent* event) {
       BlockDrawer::DrawBlock(&painter, point, map->GetBlock(x, y));
     }
   }
+  // TODO(Wind-Eagle): temporary code; need to make PlayerDrawer
+  auto player = Model::GetInstance()->GetPlayer();
+  QImage player_image(":/resources/textures/player.png");
+  QPointF point =
+      (player->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
+      rect().center();
+  painter.drawImage(point, player_image);
 }

@@ -41,6 +41,8 @@ set(SOURCES
         model/constants.h model/block.h model/block.cpp model/map.h model/map.cpp
         model/abstract_map_generator.h
         model/flat_map_generator.h model/flat_map_generator.cpp
+        model/move_vector.h model/move_vector.cpp
+        model/moving_object.h model/moving_object.cpp
         view/camera.h view/camera.cpp view/block_drawer.h view/block_drawer.cpp
         model/player.h model/player.cpp
         )

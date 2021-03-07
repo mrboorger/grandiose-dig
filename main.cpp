@@ -13,6 +13,7 @@ int main(int argc, char* argv[]) {
   Controller* controller(Controller::GetInstance());
   FlatMapGenerator generator;
   controller->SetMap(&generator);
+  controller->SetPlayer();
   // }
   view->show();
   return QApplication::exec();

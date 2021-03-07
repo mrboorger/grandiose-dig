@@ -8,6 +8,5 @@ Map FlatMapGenerator::GenerateMap() {
       map.SetBlock(x, y, Block(Block::Type::kDirt));
     }
   }
-  map.SetBlock(150, 150, Block(Block::Type::kAir));
   return map;
 }
