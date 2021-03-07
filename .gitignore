@@ -3,4 +3,5 @@
 .vimrc
 .clang-format
 .clang-tidy
+CMakeLists.txt.user
 *build*

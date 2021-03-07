@@ -8,6 +8,7 @@
 class Map {
   friend class AbstractMapGenerator;
   friend class FlatMapGenerator;
+
  public:
   explicit Map(const Map& map);
   Map(Map&& map);
@@ -17,6 +18,7 @@ class Map {
 
   const Block& GetBlock(int x, int y) const;
   void SetBlock(int x, int y, Block block);
+
  private:
   Map(int width, int height);
 

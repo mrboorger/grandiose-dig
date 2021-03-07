@@ -1,8 +1,8 @@
 #ifndef VIEW_VIEW_H_
 #define VIEW_VIEW_H_
 
-#include <QMainWindow>
 #include <QHBoxLayout>
+#include <QMainWindow>
 
 #include "camera.h"
 #include "model/model.h"

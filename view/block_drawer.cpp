@@ -1,11 +1,11 @@
 #include "block_drawer.h"
 
-#include "model/constants.h"
 #include "model/block.h"
+#include "model/constants.h"
 
 namespace {
-std::array<QImage, Block::kTypesCount>
-    images = {QImage(), QImage(":resources/textures/grass.png")};
+std::array<QImage, Block::kTypesCount> images = {
+    QImage(), QImage(":resources/textures/grass.png")};
 }
 
 void BlockDrawer::DrawBlock(QPainter* painter, QPointF point, Block block) {

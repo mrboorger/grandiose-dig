@@ -6,6 +6,7 @@
 class AbstractMapGenerator {
  public:
   virtual Map GenerateMap() = 0;
+
  private:
 };
 

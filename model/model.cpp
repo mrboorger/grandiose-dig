@@ -5,10 +5,6 @@ Model* Model::GetInstance() {
   return &model;
 }
 
-const Map* Model::GetMap() const {
-  return map_;
-}
+const Map* Model::GetMap() const { return map_; }
 
-void Model::SetMap(Map* map) {
-  map_ = map;
-}
+void Model::SetMap(Map* map) { map_ = map; }

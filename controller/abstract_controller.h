@@ -1,7 +1,6 @@
 #ifndef CONTROLLER_ABSTRACT_CONTROLLER_H_
 #define CONTROLLER_ABSTRACT_CONTROLLER_H_
 
-class AbstractController {
-};
+class AbstractController {};
 
 #endif  // CONTROLLER_ABSTRACT_CONTROLLER_H_

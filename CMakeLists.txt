@@ -16,13 +16,6 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g3 -Og")
 
 # You can set CMake prefix path here or pass it to CMake executable.
-if (UNIX)
-    set(CMAKE_PREFIX_PATH "~/Qt/5.15.2/gcc_64/lib/cmake")
-endif (UNIX)
-
-if (WIN32)
-    set(CMAKE_PREFIX_PATH "C:/Qt/5.15.2/mingw81_64/lib/cmake")
-endif (WIN32)
 
 #set(CMAKE_PREFIX_PATH "~/Qt/5.15.2/gcc_64/lib/cmake")
 #set(CMAKE_PREFIX_PATH "C:/Qt/5.15.2/mingw81_64/lib/cmake")
@@ -33,8 +26,8 @@ if (NOT CMAKE_PREFIX_PATH)
 endif ()
 
 set(QT_VERSION 5)
-set(REQUIRED_LIBS Core Widgets Multimedia WebSockets)
-set(REQUIRED_LIBS_QUALIFIED Qt5::Core Qt5::Widgets Qt5::Multimedia Qt5::WebSockets)
+set(REQUIRED_LIBS Core Widgets Multimedia)
+set(REQUIRED_LIBS_QUALIFIED Qt5::Core Qt5::Widgets Qt5::Multimedia)
 find_package(Qt${QT_VERSION} COMPONENTS ${REQUIRED_LIBS} REQUIRED)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

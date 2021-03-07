@@ -22,6 +22,7 @@ class Block {
   int32_t GetId();
 
   static constexpr int kTypesCount = static_cast<int>(Type::kTypesCount);
+
  private:
   Type type_;
 };

@@ -1,9 +1,9 @@
 #include <QApplication>
 #include <QLabel>
 
-#include "view/view.h"
-#include "model/flat_map_generator.h"
 #include "controller/controller.h"
+#include "model/flat_map_generator.h"
+#include "view/view.h"
 
 int main(int argc, char* argv[]) {
   QApplication application(argc, argv);

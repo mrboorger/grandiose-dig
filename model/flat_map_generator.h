@@ -6,6 +6,7 @@
 class FlatMapGenerator : public AbstractMapGenerator {
  public:
   Map GenerateMap() override;
+
  private:
 };
 
