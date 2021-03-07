@@ -10,8 +10,7 @@ Controller* Controller::GetInstance() {
 }
 
 void Controller::SetMap(AbstractMapGenerator* generator) {
-  Model::GetInstance()->SetMap(
-      std::make_shared<Map>(Map(generator->GenerateMap())));
+  Model::GetInstance()->SetMap(std::make_shared<Map>(generator->GenerateMap()));
 }
 
 Controller::Controller() : timer_id_(startTimer(constants::kTick)) {}

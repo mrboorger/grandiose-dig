@@ -2,8 +2,8 @@
 
 #include <QPainter>
 
-#include "block_drawer.h"
 #include "model/constants.h"
+#include "view/block_drawer.h"
 
 View* View::GetInstance() {
   static View view;

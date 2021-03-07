@@ -5,7 +5,7 @@
 Map::Map(const Map& map)
     : blocks_(map.blocks_), kWidth(map.kWidth), kHeight(map.kHeight) {}
 
-Map::Map(Map&& map) : kWidth(map.kWidth), kHeight(map.kHeight) {
+Map::Map(Map&& map) noexcept : kWidth(map.kWidth), kHeight(map.kHeight) {
   blocks_ = std::move(map.blocks_);
 }
 

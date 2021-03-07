@@ -35,14 +35,18 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(RESOURCES resources.qrc)
 
 set(SOURCES
-        main.cpp
         controller/controller.h controller/controller.cpp
-        model/model.h model/model.cpp view/view.h view/view.cpp
-        model/constants.h model/block.h model/block.cpp model/map.h model/map.cpp
+        main.cpp
         model/abstract_map_generator.h
+        model/block.h
+        model/constants.h
         model/flat_map_generator.h model/flat_map_generator.cpp
-        view/camera.h view/camera.cpp view/block_drawer.h view/block_drawer.cpp
+        model/map.h model/map.cpp
+        model/model.h model/model.cpp
         model/player.h model/player.cpp
+        view/block_drawer.h view/block_drawer.cpp
+        view/camera.h view/camera.cpp
+        view/view.h view/view.cpp
         )
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${RESOURCES})

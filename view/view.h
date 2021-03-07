@@ -15,6 +15,11 @@ class View : public QWidget {
   View(const View&) = delete;
   View(View&&) = delete;
 
+  ~View() = default;
+
+  View& operator=(const View&) = delete;
+  View& operator=(View&&) = delete;
+
   void paintEvent(QPaintEvent* event) override;
 
  private:

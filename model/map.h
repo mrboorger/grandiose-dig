@@ -10,11 +10,13 @@ class Map {
   friend class FlatMapGenerator;
 
  public:
-  explicit Map(const Map& map);
-  Map(Map&& map);
+  Map(const Map& map);
+  Map(Map&& map) noexcept;
 
-  Map operator=(const Map& map) = delete;
-  Map operator=(Map&& map) = delete;
+  ~Map() = default;
+
+  Map& operator=(const Map& map) = delete;
+  Map& operator=(Map&& map) = delete;
 
   const Block& GetBlock(int x, int y) const;
   void SetBlock(int x, int y, Block block);

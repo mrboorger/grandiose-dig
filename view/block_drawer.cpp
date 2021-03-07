@@ -1,5 +1,8 @@
 #include "block_drawer.h"
 
+#include <QString>
+#include <array>
+
 #include "model/block.h"
 #include "model/constants.h"
 

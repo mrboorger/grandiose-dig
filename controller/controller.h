@@ -17,6 +17,11 @@ class Controller : public QWidget {
   Controller(const Controller&) = delete;
   Controller(Controller&&) = delete;
 
+  ~Controller() = default;
+
+  Controller& operator=(const Controller&) = delete;
+  Controller& operator=(Controller&&) = delete;
+
   void SetMap(AbstractMapGenerator* generator);
 
   bool IsPressed(int key);

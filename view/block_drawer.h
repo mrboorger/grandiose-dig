@@ -3,8 +3,6 @@
 
 #include <QPainter>
 #include <QPointF>
-#include <QString>
-#include <array>
 
 #include "model/block.h"
 

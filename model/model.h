@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "map.h"
+#include "model/map.h"
 
 class Model {
  public:
@@ -12,8 +12,13 @@ class Model {
   Model(const Model&) = delete;
   Model(Model&&) = delete;
 
-  std::shared_ptr<const Map> GetMap() const;
-  void SetMap(std::shared_ptr<Map> map);
+  ~Model() = default;
+
+  Model& operator=(const Model&) = delete;
+  Model& operator=(Model&&) = delete;
+
+  std::shared_ptr<const Map> GetMap() const { return map_; }
+  void SetMap(std::shared_ptr<Map> map) { map_ = map; }
 
  private:
   Model() = default;
