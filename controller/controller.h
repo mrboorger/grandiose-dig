@@ -24,13 +24,13 @@ class Controller : public QWidget {
 
   bool IsPressed(int key);
 
+  void keyPressEvent(QKeyEvent* event) override;
+  void keyReleaseEvent(QKeyEvent* event) override;
+
  private:
   Controller();
 
-  void timerEvent(QTimerEvent* event);
-
-  void keyPressedEvent(QKeyEvent* event);
-  void keyReleaseEvent(QKeyEvent* event);
+  void timerEvent(QTimerEvent* event) override;
 
   int timer_id_;
   std::unordered_set<int> pressed_keys_;

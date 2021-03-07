@@ -3,6 +3,7 @@
 #include <QPainter>
 
 #include "block_drawer.h"
+#include "controller/controller.h"
 #include "model/constants.h"
 
 View* View::GetInstance() {
@@ -17,6 +18,7 @@ void View::paintEvent(QPaintEvent* event) {
   Q_UNUSED(event);
   QPainter painter(this);
   auto map = Model::GetInstance()->GetMap();
+  camera_.SetPoint(QPointF{Model::GetInstance()->GetPlayer()->GetPosition()});
   for (int y = static_cast<int>(camera_.GetPoint().y() - kRenderDistance);
        y <= camera_.GetPoint().y() + kRenderDistance; ++y) {
     for (int x = static_cast<int>(camera_.GetPoint().x() - kRenderDistance);
@@ -35,4 +37,11 @@ void View::paintEvent(QPaintEvent* event) {
       (player->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
       rect().center();
   painter.drawImage(point, player_image);
+}
+
+void View::keyPressEvent(QKeyEvent* event) {
+  Controller::GetInstance()->keyPressEvent(event);
+}
+void View::keyReleaseEvent(QKeyEvent* event) {
+  Controller::GetInstance()->keyReleaseEvent(event);
 }

@@ -16,6 +16,8 @@ class View : public QWidget {
   View(View&&) = delete;
 
   void paintEvent(QPaintEvent* event) override;
+  void keyPressEvent(QKeyEvent* event) override;
+  void keyReleaseEvent(QKeyEvent* event) override;
 
  private:
   constexpr static int kRenderDistance = 70;

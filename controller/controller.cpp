@@ -30,7 +30,7 @@ void Controller::timerEvent(QTimerEvent* event) {
 bool Controller::IsPressed(int key) {
   return (pressed_keys_.find(key) != pressed_keys_.end());
 }
-void Controller::keyPressedEvent(QKeyEvent* event) {
+void Controller::keyPressEvent(QKeyEvent* event) {
   pressed_keys_.insert(event->key());
 }
 

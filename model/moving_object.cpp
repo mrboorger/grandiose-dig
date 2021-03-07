@@ -41,5 +41,17 @@ void MovingObject::Move(const std::unordered_set<int>& pressed_keys) {
 }
 
 void MovingObject::UpdateState(const std::unordered_set<int>& pressed_keys) {
-  Q_UNUSED(pressed_keys);
+  std::shared_ptr<const Map>(Model::GetInstance()->GetMap());
+  if (pressed_keys.find(Qt::Key::Key_Right) != pressed_keys.end()) {
+    move_vector_.TranslateSpeed(walk_acceleration_, 0, walk_max_speed_,
+                                MovingObject::kAbsoluteMaxSpeedY);
+  } else {
+    move_vector_.SetSpeed(0, 0);
+  }
+  UpdatePhysics();
+}
+
+void MovingObject::UpdatePhysics() {
+  pos_ += (QPointF{move_vector_.GetSpeedX(), move_vector_.GetSpeedY()});
+  qDebug() << pos_;
 }

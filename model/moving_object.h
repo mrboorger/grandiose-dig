@@ -1,6 +1,7 @@
 #ifndef MOVING_OBJECT_H
 #define MOVING_OBJECT_H
 
+#include <QDebug>
 #include <QImage>
 #include <memory>
 #include <unordered_set>
@@ -11,6 +12,9 @@
 class MovingObject {
  public:
   enum class State { kStay, kWalk, kJump };
+
+  static constexpr double kAbsoluteMaxSpeedX = 50;
+  static constexpr double kAbsoluteMaxSpeedY = 50;
 
   void SetWalkAcceleration(double speed);
   void SetWalkMaxSpeed(double speed);
@@ -35,6 +39,7 @@ class MovingObject {
 
  private:
   void UpdateState(const std::unordered_set<int>& pressed_keys);
+  void UpdatePhysics();
   QPointF pos_;
   double size_x_;
   double size_y_;
