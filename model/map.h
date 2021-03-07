@@ -15,8 +15,10 @@ class Map {
 
   ~Map() = default;
 
-  Map& operator=(const Map& map) = delete;
-  Map& operator=(Map&& map) = delete;
+  Map& operator=(const Map& rhs);
+  Map& operator=(Map&& rhs) noexcept;
+
+  void Swap(Map& other);
 
   const Block& GetBlock(int x, int y) const;
   void SetBlock(int x, int y, Block block);
@@ -25,9 +27,8 @@ class Map {
   Map(int width, int height);
 
   std::vector<Block> blocks_;
-
-  const int kWidth;
-  const int kHeight;
+  int width_;
+  int height_;
 };
 
 #endif  // MODEL_MAP_H_

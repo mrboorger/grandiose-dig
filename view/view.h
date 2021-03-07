@@ -20,12 +20,12 @@ class View : public QWidget {
   View& operator=(const View&) = delete;
   View& operator=(View&&) = delete;
 
-  void paintEvent(QPaintEvent* event) override;
-
  private:
   constexpr static int kRenderDistance = 70;
 
   View();
+
+  void paintEvent(QPaintEvent* event) override;
 
   Camera camera_;
 };

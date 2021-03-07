@@ -1,5 +1,4 @@
 #include <QApplication>
-#include <iostream>
 
 #include "controller/controller.h"
 #include "model/flat_map_generator.h"

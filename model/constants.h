@@ -4,7 +4,7 @@
 namespace constants {
 
 constexpr int kBlockSz = 16;  // in pixels
-constexpr int kTick = 10;     // in milliseconds
+constexpr int kTickDurationMsec = 10;
 
 }  // namespace constants
 

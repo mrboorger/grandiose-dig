@@ -43,7 +43,7 @@ set(SOURCES
         model/flat_map_generator.h model/flat_map_generator.cpp
         model/map.h model/map.cpp
         model/model.h model/model.cpp
-        model/player.h model/player.cpp
+        model/player.h
         view/block_drawer.h view/block_drawer.cpp
         view/camera.h view/camera.cpp
         view/view.h view/view.cpp
