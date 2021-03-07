@@ -7,7 +7,7 @@
 int main(int argc, char* argv[]) {
   QApplication application(argc, argv);
   View* view(View::GetInstance());
-  // TODO: (Wind-Eagle: delete this code) {
+  // TODO(Wind-Eagle): delete. {
   Controller* controller(Controller::GetInstance());
   FlatMapGenerator generator;
   controller->SetMap(&generator);

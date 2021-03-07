@@ -1,7 +1,7 @@
 #include "flat_map_generator.h"
 
 Map FlatMapGenerator::GenerateMap() {
-  // TODO: (Wind-Eagle: delete)
+  // TODO(Wind-Eagle): delete
   Map map(300, 300);
   for (int y = 150; y < 300; ++y) {
     for (int x = 0; x < 300; ++x) {
