@@ -1,5 +1,5 @@
-#ifndef MOVING_OBJECT_H
-#define MOVING_OBJECT_H
+#ifndef MODEL_MOVING_OBJECT_H_
+#define MODEL_MOVING_OBJECT_H_
 
 #include <QDebug>
 #include <QImage>
@@ -33,18 +33,22 @@ class MovingObject {
  protected:
   MovingObject(QPointF pos, double size_x, double size_y,
                double walk_acceleration, double walk_max_speed,
+               double walk_air_acceleration, double walk_max_air_acceleration,
                double gravity_speed, double jump_speed,
                State state = State::kStay, int state_ticks = 0,
                MoveVector move_vector = {{0, 0}, {0, 0}});
 
  private:
   void UpdateState(const std::unordered_set<int>& pressed_keys);
-  void UpdatePhysics();
+  void UpdatePhysics(QPointF old_position);
   QPointF pos_;
+  // TODO(Wind-Eagle): make QPointF
   double size_x_;
   double size_y_;
   double walk_acceleration_;
   double walk_max_speed_;
+  double walk_air_acceleration_;
+  double walk_max_air_acceleration_;
   double gravity_speed_;
   double jump_speed_;
   State state_;
@@ -56,4 +60,4 @@ class MovingObject {
   bool pushes_left_;
 };
 
-#endif  // MOVING_OBJECT_H
+#endif  // MODEL_MOVING_OBJECT_H_

@@ -3,4 +3,6 @@
 Player::Player(QPointF pos)
     : MovingObject(pos, Player::kSizeX, Player::kSizeY,
                    Player::kWalkAcceleration, Player::kWalkMaxSpeed,
-                   Player::kGravitySpeed, Player::kJumpSpeed) {}
+                   Player::kWalkAirAcceleration,
+                   Player::kWalkMaxAirAcceleration, Player::kGravitySpeed,
+                   Player::kJumpSpeed) {}

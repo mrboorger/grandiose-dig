@@ -1,5 +1,5 @@
-#ifndef MOVE_VECTOR_H
-#define MOVE_VECTOR_H
+#ifndef MODEL_MOVE_VECTOR_H_
+#define MODEL_MOVE_VECTOR_H_
 
 #include <QPoint>
 
@@ -7,8 +7,7 @@ class MoveVector {
  public:
   MoveVector() = default;
   MoveVector(QPointF speed, QPointF momentum, bool is_momentum_locked = false);
-  MoveVector(double speedX, double speedY, double momentumX, double momentumY,
-             bool is_momentum_locked = false);
+  MoveVector(double speedX, double speedY, double momentumX, double momentumY);
 
   void TranslateSpeed(QPointF point);
   void TranslateSpeed(double x, double y);
@@ -21,6 +20,15 @@ class MoveVector {
   void SetSpeed(QPointF point, QPointF max_speed);
   void SetSpeed(double x, double y, double max_speed_x, double max_speed_y);
 
+  void SetSpeedX(double x);
+  void SetSpeedY(double y);
+  void SetSpeedX(double x, double max_speed_x);
+  void SetSpeedY(double y, double max_speed_y);
+
+  void SetMomentum(QPointF momentum);
+  void SetMomentum(double x, double y);
+  void ResetMomentum();
+
   QPointF GetSpeed() const;
   double GetSpeedX() const;
   double GetSpeedY() const;
@@ -31,7 +39,6 @@ class MoveVector {
  private:
   QPointF speed_;
   QPointF momentum_;
-  bool is_momentum_locked_;
 };
 
-#endif  // MOVE_VECTOR_H
+#endif  // MODEL_MOVE_VECTOR_H_
