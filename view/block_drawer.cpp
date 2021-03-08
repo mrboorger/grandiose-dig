@@ -7,8 +7,10 @@
 #include "model/constants.h"
 
 namespace {
+
 std::array<QString, Block::kTypesCount> names = {"", "grass.png"};
 std::array<QImage, Block::kTypesCount> images;
+
 }  // namespace
 
 void BlockDrawer::DrawBlock(QPainter* painter, QPointF point, Block block) {

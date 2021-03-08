@@ -8,7 +8,6 @@
 #include "view/camera.h"
 
 class View : public QWidget {
-  Q_OBJECT
  public:
   static View* GetInstance();
 

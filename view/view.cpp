@@ -13,7 +13,6 @@ View* View::GetInstance() {
 View::View() : QWidget(nullptr), camera_(QPointF(150, 150)) {}
 
 void View::paintEvent(QPaintEvent* event) {
-  //
   Q_UNUSED(event);
   QPainter painter(this);
   auto map = Model::GetInstance()->GetMap();

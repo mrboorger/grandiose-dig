@@ -10,8 +10,6 @@
 #include "view/view.h"
 
 class Controller : public QWidget {
-  Q_OBJECT
-
  public:
   static Controller* GetInstance();
 
