@@ -2,6 +2,7 @@
 #define MODEL_MOVE_VECTOR_H_
 
 #include <QPoint>
+#include <algorithm>
 
 #include "model/constants.h"
 

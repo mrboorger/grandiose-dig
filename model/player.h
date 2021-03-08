@@ -7,7 +7,7 @@
 
 class Player : public MovingObject {
  public:
-  Player(QPointF pos);
+  explicit Player(QPointF pos);
 
  private:
   // TODO(Wind-Eagle): make QPointF

@@ -3,6 +3,7 @@
 
 #include <QDebug>
 #include <QImage>
+#include <algorithm>
 #include <cmath>
 #include <memory>
 #include <unordered_set>
