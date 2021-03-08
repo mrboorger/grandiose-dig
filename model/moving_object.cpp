@@ -52,7 +52,6 @@ void MovingObject::UpdateState(const std::unordered_set<int>& pressed_keys) {
   QPointF old_position = pos_;
   switch (state_) {
     case State::kStay:
-      move_vector_.SetSpeed({0, 0});
       if (!pushes_ground_) {
         state_ = State::kJump;
         move_vector_.SetMomentum(move_vector_.GetSpeed());
@@ -60,6 +59,7 @@ void MovingObject::UpdateState(const std::unordered_set<int>& pressed_keys) {
         state_ticks_ = 0;
         break;
       }
+      move_vector_.SetSpeed({0, 0});
       if (IsKey(pressed_keys, Qt::Key::Key_Left) !=
           IsKey(pressed_keys, Qt::Key::Key_Right)) {
         state_ = State::kWalk;
@@ -80,7 +80,7 @@ void MovingObject::UpdateState(const std::unordered_set<int>& pressed_keys) {
           IsKey(pressed_keys, Qt::Key::Key_Right)) {
         state_ = State::kStay;
         state_ticks_ = 0;
-        move_vector_.SetSpeed({0, 0});
+        move_vector_.SetSpeedX(0);
       } else if (IsKey(pressed_keys, Qt::Key::Key_Right)) {
         if (pushes_right_) {
           move_vector_.SetSpeedX(0);
@@ -153,6 +153,10 @@ void MovingObject::UpdateState(const std::unordered_set<int>& pressed_keys) {
 }
 
 void MovingObject::UpdatePhysics(QPointF old_position) {
+  qDebug() << pos_ << " " << pushes_ground_ << " " << (state_ == State::kStay)
+           << " " << (state_ == State::kWalk) << " " << (state_ == State::kJump)
+           << " " << move_vector_.GetSpeed() << " "
+           << move_vector_.GetMomentum();
   pos_ += (move_vector_.GetSpeed());
   pos_ += (move_vector_.GetMomentum());
   if (pos_.y() > 148.25) {
@@ -163,7 +167,4 @@ void MovingObject::UpdatePhysics(QPointF old_position) {
   } else {
     pushes_ground_ = false;
   }
-  qDebug() << pos_ << " " << pushes_ground_ << " " << (state_ == State::kJump)
-           << " " << move_vector_.GetSpeed() << " "
-           << move_vector_.GetMomentum();
 }
