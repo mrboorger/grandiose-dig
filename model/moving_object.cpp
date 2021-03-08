@@ -50,6 +50,7 @@ bool IsKey(const std::unordered_set<int>& set, int key) {
 
 void MovingObject::UpdateState(const std::unordered_set<int>& pressed_keys) {
   QPointF old_position = pos_;
+  // TODO(Wind-Eagle): the longer you hold SPACE bar the higher you jump.
   switch (state_) {
     case State::kStay:
       if (!pushes_ground_) {
@@ -108,9 +109,7 @@ void MovingObject::UpdateState(const std::unordered_set<int>& pressed_keys) {
       state_ticks_++;
       break;
     case State::kJump:
-      move_vector_.TranslateSpeed(
-          {0, gravity_speed_},
-          {MovingObject::kAbsoluteMaxSpeedX, MovingObject::kAbsoluteMaxSpeedY});
+      move_vector_.TranslateSpeedWithLimits(0, gravity_speed_);
       if (IsKey(pressed_keys, Qt::Key::Key_Left) ==
           IsKey(pressed_keys, Qt::Key::Key_Right)) {
         move_vector_.TranslateSpeed({0, 0});
@@ -118,17 +117,21 @@ void MovingObject::UpdateState(const std::unordered_set<int>& pressed_keys) {
         if (pushes_right_) {
           move_vector_.SetSpeedX(0);
         } else {
-          move_vector_.TranslateSpeed(walk_air_acceleration_, 0,
-                                      walk_max_air_acceleration_,
-                                      MovingObject::kAbsoluteMaxSpeedY);
+          // TODO(Wind-Eagle): acknowledge why this piece of code is working
+          move_vector_.TranslateSpeedX(
+              walk_acceleration_,
+              -walk_max_air_acceleration_ + move_vector_.GetMomentumX(),
+              walk_max_air_acceleration_ - move_vector_.GetMomentumX());
         }
       } else if (IsKey(pressed_keys, Qt::Key::Key_Left)) {
         if (pushes_left_) {
           move_vector_.SetSpeedX(0);
         } else {
-          move_vector_.TranslateSpeed(-walk_air_acceleration_, 0,
-                                      walk_max_air_acceleration_,
-                                      MovingObject::kAbsoluteMaxSpeedY);
+          // TODO(Wind-Eagle): acknowledge why this piece of code is working
+          move_vector_.TranslateSpeedX(
+              -walk_acceleration_,
+              -walk_max_air_acceleration_ - move_vector_.GetMomentumX(),
+              walk_max_air_acceleration_ + move_vector_.GetMomentumX());
         }
       }
       if (pushes_ground_) {
@@ -152,19 +155,177 @@ void MovingObject::UpdateState(const std::unordered_set<int>& pressed_keys) {
   UpdatePhysics(old_position);
 }
 
+QPointF SegmentDivide(QPointF first, QPointF second, double percentage) {
+  return QPointF(first.x() * percentage + second.x() * (1 - percentage),
+                 first.y() * percentage + second.y() * (1 - percentage));
+}
+
+bool MovingObject::HasCollisionGround(QPointF old_position, double* ground_y,
+                                      std::shared_ptr<const Map> map) const {
+  QPointF old_bottom_left = old_position + QPointF(0, size_y_);
+  QPointF new_bottom_left = pos_ + QPointF(0, size_y_);
+  int end_y = floor(new_bottom_left.y());
+  int begin_y =
+      std::min(static_cast<int>(floor(old_bottom_left.y()) + 1), end_y);
+  int dist = std::max(std::abs(end_y - begin_y), 1);
+  for (int y = begin_y; y <= end_y; y++) {
+    double bottom_left =
+        SegmentDivide(old_bottom_left, new_bottom_left,
+                      static_cast<double>(std::abs(end_y - y)) / dist)
+            .x();
+    double bottom_right = bottom_left + size_x_ - constants::kEPS;
+    for (double x = bottom_left + constants::kEPS;; x += 1) {
+      int block_x = floor(x);
+      int block_y = floor(y);
+      if (map->GetBlock(block_x, block_y).GetType() != Block::Type::kAir) {
+        (*ground_y) = block_y - size_y_;
+        return true;
+      }
+      if (x >= floor(bottom_right)) break;
+    }
+  }
+  return false;
+}
+
+bool MovingObject::HasCollisionCeiling(QPointF old_position, double* ceiling_y,
+                                       std::shared_ptr<const Map> map) const {
+  QPointF old_top_left = old_position;
+  QPointF new_top_left = pos_;
+  int end_y = floor(new_top_left.y());
+  int begin_y = std::max(static_cast<int>(floor(old_top_left.y()) - 1), end_y);
+  int dist = std::max(std::abs(end_y - begin_y), 1);
+  for (int y = begin_y; y >= end_y; y--) {
+    double top_left =
+        SegmentDivide(old_top_left, new_top_left,
+                      static_cast<double>(std::abs(end_y - y)) / dist)
+            .x();
+    double top_right = top_left + size_x_ - constants::kEPS;
+    for (double x = top_left + constants::kEPS;; x += 1) {
+      int block_x = floor(x);
+      int block_y = floor(y);
+      if (map->GetBlock(block_x, block_y).GetType() != Block::Type::kAir) {
+        (*ceiling_y) = block_y + 1;
+        return true;
+      }
+      if (x >= floor(top_right)) break;
+    }
+  }
+  return false;
+}
+
+bool MovingObject::HasCollisionLeft(QPointF old_position, double* left_wall_x,
+                                    std::shared_ptr<const Map> map) const {
+  QPointF old_bottom_left =
+      old_position + QPointF(0, size_y_ - constants::kEPS);
+  QPointF new_bottom_left = pos_ + QPointF(0, size_y_ - constants::kEPS);
+  int end_x = floor(new_bottom_left.x());
+  int begin_x =
+      std::max(static_cast<int>(floor(old_bottom_left.x()) - 1), end_x);
+  int dist = std::max(std::abs(end_x - begin_x), 1);
+  for (int x = begin_x; x >= end_x; x--) {
+    double bottom_left =
+        SegmentDivide(old_bottom_left, new_bottom_left,
+                      static_cast<double>(std::abs(end_x - x)) / dist)
+            .y();
+    double top_left = bottom_left - size_y_;
+    for (double y = bottom_left;; y -= 1) {
+      int block_x = floor(x);
+      int block_y = floor(y);
+      if (map->GetBlock(block_x, block_y).GetType() != Block::Type::kAir) {
+        (*left_wall_x) = block_x + 1;
+        return true;
+      }
+      if (block_y <= top_left) break;
+    }
+  }
+  return false;
+}
+
+bool MovingObject::HasCollisionRight(QPointF old_position, double* rightWallX,
+                                     std::shared_ptr<const Map> map) const {
+  QPointF old_bottom_right = old_position + QPointF(size_x_ - constants::kEPS,
+                                                    size_y_ - constants::kEPS);
+  QPointF new_bottom_right =
+      pos_ + QPointF(size_x_ - constants::kEPS, size_y_ - constants::kEPS);
+  int end_x = floor(new_bottom_right.x());
+  int begin_x =
+      std::min(static_cast<int>(floor(old_bottom_right.x()) + 1), end_x);
+  int dist = std::max(std::abs(end_x - begin_x), 1);
+  for (int x = begin_x; x <= end_x; x++) {
+    double bottom_right =
+        SegmentDivide(old_bottom_right, new_bottom_right,
+                      static_cast<double>(std::abs(end_x - x)) / dist)
+            .y();
+    double top_right = bottom_right - size_y_;
+    for (double y = bottom_right;; y -= 1) {
+      int block_x = floor(x);
+      int block_y = floor(y);
+      if (map->GetBlock(block_x, block_y).GetType() != Block::Type::kAir) {
+        (*rightWallX) = block_x - size_x_;
+        return true;
+      }
+      if (block_y <= top_right) break;
+    }
+  }
+  return false;
+}
+
 void MovingObject::UpdatePhysics(QPointF old_position) {
-  qDebug() << pos_ << " " << pushes_ground_ << " " << (state_ == State::kStay)
+  /*qDebug() << pos_ << " " << pushes_ground_ << " " << (state_ == State::kStay)
            << " " << (state_ == State::kWalk) << " " << (state_ == State::kJump)
            << " " << move_vector_.GetSpeed() << " "
-           << move_vector_.GetMomentum();
-  pos_ += (move_vector_.GetSpeed());
-  pos_ += (move_vector_.GetMomentum());
-  if (pos_.y() > 148.25) {
+           << move_vector_.GetMomentum();*/
+  std::shared_ptr<const Map> map = Model::GetInstance()->GetMap();
+  double ground_y = 0, ceiling_y = 0;
+  double right_wall_x = 0, left_wall_x = 0;
+  pos_ += move_vector_.GetSpeed();
+  pos_ += move_vector_.GetMomentum();
+  if (move_vector_.GetSpeedX() + move_vector_.GetMomentumX() <= 0 &&
+      HasCollisionLeft(old_position, &left_wall_x, map)) {
+    if (old_position.x() >= left_wall_x) {
+      pushes_left_ = true;
+      pos_.setX(left_wall_x);
+    }
+    move_vector_.SetSpeedX(0);
+    move_vector_.SetMomentumX(0);
+  } else {
+    pushes_left_ = false;
+  }
+  if (move_vector_.GetSpeedX() + move_vector_.GetMomentumX() >= 0 &&
+      HasCollisionRight(old_position, &right_wall_x, map)) {
+    if (old_position.x() <= right_wall_x) {
+      pushes_right_ = true;
+      pos_.setX(right_wall_x);
+    }
+    move_vector_.SetSpeedX(0);
+    move_vector_.SetMomentumX(0);
+  } else {
+    pushes_right_ = false;
+  }
+  if (move_vector_.GetSpeedY() + move_vector_.GetMomentumY() <= 0 &&
+      HasCollisionCeiling(old_position, &ceiling_y, map)) {
+    pushes_ceil_ = true;
+    pos_.setY(ceiling_y);
+    move_vector_.SetSpeedY(0);
+    move_vector_.SetMomentumY(0);
+  } else {
+    pushes_ceil_ = false;
+  }
+  if (move_vector_.GetSpeedY() + move_vector_.GetMomentumY() >= 0 &&
+      HasCollisionGround(old_position, &ground_y, map)) {
+    pushes_ground_ = true;
+    pos_.setY(ground_y);
+    move_vector_.SetSpeedY(0);
+    move_vector_.SetMomentumY(0);
+  } else {
+    pushes_ground_ = false;
+  }
+  /*if (pos_.y() > 148.25) {
     pos_.setY(148.25);
   }
   if (pos_.y() == 148.25) {
     pushes_ground_ = true;
   } else {
     pushes_ground_ = false;
-  }
+  }*/
 }

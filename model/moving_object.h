@@ -3,18 +3,17 @@
 
 #include <QDebug>
 #include <QImage>
+#include <cmath>
 #include <memory>
 #include <unordered_set>
 
+#include "model/constants.h"
 #include "model/map.h"
 #include "model/move_vector.h"
 
 class MovingObject {
  public:
   enum class State { kStay, kWalk, kJump };
-
-  static constexpr double kAbsoluteMaxSpeedX = 50;
-  static constexpr double kAbsoluteMaxSpeedY = 50;
 
   void SetWalkAcceleration(double speed);
   void SetWalkMaxSpeed(double speed);
@@ -41,6 +40,14 @@ class MovingObject {
  private:
   void UpdateState(const std::unordered_set<int>& pressed_keys);
   void UpdatePhysics(QPointF old_position);
+  bool HasCollisionGround(QPointF old_position, double* ground_y,
+                          std::shared_ptr<const Map> map) const;
+  bool HasCollisionCeiling(QPointF old_position, double* ceiling_y,
+                           std::shared_ptr<const Map> map) const;
+  bool HasCollisionLeft(QPointF old_position, double* left_wall_x,
+                        std::shared_ptr<const Map> map) const;
+  bool HasCollisionRight(QPointF old_position, double* right_wall_x,
+                         std::shared_ptr<const Map> map) const;
   QPointF pos_;
   // TODO(Wind-Eagle): make QPointF
   double size_x_;

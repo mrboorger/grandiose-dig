@@ -16,7 +16,7 @@ class Player : public MovingObject {
   static constexpr double kWalkAcceleration = 0.01;
   static constexpr double kWalkMaxSpeed = 0.1;
   static constexpr double kWalkAirAcceleration = kWalkAcceleration;
-  static constexpr double kWalkMaxAirAcceleration = kWalkMaxSpeed * 0.5;
+  static constexpr double kWalkMaxAirAcceleration = kWalkMaxSpeed;
   static constexpr double kGravitySpeed = 0.01;
   static constexpr double kJumpSpeed = -0.3;
 };

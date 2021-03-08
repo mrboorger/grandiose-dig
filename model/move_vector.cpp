@@ -13,20 +13,45 @@ void MoveVector::TranslateSpeed(double x, double y) { speed_ += QPointF(x, y); }
 void MoveVector::SetSpeed(QPointF point) { speed_ = point; }
 void MoveVector::SetSpeed(double x, double y) { speed_ = QPointF(x, y); }
 
-void MoveVector::TranslateSpeed(QPointF point, QPointF max_speed) {
-  TranslateSpeed(point);
-  speed_.setX(std::min(speed_.x(), max_speed.x()));
-  speed_.setY(std::min(speed_.y(), max_speed.y()));
-  speed_.setX(std::max(speed_.x(), -max_speed.x()));
-  speed_.setY(std::max(speed_.y(), -max_speed.y()));
+void MoveVector::TranslateSpeedX(double x, double left_limit,
+                                 double right_limit) {
+  QPointF new_speed = speed_ + QPointF(x, 0);
+  if (left_limit <= new_speed.x() && right_limit >= new_speed.x()) {
+    speed_ = new_speed;
+    return;
+  }
+  if (left_limit > new_speed.x() && x > 0) {
+    speed_ = new_speed;
+    return;
+  }
+  if (right_limit < new_speed.x() && x < 0) {
+    speed_ = new_speed;
+    return;
+  }
 }
-void MoveVector::TranslateSpeed(double x, double y, double max_speed_x,
-                                double max_speed_y) {
+void MoveVector::TranslateSpeedY(double y, double left_limit,
+                                 double right_limit) {
+  QPointF new_speed = speed_ + QPointF(0, y);
+  if (left_limit <= new_speed.y() && right_limit >= new_speed.y()) {
+    speed_ = new_speed;
+    return;
+  }
+  if (left_limit > new_speed.y() && y > 0) {
+    speed_ = new_speed;
+    return;
+  }
+  if (right_limit < new_speed.y() && y < 0) {
+    speed_ = new_speed;
+    return;
+  }
+}
+
+void MoveVector::TranslateSpeedWithLimits(double x, double y) {
   TranslateSpeed(x, y);
-  speed_.setX(std::min(speed_.x(), max_speed_x));
-  speed_.setY(std::min(speed_.y(), max_speed_y));
-  speed_.setX(std::max(speed_.x(), -max_speed_x));
-  speed_.setY(std::max(speed_.y(), -max_speed_y));
+  speed_.setX(std::min(speed_.x(), constants::kAbsoluteMaxSpeedX));
+  speed_.setY(std::min(speed_.y(), constants::kAbsoluteMaxSpeedY));
+  speed_.setX(std::max(speed_.x(), -constants::kAbsoluteMaxSpeedX));
+  speed_.setY(std::max(speed_.y(), -constants::kAbsoluteMaxSpeedY));
 }
 void MoveVector::SetSpeed(QPointF point, QPointF max_speed) {
   SetSpeed(point);
@@ -62,6 +87,8 @@ void MoveVector::SetSpeedY(double y, double max_speed_y) {
 
 void MoveVector::SetMomentum(QPointF momentum) { momentum_ = momentum; }
 void MoveVector::SetMomentum(double x, double y) { momentum_ = {x, y}; }
+void MoveVector::SetMomentumX(double x) { momentum_.setX(x); }
+void MoveVector::SetMomentumY(double y) { momentum_.setY(y); }
 void MoveVector::ResetMomentum() { momentum_ = {0, 0}; }
 
 QPointF MoveVector::GetSpeed() const { return speed_; }
