@@ -10,16 +10,6 @@ class Map {
   friend class FlatMapGenerator;
 
  public:
-  Map(const Map& map);
-  Map(Map&& map) noexcept;
-
-  ~Map() = default;
-
-  Map& operator=(const Map& rhs) = default;
-  Map& operator=(Map&& rhs) noexcept = default;
-
-  void Swap(Map& other);
-
   const Block& GetBlock(int x, int y) const;
   void SetBlock(int x, int y, Block block);
 
