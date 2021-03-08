@@ -2,15 +2,13 @@
 
 #include "model.h"
 
-MovingObject::MovingObject(QPointF pos, double size_x, double size_y,
-                           double walk_acceleration, double walk_max_speed,
-                           double walk_air_acceleration,
+MovingObject::MovingObject(QPointF pos, QPointF size, double walk_acceleration,
+                           double walk_max_speed, double walk_air_acceleration,
                            double walk_max_air_acceleration,
                            double gravity_speed, double jump_speed, State state,
                            int state_ticks, MoveVector move_vector)
     : pos_(pos),
-      size_x_(size_x),
-      size_y_(size_y),
+      size_(size),
       walk_acceleration_(walk_acceleration),
       walk_max_speed_(walk_max_speed),
       walk_air_acceleration_(walk_air_acceleration),
@@ -162,8 +160,8 @@ QPointF SegmentDivide(QPointF first, QPointF second, double percentage) {
 
 bool MovingObject::HasCollisionGround(QPointF old_position, double* ground_y,
                                       std::shared_ptr<const Map> map) const {
-  QPointF old_bottom_left = old_position + QPointF(0, size_y_);
-  QPointF new_bottom_left = pos_ + QPointF(0, size_y_);
+  QPointF old_bottom_left = old_position + QPointF(0, size_.y());
+  QPointF new_bottom_left = pos_ + QPointF(0, size_.y());
   int end_y = floor(new_bottom_left.y());
   int begin_y =
       std::min(static_cast<int>(floor(old_bottom_left.y()) + 1), end_y);
@@ -173,12 +171,12 @@ bool MovingObject::HasCollisionGround(QPointF old_position, double* ground_y,
         SegmentDivide(old_bottom_left, new_bottom_left,
                       static_cast<double>(std::abs(end_y - y)) / dist)
             .x();
-    double bottom_right = bottom_left + size_x_ - constants::kEPS;
+    double bottom_right = bottom_left + size_.x() - constants::kEPS;
     for (double x = bottom_left + constants::kEPS;; x += 1) {
       int block_x = floor(x);
       int block_y = floor(y);
       if (map->GetBlock(block_x, block_y).GetType() != Block::Type::kAir) {
-        (*ground_y) = block_y - size_y_;
+        (*ground_y) = block_y - size_.y();
         return true;
       }
       if (x >= floor(bottom_right)) break;
@@ -199,7 +197,7 @@ bool MovingObject::HasCollisionCeiling(QPointF old_position, double* ceiling_y,
         SegmentDivide(old_top_left, new_top_left,
                       static_cast<double>(std::abs(end_y - y)) / dist)
             .x();
-    double top_right = top_left + size_x_ - constants::kEPS;
+    double top_right = top_left + size_.x() - constants::kEPS;
     for (double x = top_left + constants::kEPS;; x += 1) {
       int block_x = floor(x);
       int block_y = floor(y);
@@ -216,8 +214,8 @@ bool MovingObject::HasCollisionCeiling(QPointF old_position, double* ceiling_y,
 bool MovingObject::HasCollisionLeft(QPointF old_position, double* left_wall_x,
                                     std::shared_ptr<const Map> map) const {
   QPointF old_bottom_left =
-      old_position + QPointF(0, size_y_ - constants::kEPS);
-  QPointF new_bottom_left = pos_ + QPointF(0, size_y_ - constants::kEPS);
+      old_position + QPointF(0, size_.y() - constants::kEPS);
+  QPointF new_bottom_left = pos_ + QPointF(0, size_.y() - constants::kEPS);
   int end_x = floor(new_bottom_left.x());
   int begin_x =
       std::max(static_cast<int>(floor(old_bottom_left.x()) - 1), end_x);
@@ -227,7 +225,7 @@ bool MovingObject::HasCollisionLeft(QPointF old_position, double* left_wall_x,
         SegmentDivide(old_bottom_left, new_bottom_left,
                       static_cast<double>(std::abs(end_x - x)) / dist)
             .y();
-    double top_left = bottom_left - size_y_;
+    double top_left = bottom_left - size_.y();
     for (double y = bottom_left;; y -= 1) {
       int block_x = floor(x);
       int block_y = floor(y);
@@ -243,10 +241,11 @@ bool MovingObject::HasCollisionLeft(QPointF old_position, double* left_wall_x,
 
 bool MovingObject::HasCollisionRight(QPointF old_position, double* rightWallX,
                                      std::shared_ptr<const Map> map) const {
-  QPointF old_bottom_right = old_position + QPointF(size_x_ - constants::kEPS,
-                                                    size_y_ - constants::kEPS);
+  QPointF old_bottom_right =
+      old_position +
+      QPointF(size_.x() - constants::kEPS, size_.y() - constants::kEPS);
   QPointF new_bottom_right =
-      pos_ + QPointF(size_x_ - constants::kEPS, size_y_ - constants::kEPS);
+      pos_ + QPointF(size_.x() - constants::kEPS, size_.y() - constants::kEPS);
   int end_x = floor(new_bottom_right.x());
   int begin_x =
       std::min(static_cast<int>(floor(old_bottom_right.x()) + 1), end_x);
@@ -256,12 +255,12 @@ bool MovingObject::HasCollisionRight(QPointF old_position, double* rightWallX,
         SegmentDivide(old_bottom_right, new_bottom_right,
                       static_cast<double>(std::abs(end_x - x)) / dist)
             .y();
-    double top_right = bottom_right - size_y_;
+    double top_right = bottom_right - size_.y();
     for (double y = bottom_right;; y -= 1) {
       int block_x = floor(x);
       int block_y = floor(y);
       if (map->GetBlock(block_x, block_y).GetType() != Block::Type::kAir) {
-        (*rightWallX) = block_x - size_x_;
+        (*rightWallX) = block_x - size_.x();
         return true;
       }
       if (block_y <= top_right) break;
@@ -271,18 +270,15 @@ bool MovingObject::HasCollisionRight(QPointF old_position, double* rightWallX,
 }
 
 void MovingObject::UpdatePhysics(QPointF old_position) {
-  /*qDebug() << pos_ << " " << pushes_ground_ << " " << (state_ == State::kStay)
-           << " " << (state_ == State::kWalk) << " " << (state_ == State::kJump)
-           << " " << move_vector_.GetSpeed() << " "
-           << move_vector_.GetMomentum();*/
   std::shared_ptr<const Map> map = Model::GetInstance()->GetMap();
   double ground_y = 0, ceiling_y = 0;
   double right_wall_x = 0, left_wall_x = 0;
   pos_ += move_vector_.GetSpeed();
   pos_ += move_vector_.GetMomentum();
-  if (move_vector_.GetSpeedX() + move_vector_.GetMomentumX() <= 0 &&
+  if (move_vector_.GetSpeedX() + move_vector_.GetMomentumX() <=
+          constants::kEPS &&
       HasCollisionLeft(old_position, &left_wall_x, map)) {
-    if (old_position.x() >= left_wall_x) {
+    if (old_position.x() + constants::kEPS >= left_wall_x) {
       pushes_left_ = true;
       pos_.setX(left_wall_x);
     }
@@ -291,9 +287,10 @@ void MovingObject::UpdatePhysics(QPointF old_position) {
   } else {
     pushes_left_ = false;
   }
-  if (move_vector_.GetSpeedX() + move_vector_.GetMomentumX() >= 0 &&
+  if (move_vector_.GetSpeedX() + move_vector_.GetMomentumX() >=
+          -constants::kEPS &&
       HasCollisionRight(old_position, &right_wall_x, map)) {
-    if (old_position.x() <= right_wall_x) {
+    if (old_position.x() - constants::kEPS <= right_wall_x) {
       pushes_right_ = true;
       pos_.setX(right_wall_x);
     }
@@ -302,7 +299,8 @@ void MovingObject::UpdatePhysics(QPointF old_position) {
   } else {
     pushes_right_ = false;
   }
-  if (move_vector_.GetSpeedY() + move_vector_.GetMomentumY() <= 0 &&
+  if (move_vector_.GetSpeedY() + move_vector_.GetMomentumY() <=
+          constants::kEPS &&
       HasCollisionCeiling(old_position, &ceiling_y, map)) {
     pushes_ceil_ = true;
     pos_.setY(ceiling_y);
@@ -311,7 +309,8 @@ void MovingObject::UpdatePhysics(QPointF old_position) {
   } else {
     pushes_ceil_ = false;
   }
-  if (move_vector_.GetSpeedY() + move_vector_.GetMomentumY() >= 0 &&
+  if (move_vector_.GetSpeedY() + move_vector_.GetMomentumY() >=
+          -constants::kEPS &&
       HasCollisionGround(old_position, &ground_y, map)) {
     pushes_ground_ = true;
     pos_.setY(ground_y);
@@ -320,12 +319,4 @@ void MovingObject::UpdatePhysics(QPointF old_position) {
   } else {
     pushes_ground_ = false;
   }
-  /*if (pos_.y() > 148.25) {
-    pos_.setY(148.25);
-  }
-  if (pos_.y() == 148.25) {
-    pushes_ground_ = true;
-  } else {
-    pushes_ground_ = false;
-  }*/
 }

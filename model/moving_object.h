@@ -30,12 +30,11 @@ class MovingObject {
   void Move(const std::unordered_set<int>& pressed_keys);
 
  protected:
-  MovingObject(QPointF pos, double size_x, double size_y,
-               double walk_acceleration, double walk_max_speed,
-               double walk_air_acceleration, double walk_max_air_acceleration,
-               double gravity_speed, double jump_speed,
-               State state = State::kStay, int state_ticks = 0,
-               MoveVector move_vector = {{0, 0}, {0, 0}});
+  MovingObject(QPointF pos, QPointF size, double walk_acceleration,
+               double walk_max_speed, double walk_air_acceleration,
+               double walk_max_air_acceleration, double gravity_speed,
+               double jump_speed, State state = State::kStay,
+               int state_ticks = 0, MoveVector move_vector = {0, 0, 0, 0});
 
  private:
   void UpdateState(const std::unordered_set<int>& pressed_keys);
@@ -49,9 +48,7 @@ class MovingObject {
   bool HasCollisionRight(QPointF old_position, double* right_wall_x,
                          std::shared_ptr<const Map> map) const;
   QPointF pos_;
-  // TODO(Wind-Eagle): make QPointF
-  double size_x_;
-  double size_y_;
+  QPointF size_;
   double walk_acceleration_;
   double walk_max_speed_;
   double walk_air_acceleration_;

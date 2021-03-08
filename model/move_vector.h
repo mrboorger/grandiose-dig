@@ -8,7 +8,6 @@
 class MoveVector {
  public:
   MoveVector() = default;
-  MoveVector(QPointF speed, QPointF momentum, bool is_momentum_locked = false);
   MoveVector(double speedX, double speedY, double momentumX, double momentumY);
 
   void TranslateSpeed(QPointF point);
@@ -23,13 +22,9 @@ class MoveVector {
   void SetSpeed(double x, double y);
 
   void TranslateSpeedWithLimits(double x, double y);
-  void SetSpeed(QPointF point, QPointF max_speed);
-  void SetSpeed(double x, double y, double max_speed_x, double max_speed_y);
 
   void SetSpeedX(double x);
   void SetSpeedY(double y);
-  void SetSpeedX(double x, double max_speed_x);
-  void SetSpeedY(double y, double max_speed_y);
 
   void SetMomentum(QPointF momentum);
   void SetMomentum(double x, double y);
