@@ -10,18 +10,6 @@ Map::Map(Map&& map) noexcept : width_(map.width_), height_(map.height_) {
   blocks_ = std::move(map.blocks_);
 }
 
-Map& Map::operator=(const Map& rhs) {
-  Map tmp(rhs);
-  Swap(tmp);
-  return *this;
-}
-
-Map& Map::operator=(Map&& rhs) noexcept {
-  Map tmp(std::move(rhs));
-  Swap(tmp);
-  return *this;
-}
-
 void Map::Swap(Map& other) {
   blocks_.swap(other.blocks_);
   std::swap(width_, other.width_);

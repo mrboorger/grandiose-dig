@@ -15,8 +15,8 @@ class Map {
 
   ~Map() = default;
 
-  Map& operator=(const Map& rhs);
-  Map& operator=(Map&& rhs) noexcept;
+  Map& operator=(const Map& rhs) = default;
+  Map& operator=(Map&& rhs) noexcept = default;
 
   void Swap(Map& other);
 
