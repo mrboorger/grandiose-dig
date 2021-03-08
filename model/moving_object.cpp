@@ -143,6 +143,11 @@ void MovingObject::UpdateState(const std::unordered_set<int>& pressed_keys) {
           state_ticks_ = 0;
           move_vector_.SetSpeedY(0);
         }
+      } else {
+        move_vector_.SetSpeedX(move_vector_.GetSpeedX() *
+                               (1.0 - constants::kAirResistance));
+        move_vector_.SetMomentumX(move_vector_.GetMomentumX() *
+                                  (1.0 - constants::kAirResistance));
       }
       state_ticks_++;
       break;
