@@ -11,14 +11,18 @@
 #include "view/view.h"
 
 class Controller : public QWidget {
-  Q_OBJECT
  public:
   static Controller* GetInstance();
 
   Controller(const Controller&) = delete;
   Controller(Controller&&) = delete;
 
-  void SetMap(AbstractMapGenerator* generator);
+  ~Controller() = default;
+
+  Controller& operator=(const Controller&) = delete;
+  Controller& operator=(Controller&&) = delete;
+
+  void SetGeneratedMap(AbstractMapGenerator* generator);
 
   void SetPlayer();
 

@@ -10,12 +10,6 @@ class Map {
   friend class FlatMapGenerator;
 
  public:
-  explicit Map(const Map& map);
-  Map(Map&& map);
-
-  Map operator=(const Map& map) = delete;
-  Map operator=(Map&& map) = delete;
-
   const Block& GetBlock(int x, int y) const;
   void SetBlock(int x, int y, Block block);
 
@@ -23,9 +17,8 @@ class Map {
   Map(int width, int height);
 
   std::vector<Block> blocks_;
-
-  const int kWidth;
-  const int kHeight;
+  int width_;
+  int height_;
 };
 
 #endif  // MODEL_MAP_H_

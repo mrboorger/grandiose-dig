@@ -14,13 +14,20 @@ class Model {
   Model(const Model&) = delete;
   Model(Model&&) = delete;
 
-  std::shared_ptr<const Map> GetMap() const;
-  void SetMap(std::shared_ptr<Map> map);
+  ~Model() = default;
 
-  std::shared_ptr<const Player> GetPlayer() const;
-  void SetPlayer(std::shared_ptr<Player> player);
+  Model& operator=(const Model&) = delete;
+  Model& operator=(Model&&) = delete;
 
-  void MoveObjects(const std::unordered_set<int>& pressed_keys);
+  std::shared_ptr<const Map> GetMap() const { return map_; }
+  void SetMap(std::shared_ptr<Map> map) { map_ = map; }
+
+  std::shared_ptr<const Player> GetPlayer() const { return player_; }
+  void SetPlayer(std::shared_ptr<Player> player) { player_ = player; }
+
+  void MoveObjects(const std::unordered_set<int>& pressed_keys) {
+    player_->Move(pressed_keys);
+  }
 
  private:
   Model() = default;

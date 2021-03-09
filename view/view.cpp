@@ -2,9 +2,9 @@
 
 #include <QPainter>
 
-#include "block_drawer.h"
 #include "controller/controller.h"
 #include "model/constants.h"
+#include "view/block_drawer.h"
 
 View* View::GetInstance() {
   static View view;
@@ -14,7 +14,6 @@ View* View::GetInstance() {
 View::View() : QWidget(nullptr), camera_(QPointF(150, 150)) {}
 
 void View::paintEvent(QPaintEvent* event) {
-  //
   Q_UNUSED(event);
   QPainter painter(this);
   auto map = Model::GetInstance()->GetMap();

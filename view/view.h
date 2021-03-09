@@ -8,21 +8,25 @@
 #include "view/camera.h"
 
 class View : public QWidget {
-  Q_OBJECT
  public:
   static View* GetInstance();
 
   View(const View&) = delete;
   View(View&&) = delete;
 
-  void paintEvent(QPaintEvent* event) override;
-  void keyPressEvent(QKeyEvent* event) override;
-  void keyReleaseEvent(QKeyEvent* event) override;
+  ~View() = default;
+
+  View& operator=(const View&) = delete;
+  View& operator=(View&&) = delete;
 
  private:
   constexpr static int kRenderDistance = 70;
 
   View();
+
+  void paintEvent(QPaintEvent* event) override;
+  void keyPressEvent(QKeyEvent* event) override;
+  void keyReleaseEvent(QKeyEvent* event) override;
 
   Camera camera_;
 };

@@ -1,11 +1,16 @@
 #include "block_drawer.h"
 
+#include <QString>
+#include <array>
+
 #include "model/block.h"
 #include "model/constants.h"
 
 namespace {
+
 std::array<QString, Block::kTypesCount> names = {"", "grass.png"};
 std::array<QImage, Block::kTypesCount> images;
+
 }  // namespace
 
 void BlockDrawer::DrawBlock(QPainter* painter, QPointF point, Block block) {

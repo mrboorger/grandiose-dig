@@ -9,17 +9,17 @@ Controller* Controller::GetInstance() {
   return &controller;
 }
 
-void Controller::SetMap(AbstractMapGenerator* generator) {
-  Model::GetInstance()->SetMap(
-      std::make_shared<Map>(Map(generator->GenerateMap())));
+void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
+  Model::GetInstance()->SetMap(std::make_shared<Map>(generator->GenerateMap()));
 }
 
+Controller::Controller()
+    : timer_id_(startTimer(constants::kTickDurationMsec)) {}
 void Controller::SetPlayer() {
   Model::GetInstance()->SetPlayer(
       std::make_shared<Player>(Player(QPointF(150, 148.25))));
 }
 
-Controller::Controller() : timer_id_(startTimer(constants::kTick)) {}
 
 void Controller::timerEvent(QTimerEvent* event) {
   Q_UNUSED(event);
