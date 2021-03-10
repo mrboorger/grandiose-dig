@@ -11,7 +11,7 @@ class Player : public MovingObject {
 
  private:
   // TODO(Wind-Eagle): make QPointF
-  static constexpr QPointF kSize = {0.75, 1.75};
+  static constexpr QPointF kSize{0.75, 1.75};
   static constexpr double kWalkAcceleration = 0.01;
   static constexpr double kWalkMaxSpeed = 0.1;
   static constexpr double kWalkAirAcceleration = kWalkAcceleration;

@@ -59,10 +59,10 @@ void MovingObject::UpdateStay(const std::unordered_set<int>& pressed_keys) {
       IsKey(pressed_keys, Qt::Key::Key_Right)) {
     state_ = State::kWalk;
     return;
-  } else if (IsKey(pressed_keys, Qt::Key::Key_Space)) {
+  }
+  if (IsKey(pressed_keys, Qt::Key::Key_Space)) {
     state_ = State::kJump;
-    move_vector_.SetSpeedY(jump_speed_);
-    move_vector_.SetMomentum(move_vector_.GetSpeed());
+    move_vector_.SetMomentum(move_vector_.GetSpeed().x(), jump_speed_);
     move_vector_.ResetSpeed();
     return;
   }
@@ -128,7 +128,7 @@ void MovingObject::UpdateJump(const std::unordered_set<int>& pressed_keys) {
     if (IsKey(pressed_keys, Qt::Key::Key_Left) ==
         IsKey(pressed_keys, Qt::Key::Key_Right)) {
       state_ = State::kStay;
-      move_vector_.SetSpeed(0, 0);
+      move_vector_.ResetSpeed();
     } else {
       state_ = State::kWalk;
       move_vector_.SetSpeedY(0);

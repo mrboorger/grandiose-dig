@@ -17,6 +17,7 @@ Controller::Controller()
     : timer_id_(startTimer(constants::kTickDurationMsec)) {}
 
 void Controller::SetPlayer() {
+  // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->SetPlayer(
       std::make_shared<Player>(QPointF(150, 148.25)));
 }
