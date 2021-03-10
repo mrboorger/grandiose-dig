@@ -1,5 +1,7 @@
 #include "move_vector.h"
 
+#include <algorithm>
+
 MoveVector::MoveVector(double speedX, double speedY, double momentumX,
                        double momentumY)
     : speed_(speedX, speedY), momentum_(momentumX, momentumY) {}
