@@ -2,7 +2,6 @@
 #define MODEL_MOVE_VECTOR_H_
 
 #include <QPoint>
-#include <algorithm>
 
 #include "model/constants.h"
 
@@ -11,34 +10,33 @@ class MoveVector {
   MoveVector() = default;
   MoveVector(double speedX, double speedY, double momentumX, double momentumY);
 
-  void TranslateSpeed(QPointF point);
-  void TranslateSpeed(double x, double y);
+  void TranslateSpeed(QPointF point) { speed_ += point; }
+  void TranslateSpeed(double x, double y) { speed_ += QPointF(x, y); }
   void TranslateSpeedX(double x,
                        double left_limit = -constants::kAbsoluteMaxSpeedX,
                        double right_limit = constants::kAbsoluteMaxSpeedX);
   void TranslateSpeedY(double y,
                        double left_limit = -constants::kAbsoluteMaxSpeedY,
                        double right_limit = constants::kAbsoluteMaxSpeedY);
-  void SetSpeed(QPointF point);
-  void SetSpeed(double x, double y);
-
   void TranslateSpeedWithLimits(double x, double y);
 
-  void SetSpeedX(double x);
-  void SetSpeedY(double y);
+  void SetSpeed(QPointF point) { speed_ = point; }
+  void SetSpeed(double x, double y) { speed_ = QPointF(x, y); }
+  void SetSpeedX(double x) { speed_.setX(x); }
+  void SetSpeedY(double y) { speed_.setY(y); }
+  void SetMomentum(QPointF momentum) { momentum_ = momentum; }
+  void SetMomentum(double x, double y) { momentum_ = QPointF(x, y); }
+  void SetMomentumX(double x) { momentum_.setX(x); }
+  void SetMomentumY(double y) { momentum_.setY(y); }
+  void ResetSpeed() { momentum_ = {0, 0}; }
+  void ResetMomentum() { momentum_ = {0, 0}; }
 
-  void SetMomentum(QPointF momentum);
-  void SetMomentum(double x, double y);
-  void SetMomentumX(double x);
-  void SetMomentumY(double x);
-  void ResetMomentum();
-
-  QPointF GetSpeed() const;
-  double GetSpeedX() const;
-  double GetSpeedY() const;
-  QPointF GetMomentum() const;
-  double GetMomentumX() const;
-  double GetMomentumY() const;
+  QPointF GetSpeed() const { return speed_; }
+  double GetSpeedX() const { return speed_.x(); }
+  double GetSpeedY() const { return speed_.y(); }
+  QPointF GetMomentum() const { return momentum_; }
+  double GetMomentumX() const { return momentum_.x(); }
+  double GetMomentumY() const { return momentum_.y(); }
 
  private:
   QPointF speed_;

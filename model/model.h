@@ -20,10 +20,12 @@ class Model {
   Model& operator=(Model&&) = delete;
 
   std::shared_ptr<const Map> GetMap() const { return map_; }
+
   void SetMap(std::shared_ptr<Map> map) { map_ = map; }
 
   std::shared_ptr<const Player> GetPlayer() const { return player_; }
-  void SetPlayer(std::shared_ptr<Player> player) { player_ = player; }
+
+  void SetPlayer(const std::shared_ptr<Player>& player) { player_ = player; }
 
   void MoveObjects(const std::unordered_set<int>& pressed_keys) {
     player_->Move(pressed_keys);

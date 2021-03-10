@@ -3,12 +3,12 @@
 
 namespace constants {
 
-constexpr double kEPS = 0.00001;           // in blocks
-constexpr double kAirResistance = 0.05;    // in percents
-constexpr int kBlockSz = 16;               // in pixels
+constexpr double kEps = 0.00001;         // in blocks
+constexpr double kAirResistance = 0.05;  // in percents
+constexpr int kBlockSz = 16;             // in pixels
 constexpr int kTickDurationMsec = 10;
-constexpr double kAbsoluteMaxSpeedX = 50;  // in blocks per tick
-constexpr double kAbsoluteMaxSpeedY = 50;  // in blocks per tick
+constexpr double kAbsoluteMaxSpeedX = 50.0;  // in blocks per tick
+constexpr double kAbsoluteMaxSpeedY = 50.0;  // in blocks per tick
 
 }  // namespace constants
 

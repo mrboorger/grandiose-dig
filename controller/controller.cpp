@@ -15,11 +15,11 @@ void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
 
 Controller::Controller()
     : timer_id_(startTimer(constants::kTickDurationMsec)) {}
+
 void Controller::SetPlayer() {
   Model::GetInstance()->SetPlayer(
-      std::make_shared<Player>(Player(QPointF(150, 148.25))));
+      std::make_shared<Player>(QPointF(150, 148.25)));
 }
-
 
 void Controller::timerEvent(QTimerEvent* event) {
   Q_UNUSED(event);
@@ -30,6 +30,7 @@ void Controller::timerEvent(QTimerEvent* event) {
 bool Controller::IsPressed(int key) {
   return (pressed_keys_.find(key) != pressed_keys_.end());
 }
+
 void Controller::keyPressEvent(QKeyEvent* event) {
   pressed_keys_.insert(event->key());
 }

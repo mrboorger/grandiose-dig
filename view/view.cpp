@@ -41,6 +41,7 @@ void View::paintEvent(QPaintEvent* event) {
 void View::keyPressEvent(QKeyEvent* event) {
   Controller::GetInstance()->keyPressEvent(event);
 }
+
 void View::keyReleaseEvent(QKeyEvent* event) {
   Controller::GetInstance()->keyReleaseEvent(event);
 }
