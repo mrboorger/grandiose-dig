@@ -33,6 +33,9 @@ class MovingObject {
                double gravity_speed, double jump_speed, int state_ticks = 0);
 
  private:
+  void UpdateStay(const std::unordered_set<int>& pressed_keys);
+  void UpdateWalk(const std::unordered_set<int>& pressed_keys);
+  void UpdateJump(const std::unordered_set<int>& pressed_keys);
   void UpdateState(const std::unordered_set<int>& pressed_keys);
   void CheckCollisions(QPointF old_position);
   bool FindCollisionGround(QPointF old_position, double* ground_y,

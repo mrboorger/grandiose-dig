@@ -47,112 +47,120 @@ bool IsKey(const std::unordered_set<int>& set, int key) {
 }
 }  // namespace
 
+void MovingObject::UpdateStay(const std::unordered_set<int>& pressed_keys) {
+  if (!pushes_ground_) {
+    state_ = State::kJump;
+    move_vector_.SetMomentum(move_vector_.GetSpeed());
+    move_vector_.ResetSpeed();
+    return;
+  }
+  move_vector_.ResetSpeed();
+  if (IsKey(pressed_keys, Qt::Key::Key_Left) !=
+      IsKey(pressed_keys, Qt::Key::Key_Right)) {
+    state_ = State::kWalk;
+    return;
+  } else if (IsKey(pressed_keys, Qt::Key::Key_Space)) {
+    state_ = State::kJump;
+    move_vector_.SetSpeedY(jump_speed_);
+    move_vector_.SetMomentum(move_vector_.GetSpeed());
+    move_vector_.ResetSpeed();
+    return;
+  }
+}
+
+void MovingObject::UpdateWalk(const std::unordered_set<int>& pressed_keys) {
+  if (IsKey(pressed_keys, Qt::Key::Key_Left) ==
+      IsKey(pressed_keys, Qt::Key::Key_Right)) {
+    state_ = State::kStay;
+    move_vector_.SetSpeedX(0);
+  } else if (IsKey(pressed_keys, Qt::Key::Key_Right)) {
+    if (pushes_right_) {
+      move_vector_.SetSpeedX(0);
+    } else {
+      move_vector_.SetSpeedX(walk_max_speed_);
+    }
+  } else if (IsKey(pressed_keys, Qt::Key::Key_Left)) {
+    if (pushes_left_) {
+      move_vector_.SetSpeedX(0);
+    } else {
+      move_vector_.SetSpeedX(-walk_max_speed_);
+    }
+  }
+  if (pushes_ground_) {
+    if (IsKey(pressed_keys, Qt::Key::Key_Space)) {
+      move_vector_.SetSpeedY(jump_speed_);
+    }
+  } else {
+    state_ = State::kJump;
+    move_vector_.SetMomentum(move_vector_.GetSpeed());
+    move_vector_.ResetSpeed();
+    return;
+  }
+}
+
+void MovingObject::UpdateJump(const std::unordered_set<int>& pressed_keys) {
+  move_vector_.TranslateSpeedWithLimits(0, gravity_speed_);
+  if (IsKey(pressed_keys, Qt::Key::Key_Left) ==
+      IsKey(pressed_keys, Qt::Key::Key_Right)) {
+    // Do nothing
+  } else if (IsKey(pressed_keys, Qt::Key::Key_Right)) {
+    if (pushes_right_) {
+      move_vector_.SetSpeedX(0);
+    } else {
+      // TODO(Wind-Eagle): acknowledge why this piece of code is working
+      move_vector_.TranslateSpeedX(
+          walk_acceleration_,
+          -walk_max_air_acceleration_ + move_vector_.GetMomentumX(),
+          walk_max_air_acceleration_ - move_vector_.GetMomentumX());
+    }
+  } else if (IsKey(pressed_keys, Qt::Key::Key_Left)) {
+    if (pushes_left_) {
+      move_vector_.SetSpeedX(0);
+    } else {
+      // TODO(Wind-Eagle): acknowledge why this piece of code is working
+      move_vector_.TranslateSpeedX(
+          -walk_acceleration_,
+          -walk_max_air_acceleration_ - move_vector_.GetMomentumX(),
+          walk_max_air_acceleration_ + move_vector_.GetMomentumX());
+    }
+  }
+  if (pushes_ground_) {
+    if (IsKey(pressed_keys, Qt::Key::Key_Left) ==
+        IsKey(pressed_keys, Qt::Key::Key_Right)) {
+      state_ = State::kStay;
+      move_vector_.SetSpeed(0, 0);
+    } else {
+      state_ = State::kWalk;
+      move_vector_.SetSpeedY(0);
+    }
+  } else {
+    move_vector_.SetSpeedX(move_vector_.GetSpeedX() *
+                           (1.0 - constants::kAirResistance));
+    move_vector_.SetMomentumX(move_vector_.GetMomentumX() *
+                              (1.0 - constants::kAirResistance));
+  }
+}
+
 void MovingObject::UpdateState(const std::unordered_set<int>& pressed_keys) {
   QPointF old_position = pos_;
   // TODO(Wind-Eagle): the longer you hold SPACE bar the higher you jump.
   // TODO(Wind-Eagle): fix state_ticks.
+  State old_state = state_;
   switch (state_) {
     case State::kStay:
-      if (!pushes_ground_) {
-        state_ = State::kJump;
-        move_vector_.SetMomentum(move_vector_.GetSpeed());
-        move_vector_.ResetSpeed();
-        state_ticks_ = 0;
-        break;
-      }
-      move_vector_.ResetSpeed();
-      if (IsKey(pressed_keys, Qt::Key::Key_Left) !=
-          IsKey(pressed_keys, Qt::Key::Key_Right)) {
-        state_ = State::kWalk;
-        state_ticks_ = 0;
-        break;
-      } else if (IsKey(pressed_keys, Qt::Key::Key_Space)) {
-        state_ = State::kJump;
-        move_vector_.SetSpeedY(jump_speed_);
-        move_vector_.SetMomentum(move_vector_.GetSpeed());
-        move_vector_.ResetSpeed();
-        state_ticks_ = 0;
-        break;
-      }
-      state_ticks_++;
+      UpdateStay(pressed_keys);
       break;
     case State::kWalk:
-      if (IsKey(pressed_keys, Qt::Key::Key_Left) ==
-          IsKey(pressed_keys, Qt::Key::Key_Right)) {
-        state_ = State::kStay;
-        state_ticks_ = 0;
-        move_vector_.SetSpeedX(0);
-      } else if (IsKey(pressed_keys, Qt::Key::Key_Right)) {
-        if (pushes_right_) {
-          move_vector_.SetSpeedX(0);
-        } else {
-          move_vector_.SetSpeedX(walk_max_speed_);
-        }
-      } else if (IsKey(pressed_keys, Qt::Key::Key_Left)) {
-        if (pushes_left_) {
-          move_vector_.SetSpeedX(0);
-        } else {
-          move_vector_.SetSpeedX(-walk_max_speed_);
-        }
-      }
-      if (pushes_ground_) {
-        if (IsKey(pressed_keys, Qt::Key::Key_Space)) {
-          move_vector_.SetSpeedY(jump_speed_);
-        }
-      } else {
-        state_ = State::kJump;
-        move_vector_.SetMomentum(move_vector_.GetSpeed());
-        move_vector_.ResetSpeed();
-        state_ticks_ = 0;
-        break;
-      }
-      state_ticks_++;
+      UpdateWalk(pressed_keys);
       break;
     case State::kJump:
-      move_vector_.TranslateSpeedWithLimits(0, gravity_speed_);
-      if (IsKey(pressed_keys, Qt::Key::Key_Left) ==
-          IsKey(pressed_keys, Qt::Key::Key_Right)) {
-        // Do nothing
-      } else if (IsKey(pressed_keys, Qt::Key::Key_Right)) {
-        if (pushes_right_) {
-          move_vector_.SetSpeedX(0);
-        } else {
-          // TODO(Wind-Eagle): acknowledge why this piece of code is working
-          move_vector_.TranslateSpeedX(
-              walk_acceleration_,
-              -walk_max_air_acceleration_ + move_vector_.GetMomentumX(),
-              walk_max_air_acceleration_ - move_vector_.GetMomentumX());
-        }
-      } else if (IsKey(pressed_keys, Qt::Key::Key_Left)) {
-        if (pushes_left_) {
-          move_vector_.SetSpeedX(0);
-        } else {
-          // TODO(Wind-Eagle): acknowledge why this piece of code is working
-          move_vector_.TranslateSpeedX(
-              -walk_acceleration_,
-              -walk_max_air_acceleration_ - move_vector_.GetMomentumX(),
-              walk_max_air_acceleration_ + move_vector_.GetMomentumX());
-        }
-      }
-      if (pushes_ground_) {
-        if (IsKey(pressed_keys, Qt::Key::Key_Left) ==
-            IsKey(pressed_keys, Qt::Key::Key_Right)) {
-          state_ = State::kStay;
-          state_ticks_ = 0;
-          move_vector_.SetSpeed(0, 0);
-        } else {
-          state_ = State::kWalk;
-          state_ticks_ = 0;
-          move_vector_.SetSpeedY(0);
-        }
-      } else {
-        move_vector_.SetSpeedX(move_vector_.GetSpeedX() *
-                               (1.0 - constants::kAirResistance));
-        move_vector_.SetMomentumX(move_vector_.GetMomentumX() *
-                                  (1.0 - constants::kAirResistance));
-      }
-      state_ticks_++;
+      UpdateJump(pressed_keys);
       break;
+  }
+  if (old_state != state_) {
+    state_ticks_++;
+  } else {
+    state_ticks_ = 0;
   }
   if (state_ != State::kJump) {
     move_vector_.ResetMomentum();

@@ -32,8 +32,8 @@ void MoveVector::TranslateSpeedY(double y, double left_limit,
 
 void MoveVector::TranslateSpeedWithLimits(double x, double y) {
   TranslateSpeed(x, y);
-  speed_.setX(std::min(speed_.x(), constants::kAbsoluteMaxSpeedX));
-  speed_.setY(std::min(speed_.y(), constants::kAbsoluteMaxSpeedY));
-  speed_.setX(std::max(speed_.x(), -constants::kAbsoluteMaxSpeedX));
-  speed_.setY(std::max(speed_.y(), -constants::kAbsoluteMaxSpeedY));
+  speed_.setX(std::clamp(speed_.x(), -constants::kAbsoluteMaxSpeedX,
+                         constants::kAbsoluteMaxSpeedX));
+  speed_.setY(std::clamp(speed_.y(), -constants::kAbsoluteMaxSpeedY,
+                         constants::kAbsoluteMaxSpeedY));
 }

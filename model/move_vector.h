@@ -28,7 +28,7 @@ class MoveVector {
   void SetMomentum(double x, double y) { momentum_ = QPointF(x, y); }
   void SetMomentumX(double x) { momentum_.setX(x); }
   void SetMomentumY(double y) { momentum_.setY(y); }
-  void ResetSpeed() { momentum_ = {0, 0}; }
+  void ResetSpeed() { speed_ = {0, 0}; }
   void ResetMomentum() { momentum_ = {0, 0}; }
 
   QPointF GetSpeed() const { return speed_; }
