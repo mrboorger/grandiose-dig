@@ -12,12 +12,12 @@ class MoveVector {
 
   void TranslateSpeed(QPointF point) { speed_ += point; }
   void TranslateSpeed(double x, double y) { speed_ += QPointF(x, y); }
-  void TranslateSpeedX(double x,
-                       double left_limit = -constants::kAbsoluteMaxSpeedX,
-                       double right_limit = constants::kAbsoluteMaxSpeedX);
-  void TranslateSpeedY(double y,
-                       double left_limit = -constants::kAbsoluteMaxSpeedY,
-                       double right_limit = constants::kAbsoluteMaxSpeedY);
+  void TranslateSpeedXIfNearerToBounds(
+      double x, double left_limit = -constants::kAbsoluteMaxSpeedX,
+      double right_limit = constants::kAbsoluteMaxSpeedX);
+  void TranslateSpeedYIfNearerToBounds(
+      double y, double left_limit = -constants::kAbsoluteMaxSpeedY,
+      double right_limit = constants::kAbsoluteMaxSpeedY);
   void TranslateSpeedWithLimits(double x, double y);
 
   void SetSpeed(QPointF point) { speed_ = point; }

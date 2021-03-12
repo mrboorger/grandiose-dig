@@ -68,6 +68,7 @@ void MovingObject::UpdateStay(const std::unordered_set<int>& pressed_keys) {
   }
 }
 
+// TODO(Wind-Eagle): Check and fix
 void MovingObject::UpdateWalk(const std::unordered_set<int>& pressed_keys) {
   if (IsKey(pressed_keys, Qt::Key::Key_Left) ==
       IsKey(pressed_keys, Qt::Key::Key_Right)) {
@@ -77,13 +78,15 @@ void MovingObject::UpdateWalk(const std::unordered_set<int>& pressed_keys) {
     if (pushes_right_) {
       move_vector_.SetSpeedX(0);
     } else {
-      move_vector_.SetSpeedX(walk_max_speed_);
+      move_vector_.TranslateSpeedXIfNearerToBounds(walk_acceleration_, 0,
+                                                   walk_max_speed_);
     }
   } else if (IsKey(pressed_keys, Qt::Key::Key_Left)) {
     if (pushes_left_) {
       move_vector_.SetSpeedX(0);
     } else {
-      move_vector_.SetSpeedX(-walk_max_speed_);
+      move_vector_.TranslateSpeedXIfNearerToBounds(-walk_acceleration_,
+                                                   -walk_max_speed_, 0);
     }
   }
   if (pushes_ground_) {
@@ -108,8 +111,8 @@ void MovingObject::UpdateJump(const std::unordered_set<int>& pressed_keys) {
       move_vector_.SetSpeedX(0);
     } else {
       // TODO(Wind-Eagle): acknowledge why this piece of code is working
-      move_vector_.TranslateSpeedX(
-          walk_acceleration_,
+      move_vector_.TranslateSpeedXIfNearerToBounds(
+          walk_air_acceleration_,
           -walk_max_air_acceleration_ + move_vector_.GetMomentumX(),
           walk_max_air_acceleration_ - move_vector_.GetMomentumX());
     }
@@ -118,8 +121,8 @@ void MovingObject::UpdateJump(const std::unordered_set<int>& pressed_keys) {
       move_vector_.SetSpeedX(0);
     } else {
       // TODO(Wind-Eagle): acknowledge why this piece of code is working
-      move_vector_.TranslateSpeedX(
-          -walk_acceleration_,
+      move_vector_.TranslateSpeedXIfNearerToBounds(
+          -walk_air_acceleration_,
           -walk_max_air_acceleration_ - move_vector_.GetMomentumX(),
           walk_max_air_acceleration_ + move_vector_.GetMomentumX());
     }

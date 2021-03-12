@@ -10,7 +10,7 @@ class Player : public MovingObject {
   explicit Player(QPointF pos);
 
  private:
-  // TODO(Wind-Eagle): make QPointF
+  // TODO(Wind-Eagle): when jump off the block, acceleration now resets;
   static constexpr QPointF kSize{0.75, 1.75};
   static constexpr double kWalkAcceleration = 0.01;
   static constexpr double kWalkMaxSpeed = 0.1;
