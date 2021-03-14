@@ -5,6 +5,7 @@
 #include <QTimer>
 #include <unordered_set>
 
+#include "controller/controller_types.h"
 #include "model/abstract_map_generator.h"
 #include "model/model.h"
 #include "model/player.h"
@@ -26,10 +27,12 @@ class Controller : public QWidget {
 
   void SetPlayer();
 
-  bool IsPressed(int key);
+  bool IsPressed(ControllerTypes::Key key);
 
-  void keyPressEvent(QKeyEvent* event) override;
-  void keyReleaseEvent(QKeyEvent* event) override;
+  static ControllerTypes::Key TranslateKeyCode(int key_code);
+
+  void KeyPress(int key);
+  void KeyRelease(int key);
 
  private:
   Controller();
@@ -37,7 +40,7 @@ class Controller : public QWidget {
   void timerEvent(QTimerEvent* event) override;
 
   int timer_id_;
-  std::unordered_set<int> pressed_keys_;
+  std::unordered_set<ControllerTypes::Key> pressed_keys_;
 };
 
 #endif  // CONTROLLER_CONTROLLER_H_

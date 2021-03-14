@@ -37,17 +37,20 @@ double MovingObject::GetJumpSpeed() const { return jump_speed_; }
 
 QPointF MovingObject::GetPosition() const { return pos_; }
 
-void MovingObject::Move(const std::unordered_set<int>& pressed_keys) {
+void MovingObject::Move(
+    const std::unordered_set<ControllerTypes::Key>& pressed_keys) {
   UpdateState(pressed_keys);
 }
 
 namespace {
-bool IsKey(const std::unordered_set<int>& set, int key) {
+bool IsKey(const std::unordered_set<ControllerTypes::Key>& set,
+           ControllerTypes::Key key) {
   return set.find(key) != set.end();
 }
 }  // namespace
 
-void MovingObject::UpdateStay(const std::unordered_set<int>& pressed_keys) {
+void MovingObject::UpdateStay(
+    const std::unordered_set<ControllerTypes::Key>& pressed_keys) {
   if (!pushes_ground_) {
     state_ = State::kJump;
     move_vector_.SetMomentum(move_vector_.GetSpeed());
@@ -55,12 +58,12 @@ void MovingObject::UpdateStay(const std::unordered_set<int>& pressed_keys) {
     return;
   }
   move_vector_.ResetSpeed();
-  if (IsKey(pressed_keys, Qt::Key::Key_Left) !=
-      IsKey(pressed_keys, Qt::Key::Key_Right)) {
+  if (IsKey(pressed_keys, ControllerTypes::Key::kLeft) !=
+      IsKey(pressed_keys, ControllerTypes::Key::kRight)) {
     state_ = State::kWalk;
     return;
   }
-  if (IsKey(pressed_keys, Qt::Key::Key_Space)) {
+  if (IsKey(pressed_keys, ControllerTypes::Key::kJump)) {
     state_ = State::kJump;
     move_vector_.SetMomentum(move_vector_.GetSpeed().x(), jump_speed_);
     move_vector_.ResetSpeed();
@@ -69,19 +72,20 @@ void MovingObject::UpdateStay(const std::unordered_set<int>& pressed_keys) {
 }
 
 // TODO(Wind-Eagle): Check and fix
-void MovingObject::UpdateWalk(const std::unordered_set<int>& pressed_keys) {
-  if (IsKey(pressed_keys, Qt::Key::Key_Left) ==
-      IsKey(pressed_keys, Qt::Key::Key_Right)) {
+void MovingObject::UpdateWalk(
+    const std::unordered_set<ControllerTypes::Key>& pressed_keys) {
+  if (IsKey(pressed_keys, ControllerTypes::Key::kLeft) ==
+      IsKey(pressed_keys, ControllerTypes::Key::kRight)) {
     state_ = State::kStay;
     move_vector_.SetSpeedX(0);
-  } else if (IsKey(pressed_keys, Qt::Key::Key_Right)) {
+  } else if (IsKey(pressed_keys, ControllerTypes::Key::kRight)) {
     if (pushes_right_) {
       move_vector_.SetSpeedX(0);
     } else {
       move_vector_.TranslateSpeedXIfNearerToBounds(walk_acceleration_, 0,
                                                    walk_max_speed_);
     }
-  } else if (IsKey(pressed_keys, Qt::Key::Key_Left)) {
+  } else if (IsKey(pressed_keys, ControllerTypes::Key::kLeft)) {
     if (pushes_left_) {
       move_vector_.SetSpeedX(0);
     } else {
@@ -90,7 +94,7 @@ void MovingObject::UpdateWalk(const std::unordered_set<int>& pressed_keys) {
     }
   }
   if (pushes_ground_) {
-    if (IsKey(pressed_keys, Qt::Key::Key_Space)) {
+    if (IsKey(pressed_keys, ControllerTypes::Key::kJump)) {
       move_vector_.SetSpeedY(jump_speed_);
     }
   } else {
@@ -101,12 +105,13 @@ void MovingObject::UpdateWalk(const std::unordered_set<int>& pressed_keys) {
   }
 }
 
-void MovingObject::UpdateJump(const std::unordered_set<int>& pressed_keys) {
+void MovingObject::UpdateJump(
+    const std::unordered_set<ControllerTypes::Key>& pressed_keys) {
   move_vector_.TranslateSpeedWithLimits(0, gravity_speed_);
-  if (IsKey(pressed_keys, Qt::Key::Key_Left) ==
-      IsKey(pressed_keys, Qt::Key::Key_Right)) {
+  if (IsKey(pressed_keys, ControllerTypes::Key::kLeft) ==
+      IsKey(pressed_keys, ControllerTypes::Key::kRight)) {
     // Do nothing
-  } else if (IsKey(pressed_keys, Qt::Key::Key_Right)) {
+  } else if (IsKey(pressed_keys, ControllerTypes::Key::kRight)) {
     if (pushes_right_) {
       move_vector_.SetSpeedX(0);
     } else {
@@ -116,7 +121,7 @@ void MovingObject::UpdateJump(const std::unordered_set<int>& pressed_keys) {
           -walk_max_air_acceleration_ + move_vector_.GetMomentumX(),
           walk_max_air_acceleration_ - move_vector_.GetMomentumX());
     }
-  } else if (IsKey(pressed_keys, Qt::Key::Key_Left)) {
+  } else if (IsKey(pressed_keys, ControllerTypes::Key::kLeft)) {
     if (pushes_left_) {
       move_vector_.SetSpeedX(0);
     } else {
@@ -128,8 +133,8 @@ void MovingObject::UpdateJump(const std::unordered_set<int>& pressed_keys) {
     }
   }
   if (pushes_ground_) {
-    if (IsKey(pressed_keys, Qt::Key::Key_Left) ==
-        IsKey(pressed_keys, Qt::Key::Key_Right)) {
+    if (IsKey(pressed_keys, ControllerTypes::Key::kLeft) ==
+        IsKey(pressed_keys, ControllerTypes::Key::kRight)) {
       state_ = State::kStay;
       move_vector_.ResetSpeed();
     } else {
@@ -144,7 +149,8 @@ void MovingObject::UpdateJump(const std::unordered_set<int>& pressed_keys) {
   }
 }
 
-void MovingObject::UpdateState(const std::unordered_set<int>& pressed_keys) {
+void MovingObject::UpdateState(
+    const std::unordered_set<ControllerTypes::Key>& pressed_keys) {
   QPointF old_position = pos_;
   // TODO(Wind-Eagle): the longer you hold SPACE bar the higher you jump.
   // TODO(Wind-Eagle): fix state_ticks.

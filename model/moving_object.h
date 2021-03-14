@@ -4,6 +4,7 @@
 #include <memory>
 #include <unordered_set>
 
+#include "controller/controller_types.h"
 #include "model/constants.h"
 #include "model/map.h"
 #include "model/move_vector.h"
@@ -24,7 +25,7 @@ class MovingObject {
 
   QPointF GetPosition() const;
 
-  void Move(const std::unordered_set<int>& pressed_keys);
+  void Move(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
 
  protected:
   MovingObject(MoveVector move_vector, QPointF pos, QPointF size, State state,
@@ -33,10 +34,11 @@ class MovingObject {
                double gravity_speed, double jump_speed, int state_ticks = 0);
 
  private:
-  void UpdateStay(const std::unordered_set<int>& pressed_keys);
-  void UpdateWalk(const std::unordered_set<int>& pressed_keys);
-  void UpdateJump(const std::unordered_set<int>& pressed_keys);
-  void UpdateState(const std::unordered_set<int>& pressed_keys);
+  void UpdateStay(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
+  void UpdateWalk(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
+  void UpdateJump(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
+  void UpdateState(
+      const std::unordered_set<ControllerTypes::Key>& pressed_keys);
   void CheckCollisions(QPointF old_position);
   bool FindCollisionGround(QPointF old_position, double* ground_y,
                            const std::shared_ptr<const Map>& map) const;

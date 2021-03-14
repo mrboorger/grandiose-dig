@@ -1,8 +1,9 @@
 #include "player.h"
 
 Player::Player(QPointF pos)
-    : MovingObject(MoveVector(0, 0, 0, 0), pos, Player::kSize,
-                   MovingObject::State::kStay, Player::kWalkAcceleration,
-                   Player::kWalkMaxSpeed, Player::kWalkAirAcceleration,
-                   Player::kWalkMaxAirAcceleration, Player::kGravitySpeed,
-                   Player::kJumpSpeed) {}
+    : MovingObject(
+          MoveVector(0, 0, 0, 0), pos, constants::kPlayerSize,
+          MovingObject::State::kStay, constants::kPlayerWalkAcceleration,
+          constants::kPlayerWalkMaxSpeed, constants::kPlayerWalkAirAcceleration,
+          constants::kPlayerWalkMaxAirAcceleration,
+          constants::kPlayerGravitySpeed, constants::kPlayerJumpSpeed) {}

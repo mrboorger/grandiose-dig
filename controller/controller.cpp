@@ -28,14 +28,27 @@ void Controller::timerEvent(QTimerEvent* event) {
   View::GetInstance()->repaint();
 }
 
-bool Controller::IsPressed(int key) {
+bool Controller::IsPressed(ControllerTypes::Key key) {
   return (pressed_keys_.find(key) != pressed_keys_.end());
 }
 
-void Controller::keyPressEvent(QKeyEvent* event) {
-  pressed_keys_.insert(event->key());
+ControllerTypes::Key Controller::TranslateKeyCode(int key_code) {
+  switch (key_code) {
+    case Qt::Key::Key_Left:
+      return ControllerTypes::Key::kLeft;
+    case Qt::Key::Key_Right:
+      return ControllerTypes::Key::kRight;
+    case Qt::Key::Key_Space:
+      return ControllerTypes::Key::kJump;
+    default:
+      return ControllerTypes::Key::kUnused;
+  }
 }
 
-void Controller::keyReleaseEvent(QKeyEvent* event) {
-  pressed_keys_.erase(event->key());
+void Controller::KeyPress(int key) {
+  pressed_keys_.insert(TranslateKeyCode(key));
+}
+
+void Controller::KeyRelease(int key) {
+  pressed_keys_.erase(TranslateKeyCode(key));
 }

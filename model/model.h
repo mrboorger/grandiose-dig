@@ -27,7 +27,8 @@ class Model {
 
   void SetPlayer(const std::shared_ptr<Player>& player) { player_ = player; }
 
-  void MoveObjects(const std::unordered_set<int>& pressed_keys) {
+  void MoveObjects(
+      const std::unordered_set<ControllerTypes::Key>& pressed_keys) {
     player_->Move(pressed_keys);
   }
 
