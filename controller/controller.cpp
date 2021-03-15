@@ -14,7 +14,11 @@ void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
 }
 
 Controller::Controller()
-    : timer_id_(startTimer(constants::kTickDurationMsec)) {}
+    : tick_timer_() {
+  auto tick_event_handler = [this]() { TickEvent(); };
+  tick_timer_.callOnTimeout(tick_event_handler);
+  tick_timer_.start(constants::kTickDurationMsec);
+}
 
 void Controller::SetPlayer() {
   // TODO(Wind-Eagle): this is temporary code.
@@ -22,14 +26,9 @@ void Controller::SetPlayer() {
       std::make_shared<Player>(QPointF(150, 148.25)));
 }
 
-void Controller::timerEvent(QTimerEvent* event) {
-  Q_UNUSED(event);
+void Controller::TickEvent() {
   Model::GetInstance()->MoveObjects(pressed_keys_);
   View::GetInstance()->repaint();
-}
-
-bool Controller::IsPressed(ControllerTypes::Key key) {
-  return (pressed_keys_.find(key) != pressed_keys_.end());
 }
 
 ControllerTypes::Key Controller::TranslateKeyCode(int key_code) {

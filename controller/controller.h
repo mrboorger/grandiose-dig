@@ -3,6 +3,7 @@
 
 #include <QKeyEvent>
 #include <QTimer>
+#include <cstdint>
 #include <unordered_set>
 
 #include "controller/controller_types.h"
@@ -11,7 +12,7 @@
 #include "model/player.h"
 #include "view/view.h"
 
-class Controller : public QWidget {
+class Controller {
  public:
   static Controller* GetInstance();
 
@@ -27,8 +28,6 @@ class Controller : public QWidget {
 
   void SetPlayer();
 
-  bool IsPressed(ControllerTypes::Key key);
-
   static ControllerTypes::Key TranslateKeyCode(int key_code);
 
   void KeyPress(int key);
@@ -37,9 +36,9 @@ class Controller : public QWidget {
  private:
   Controller();
 
-  void timerEvent(QTimerEvent* event) override;
+  void TickEvent();
 
-  int timer_id_;
+  QTimer tick_timer_;
   std::unordered_set<ControllerTypes::Key> pressed_keys_;
 };
 

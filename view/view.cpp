@@ -17,7 +17,7 @@ void View::paintEvent(QPaintEvent* event) {
   Q_UNUSED(event);
   QPainter painter(this);
   auto map = Model::GetInstance()->GetMap();
-  camera_.SetPoint(QPointF{Model::GetInstance()->GetPlayer()->GetPosition()});
+  camera_.SetPoint(Model::GetInstance()->GetPlayer()->GetPosition());
   for (int y = static_cast<int>(camera_.GetPoint().y() - kRenderDistance);
        y <= camera_.GetPoint().y() + kRenderDistance; ++y) {
     for (int x = static_cast<int>(camera_.GetPoint().x() - kRenderDistance);

@@ -28,10 +28,17 @@ class MovingObject {
   void Move(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
 
  protected:
-  MovingObject(MoveVector move_vector, QPointF pos, QPointF size, State state,
-               double walk_acceleration, double walk_max_speed,
-               double walk_air_acceleration, double walk_max_air_acceleration,
-               double gravity_speed, double jump_speed, int state_ticks = 0);
+  MovingObject(
+      MoveVector move_vector = MoveVector(0, 0, 0, 0),
+      QPointF pos = QPointF(0, 0), QPointF size = constants::kPlayerSize,
+      State state = MovingObject::State::kStay,
+      double walk_acceleration = constants::kPlayerWalkAcceleration,
+      double walk_max_speed = constants::kPlayerWalkMaxSpeed,
+      double walk_air_acceleration = constants::kPlayerWalkAirAcceleration,
+      double walk_max_air_acceleration =
+          constants::kPlayerWalkMaxAirAcceleration,
+      double gravity_speed = constants::kPlayerGravitySpeed,
+      double jump_speed = constants::kPlayerJumpSpeed, int state_ticks = 0);
 
  private:
   void UpdateStay(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
@@ -52,17 +59,21 @@ class MovingObject {
   QPointF pos_;
   QPointF size_;
   State state_;
+
   double walk_acceleration_;
   double walk_max_speed_;
   double walk_air_acceleration_;
   double walk_max_air_acceleration_;
+
   double gravity_speed_;
   double jump_speed_;
+
   int state_ticks_;
-  bool pushes_ground_ = false;
-  bool pushes_ceil_ = false;
-  bool pushes_left_ = false;
-  bool pushes_right_ = false;
+
+  bool pushes_ground_;
+  bool pushes_ceil_;
+  bool pushes_left_;
+  bool pushes_right_;
 };
 
 #endif  // MODEL_MOVING_OBJECT_H_
