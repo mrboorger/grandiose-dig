@@ -13,26 +13,32 @@ class MovingObject {
  public:
   enum class State { kStay, kWalk, kJump };
 
-  void SetWalkAcceleration(double speed);
-  void SetWalkMaxSpeed(double speed);
-  void SetWalkAirAcceleration(double speed);
-  void SetWalkMaxAirAcceleration(double speed);
-  void SetGravitySpeed(double speed);
-  void SetJumpSpeed(double speed);
+  void SetWalkAcceleration(double speed) { walk_acceleration_ = speed; }
+  void SetWalkMaxSpeed(double speed) { walk_max_speed_ = speed; }
+  void SetWalkAirAcceleration(double speed) { walk_air_acceleration_ = speed; }
+  void SetWalkMaxAirAcceleration(double speed) {
+    walk_max_air_acceleration_ = speed;
+  }
 
-  double GetWalkAcceleration() const;
-  double GetWalkMaxSpeed() const;
-  double GetWalkAirAcceleration() const;
-  double GetWalkMaxAirAcceleration() const;
-  double GetGravitySpeed() const;
-  double GetJumpSpeed() const;
+  void SetGravitySpeed(double speed) { gravity_speed_ = speed; }
+  void SetJumpSpeed(double speed) { jump_speed_ = speed; }
 
-  QPointF GetPosition() const;
+  double GetWalkAcceleration() const { return walk_acceleration_; }
+  double GetWalkMaxSpeed() const { return walk_max_speed_; }
+  double GetWalkAirAcceleration() const { return walk_air_acceleration_; }
+  double GetWalkMaxAirAcceleration() const {
+    return walk_max_air_acceleration_;
+  }
+
+  double GetGravitySpeed() const { return gravity_speed_; }
+  double GetJumpSpeed() const { return jump_speed_; }
+
+  QPointF GetPosition() const { return pos_; }
 
   void Move(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
 
  protected:
-  explicit MovingObject(QPointF pos, QPointF size);
+  MovingObject(QPointF pos, QPointF size);
 
  private:
   void UpdateStay(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
@@ -54,13 +60,13 @@ class MovingObject {
   QPointF size_;
   State state_ = MovingObject::State::kStay;
 
-  double walk_acceleration_;
-  double walk_max_speed_;
-  double walk_air_acceleration_;
-  double walk_max_air_acceleration_;
+  double walk_acceleration_ = 0.01;
+  double walk_max_speed_ = 0.1;
+  double walk_air_acceleration_ = 0.01;
+  double walk_max_air_acceleration_ = 0.1;
 
-  double gravity_speed_;
-  double jump_speed_;
+  double gravity_speed_ = 0.01;
+  double jump_speed_ = -0.3;
 
   int state_ticks_ = 0;
 

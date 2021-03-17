@@ -1,6 +1,5 @@
 #include "model/moving_object.h"
 
-#include <QDebug>
 #include <algorithm>
 #include <cmath>
 
@@ -8,32 +7,6 @@
 
 MovingObject::MovingObject(QPointF pos, QPointF size)
     : pos_(pos), size_(size) {}
-
-void MovingObject::SetWalkAcceleration(double speed) {
-  walk_acceleration_ = speed;
-}
-void MovingObject::SetWalkMaxSpeed(double speed) { walk_max_speed_ = speed; }
-void MovingObject::SetWalkAirAcceleration(double speed) {
-  walk_air_acceleration_ = speed;
-}
-void MovingObject::SetWalkMaxAirAcceleration(double speed) {
-  walk_max_air_acceleration_ = speed;
-}
-void MovingObject::SetGravitySpeed(double speed) { gravity_speed_ = speed; }
-void MovingObject::SetJumpSpeed(double speed) { jump_speed_ = speed; }
-
-double MovingObject::GetWalkAcceleration() const { return walk_acceleration_; }
-double MovingObject::GetWalkMaxSpeed() const { return walk_max_speed_; }
-double MovingObject::GetWalkAirAcceleration() const {
-  return walk_air_acceleration_;
-}
-double MovingObject::GetWalkMaxAirAcceleration() const {
-  return walk_max_air_acceleration_;
-}
-double MovingObject::GetGravitySpeed() const { return gravity_speed_; }
-double MovingObject::GetJumpSpeed() const { return jump_speed_; }
-
-QPointF MovingObject::GetPosition() const { return pos_; }
 
 void MovingObject::Move(
     const std::unordered_set<ControllerTypes::Key>& pressed_keys) {
@@ -54,13 +27,11 @@ void MovingObject::UpdateStay(
     state_ = State::kWalk;
   } else if (pressed_keys.count(ControllerTypes::Key::kJump)) {
     state_ = State::kJump;
-    /*move_vector_.SetMomentum(move_vector_.GetSpeed().x(), jump_speed_);
-    move_vector_.ResetSpeed();*/
     move_vector_.SetMomentum(0, jump_speed_);
   }
 }
 
-// TODO(Wind-Eagle): when jump off the block, acceleration now resets;
+// TODO: Do not reset acceleration when jumping off the block
 void MovingObject::UpdateWalk(
     const std::unordered_set<ControllerTypes::Key>& pressed_keys) {
   if (pressed_keys.count(ControllerTypes::Key::kLeft) ==
