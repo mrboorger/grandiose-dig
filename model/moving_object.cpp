@@ -31,7 +31,7 @@ void MovingObject::UpdateStay(
   }
 }
 
-// TODO: Do not reset acceleration when jumping off the block
+// TODO(Wind-Eagle): Do not reset acceleration when jumping off the block
 void MovingObject::UpdateWalk(
     const std::unordered_set<ControllerTypes::Key>& pressed_keys) {
   if (pressed_keys.count(ControllerTypes::Key::kLeft) ==
