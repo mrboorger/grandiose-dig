@@ -1,41 +1,35 @@
 #include "model/moving_object.h"
 
+#include <QDebug>
 #include <algorithm>
 #include <cmath>
 
 #include "model/model.h"
 
-MovingObject::MovingObject(MoveVector move_vector, QPointF pos, QPointF size,
-                           State state, double walk_acceleration,
-                           double walk_max_speed, double walk_air_acceleration,
-                           double walk_max_air_acceleration,
-                           double gravity_speed, double jump_speed,
-                           int state_ticks)
-    : move_vector_(move_vector),
-      pos_(pos),
-      size_(size),
-      state_(state),
-      walk_acceleration_(walk_acceleration),
-      walk_max_speed_(walk_max_speed),
-      walk_air_acceleration_(walk_air_acceleration),
-      walk_max_air_acceleration_(walk_max_air_acceleration),
-      gravity_speed_(gravity_speed),
-      jump_speed_(jump_speed),
-      state_ticks_(state_ticks),
-      pushes_ground_(false),
-      pushes_ceil_(false),
-      pushes_left_(false),
-      pushes_right_(false) {}
+MovingObject::MovingObject(QPointF pos, QPointF size)
+    : pos_(pos), size_(size) {}
 
 void MovingObject::SetWalkAcceleration(double speed) {
   walk_acceleration_ = speed;
 }
 void MovingObject::SetWalkMaxSpeed(double speed) { walk_max_speed_ = speed; }
+void MovingObject::SetWalkAirAcceleration(double speed) {
+  walk_air_acceleration_ = speed;
+}
+void MovingObject::SetWalkMaxAirAcceleration(double speed) {
+  walk_max_air_acceleration_ = speed;
+}
 void MovingObject::SetGravitySpeed(double speed) { gravity_speed_ = speed; }
 void MovingObject::SetJumpSpeed(double speed) { jump_speed_ = speed; }
 
 double MovingObject::GetWalkAcceleration() const { return walk_acceleration_; }
 double MovingObject::GetWalkMaxSpeed() const { return walk_max_speed_; }
+double MovingObject::GetWalkAirAcceleration() const {
+  return walk_air_acceleration_;
+}
+double MovingObject::GetWalkMaxAirAcceleration() const {
+  return walk_max_air_acceleration_;
+}
 double MovingObject::GetGravitySpeed() const { return gravity_speed_; }
 double MovingObject::GetJumpSpeed() const { return jump_speed_; }
 
@@ -60,12 +54,13 @@ void MovingObject::UpdateStay(
     state_ = State::kWalk;
   } else if (pressed_keys.count(ControllerTypes::Key::kJump)) {
     state_ = State::kJump;
-    move_vector_.SetMomentum(move_vector_.GetSpeed().x(), jump_speed_);
-    move_vector_.ResetSpeed();
+    /*move_vector_.SetMomentum(move_vector_.GetSpeed().x(), jump_speed_);
+    move_vector_.ResetSpeed();*/
+    move_vector_.SetMomentum(0, jump_speed_);
   }
 }
 
-// TODO(Wind-Eagle): Check and fix
+// TODO(Wind-Eagle): when jump off the block, acceleration now resets;
 void MovingObject::UpdateWalk(
     const std::unordered_set<ControllerTypes::Key>& pressed_keys) {
   if (pressed_keys.count(ControllerTypes::Key::kLeft) ==
@@ -108,7 +103,6 @@ void MovingObject::UpdateJump(
     if (pushes_right_) {
       move_vector_.SetSpeedX(0);
     } else {
-      // TODO(Wind-Eagle): acknowledge why this piece of code is working
       move_vector_.TranslateSpeedXIfNearerToBounds(
           walk_air_acceleration_,
           -walk_max_air_acceleration_ + move_vector_.GetMomentumX(),
@@ -118,7 +112,6 @@ void MovingObject::UpdateJump(
     if (pushes_left_) {
       move_vector_.SetSpeedX(0);
     } else {
-      // TODO(Wind-Eagle): acknowledge why this piece of code is working
       move_vector_.TranslateSpeedXIfNearerToBounds(
           -walk_air_acceleration_,
           -walk_max_air_acceleration_ - move_vector_.GetMomentumX(),
@@ -157,7 +150,7 @@ void MovingObject::UpdateState(
       UpdateJump(pressed_keys);
       break;
   }
-  if (old_state != state_) {
+  if (old_state == state_) {
     state_ticks_++;
   } else {
     state_ticks_ = 0;
@@ -184,19 +177,19 @@ bool MovingObject::FindCollisionGround(
       std::min(static_cast<int>(std::floor(old_bottom_left.y()) + 1), end_y);
   int dist = std::max(std::abs(end_y - begin_y), 1);
   for (int y = begin_y; y <= end_y; y++) {
-    double bottom_left =
+    double bottom_left_x =
         DivideSegment(old_bottom_left, new_bottom_left,
                       static_cast<double>(std::abs(end_y - y)) / dist)
             .x();
-    double bottom_right = bottom_left + size_.x() - constants::kEps;
-    for (double x = bottom_left + constants::kEps;; x += 1) {
+    double bottom_right_x = bottom_left_x + size_.x() - constants::kEps;
+    for (double x = bottom_left_x + constants::kEps;; x += 1) {
       int block_x = std::floor(x);
       int block_y = std::floor(y);
       if (map->GetBlock(block_x, block_y).GetType() != Block::Type::kAir) {
         *ground_y = block_y - size_.y();
         return true;
       }
-      if (x >= std::floor(bottom_right)) {
+      if (x >= std::floor(bottom_right_x)) {
         break;
       }
     }
@@ -214,19 +207,19 @@ bool MovingObject::FindCollisionCeiling(
       std::max(static_cast<int>(std::floor(old_top_left.y()) - 1), end_y);
   int dist = std::max(std::abs(end_y - begin_y), 1);
   for (int y = begin_y; y >= end_y; y--) {
-    double top_left =
+    double top_left_x =
         DivideSegment(old_top_left, new_top_left,
                       static_cast<double>(std::abs(end_y - y)) / dist)
             .x();
-    double top_right = top_left + size_.x() - constants::kEps;
-    for (double x = top_left + constants::kEps;; x += 1) {
+    double top_right_x = top_left_x + size_.x() - constants::kEps;
+    for (double x = top_left_x + constants::kEps;; x += 1) {
       int block_x = std::floor(x);
       int block_y = std::floor(y);
       if (map->GetBlock(block_x, block_y).GetType() != Block::Type::kAir) {
         *ceiling_y = block_y + 1;
         return true;
       }
-      if (x >= std::floor(top_right)) {
+      if (x >= std::floor(top_right_x)) {
         break;
       }
     }
@@ -245,19 +238,19 @@ bool MovingObject::FindCollisionLeft(
       std::max(static_cast<int>(std::floor(old_bottom_left.x()) - 1), end_x);
   int dist = std::max(std::abs(end_x - begin_x), 1);
   for (int x = begin_x; x >= end_x; x--) {
-    double bottom_left =
+    double bottom_left_y =
         DivideSegment(old_bottom_left, new_bottom_left,
                       static_cast<double>(std::abs(end_x - x)) / dist)
             .y();
-    double top_left = bottom_left - size_.y();
-    for (double y = bottom_left;; y -= 1) {
+    double top_left_y = bottom_left_y - size_.y() + constants::kEps;
+    for (double y = bottom_left_y;; y -= 1) {
       int block_x = std::floor(x);
       int block_y = std::floor(y);
       if (map->GetBlock(block_x, block_y).GetType() != Block::Type::kAir) {
         *left_wall_x = block_x + 1;
         return true;
       }
-      if (block_y <= top_left) {
+      if (block_y <= top_left_y) {
         break;
       }
     }
@@ -278,19 +271,19 @@ bool MovingObject::FindCollisionRight(
       std::min(static_cast<int>(std::floor(old_bottom_right.x()) + 1), end_x);
   int dist = std::max(std::abs(end_x - begin_x), 1);
   for (int x = begin_x; x <= end_x; x++) {
-    double bottom_right =
+    double bottom_right_y =
         DivideSegment(old_bottom_right, new_bottom_right,
                       static_cast<double>(std::abs(end_x - x)) / dist)
             .y();
-    double top_right = bottom_right - size_.y();
-    for (double y = bottom_right;; y -= 1) {
+    double top_right_y = bottom_right_y - size_.y() + constants::kEps;
+    for (double y = bottom_right_y;; y -= 1) {
       int block_x = std::floor(x);
       int block_y = std::floor(y);
       if (map->GetBlock(block_x, block_y).GetType() != Block::Type::kAir) {
         *right_wall_x = block_x - size_.x();
         return true;
       }
-      if (block_y <= top_right) {
+      if (block_y <= top_right_y) {
         break;
       }
     }

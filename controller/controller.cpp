@@ -13,10 +13,8 @@ void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
   Model::GetInstance()->SetMap(std::make_shared<Map>(generator->GenerateMap()));
 }
 
-Controller::Controller()
-    : tick_timer_() {
-  auto tick_event_handler = [this]() { TickEvent(); };
-  tick_timer_.callOnTimeout(tick_event_handler);
+Controller::Controller() : tick_timer_() {
+  tick_timer_.callOnTimeout([this]() { TickEvent(); });
   tick_timer_.start(constants::kTickDurationMsec);
 }
 

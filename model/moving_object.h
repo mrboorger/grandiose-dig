@@ -15,11 +15,15 @@ class MovingObject {
 
   void SetWalkAcceleration(double speed);
   void SetWalkMaxSpeed(double speed);
+  void SetWalkAirAcceleration(double speed);
+  void SetWalkMaxAirAcceleration(double speed);
   void SetGravitySpeed(double speed);
   void SetJumpSpeed(double speed);
 
   double GetWalkAcceleration() const;
   double GetWalkMaxSpeed() const;
+  double GetWalkAirAcceleration() const;
+  double GetWalkMaxAirAcceleration() const;
   double GetGravitySpeed() const;
   double GetJumpSpeed() const;
 
@@ -28,17 +32,7 @@ class MovingObject {
   void Move(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
 
  protected:
-  MovingObject(
-      MoveVector move_vector = MoveVector(0, 0, 0, 0),
-      QPointF pos = QPointF(0, 0), QPointF size = constants::kPlayerSize,
-      State state = MovingObject::State::kStay,
-      double walk_acceleration = constants::kPlayerWalkAcceleration,
-      double walk_max_speed = constants::kPlayerWalkMaxSpeed,
-      double walk_air_acceleration = constants::kPlayerWalkAirAcceleration,
-      double walk_max_air_acceleration =
-          constants::kPlayerWalkMaxAirAcceleration,
-      double gravity_speed = constants::kPlayerGravitySpeed,
-      double jump_speed = constants::kPlayerJumpSpeed, int state_ticks = 0);
+  explicit MovingObject(QPointF pos, QPointF size);
 
  private:
   void UpdateStay(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
@@ -55,10 +49,10 @@ class MovingObject {
                          const std::shared_ptr<const Map>& map) const;
   bool FindCollisionRight(QPointF old_position, double* right_wall_x,
                           const std::shared_ptr<const Map>& map) const;
-  MoveVector move_vector_;
+  MoveVector move_vector_ = MoveVector(0, 0, 0, 0);
   QPointF pos_;
   QPointF size_;
-  State state_;
+  State state_ = MovingObject::State::kStay;
 
   double walk_acceleration_;
   double walk_max_speed_;
@@ -68,12 +62,12 @@ class MovingObject {
   double gravity_speed_;
   double jump_speed_;
 
-  int state_ticks_;
+  int state_ticks_ = 0;
 
-  bool pushes_ground_;
-  bool pushes_ceil_;
-  bool pushes_left_;
-  bool pushes_right_;
+  bool pushes_ground_ = false;
+  bool pushes_ceil_ = false;
+  bool pushes_left_ = false;
+  bool pushes_right_ = false;
 };
 
 #endif  // MODEL_MOVING_OBJECT_H_

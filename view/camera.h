@@ -14,6 +14,7 @@ class Camera {
 
  private:
   QPointF point_;
+  z
 };
 
 #endif  // VIEW_CAMERA_H_
