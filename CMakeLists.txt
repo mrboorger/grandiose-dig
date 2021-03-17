@@ -43,6 +43,12 @@ set(SOURCES
         view/block_drawer.cpp
         view/camera.cpp
         view/view.cpp
+        model/move_vector.cpp
+        model/moving_object.cpp
+        view/camera.cpp
+        view/block_drawer.cpp
+        model/player.cpp
+        view/view.cpp
         )
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${RESOURCES})

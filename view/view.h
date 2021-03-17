@@ -25,6 +25,8 @@ class View : public QWidget {
   View();
 
   void paintEvent(QPaintEvent* event) override;
+  void keyPressEvent(QKeyEvent* event) override;
+  void keyReleaseEvent(QKeyEvent* event) override;
 
   Camera camera_;
 };

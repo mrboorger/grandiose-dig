@@ -1,10 +1,25 @@
 #ifndef MODEL_CONSTANTS_H_
 #define MODEL_CONSTANTS_H_
 
+#include <QPointF>
+
 namespace constants {
 
-constexpr int kBlockSz = 16;  // in pixels
+constexpr double kEps = 0.00001;         // in blocks
+constexpr double kAirResistance = 0.05;  // in percents
+constexpr int kBlockSz = 16;             // in pixels
 constexpr int kTickDurationMsec = 10;
+constexpr double kAbsoluteMaxSpeedX = 50.0;       // in blocks per tick
+constexpr double kAbsoluteMaxSpeedY = 50.0;       // in blocks per tick
+constexpr QPointF kPlayerSize{0.75, 1.75};        // in blocks
+constexpr double kPlayerWalkAcceleration = 0.01;  // in blocks per tick
+constexpr double kPlayerWalkMaxSpeed = 0.1;       // in blocks per tick
+constexpr double kPlayerWalkAirAcceleration =
+    kPlayerWalkAcceleration;  // in blocks per tick
+constexpr double kPlayerWalkMaxAirAcceleration =
+    kPlayerWalkMaxSpeed;                      // in blocks per tick
+constexpr double kPlayerGravitySpeed = 0.01;  // in blocks per tick
+constexpr double kPlayerJumpSpeed = -0.3;     // in blocks per tick
 
 }  // namespace constants
 
