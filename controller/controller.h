@@ -3,7 +3,6 @@
 
 #include <QKeyEvent>
 #include <QTimer>
-#include <cstdint>
 #include <unordered_set>
 
 #include "controller/controller_types.h"
