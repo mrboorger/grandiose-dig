@@ -5,11 +5,13 @@
 #include <QTimer>
 #include <unordered_set>
 
+#include "controller/controller_types.h"
 #include "model/abstract_map_generator.h"
 #include "model/model.h"
+#include "model/player.h"
 #include "view/view.h"
 
-class Controller : public QWidget {
+class Controller {
  public:
   static Controller* GetInstance();
 
@@ -23,18 +25,20 @@ class Controller : public QWidget {
 
   void SetGeneratedMap(AbstractMapGenerator* generator);
 
-  bool IsPressed(int key);
+  void SetPlayer();
+
+  static ControllerTypes::Key TranslateKeyCode(int key_code);
+
+  void KeyPress(int key);
+  void KeyRelease(int key);
 
  private:
   Controller();
 
-  void timerEvent(QTimerEvent* event);
+  void TickEvent();
 
-  void keyPressedEvent(QKeyEvent* event);
-  void keyReleaseEvent(QKeyEvent* event);
-
-  int timer_id_;
-  std::unordered_set<int> pressed_keys_;
+  QTimer tick_timer_;
+  std::unordered_set<ControllerTypes::Key> pressed_keys_;
 };
 
 #endif  // CONTROLLER_CONTROLLER_H_
