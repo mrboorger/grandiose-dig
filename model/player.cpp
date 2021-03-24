@@ -1,4 +1,4 @@
-#include "player.h"
+#include "model/player.h"
 
 #include "model/constants.h"
 

@@ -6,7 +6,7 @@
 
 #include "controller/controller_types.h"
 #include "model/constants.h"
-#include "model/map.h"
+#include "model/abstract_map.h"
 #include "model/move_vector.h"
 
 class MovingObject {
@@ -48,13 +48,13 @@ class MovingObject {
       const std::unordered_set<ControllerTypes::Key>& pressed_keys);
   void CheckCollisions(QPointF old_position);
   bool FindCollisionGround(QPointF old_position, double* ground_y,
-                           const std::shared_ptr<const Map>& map) const;
+                           const std::shared_ptr<AbstractMap>& map) const;
   bool FindCollisionCeiling(QPointF old_position, double* ceiling_y,
-                            const std::shared_ptr<const Map>& map) const;
+                            const std::shared_ptr<AbstractMap>& map) const;
   bool FindCollisionLeft(QPointF old_position, double* left_wall_x,
-                         const std::shared_ptr<const Map>& map) const;
+                         const std::shared_ptr<AbstractMap>& map) const;
   bool FindCollisionRight(QPointF old_position, double* right_wall_x,
-                          const std::shared_ptr<const Map>& map) const;
+                          const std::shared_ptr<AbstractMap>& map) const;
   MoveVector move_vector_ = MoveVector(0, 0, 0, 0);
   QPointF pos_;
   QPointF size_;

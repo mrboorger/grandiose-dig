@@ -1,11 +1,13 @@
-#include "flat_map_generator.h"
+#include "model/flat_map_generator.h"
 
-Map FlatMapGenerator::GenerateMap() {
+#include "model/map.h"
+
+AbstractMap* FlatMapGenerator::GenerateMap() {
   // TODO(Wind-Eagle): delete
-  Map map(300, 300);
+  auto* map = new Map(300, 300);
   for (int y = 150; y < 300; ++y) {
     for (int x = 0; x < 300; ++x) {
-      map.SetBlock(x, y, Block(Block::Type::kDirt));
+      map->SetBlock(x, y, Block(Block::Type::kDirt));
     }
   }
   // TODO(Wind-Eagle): make better map generation. This is temporary code!
@@ -15,7 +17,9 @@ Map FlatMapGenerator::GenerateMap() {
       random ^= (random << 8);
       random ^= (random >> 11);
       random ^= (random << 9);
-      if (random % 10 == 0) map.SetBlock(x, y, Block(Block::Type::kDirt));
+      if (random % 10 == 0) {
+        map->SetBlock(x, y, Block(Block::Type::kDirt));
+      }
     }
   }
   return map;

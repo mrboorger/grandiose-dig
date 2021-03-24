@@ -5,7 +5,7 @@
 
 class FlatMapGenerator : public AbstractMapGenerator {
  public:
-  Map GenerateMap() override;
+  AbstractMap* GenerateMap() override;
 };
 
 #endif  // MODEL_FLAT_MAP_GENERATOR_H_

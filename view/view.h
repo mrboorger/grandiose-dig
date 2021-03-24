@@ -3,8 +3,10 @@
 
 #include <QHBoxLayout>
 #include <QMainWindow>
+#include <memory>
 
 #include "model/model.h"
+#include "view/abstract_map_drawer.h"
 #include "view/camera.h"
 
 class View : public QWidget {
@@ -19,6 +21,8 @@ class View : public QWidget {
   View& operator=(const View&) = delete;
   View& operator=(View&&) = delete;
 
+  void SetDrawer(AbstractMapDrawer* drawer) { drawer_.reset(drawer); }
+
  private:
   constexpr static int kRenderDistance = 70;
 
@@ -29,6 +33,7 @@ class View : public QWidget {
   void keyReleaseEvent(QKeyEvent* event) override;
 
   Camera camera_;
+  std::unique_ptr<AbstractMapDrawer> drawer_;
 };
 
 #endif  // VIEW_VIEW_H_

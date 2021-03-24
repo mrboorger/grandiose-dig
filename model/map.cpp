@@ -1,13 +1,13 @@
-#include "map.h"
+#include "model/map.h"
 
 #include <algorithm>
 #include <utility>
 
-const Block& Map::GetBlock(int x, int y) const {
+const Block& Map::GetBlock(int32_t x, int32_t y) {
   return blocks_[y * width_ + x];
 }
 
-void Map::SetBlock(int x, int y, Block block) {
+void Map::SetBlock(int32_t x, int32_t y, Block block) {
   blocks_[y * width_ + x] = block;
 }
 

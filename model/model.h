@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <unordered_set>
+#include <utility>
 
 #include "model/map.h"
 #include "model/player.h"
@@ -19,9 +20,9 @@ class Model {
   Model& operator=(const Model&) = delete;
   Model& operator=(Model&&) = delete;
 
-  std::shared_ptr<const Map> GetMap() const { return map_; }
+  std::shared_ptr<AbstractMap> GetMap() { return map_; }
 
-  void SetMap(std::shared_ptr<Map> map) { map_ = map; }
+  void SetMap(std::shared_ptr<AbstractMap> map) { map_ = std::move(map); }
 
   std::shared_ptr<const Player> GetPlayer() const { return player_; }
 
@@ -35,7 +36,7 @@ class Model {
  private:
   Model() = default;
 
-  std::shared_ptr<Map> map_;
+  std::shared_ptr<AbstractMap> map_;
   std::shared_ptr<Player> player_;
 };
 

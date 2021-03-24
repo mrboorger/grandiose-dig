@@ -4,14 +4,15 @@
 #include <vector>
 
 #include "model/block.h"
+#include "model/abstract_map.h"
 
-class Map {
+class Map : AbstractMap {
   friend class AbstractMapGenerator;
   friend class FlatMapGenerator;
 
  public:
-  const Block& GetBlock(int x, int y) const;
-  void SetBlock(int x, int y, Block block);
+  const Block& GetBlock(int32_t x, int32_t y) override;
+  void SetBlock(int32_t x, int32_t y, Block block) override;
 
  private:
   Map(int width, int height);

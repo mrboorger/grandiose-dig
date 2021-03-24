@@ -140,7 +140,7 @@ QPointF DivideSegment(QPointF first, QPointF second, double percentage) {
 
 bool MovingObject::FindCollisionGround(
     QPointF old_position, double* ground_y,
-    const std::shared_ptr<const Map>& map) const {
+    const std::shared_ptr<AbstractMap>& map) const {
   QPointF old_bottom_left = old_position + QPointF(0, size_.y());
   QPointF new_bottom_left = pos_ + QPointF(0, size_.y());
   int end_y = std::floor(new_bottom_left.y());
@@ -170,7 +170,7 @@ bool MovingObject::FindCollisionGround(
 
 bool MovingObject::FindCollisionCeiling(
     QPointF old_position, double* ceiling_y,
-    const std::shared_ptr<const Map>& map) const {
+    const std::shared_ptr<AbstractMap>& map) const {
   QPointF old_top_left = old_position;
   QPointF new_top_left = pos_;
   int end_y = std::floor(new_top_left.y());
@@ -200,7 +200,7 @@ bool MovingObject::FindCollisionCeiling(
 
 bool MovingObject::FindCollisionLeft(
     QPointF old_position, double* left_wall_x,
-    const std::shared_ptr<const Map>& map) const {
+    const std::shared_ptr<AbstractMap>& map) const {
   QPointF old_bottom_left =
       old_position + QPointF(0, size_.y() - constants::kEps);
   QPointF new_bottom_left = pos_ + QPointF(0, size_.y() - constants::kEps);
@@ -231,7 +231,7 @@ bool MovingObject::FindCollisionLeft(
 
 bool MovingObject::FindCollisionRight(
     QPointF old_position, double* right_wall_x,
-    const std::shared_ptr<const Map>& map) const {
+    const std::shared_ptr<AbstractMap>& map) const {
   QPointF old_bottom_right =
       old_position +
       QPointF(size_.x() - constants::kEps, size_.y() - constants::kEps);
