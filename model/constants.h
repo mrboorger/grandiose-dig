@@ -1,6 +1,7 @@
 #ifndef MODEL_CONSTANTS_H_
 #define MODEL_CONSTANTS_H_
 
+#include <QDebug>
 #include <QPointF>
 
 namespace constants {
@@ -20,6 +21,13 @@ constexpr double kPlayerWalkMaxAirAcceleration =
     kPlayerWalkMaxSpeed;                      // in blocks per tick
 constexpr double kPlayerGravitySpeed = 0.01;  // in blocks per tick
 constexpr double kPlayerJumpSpeed = -0.3;     // in blocks per tick
+
+constexpr double kBasicStrategyVisionRadius = 12.0;  // in blocks
+constexpr int kBasicStrategyWalkTicksCount = 300;
+constexpr int kBasicStrategyAttackTicksCount = 100;
+constexpr double kBasicStrategyWalkPrecision = 0.1;  // in blocks
+constexpr int kBasicStrategyRandomWalkChance =
+    100;  // chance^(-1) * 100 percents per tick
 
 }  // namespace constants
 

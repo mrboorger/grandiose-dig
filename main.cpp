@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QDebug>
 
 #include "controller/controller.h"
 #include "model/flat_chunk_map_generator.h"
@@ -13,6 +14,7 @@ int main(int argc, char* argv[]) {
   FlatChunkMapGenerator generator;
   controller->SetGeneratedMap(&generator);
   controller->SetPlayer();
+  controller->SetMob();
   // }
   view->show();
   return QApplication::exec();

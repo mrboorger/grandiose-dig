@@ -53,8 +53,11 @@ set(SOURCES
         view/view.cpp
         model/move_vector.cpp
         model/moving_object.cpp
+        model/strategy.cpp
+        model/mob.cpp
         view/camera.cpp
         view/block_drawer.cpp
+        view/mob_drawer.cpp
         model/player.cpp
         view/view.cpp
         )

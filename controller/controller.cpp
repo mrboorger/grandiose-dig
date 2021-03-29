@@ -35,6 +35,12 @@ void Controller::SetPlayer() {
       std::make_shared<Player>(QPointF(148.0, 126.0)));
 }
 
+void Controller::SetMob() {
+  // TODO(Wind-Eagle): this is temporary code.
+  Model::GetInstance()->AddMob(
+      std::make_shared<Mob>(QPointF(138.0, 126.25), QPointF(0.75, 1.75)));
+}
+
 void Controller::TickEvent() {
   Model::GetInstance()->MoveObjects(pressed_keys_);
   View::GetInstance()->repaint();

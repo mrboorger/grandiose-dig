@@ -8,6 +8,13 @@
 MovingObject::MovingObject(QPointF pos, QPointF size)
     : pos_(pos), size_(size) {}
 
+bool MovingObject::IsObjectCollision(QPointF lhs_pos, QPointF lhs_size,
+                                     QPointF rhs_pos, QPointF rhs_size) {
+  QRectF lhs(lhs_pos, QSizeF(lhs_size.x(), lhs_size.y()));
+  QRectF rhs(rhs_pos, QSizeF(rhs_size.x(), rhs_size.y()));
+  return lhs.intersects(rhs);
+}
+
 void MovingObject::Move(
     const std::unordered_set<ControllerTypes::Key>& pressed_keys) {
   UpdateState(pressed_keys);

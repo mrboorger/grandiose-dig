@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>resources/textures/grass.png</file>
         <file>resources/textures/player.png</file>
+        <file>resources/textures/mob.png</file>
     </qresource>
 </RCC>
