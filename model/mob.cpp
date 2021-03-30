@@ -11,8 +11,8 @@ Mob::Mob(QPointF pos, QPointF size)
 }
 
 void Mob::MoveMob() {
-  strategy_->SetMobState({GetPosition(), GetSize(), IsOnGround(), IsOnCeil(),
-                          IsPushesLeft(), IsPushesRight()});
+  strategy_->SetMobState(MobState{GetPosition(), GetSize(), IsOnGround(),
+                                  IsOnCeil(), IsPushesLeft(), IsPushesRight()});
   strategy_->Update();
   UpdateState(strategy_->GetKeys());
 }

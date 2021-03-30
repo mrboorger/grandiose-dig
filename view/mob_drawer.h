@@ -1,5 +1,5 @@
-#ifndef VIEW_MOB_DRAWER_H
-#define VIEW_MOB_DRAWER_H
+#ifndef VIEW_MOB_DRAWER_H_
+#define VIEW_MOB_DRAWER_H_
 
 #include <QPainter>
 #include <QPointF>
@@ -13,4 +13,4 @@ class MobDrawer {
                       std::shared_ptr<Mob> mob);
 };
 
-#endif  // VIEW_MOB_DRAWER_H
+#endif  // VIEW_MOB_DRAWER_H_

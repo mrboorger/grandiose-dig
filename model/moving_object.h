@@ -13,6 +13,13 @@ class MovingObject {
  public:
   enum class State { kStay, kWalk, kJump };
 
+  MovingObject(const MovingObject&) = default;
+  MovingObject(MovingObject&&) = default;
+  virtual ~MovingObject() = default;
+  MovingObject& operator=(const MovingObject&) = default;
+  MovingObject& operator=(MovingObject&&) = default;
+
+
   void SetWalkAcceleration(double speed) { walk_acceleration_ = speed; }
   void SetWalkMaxSpeed(double speed) { walk_max_speed_ = speed; }
   void SetWalkAirAcceleration(double speed) { walk_air_acceleration_ = speed; }

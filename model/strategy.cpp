@@ -1,4 +1,4 @@
-#include "strategy.h"
+#include "model/strategy.h"
 
 #include <QDebug>
 #include <algorithm>
@@ -7,7 +7,7 @@
 #include <memory>
 #include <random>
 
-#include "model.h"
+#include "model/model.h"
 
 BasicStrategy::BasicStrategy() { state_ = State::kStay; }
 

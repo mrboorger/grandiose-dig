@@ -5,3 +5,4 @@
 .clang-tidy
 CMakeLists.txt.user
 *build*
+runcpplint.sh

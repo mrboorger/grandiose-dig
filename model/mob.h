@@ -1,5 +1,5 @@
-#ifndef MODEL_MOB_H
-#define MODEL_MOB_H
+#ifndef MODEL_MOB_H_
+#define MODEL_MOB_H_
 
 #include <QImage>
 
@@ -23,4 +23,4 @@ class Mob : public MovingObject {
   MobState mob_state_;
 };
 
-#endif  // MODEL_MOB_H
+#endif  // MODEL_MOB_H_

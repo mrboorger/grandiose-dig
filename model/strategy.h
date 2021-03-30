@@ -1,5 +1,5 @@
-#ifndef MODEL_STRATEGY_H
-#define MODEL_STRATEGY_H
+#ifndef MODEL_STRATEGY_H_
+#define MODEL_STRATEGY_H_
 
 #include <QPointF>
 #include <memory>
@@ -11,11 +11,11 @@
 class BasicStrategy : public AbstractStrategy {
  public:
   BasicStrategy();
-  virtual void Update() override;
-  virtual void SelectNewState() override;
-  virtual void UpdateConditions() override;
-  virtual bool IsActionFinished() override;
-  virtual void MakeAction() override;
+  void Update() override;
+  void SelectNewState() override;
+  void UpdateConditions() override;
+  bool IsActionFinished() override;
+  void MakeAction() override;
 
  protected:
   void DecreaseIntervals();
@@ -38,4 +38,4 @@ class BasicStrategy : public AbstractStrategy {
   QPointF walk_target_;
 };
 
-#endif  // MODEL_STRATEGY_H
+#endif  // MODEL_STRATEGY_H_
