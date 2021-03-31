@@ -22,6 +22,14 @@ constexpr double kPlayerWalkMaxAirAcceleration =
 constexpr double kPlayerGravitySpeed = 0.01;  // in blocks per tick
 constexpr double kPlayerJumpSpeed = -0.3;     // in blocks per tick
 
+constexpr double kMobWalkAcceleration =
+    kPlayerWalkAcceleration / 3;  // in blocks per tick
+constexpr double kMobWalkMaxSpeed =
+    kPlayerWalkMaxSpeed / 2;  // in blocks per tick
+constexpr double kMobWalkMaxAirAcceleration =
+    kPlayerWalkMaxAirAcceleration / 2;                    // in blocks per tick
+constexpr double kMobJumpSpeed = kPlayerJumpSpeed / 1.5;  // in blocks per tick
+
 constexpr double kBasicStrategyVisionRadius = 12.0;  // in blocks
 constexpr int kBasicStrategyWalkTicksCount = 300;
 constexpr int kBasicStrategyAttackTicksCount = 100;

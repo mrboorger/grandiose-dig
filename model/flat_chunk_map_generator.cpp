@@ -7,20 +7,19 @@ AbstractMap* FlatChunkMapGenerator::GenerateMap() {
 FlatChunkMapGenerator::FlatRegionGenerator::FlatRegionGenerator(int seed)
     : gen_(seed) {}
 
-Chunk FlatChunkMapGenerator::FlatRegionGenerator::Generate(int32_t chunk_x,
-                                                           int32_t chunk_y) {
-  Chunk chunk(chunk_x, chunk_y);
-  if (chunk_y > 1) {
+Chunk FlatChunkMapGenerator::FlatRegionGenerator::Generate(QPoint chunk_pos) {
+  Chunk chunk(chunk_pos);
+  if (chunk_pos.y() > 1) {
     for (int32_t y = 0; y < Chunk::kHeight; ++y) {
       for (int32_t x = 0; x < Chunk::kWidth; ++x) {
-        chunk.SetBlock(x, y, Block(Block::Type::kDirt));
+        chunk.SetBlock(QPoint(x, y), Block(Block::Type::kDirt));
       }
     }
   } else {
     for (int32_t y = 0; y < Chunk::kHeight; ++y) {
       for (int32_t x = 0; x < Chunk::kWidth; ++x) {
         if (gen_() % 20 == 0) {
-          chunk.SetBlock(x, y, Block(Block::Type::kDirt));
+          chunk.SetBlock(QPoint(x, y), Block(Block::Type::kDirt));
         }
       }
     }

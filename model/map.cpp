@@ -3,12 +3,12 @@
 #include <algorithm>
 #include <utility>
 
-const Block& Map::GetBlock(int32_t x, int32_t y) {
-  return blocks_[y * width_ + x];
+const Block& Map::GetBlock(QPoint pos) {
+  return blocks_[pos.y() * width_ + pos.x()];
 }
 
-void Map::SetBlock(int32_t x, int32_t y, Block block) {
-  blocks_[y * width_ + x] = block;
+void Map::SetBlock(QPoint pos, Block block) {
+  blocks_[pos.y() * width_ + pos.x()] = block;
 }
 
 Map::Map(int width, int height)

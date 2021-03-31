@@ -14,32 +14,30 @@ class ChunkMap : public AbstractMap {
   friend class FlatChunkMapGenerator;
 
  public:
-  const Block& GetBlock(int32_t x, int32_t y) override;
-  void SetBlock(int32_t x, int32_t y, Block block) override;
+  const Block& GetBlock(QPoint pos) override;
+  void SetBlock(QPoint pos, Block block) override;
 
-  const Chunk& GetChunk(int32_t chunk_x, int32_t chunk_y);
+  const Chunk& GetChunk(QPoint chunk_pos);
 
-  static void GetChunkCoords(int32_t* x, int32_t* y, int32_t* chunk_x,
-                             int32_t* chunk_y);
-  static void GetChunkCoords(float x, float y, int32_t* chunk_x,
-                             int32_t* chunk_y);
-  static QPointF GetWorldCoords(int32_t chunk_x, int32_t chunk_y);
+  static void GetChunkCoords(QPoint* pos, QPoint* chunk_pos);
+  static void GetChunkCoords(QPointF pos, QPoint* chunk_pos);
+  static QPointF GetWorldCoords(QPoint chunk_pos);
 
-  void UseChunk(int32_t chunk_x, int32_t chunk_y);
+  void UseChunk(QPoint chunk_pos);
 
  private:
-  explicit ChunkMap(AbstractRegionGenerator* generator);
-
-  static constexpr int kClearTimeMSec = 1000;
-
   struct MapNode {
     Chunk chunk;
     bool is_used;
   };
 
+  static constexpr int kClearTimeMSec = 1000;
+
+  explicit ChunkMap(AbstractRegionGenerator* generator);
+
   void ClearUnusedChunks();
 
-  Chunk* FindChunk(int32_t chunk_x, int32_t chunk_y);
+  Chunk* FindChunk(QPoint chunk_pos);
 
   std::vector<MapNode> nodes_;
   std::unique_ptr<AbstractRegionGenerator> generator_;

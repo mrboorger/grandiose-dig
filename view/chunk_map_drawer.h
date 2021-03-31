@@ -17,7 +17,6 @@ class ChunkMapDrawer : public AbstractMapDrawer {
   void DrawMapWithCenter(QPainter* painter, const QPointF& pos,
                          const QRect& screen_coords) override;
 
-
  private:
   // In chunks
   static constexpr int32_t kFieldOfView = 1;
@@ -29,12 +28,11 @@ class ChunkMapDrawer : public AbstractMapDrawer {
 
   struct Node {
     QPixmap pixmap;
-    int32_t chunk_x;
-    int32_t chunk_y;
+    QPoint chunk_pos;
     bool is_used;
   };
 
-  const QPixmap& GetChunkPixmap(int32_t chunk_x, int32_t chunk_y);
+  const QPixmap& GetChunkPixmap(QPoint chunk_pos);
   static void RenderChunk(QPixmap* buffer, const Chunk& chunk);
 
   void ClearUnusedNodes();

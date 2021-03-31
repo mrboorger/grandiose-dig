@@ -55,11 +55,11 @@ class AbstractStrategy {
   void SetMobState(const MobState& mob_state) { mob_state_ = mob_state; }
 
  protected:
+  MobState mob_state_;
+  std::unordered_set<ControllerTypes::Key> keys_;
   int state_interval_ = 0;
   int attack_interval_ = 0;
   int walk_interval_ = 0;
-  std::unordered_set<ControllerTypes::Key> keys_;
-  MobState mob_state_;
 };
 
 #endif  // MODEL_ABSTRACT_STRATEGY_H_

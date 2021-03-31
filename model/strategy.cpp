@@ -166,8 +166,10 @@ void BasicStrategy::DoWalk() {
   bool succesful_jump_up = true;
   for (int i = mob_state_.GetPos().y();
        i >= mob_state_.GetPos().y() - mob_state_.GetSize().y(); i--) {
-    if (map->GetBlock(std::floor(mob_state_.GetPos().x()), i).GetType() !=
-        Block::Type::kAir) {
+    if (map
+            ->GetBlock(QPoint(
+                static_cast<int32_t>(std::floor(mob_state_.GetPos().x())), i))
+            .GetType() != Block::Type::kAir) {
       succesful_jump_up = false;
       break;
     }

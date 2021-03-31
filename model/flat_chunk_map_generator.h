@@ -17,7 +17,7 @@ class FlatChunkMapGenerator : public AbstractMapGenerator {
    public:
     explicit FlatRegionGenerator(int seed);
 
-    Chunk Generate(int32_t chunk_x, int32_t chunk_y) override;
+    Chunk Generate(QPoint chunk_pos) override;
 
    private:
     std::mt19937 gen_;

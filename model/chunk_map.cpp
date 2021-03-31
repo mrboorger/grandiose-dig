@@ -4,60 +4,50 @@
 
 ChunkMap::ChunkMap(AbstractRegionGenerator* generator)
     : nodes_(), generator_(generator), clear_timer_() {
-  auto clear_unused_chunks = [this]() {
-    ClearUnusedChunks();
-  };
+  auto clear_unused_chunks = [this]() { ClearUnusedChunks(); };
   clear_timer_.callOnTimeout(clear_unused_chunks);
   clear_timer_.start(kClearTimeMSec);
 }
 
-const Block& ChunkMap::GetBlock(int32_t x, int32_t y) {
-  int32_t chunk_x = 0;
-  int32_t chunk_y = 0;
-  GetChunkCoords(&x, &y, &chunk_x, &chunk_y);
-  return FindChunk(chunk_x, chunk_y)->GetBlock(x, y);
+const Block& ChunkMap::GetBlock(QPoint pos) {
+  QPoint chunk_pos{0, 0};
+  GetChunkCoords(&pos, &chunk_pos);
+  return FindChunk(chunk_pos)->GetBlock(pos);
 }
 
-void ChunkMap::SetBlock(int32_t x, int32_t y, Block block) {
-  int32_t chunk_x = 0;
-  int32_t chunk_y = 0;
-  GetChunkCoords(&x, &y, &chunk_x, &chunk_y);
-  FindChunk(chunk_x, chunk_y)->SetBlock(x, y, block);
+void ChunkMap::SetBlock(QPoint pos, Block block) {
+  QPoint chunk_pos{0, 0};
+  GetChunkCoords(&pos, &chunk_pos);
+  FindChunk(chunk_pos)->SetBlock(pos, block);
 }
 
-const Chunk& ChunkMap::GetChunk(int32_t chunk_x, int32_t chunk_y) {
-  return *FindChunk(chunk_x, chunk_y);
+const Chunk& ChunkMap::GetChunk(QPoint chunk_pos) {
+  return *FindChunk(chunk_pos);
 }
 
-void ChunkMap::GetChunkCoords(int32_t* x, int32_t* y, int32_t* chunk_x,
-                              int32_t* chunk_y) {
-  *y = *y;
-  *chunk_x = *x / Chunk::kWidth;
-  *x %= Chunk::kWidth;
-  if (*x < 0) {
-    *x += Chunk::kWidth;
+void ChunkMap::GetChunkCoords(QPoint* pos, QPoint* chunk_pos) {
+  chunk_pos->setX(pos->x() / Chunk::kWidth);
+  pos->setX(pos->x() % Chunk::kWidth);
+  if (pos->x() < 0) {
+    *pos += QPoint(Chunk::kWidth, 0);
   }
-  *chunk_y = *y / Chunk::kHeight;
-  *y %= Chunk::kHeight;
-  if (*y < 0) {
-    *y += Chunk::kWidth;
+  chunk_pos->setY(pos->y() / Chunk::kHeight);
+  pos->setY(pos->y() % Chunk::kHeight);
+  if (pos->y() < 0) {
+    *pos += QPoint(0, Chunk::kHeight);
   }
 }
 
-void ChunkMap::GetChunkCoords(float x, float y, int32_t* chunk_x,
-                              int32_t* chunk_y) {
-  int casted_x = x;
-  int casted_y = y;
-  GetChunkCoords(&casted_x, &casted_y, chunk_x, chunk_y);
+void ChunkMap::GetChunkCoords(QPointF pos, QPoint* chunk_pos) {
+  QPoint casted{static_cast<int32_t>(pos.x()), static_cast<int32_t>(pos.y())};
+  GetChunkCoords(&casted, chunk_pos);
 }
 
-QPointF ChunkMap::GetWorldCoords(int32_t chunk_x, int32_t chunk_y) {
-  return QPointF(chunk_x * Chunk::kWidth, chunk_y * Chunk::kHeight);
+QPointF ChunkMap::GetWorldCoords(QPoint chunk_pos) {
+  return QPointF(chunk_pos.x() * Chunk::kWidth, chunk_pos.y() * Chunk::kHeight);
 }
 
-void ChunkMap::UseChunk(int32_t chunk_x, int32_t chunk_y) {
-  FindChunk(chunk_x, chunk_y);
-}
+void ChunkMap::UseChunk(QPoint chunk_pos) { FindChunk(chunk_pos); }
 
 void ChunkMap::ClearUnusedChunks() {
   for (int i = 0; i < static_cast<int>(nodes_.size()); ++i) {
@@ -71,13 +61,13 @@ void ChunkMap::ClearUnusedChunks() {
   }
 }
 
-Chunk* ChunkMap::FindChunk(int32_t chunk_x, int32_t chunk_y) {
+Chunk* ChunkMap::FindChunk(QPoint chunk_pos) {
   for (auto& [chunk, is_used] : nodes_) {
-    if (chunk.GetPosX() == chunk_x && chunk.GetPosY() == chunk_y) {
+    if (chunk.GetPos() == chunk_pos) {
       is_used = true;
       return &chunk;
     }
   }
-  nodes_.push_back(MapNode{generator_->Generate(chunk_x, chunk_y), true});
+  nodes_.push_back(MapNode{generator_->Generate(chunk_pos), true});
   return &nodes_.back().chunk;
 }

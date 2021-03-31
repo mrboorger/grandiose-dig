@@ -8,19 +8,19 @@
 
 class Mob : public MovingObject {
  public:
-  Mob(QPointF pos, QPointF size);
   enum class Type { kMob, kTypesCount };
+  static constexpr int kTypesCount = static_cast<int>(Type::kTypesCount);
+
+  Mob(QPointF pos, QPointF size);
 
   int32_t GetId() const { return static_cast<int32_t>(type_); }
-
-  static constexpr int kTypesCount = static_cast<int>(Type::kTypesCount);
 
   void MoveMob();
 
  private:
-  AbstractStrategy* strategy_;
-  Type type_;
   MobState mob_state_;
+  Type type_;
+  AbstractStrategy* strategy_;
 };
 
 #endif  // MODEL_MOB_H_

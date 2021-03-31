@@ -16,34 +16,31 @@ ChunkMapDrawer::ChunkMapDrawer(std::shared_ptr<ChunkMap> map)
 
 void ChunkMapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
                                        const QRect& screen_coords) {
-  int32_t chunk_x = 0;
-  int32_t chunk_y = 0;
-  ChunkMap::GetChunkCoords(pos.x(), pos.y(), &chunk_x, &chunk_y);
-  for (int32_t curr_y = chunk_y - kFieldOfView;
-       curr_y <= chunk_y + kFieldOfView; ++curr_y) {
-    for (int32_t curr_x = chunk_x - kFieldOfView;
-         curr_x <= chunk_x + kFieldOfView; ++curr_x) {
-      QPointF point =
-          (ChunkMap::GetWorldCoords(curr_x, curr_y) - pos) *
-              constants::kBlockSz +
-          screen_coords.center();
-      painter->drawPixmap(point, GetChunkPixmap(curr_x, curr_y));
+  QPoint chunk_pos{0, 0};
+  ChunkMap::GetChunkCoords(pos, &chunk_pos);
+  for (int32_t curr_y = chunk_pos.y() - kFieldOfView;
+       curr_y <= chunk_pos.y() + kFieldOfView; ++curr_y) {
+    for (int32_t curr_x = chunk_pos.x() - kFieldOfView;
+         curr_x <= chunk_pos.x() + kFieldOfView; ++curr_x) {
+      QPointF point = (ChunkMap::GetWorldCoords(QPoint(curr_x, curr_y)) - pos) *
+                          constants::kBlockSz +
+                      screen_coords.center();
+      painter->drawPixmap(point, GetChunkPixmap(QPoint(curr_x, curr_y)));
     }
   }
 }
 
-const QPixmap& ChunkMapDrawer::GetChunkPixmap(int32_t chunk_x,
-                                              int32_t chunk_y) {
-  map_->UseChunk(chunk_x, chunk_y);
-  for (auto& [pixmap, x, y, is_used] : render_buffer_) {
-    if (x == chunk_x && y == chunk_y) {
+const QPixmap& ChunkMapDrawer::GetChunkPixmap(QPoint chunk_pos) {
+  map_->UseChunk(chunk_pos);
+  for (auto& [pixmap, pos, is_used] : render_buffer_) {
+    if (pos == chunk_pos) {
       is_used = true;
       return pixmap;
     }
   }
-  auto& node = render_buffer_.emplace_back(Node{
-      QPixmap(kPixmapXInPixels, kPixmapYInPixels), chunk_x, chunk_y, true});
-  RenderChunk(&node.pixmap, map_->GetChunk(chunk_x, chunk_y));
+  auto& node = render_buffer_.emplace_back(
+      Node{QPixmap(kPixmapXInPixels, kPixmapYInPixels), chunk_pos, true});
+  RenderChunk(&node.pixmap, map_->GetChunk(chunk_pos));
   return node.pixmap;
 }
 
@@ -52,10 +49,10 @@ void ChunkMapDrawer::RenderChunk(QPixmap* buffer, const Chunk& chunk) {
   QPainter painter(buffer);
   for (int y = 0; y < Chunk::kHeight; ++y) {
     for (int x = 0; x < Chunk::kWidth; ++x) {
-      auto block = chunk.GetBlock(x, y);
+      auto block = chunk.GetBlock(QPoint(x, y));
       if (block.IsVisible()) {
         BlockDrawer::DrawBlock(&painter, QPointF(x, y) * constants::kBlockSz,
-                               chunk.GetBlock(x, y));
+                               chunk.GetBlock(QPoint(x, y)));
       }
     }
   }

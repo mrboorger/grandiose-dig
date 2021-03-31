@@ -4,10 +4,10 @@ Mob::Mob(QPointF pos, QPointF size)
     : MovingObject(pos, size), mob_state_(GetPosition(), GetSize()) {
   type_ = Type::kMob;
   strategy_ = new BasicStrategy();
-  SetWalkAcceleration(constants::kPlayerWalkAcceleration / 3);
-  SetWalkMaxSpeed(constants::kPlayerWalkMaxSpeed / 2);
-  SetWalkMaxAirAcceleration(constants::kPlayerWalkMaxAirAcceleration / 2);
-  SetJumpSpeed(constants::kPlayerJumpSpeed / 1.5);
+  SetWalkAcceleration(constants::kMobWalkAcceleration);
+  SetWalkMaxSpeed(constants::kMobWalkMaxSpeed);
+  SetWalkMaxAirAcceleration(constants::kMobWalkMaxAirAcceleration);
+  SetJumpSpeed(constants::kMobJumpSpeed);
 }
 
 void Mob::MoveMob() {

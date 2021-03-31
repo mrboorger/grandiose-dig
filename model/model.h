@@ -40,9 +40,9 @@ class Model {
  private:
   Model() = default;
 
+  std::set<std::shared_ptr<Mob>> mobs_;
   std::shared_ptr<AbstractMap> map_;
   std::shared_ptr<Player> player_;
-  std::set<std::shared_ptr<Mob>> mobs_;
 };
 
 #endif  // MODEL_MODEL_H_
