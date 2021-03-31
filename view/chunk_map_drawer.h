@@ -43,3 +43,4 @@ class ChunkMapDrawer : public AbstractMapDrawer {
 };
 
 #endif  // VIEW_CHUNK_MAP_DRAWER_H_
+

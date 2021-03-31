@@ -17,7 +17,7 @@ Controller* Controller::GetInstance() {
 void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
   auto map = std::shared_ptr<AbstractMap>(generator->GenerateMap());
   Model::GetInstance()->SetMap(map);
-  if (auto chunk_map = std::dynamic_pointer_cast<ChunkMap>(map); chunk_map) {
+  if (auto chunk_map = std::dynamic_pointer_cast<ChunkMap>(map)) {
     View::GetInstance()->SetDrawer(new ChunkMapDrawer(chunk_map));
   } else {
     View::GetInstance()->SetDrawer(new MapDrawer(map));
@@ -32,7 +32,7 @@ Controller::Controller() : tick_timer_() {
 void Controller::SetPlayer() {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->SetPlayer(
-      std::make_shared<Player>(QPointF(148.0, 126.0)));
+      std::make_shared<Player>(QPointF(-5.0, 126.0)));
 }
 
 void Controller::SetMob() {

@@ -1,5 +1,4 @@
 #include <QApplication>
-#include <QDebug>
 
 #include "controller/controller.h"
 #include "model/flat_chunk_map_generator.h"

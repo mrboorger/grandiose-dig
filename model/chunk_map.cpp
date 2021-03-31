@@ -2,6 +2,8 @@
 
 #include <utility>
 
+#include "utils.h"
+
 ChunkMap::ChunkMap(AbstractRegionGenerator* generator)
     : nodes_(), generator_(generator), clear_timer_() {
   auto clear_unused_chunks = [this]() { ClearUnusedChunks(); };
@@ -26,16 +28,10 @@ const Chunk& ChunkMap::GetChunk(QPoint chunk_pos) {
 }
 
 void ChunkMap::GetChunkCoords(QPoint* pos, QPoint* chunk_pos) {
-  chunk_pos->setX(pos->x() / Chunk::kWidth);
-  pos->setX(pos->x() % Chunk::kWidth);
-  if (pos->x() < 0) {
-    *pos += QPoint(Chunk::kWidth, 0);
-  }
-  chunk_pos->setY(pos->y() / Chunk::kHeight);
-  pos->setY(pos->y() % Chunk::kHeight);
-  if (pos->y() < 0) {
-    *pos += QPoint(0, Chunk::kHeight);
-  }
+  std::tie(chunk_pos->rx(), pos->rx()) =
+      utils::ArithmeticalDivMod(pos->x(), Chunk::kWidth);
+  std::tie(chunk_pos->ry(), pos->ry()) =
+      utils::ArithmeticalDivMod(pos->y(), Chunk::kHeight);
 }
 
 void ChunkMap::GetChunkCoords(QPointF pos, QPoint* chunk_pos) {

@@ -1,7 +1,7 @@
 #ifndef MODEL_ABSTRACT_REGION_GENERATOR_H_
 #define MODEL_ABSTRACT_REGION_GENERATOR_H_
 
-#include <model/chunk.h>
+#include "model/chunk.h"
 
 class AbstractRegionGenerator {
  public:
