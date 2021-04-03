@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
 
   // TODO(Wind-Eagle): delete. {
   Controller* controller(Controller::GetInstance());
-  FlatChunkMapGenerator generator;
+  FlatChunkMapGenerator generator(42);
   controller->SetGeneratedMap(&generator);
   controller->SetPlayer();
   controller->SetMob();

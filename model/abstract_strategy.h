@@ -1,7 +1,6 @@
 #ifndef MODEL_ABSTRACT_STRATEGY_H_
 #define MODEL_ABSTRACT_STRATEGY_H_
 
-#include <QDebug>
 #include <QPointF>
 #include <unordered_set>
 

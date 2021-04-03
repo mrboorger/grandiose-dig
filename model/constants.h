@@ -1,7 +1,6 @@
 #ifndef MODEL_CONSTANTS_H_
 #define MODEL_CONSTANTS_H_
 
-#include <QDebug>
 #include <QPointF>
 
 namespace constants {

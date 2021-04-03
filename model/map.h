@@ -6,7 +6,7 @@
 #include "model/abstract_map.h"
 #include "model/block.h"
 
-class Map : AbstractMap {
+class Map : public AbstractMap {
   friend class AbstractMapGenerator;
   friend class FlatMapGenerator;
 
