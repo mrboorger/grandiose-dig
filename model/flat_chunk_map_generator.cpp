@@ -8,7 +8,7 @@ FlatChunkMapGenerator::FlatRegionGenerator::FlatRegionGenerator(int seed)
     : gen_(seed) {}
 
 Chunk FlatChunkMapGenerator::FlatRegionGenerator::Generate(QPoint chunk_pos) {
-  Chunk chunk(chunk_pos);
+  Chunk chunk;
   if (chunk_pos.y() > 1) {
     for (int32_t y = 0; y < Chunk::kHeight; ++y) {
       for (int32_t x = 0; x < Chunk::kWidth; ++x) {

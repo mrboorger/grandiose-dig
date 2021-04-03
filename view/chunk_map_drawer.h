@@ -3,11 +3,13 @@
 
 #include <QPixmap>
 #include <QTimer>
+#include <map>
 #include <memory>
 #include <vector>
 
 #include "model/chunk_map.h"
 #include "model/constants.h"
+#include "utils.h"
 #include "view/abstract_map_drawer.h"
 
 class ChunkMapDrawer : public AbstractMapDrawer {
@@ -28,7 +30,6 @@ class ChunkMapDrawer : public AbstractMapDrawer {
 
   struct Node {
     QPixmap pixmap;
-    QPoint chunk_pos;
     bool is_used;
   };
 
@@ -37,7 +38,7 @@ class ChunkMapDrawer : public AbstractMapDrawer {
 
   void ClearUnusedNodes();
 
-  std::vector<Node> render_buffer_;
+  std::map<QPoint, Node, utils::QPointCompare> render_buffer_;
   std::shared_ptr<ChunkMap> map_;
   QTimer clear_timer_;
 };

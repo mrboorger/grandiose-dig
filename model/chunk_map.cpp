@@ -2,8 +2,6 @@
 
 #include <utility>
 
-#include "utils.h"
-
 ChunkMap::ChunkMap(AbstractRegionGenerator* generator)
     : nodes_(), generator_(generator), clear_timer_() {
   auto clear_unused_chunks = [this]() { ClearUnusedChunks(); };
@@ -46,24 +44,24 @@ QPointF ChunkMap::GetWorldCoords(QPoint chunk_pos) {
 void ChunkMap::UseChunk(QPoint chunk_pos) { FindChunk(chunk_pos); }
 
 void ChunkMap::ClearUnusedChunks() {
-  for (int i = 0; i < static_cast<int>(nodes_.size()); ++i) {
-    if (!nodes_[i].is_used) {
-      std::swap(nodes_[i], nodes_.back());
-      nodes_.pop_back();
-      --i;
+  for (auto i = nodes_.begin(); i != nodes_.end();) {
+    if (!i->second.is_used) {
+      i = nodes_.erase(i);
     } else {
-      nodes_[i].is_used = false;
+      i->second.is_used = false;
+      ++i;
     }
   }
 }
 
 Chunk* ChunkMap::FindChunk(QPoint chunk_pos) {
-  for (auto& [chunk, is_used] : nodes_) {
-    if (chunk.GetPos() == chunk_pos) {
-      is_used = true;
-      return &chunk;
-    }
+  if (!nodes_.count(chunk_pos)) {
+    return &nodes_
+                .emplace(chunk_pos,
+                         MapNode{generator_->Generate(chunk_pos), true})
+                .first->second.chunk;
   }
-  nodes_.push_back(MapNode{generator_->Generate(chunk_pos), true});
-  return &nodes_.back().chunk;
+  auto& node = nodes_.at(chunk_pos);
+  node.is_used = true;
+  return &node.chunk;
 }

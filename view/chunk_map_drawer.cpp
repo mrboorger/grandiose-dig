@@ -1,7 +1,5 @@
 #include "view/chunk_map_drawer.h"
 
-#include <QDebug>
-#include <QFile>
 #include <cmath>
 #include <memory>
 #include <utility>
@@ -32,15 +30,17 @@ void ChunkMapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
 
 const QPixmap& ChunkMapDrawer::GetChunkPixmap(QPoint chunk_pos) {
   map_->UseChunk(chunk_pos);
-  for (auto& [pixmap, pos, is_used] : render_buffer_) {
-    if (pos == chunk_pos) {
-      is_used = true;
-      return pixmap;
-    }
+  if (render_buffer_.count(chunk_pos) == 0) {
+    auto& node =
+        render_buffer_
+            .emplace(chunk_pos,
+                     Node{QPixmap(kPixmapXInPixels, kPixmapYInPixels), true})
+            .first->second;
+    RenderChunk(&node.pixmap, map_->GetChunk(chunk_pos));
+    return node.pixmap;
   }
-  auto& node = render_buffer_.emplace_back(
-      Node{QPixmap(kPixmapXInPixels, kPixmapYInPixels), chunk_pos, true});
-  RenderChunk(&node.pixmap, map_->GetChunk(chunk_pos));
+  auto& node = render_buffer_.at(chunk_pos);
+  node.is_used = true;
   return node.pixmap;
 }
 
@@ -59,13 +59,12 @@ void ChunkMapDrawer::RenderChunk(QPixmap* buffer, const Chunk& chunk) {
 }
 
 void ChunkMapDrawer::ClearUnusedNodes() {
-  for (int i = 0; i < static_cast<int>(render_buffer_.size()); ++i) {
-    if (!render_buffer_[i].is_used) {
-      std::swap(render_buffer_[i], render_buffer_.back());
-      render_buffer_.pop_back();
-      --i;
+  for (auto i = render_buffer_.begin(); i != render_buffer_.end();) {
+    if (!i->second.is_used) {
+      i = render_buffer_.erase(i);
     } else {
-      render_buffer_[i].is_used = false;
+      i->second.is_used = false;
+      ++i;
     }
   }
 }

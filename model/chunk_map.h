@@ -1,14 +1,16 @@
 #ifndef MODEL_CHUNK_MAP_H_
 #define MODEL_CHUNK_MAP_H_
 
+#include <QPoint>
 #include <QPointF>
 #include <QTimer>
+#include <map>
 #include <memory>
-#include <vector>
 
 #include "model/abstract_map.h"
 #include "model/abstract_region_generator.h"
 #include "model/chunk.h"
+#include "utils.h"
 
 class ChunkMap : public AbstractMap {
   friend class FlatChunkMapGenerator;
@@ -39,7 +41,7 @@ class ChunkMap : public AbstractMap {
 
   Chunk* FindChunk(QPoint chunk_pos);
 
-  std::vector<MapNode> nodes_;
+  std::map<QPoint, MapNode, utils::QPointCompare> nodes_;
   std::unique_ptr<AbstractRegionGenerator> generator_;
   QTimer clear_timer_;
 };

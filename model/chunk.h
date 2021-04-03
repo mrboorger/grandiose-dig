@@ -13,7 +13,7 @@ class Chunk {
   static constexpr int32_t kWidth = 64;
   static constexpr int32_t kHeight = 64;
 
-  explicit Chunk(QPoint pos);
+  Chunk() : blocks_(kWidth * kHeight, Block(Block::Type::kAir)) {}
 
   const Block& GetBlock(QPoint pos) const {
     assert(0 <= pos.x() && pos.x() < kWidth);
@@ -27,11 +27,8 @@ class Chunk {
     blocks_[kWidth * pos.y() + pos.x()] = block;
   }
 
-  QPoint GetPos() const { return pos_; }
-
  private:
   std::vector<Block> blocks_;
-  QPoint pos_;
 };
 
 #endif  // MODEL_CHUNK_H_
