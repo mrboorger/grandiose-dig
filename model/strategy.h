@@ -11,11 +11,15 @@
 class BasicStrategy : public AbstractStrategy {
  public:
   BasicStrategy();
-  virtual void Update();
+  void Update() override;
   virtual void SelectNewState();
   virtual void UpdateConditions();
   virtual bool IsActionFinished();
   virtual void PerformAction();
+  virtual ~BasicStrategy() = default;
+  const std::unordered_set<ControllerTypes::Key>& GetKeys() const override {
+    return keys_;
+  }
 
  protected:
   void DecreaseIntervals();
@@ -25,11 +29,9 @@ class BasicStrategy : public AbstractStrategy {
   void DoWalk();
   void DoAttack();
 
-  int state_interval_ = 0;
-  int attack_interval_ = 0;
-  int walk_interval_ = 0;
-  QPointF walk_target_ = {0, 0};
-  std::shared_ptr<const MovingObject> attack_target_;
+  void UpdateStay();
+  void UpdateWalk();
+  void UpdateAttack();
 
  private:
   enum class State { kStay, kWalk, kAttack, kStatesCount };
@@ -39,12 +41,24 @@ class BasicStrategy : public AbstractStrategy {
   static constexpr int kConditionsCount =
       static_cast<int>(Condition::kConditionsCount);
 
-  bool HasCondition(Condition condition) {
-    return std::find(conditions_.begin(), conditions_.end(), condition) !=
-           conditions_.end();
+  bool HasCondition(Condition condition) const {
+    return (conditions_ & (1 << static_cast<uint32_t>(condition))) != 0;
   }
+  void AddCondition(Condition condition) {
+    conditions_ |= 1 << static_cast<uint32_t>(condition);
+  }
+  void RemoveCondition(Condition condition) {
+    conditions_ &= ~(1 << static_cast<uint32_t>(condition));
+  }
+  void ClearConditions() { conditions_ = 0; }
 
-  std::vector<Condition> conditions_;
+  std::unordered_set<ControllerTypes::Key> keys_;
+
+  int attack_interval_ = 0;
+  int walk_interval_ = 0;
+  QPointF walk_target_ = {0, 0};
+  std::shared_ptr<const MovingObject> attack_target_;
+  uint32_t conditions_;
   State state_;
 };
 

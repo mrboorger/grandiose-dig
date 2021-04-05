@@ -19,7 +19,7 @@ class Mob : public MovingObject {
   void MoveMob();
 
   void SetStrategy(std::shared_ptr<AbstractStrategy> strategy) {
-    strategy_ = strategy;
+    strategy_ = std::move(strategy);
   }
 
  private:

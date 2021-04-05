@@ -25,46 +25,54 @@ void BasicStrategy::Update() {
   PerformAction();
 }
 
+void BasicStrategy::UpdateStay() {
+  bool can_walk = true;
+  if (HasCondition(Condition::kSeeEnemy) &&
+      HasCondition(Condition::kCanAttack)) {
+    if (attack_interval_ == 0) {
+      state_ = State::kAttack;
+      attack_interval_ = constants::kBasicStrategyAttackTicksCount;
+    }
+    can_walk = false;
+  }
+  if (can_walk) {
+    state_ = State::kWalk;
+    walk_interval_ = constants::kBasicStrategyWalkTicksCount;
+    walk_target_ = ChooseRandomWalkPosition();
+  }
+}
+void BasicStrategy::UpdateWalk() {
+  if (HasCondition(Condition::kSeeEnemy)) {
+    if (HasCondition(Condition::kCanAttack)) {
+      if (attack_interval_ == 0) {
+        state_ = State::kAttack;
+        attack_interval_ = constants::kBasicStrategyAttackTicksCount;
+      } else {
+        state_ = State::kStay;
+      }
+      return;
+    }
+    walk_target_ = attack_target_->GetPosition();
+    walk_interval_ = constants::kBasicStrategyWalkTicksCount;
+    return;
+  }
+  state_ = State::kStay;
+}
+void BasicStrategy::UpdateAttack() {
+  state_ = State::kWalk;
+  walk_interval_ = constants::kBasicStrategyWalkTicksCount;
+}
+
 void BasicStrategy::SelectNewState() {
   switch (state_) {
     case State::kStay:
-      if (HasCondition(Condition::kSeeEnemy)) {
-        if (HasCondition(Condition::kCanAttack)) {
-          if (attack_interval_ == 0) {
-            state_ = State::kAttack;
-            attack_interval_ = constants::kBasicStrategyAttackTicksCount;
-          }
-        } else {
-          state_ = State::kWalk;
-          walk_interval_ = constants::kBasicStrategyWalkTicksCount;
-          walk_target_ = ChooseRandomWalkPosition();
-        }
-        break;
-      }
-      state_ = State::kWalk;
-      walk_interval_ = constants::kBasicStrategyWalkTicksCount;
-      walk_target_ = ChooseRandomWalkPosition();
+      UpdateStay();
       break;
     case State::kWalk:
-      if (HasCondition(Condition::kSeeEnemy)) {
-        if (HasCondition(Condition::kCanAttack)) {
-          if (attack_interval_ == 0) {
-            state_ = State::kAttack;
-            attack_interval_ = constants::kBasicStrategyAttackTicksCount;
-          } else {
-            state_ = State::kStay;
-          }
-          break;
-        }
-        walk_target_ = attack_target_->GetPosition();
-        walk_interval_ = constants::kBasicStrategyWalkTicksCount;
-        break;
-      }
-      state_ = State::kStay;
+      UpdateWalk();
       break;
     case State::kAttack:
-      state_ = State::kWalk;
-      walk_interval_ = constants::kBasicStrategyWalkTicksCount;
+      UpdateAttack();
       break;
     default:
       assert(false);
@@ -75,19 +83,19 @@ void BasicStrategy::SelectNewState() {
 QPointF BasicStrategy::ChooseRandomWalkPosition() const {
   // TODO(Wind-Eagle): This is temporary code.
   static std::mt19937 rnd(time(nullptr));
-  return {mob_state_.GetPos().x() + static_cast<double>(rnd() % 21) - 10,
-          mob_state_.GetPos().y()};
+  return {GetMobState().GetPos().x() + static_cast<double>(rnd() % 21) - 10,
+          GetMobState().GetPos().y()};
 }
 
 void BasicStrategy::UpdateConditions() {
-  conditions_.clear();
+  ClearConditions();
   std::shared_ptr<const MovingObject> target = EnemySpotted();
   if (target) {
-    conditions_.push_back(Condition::kSeeEnemy);
+    AddCondition(Condition::kSeeEnemy);
     if (MovingObject::IsObjectCollision(
-            mob_state_.GetPos(), mob_state_.GetSize(), target->GetPosition(),
-            target->GetSize())) {
-      conditions_.push_back(Condition::kCanAttack);
+            GetMobState().GetPos(), GetMobState().GetSize(),
+            target->GetPosition(), target->GetSize())) {
+      AddCondition(Condition::kCanAttack);
     }
     walk_target_ = target->GetPosition();
   }
@@ -108,7 +116,8 @@ bool BasicStrategy::IsActionFinished() {
       if (HasCondition(Condition::kSeeEnemy)) {
         return true;
       }
-      return rnd() % constants::kBasicStrategyRandomWalkChance == 0;
+      static std::uniform_real_distribution<double> distrib(0.0, 1.0);
+      return distrib(rnd) < constants::kBasicStrategyRandomWalkChance;
     case State::kWalk:
       if (HasCondition(Condition::kCanAttack) && attack_interval_ == 0) {
         return true;
@@ -116,7 +125,7 @@ bool BasicStrategy::IsActionFinished() {
       if (walk_interval_ == 0) {
         return true;
       }
-      return (AlmostNearX(mob_state_.GetPos(), walk_target_));
+      return (AlmostNearX(GetMobState().GetPos(), walk_target_));
     case State::kAttack:
       if (HasCondition(Condition::kSeeEnemy) &&
           HasCondition(Condition::kCanAttack)) {
@@ -150,18 +159,18 @@ void BasicStrategy::DoStay() { keys_.clear(); }
 
 void BasicStrategy::DoWalk() {
   keys_.clear();
-  QPointF src = mob_state_.GetPos();
+  QPointF src = GetMobState().GetPos();
   QPointF dst = walk_target_;
   if (AlmostNearX(src, dst)) {
     return;
   }
   std::shared_ptr<AbstractMap> map = Model::GetInstance()->GetMap();
   bool succesful_jump_up = true;
-  for (int i = mob_state_.GetPos().y();
-       i >= mob_state_.GetPos().y() - mob_state_.GetSize().y(); i--) {
-    if (map
-            ->GetBlock(QPoint(
-                static_cast<int32_t>(std::floor(mob_state_.GetPos().x())), i))
+  for (int i = GetMobState().GetPos().y();
+       i >= GetMobState().GetPos().y() - GetMobState().GetSize().y(); i--) {
+    if (map->GetBlock(QPoint(static_cast<int32_t>(
+                                 std::floor(GetMobState().GetPos().x())),
+                             i))
             .GetType() != Block::Type::kAir) {
       succesful_jump_up = false;
       break;
@@ -169,14 +178,14 @@ void BasicStrategy::DoWalk() {
   }
   if (src.x() > dst.x()) {
     keys_.insert(ControllerTypes::Key::kLeft);
-    if (mob_state_.IsPushesLeft()) {
+    if (GetMobState().IsPushesLeft()) {
       if (succesful_jump_up) {
         keys_.insert(ControllerTypes::Key::kJump);
       }
     }
   } else {
     keys_.insert(ControllerTypes::Key::kRight);
-    if (mob_state_.IsPushesRight()) {
+    if (GetMobState().IsPushesRight()) {
       if (succesful_jump_up) {
         keys_.insert(ControllerTypes::Key::kJump);
       }
@@ -195,7 +204,7 @@ static double EuclidianDistance(QPointF lhs, QPointF rhs) {
 
 std::shared_ptr<const MovingObject> BasicStrategy::EnemySpotted() {
   if (EuclidianDistance(Model::GetInstance()->GetPlayer()->GetPosition(),
-                        mob_state_.GetPos()) <=
+                        GetMobState().GetPos()) <=
       constants::kBasicStrategyVisionRadius) {
     auto target = Model::GetInstance()->GetPlayer();
     return target;

@@ -44,14 +44,12 @@ class AbstractStrategy {
  public:
   virtual void Update() = 0;
 
-  virtual std::unordered_set<ControllerTypes::Key> GetKeys() const {
-    return keys_;
-  }
+  virtual const std::unordered_set<ControllerTypes::Key>& GetKeys() const = 0;
   void SetMobState(const MobState& mob_state) { mob_state_ = mob_state; }
+  const MobState& GetMobState() const { return mob_state_; }
 
- protected:
+ private:
   MobState mob_state_;
-  std::unordered_set<ControllerTypes::Key> keys_;
 };
 
 #endif  // MODEL_ABSTRACT_STRATEGY_H_
