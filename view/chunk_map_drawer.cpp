@@ -7,10 +7,7 @@
 #include "view/block_drawer.h"
 
 ChunkMapDrawer::ChunkMapDrawer(std::shared_ptr<ChunkMap> map)
-    : map_(std::move(map)), clear_timer_() {
-  clear_timer_.callOnTimeout([this]() { ClearUnusedNodes(); });
-  clear_timer_.start(kClearTimeMSec);
-}
+    : map_(std::move(map)) {}
 
 void ChunkMapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
                                        const QRect& screen_coords) {
@@ -54,17 +51,6 @@ void ChunkMapDrawer::RenderChunk(QPixmap* buffer, const Chunk& chunk) {
         BlockDrawer::DrawBlock(&painter, QPointF(x, y) * constants::kBlockSz,
                                chunk.GetBlock(QPoint(x, y)));
       }
-    }
-  }
-}
-
-void ChunkMapDrawer::ClearUnusedNodes() {
-  for (auto i = render_buffer_.begin(); i != render_buffer_.end();) {
-    if (!i->second.is_used) {
-      i = render_buffer_.erase(i);
-    } else {
-      i->second.is_used = false;
-      ++i;
     }
   }
 }

@@ -3,11 +3,7 @@
 #include <utility>
 
 ChunkMap::ChunkMap(AbstractRegionGenerator* generator)
-    : nodes_(), generator_(generator), clear_timer_() {
-  auto clear_unused_chunks = [this]() { ClearUnusedChunks(); };
-  clear_timer_.callOnTimeout(clear_unused_chunks);
-  clear_timer_.start(kClearTimeMSec);
-}
+    : nodes_(), generator_(generator) {}
 
 const Block& ChunkMap::GetBlock(QPoint pos) {
   QPoint chunk_pos{0, 0};
@@ -42,17 +38,6 @@ QPointF ChunkMap::GetWorldCoords(QPoint chunk_pos) {
 }
 
 void ChunkMap::UseChunk(QPoint chunk_pos) { FindChunk(chunk_pos); }
-
-void ChunkMap::ClearUnusedChunks() {
-  for (auto i = nodes_.begin(); i != nodes_.end();) {
-    if (!i->second.is_used) {
-      i = nodes_.erase(i);
-    } else {
-      i->second.is_used = false;
-      ++i;
-    }
-  }
-}
 
 Chunk* ChunkMap::FindChunk(QPoint chunk_pos) {
   if (!nodes_.count(chunk_pos)) {

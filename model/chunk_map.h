@@ -10,6 +10,7 @@
 #include "model/abstract_map.h"
 #include "model/abstract_region_generator.h"
 #include "model/chunk.h"
+#include "model/clearable_map.h"
 #include "utils.h"
 
 class ChunkMap : public AbstractMap {
@@ -33,17 +34,12 @@ class ChunkMap : public AbstractMap {
     bool is_used;
   };
 
-  static constexpr int kClearTimeMSec = 1000;
-
   explicit ChunkMap(AbstractRegionGenerator* generator);
-
-  void ClearUnusedChunks();
 
   Chunk* FindChunk(QPoint chunk_pos);
 
-  std::map<QPoint, MapNode, utils::QPointCompare> nodes_;
+  containers::ClearableMap<QPoint, MapNode, utils::QPointCompare> nodes_;
   std::unique_ptr<AbstractRegionGenerator> generator_;
-  QTimer clear_timer_;
 };
 
 #endif  // MODEL_CHUNK_MAP_H_

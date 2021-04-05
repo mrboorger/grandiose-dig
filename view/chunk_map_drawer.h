@@ -9,6 +9,7 @@
 
 #include "model/chunk_map.h"
 #include "model/constants.h"
+#include "model/clearable_map.h"
 #include "utils.h"
 #include "view/abstract_map_drawer.h"
 
@@ -26,7 +27,6 @@ class ChunkMapDrawer : public AbstractMapDrawer {
       constants::kBlockSz * Chunk::kWidth;
   static constexpr int32_t kPixmapYInPixels =
       constants::kBlockSz * Chunk::kHeight;
-  static constexpr int kClearTimeMSec = 1000;
 
   struct Node {
     QPixmap pixmap;
@@ -36,11 +36,8 @@ class ChunkMapDrawer : public AbstractMapDrawer {
   const QPixmap& GetChunkPixmap(QPoint chunk_pos);
   static void RenderChunk(QPixmap* buffer, const Chunk& chunk);
 
-  void ClearUnusedNodes();
-
-  std::map<QPoint, Node, utils::QPointCompare> render_buffer_;
+  containers::ClearableMap<QPoint, Node, utils::QPointCompare> render_buffer_;
   std::shared_ptr<ChunkMap> map_;
-  QTimer clear_timer_;
 };
 
 #endif  // VIEW_CHUNK_MAP_DRAWER_H_

@@ -36,6 +36,8 @@ constexpr double kBasicStrategyWalkPrecision = 0.1;  // in blocks
 constexpr int kBasicStrategyRandomWalkChance =
     100;  // chance^(-1) * 100 percents per tick
 
+constexpr int kDefaultClearTimeMSec = 1'000;
+
 }  // namespace constants
 
 #endif  // MODEL_CONSTANTS_H_
