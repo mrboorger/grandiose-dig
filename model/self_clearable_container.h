@@ -12,6 +12,8 @@ namespace containers {
 template<typename T, int clear_time_msec, typename IsUsed, typename ClearUse>
 class SelfClearableContainer : public T {
  public:
+  using iterator = typename T::iterator;
+
   explicit SelfClearableContainer(IsUsed is_used = IsUsed(),
                                   ClearUse clear_use = ClearUse())
       : T(),
@@ -30,10 +32,15 @@ class SelfClearableContainer : public T {
     SetupTimer();
   }
 
- private:
-  using iterator = typename T::iterator;
+  bool IsCleared() {
+    bool result = is_cleared_;
+    is_cleared_ = false;
+    return result;
+  }
 
-  void ClearUsed() {
+ private:
+  void ClearUnused() {
+    is_cleared_ = true;
     for (auto i = T::begin(); i != T::end();) {
       if (!is_used_(i)) {
         i = T::erase(i);
@@ -45,13 +52,14 @@ class SelfClearableContainer : public T {
   }
 
   void SetupTimer() {
-    clear_timer_.callOnTimeout([this]() { ClearUsed(); });
+    clear_timer_.callOnTimeout([this]() { ClearUnused(); });
     clear_timer_.start(clear_time_msec);
   }
 
   QTimer clear_timer_;
   IsUsed is_used_;
   ClearUse clear_use_;
+  bool is_cleared_ = false;
 };
 
 }  // namespace containers

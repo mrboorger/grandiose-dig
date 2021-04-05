@@ -53,9 +53,9 @@ set(SOURCES
         utils.cpp
         view/block_drawer.cpp
         view/block_drawer.cpp
+        view/buffered_map_drawer.cpp
         view/camera.cpp
         view/camera.cpp
-        view/chunk_map_drawer.cpp
         view/map_drawer.cpp
         view/mob_drawer.cpp
         view/view.cpp

@@ -42,6 +42,15 @@ class MobState {
 
 class AbstractStrategy {
  public:
+  AbstractStrategy() = default;
+  AbstractStrategy(const AbstractStrategy&) = default;
+  AbstractStrategy(AbstractStrategy&&) = default;
+
+  virtual ~AbstractStrategy() = default;
+
+  AbstractStrategy& operator=(const AbstractStrategy&) = default;
+  AbstractStrategy& operator=(AbstractStrategy&&) = default;
+
   virtual void Update() = 0;
 
   virtual std::unordered_set<ControllerTypes::Key> GetKeys() const {

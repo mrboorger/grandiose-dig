@@ -6,6 +6,7 @@
 #include <QTimer>
 #include <map>
 #include <memory>
+#include <utility>
 
 #include "model/abstract_map.h"
 #include "model/abstract_region_generator.h"
@@ -19,14 +20,13 @@ class ChunkMap : public AbstractMap {
  public:
   const Block& GetBlock(QPoint pos) override;
   void SetBlock(QPoint pos, Block block) override;
+  void CacheRegion(const QRect& region) override;
 
   const Chunk& GetChunk(QPoint chunk_pos);
 
-  static void GetChunkCoords(QPoint* pos, QPoint* chunk_pos);
-  static void GetChunkCoords(QPointF pos, QPoint* chunk_pos);
+  static std::pair<QPoint, QPoint> GetChunkCoords(QPoint pos);
+  static QPoint GetChunkCoords(QPointF pos);
   static QPointF GetWorldCoords(QPoint chunk_pos);
-
-  void UseChunk(QPoint chunk_pos);
 
  private:
   struct MapNode {
@@ -38,9 +38,12 @@ class ChunkMap : public AbstractMap {
 
   Chunk* FindChunk(QPoint chunk_pos);
 
-  containers::ClearableMap<QPoint, MapNode, utils::QPointLexicographicalCompare>
-      nodes_;
+  using NodesContainer =
+      containers::ClearableMap<QPoint, MapNode,
+                               utils::QPointLexicographicalCompare>;
+  NodesContainer nodes_;
   std::unique_ptr<AbstractRegionGenerator> generator_;
+  NodesContainer::iterator last_used_;
 };
 
 #endif  // MODEL_CHUNK_MAP_H_

@@ -2,6 +2,7 @@
 #define MODEL_ABSTRACT_MAP_H_
 
 #include <QPoint>
+#include <QRect>
 
 #include "model/block.h"
 
@@ -18,6 +19,8 @@ class AbstractMap {
 
   virtual const Block& GetBlock(QPoint pos) = 0;
   virtual void SetBlock(QPoint pos, Block block) = 0;
+
+  virtual void CacheRegion(const QRect& region) { Q_UNUSED(region); }
 };
 
 #endif  // MODEL_ABSTRACT_MAP_H_
