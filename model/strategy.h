@@ -18,6 +18,10 @@ class BasicStrategy : public AbstractStrategy {
   virtual bool IsActionFinished();
   virtual void PerformAction();
   virtual ~BasicStrategy() = default;
+  BasicStrategy(const BasicStrategy& strategy) = default;
+  BasicStrategy(BasicStrategy&& strategy) = default;
+  BasicStrategy& operator=(const BasicStrategy& strategy) = default;
+  BasicStrategy& operator=(BasicStrategy&& strategy) = default;
   const std::unordered_set<ControllerTypes::Key>& GetKeys() const override {
     return keys_;
   }
@@ -45,12 +49,15 @@ class BasicStrategy : public AbstractStrategy {
   bool HasCondition(Condition condition) const {
     return (conditions_ & (1 << static_cast<uint32_t>(condition))) != 0;
   }
+
   void AddCondition(Condition condition) {
     conditions_ |= 1 << static_cast<uint32_t>(condition);
   }
+
   void RemoveCondition(Condition condition) {
     conditions_ &= ~(1 << static_cast<uint32_t>(condition));
   }
+
   void ClearConditions() { conditions_ = 0; }
 
   std::unordered_set<ControllerTypes::Key> keys_;

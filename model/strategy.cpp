@@ -41,6 +41,7 @@ void BasicStrategy::UpdateStay() {
     walk_target_ = ChooseRandomWalkPosition();
   }
 }
+
 void BasicStrategy::UpdateWalk() {
   if (HasCondition(Condition::kSeeEnemy)) {
     if (HasCondition(Condition::kCanAttack)) {

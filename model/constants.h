@@ -32,8 +32,8 @@ constexpr double kMobJumpSpeed = kPlayerJumpSpeed / 1.5;  // in blocks per tick
 constexpr double kBasicStrategyVisionRadius = 12.0;  // in blocks
 constexpr int kBasicStrategyWalkTicksCount = 300;
 constexpr int kBasicStrategyAttackTicksCount = 100;
-constexpr double kBasicStrategyWalkPrecision = 0.1;      // in blocks
-constexpr double kBasicStrategyRandomWalkChance = 0.01;  // chance
+constexpr double kBasicStrategyWalkPrecision = 0.1;  // in blocks
+constexpr double kBasicStrategyRandomWalkChance = 0.01;
 
 constexpr int kDefaultClearTimeMSec = 1'000;
 
