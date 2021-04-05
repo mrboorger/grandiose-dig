@@ -2,6 +2,7 @@
 #define MODEL_MOB_H_
 
 #include <QImage>
+#include <memory>
 
 #include "model/moving_object.h"
 #include "model/strategy.h"
