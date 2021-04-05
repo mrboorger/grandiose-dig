@@ -10,7 +10,7 @@ namespace utils {
 
 std::pair<int64_t, int64_t> ArithmeticalDivMod(int64_t a, int64_t b);
 
-struct QPointCompare {
+struct QPointLexicographicalCompare {
   bool operator()(QPoint lhs, QPoint rhs) const;
 };
 

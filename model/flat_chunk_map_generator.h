@@ -16,11 +16,12 @@ class FlatChunkMapGenerator : public AbstractMapGenerator {
    public:
     explicit FlatRegionGenerator(uint32_t seed);
 
-    uint32_t GetChunkSeed(QPoint chunk_pos) const;
-
     Chunk Generate(QPoint chunk_pos) override;
 
    private:
+    uint32_t GetChunkSeed(QPoint chunk_pos) const;
+
+    static constexpr int kSeedMod = 2000000773;
     uint32_t seed_;
   };
 

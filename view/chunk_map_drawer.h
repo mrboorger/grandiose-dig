@@ -36,7 +36,8 @@ class ChunkMapDrawer : public AbstractMapDrawer {
   const QPixmap& GetChunkPixmap(QPoint chunk_pos);
   static void RenderChunk(QPixmap* buffer, const Chunk& chunk);
 
-  containers::ClearableMap<QPoint, Node, utils::QPointCompare> render_buffer_;
+  containers::ClearableMap<QPoint, Node, utils::QPointLexicographicalCompare>
+      render_buffer_;
   std::shared_ptr<ChunkMap> map_;
 };
 

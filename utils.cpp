@@ -14,7 +14,7 @@ std::pair<int64_t, int64_t> ArithmeticalDivMod(int64_t a, int64_t b) {
   return std::make_pair((a - (b - 1)) / b, mod);
 }
 
-bool QPointCompare::operator()(QPoint lhs, QPoint rhs) const {
+bool QPointLexicographicalCompare::operator()(QPoint lhs, QPoint rhs) const {
   if (lhs.x() != rhs.x()) {
     return lhs.x() < rhs.x();
   }

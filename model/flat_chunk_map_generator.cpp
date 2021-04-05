@@ -13,7 +13,8 @@ FlatChunkMapGenerator::FlatRegionGenerator::FlatRegionGenerator(uint32_t seed)
 
 uint32_t FlatChunkMapGenerator::FlatRegionGenerator::GetChunkSeed(
     QPoint chunk_pos) const {
-  return seed_ + 2 * chunk_pos.x() + 3 * chunk_pos.y();
+  return (seed_ + 57873833LL * chunk_pos.x() + 43947077LL * chunk_pos.y()) %
+         kSeedMod;
 }
 
 Chunk FlatChunkMapGenerator::FlatRegionGenerator::Generate(QPoint chunk_pos) {

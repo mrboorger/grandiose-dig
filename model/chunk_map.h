@@ -38,7 +38,8 @@ class ChunkMap : public AbstractMap {
 
   Chunk* FindChunk(QPoint chunk_pos);
 
-  containers::ClearableMap<QPoint, MapNode, utils::QPointCompare> nodes_;
+  containers::ClearableMap<QPoint, MapNode, utils::QPointLexicographicalCompare>
+      nodes_;
   std::unique_ptr<AbstractRegionGenerator> generator_;
 };
 
