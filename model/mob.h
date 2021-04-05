@@ -3,6 +3,7 @@
 
 #include <QImage>
 #include <memory>
+#include <utility>
 
 #include "model/moving_object.h"
 #include "model/strategy.h"

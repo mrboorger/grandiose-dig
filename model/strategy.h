@@ -3,6 +3,7 @@
 
 #include <QPointF>
 #include <memory>
+#include <unordered_set>
 #include <vector>
 
 #include "model/abstract_strategy.h"
