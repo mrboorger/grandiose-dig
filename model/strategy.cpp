@@ -22,16 +22,14 @@ void BasicStrategy::Update() {
   if (IsActionFinished()) {
     SelectNewState();
   }
-  MakeAction();
+  PerformAction();
 }
 
 void BasicStrategy::SelectNewState() {
   switch (state_) {
     case State::kStay:
-      if (std::find(conditions_.begin(), conditions_.end(),
-                    Condition::kSeeEnemy) != conditions_.end()) {
-        if (std::find(conditions_.begin(), conditions_.end(),
-                      Condition::kCanAttack) != conditions_.end()) {
+      if (HasCondition(Condition::kSeeEnemy)) {
+        if (HasCondition(Condition::kCanAttack)) {
           if (attack_interval_ == 0) {
             state_ = State::kAttack;
             attack_interval_ = constants::kBasicStrategyAttackTicksCount;
@@ -48,10 +46,8 @@ void BasicStrategy::SelectNewState() {
       walk_target_ = ChooseRandomWalkPosition();
       break;
     case State::kWalk:
-      if (std::find(conditions_.begin(), conditions_.end(),
-                    Condition::kSeeEnemy) != conditions_.end()) {
-        if (std::find(conditions_.begin(), conditions_.end(),
-                      Condition::kCanAttack) != conditions_.end()) {
+      if (HasCondition(Condition::kSeeEnemy)) {
+        if (HasCondition(Condition::kCanAttack)) {
           if (attack_interval_ == 0) {
             state_ = State::kAttack;
             attack_interval_ = constants::kBasicStrategyAttackTicksCount;
@@ -71,6 +67,7 @@ void BasicStrategy::SelectNewState() {
       walk_interval_ = constants::kBasicStrategyWalkTicksCount;
       break;
     default:
+      assert(false);
       break;
   }
 }
@@ -94,13 +91,13 @@ void BasicStrategy::UpdateConditions() {
     }
     walk_target_ = target->GetPosition();
   }
-  if (attack_target_ && (!target)) {
+  if (attack_target_ && !target) {
     walk_target_ = ChooseRandomWalkPosition();
   }
   attack_target_ = target;
 }
 
-bool AlmostNearX(QPointF lhs, QPointF rhs) {
+static bool AlmostNearX(QPointF lhs, QPointF rhs) {
   return std::abs(lhs.x() - rhs.x()) <= constants::kBasicStrategyWalkPrecision;
 }
 
@@ -108,15 +105,12 @@ bool BasicStrategy::IsActionFinished() {
   static std::mt19937 rnd(time(nullptr));
   switch (state_) {
     case State::kStay:
-      if (std::find(conditions_.begin(), conditions_.end(),
-                    Condition::kSeeEnemy) != conditions_.end()) {
+      if (HasCondition(Condition::kSeeEnemy)) {
         return true;
       }
       return rnd() % constants::kBasicStrategyRandomWalkChance == 0;
     case State::kWalk:
-      if (std::find(conditions_.begin(), conditions_.end(),
-                    Condition::kCanAttack) != conditions_.end() &&
-          attack_interval_ == 0) {
+      if (HasCondition(Condition::kCanAttack) && attack_interval_ == 0) {
         return true;
       }
       if (walk_interval_ == 0) {
@@ -124,10 +118,8 @@ bool BasicStrategy::IsActionFinished() {
       }
       return (AlmostNearX(mob_state_.GetPos(), walk_target_));
     case State::kAttack:
-      if (std::find(conditions_.begin(), conditions_.end(),
-                    Condition::kSeeEnemy) != conditions_.end() &&
-          std::find(conditions_.begin(), conditions_.end(),
-                    Condition::kCanAttack) != conditions_.end()) {
+      if (HasCondition(Condition::kSeeEnemy) &&
+          HasCondition(Condition::kCanAttack)) {
         if (attack_interval_ == 0) {
           return false;
         }
@@ -138,7 +130,7 @@ bool BasicStrategy::IsActionFinished() {
   }
 }
 
-void BasicStrategy::MakeAction() {
+void BasicStrategy::PerformAction() {
   switch (state_) {
     case State::kStay:
       DoStay();
@@ -155,6 +147,7 @@ void BasicStrategy::MakeAction() {
 }
 
 void BasicStrategy::DoStay() { keys_.clear(); }
+
 void BasicStrategy::DoWalk() {
   keys_.clear();
   QPointF src = mob_state_.GetPos();
@@ -190,19 +183,21 @@ void BasicStrategy::DoWalk() {
     }
   }
 }
-void BasicStrategy::DoAttack() { qDebug() << "Attack"; }
 
-double EuclidianDistance(QPointF lhs, QPointF rhs) {
-  return std::sqrt((lhs.x() - rhs.x()) * (lhs.x() - rhs.x()) +
-                   (lhs.y() - rhs.y()) * (lhs.y() - rhs.y()));
+void BasicStrategy::DoAttack() {
+  // TODO(Wind-Eagle): This is temporary code
+  qDebug() << "Attack";
+}
+
+static double EuclidianDistance(QPointF lhs, QPointF rhs) {
+  return std::hypot(lhs.x() - rhs.x(), lhs.y() - rhs.y());
 }
 
 std::shared_ptr<const MovingObject> BasicStrategy::EnemySpotted() {
   if (EuclidianDistance(Model::GetInstance()->GetPlayer()->GetPosition(),
                         mob_state_.GetPos()) <=
       constants::kBasicStrategyVisionRadius) {
-    auto target = std::dynamic_pointer_cast<const MovingObject>(
-        Model::GetInstance()->GetPlayer());
+    auto target = Model::GetInstance()->GetPlayer();
     return target;
   }
   return nullptr;

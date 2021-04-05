@@ -43,12 +43,8 @@ class MobState {
 class AbstractStrategy {
  public:
   virtual void Update() = 0;
-  virtual void SelectNewState() = 0;
-  virtual void UpdateConditions() = 0;
-  virtual bool IsActionFinished() = 0;
-  virtual void MakeAction() = 0;
 
-  virtual const std::unordered_set<ControllerTypes::Key> GetKeys() {
+  virtual std::unordered_set<ControllerTypes::Key> GetKeys() const {
     return keys_;
   }
   void SetMobState(const MobState& mob_state) { mob_state_ = mob_state; }
@@ -56,9 +52,6 @@ class AbstractStrategy {
  protected:
   MobState mob_state_;
   std::unordered_set<ControllerTypes::Key> keys_;
-  int state_interval_ = 0;
-  int attack_interval_ = 0;
-  int walk_interval_ = 0;
 };
 
 #endif  // MODEL_ABSTRACT_STRATEGY_H_

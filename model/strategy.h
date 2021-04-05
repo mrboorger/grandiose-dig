@@ -11,11 +11,11 @@
 class BasicStrategy : public AbstractStrategy {
  public:
   BasicStrategy();
-  void Update() override;
-  void SelectNewState() override;
-  void UpdateConditions() override;
-  bool IsActionFinished() override;
-  void MakeAction() override;
+  virtual void Update();
+  virtual void SelectNewState();
+  virtual void UpdateConditions();
+  virtual bool IsActionFinished();
+  virtual void PerformAction();
 
  protected:
   void DecreaseIntervals();
@@ -25,6 +25,12 @@ class BasicStrategy : public AbstractStrategy {
   void DoWalk();
   void DoAttack();
 
+  int state_interval_ = 0;
+  int attack_interval_ = 0;
+  int walk_interval_ = 0;
+  QPointF walk_target_ = {0, 0};
+  std::shared_ptr<const MovingObject> attack_target_;
+
  private:
   enum class State { kStay, kWalk, kAttack, kStatesCount };
   enum class Condition { kSeeEnemy, kCanAttack, kConditionsCount };
@@ -33,10 +39,13 @@ class BasicStrategy : public AbstractStrategy {
   static constexpr int kConditionsCount =
       static_cast<int>(Condition::kConditionsCount);
 
+  bool HasCondition(Condition condition) {
+    return std::find(conditions_.begin(), conditions_.end(), condition) !=
+           conditions_.end();
+  }
+
   std::vector<Condition> conditions_;
-  QPointF walk_target_;
   State state_;
-  std::shared_ptr<const MovingObject> attack_target_;
 };
 
 #endif  // MODEL_STRATEGY_H_

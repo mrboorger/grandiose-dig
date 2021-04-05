@@ -1,9 +1,10 @@
 #include "model/mob.h"
 
 Mob::Mob(QPointF pos, QPointF size)
-    : MovingObject(pos, size), mob_state_(GetPosition(), GetSize()) {
-  type_ = Type::kMob;
-  strategy_ = new BasicStrategy();
+    : MovingObject(pos, size),
+      mob_state_(GetPosition(), GetSize()),
+      type_(Type::kMob),
+      strategy_(std::make_shared<BasicStrategy>()) {
   SetWalkAcceleration(constants::kMobWalkAcceleration);
   SetWalkMaxSpeed(constants::kMobWalkMaxSpeed);
   SetWalkMaxAirAcceleration(constants::kMobWalkMaxAirAcceleration);
@@ -11,8 +12,8 @@ Mob::Mob(QPointF pos, QPointF size)
 }
 
 void Mob::MoveMob() {
-  strategy_->SetMobState(MobState{GetPosition(), GetSize(), IsOnGround(),
-                                  IsOnCeil(), IsPushesLeft(), IsPushesRight()});
+  strategy_->SetMobState(MobState(GetPosition(), GetSize(), IsOnGround(),
+                                  IsOnCeil(), IsPushesLeft(), IsPushesRight()));
   strategy_->Update();
   UpdateState(strategy_->GetKeys());
 }

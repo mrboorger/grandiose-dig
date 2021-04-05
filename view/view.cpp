@@ -28,11 +28,11 @@ void View::paintEvent(QPaintEvent* event) {
       rect().center();
   painter.drawImage(point, player_image);
   auto mobs = Model::GetInstance()->GetMobs();
-  for (auto i : mobs) {
+  for (auto mob : mobs) {
     QPointF mob_point =
-        (i->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
+        (mob->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
         rect().center();
-    MobDrawer::DrawMob(&painter, mob_point, i);
+    MobDrawer::DrawMob(&painter, mob_point, mob);
   }
 }
 

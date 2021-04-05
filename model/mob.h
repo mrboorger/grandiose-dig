@@ -17,10 +17,14 @@ class Mob : public MovingObject {
 
   void MoveMob();
 
+  void SetStrategy(std::shared_ptr<AbstractStrategy> strategy) {
+    strategy_ = strategy;
+  }
+
  private:
   MobState mob_state_;
   Type type_;
-  AbstractStrategy* strategy_;
+  std::shared_ptr<AbstractStrategy> strategy_;
 };
 
 #endif  // MODEL_MOB_H_

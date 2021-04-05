@@ -32,13 +32,13 @@ Controller::Controller() : tick_timer_() {
 void Controller::SetPlayer() {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->SetPlayer(
-      std::make_shared<Player>(QPointF(-5.0, 126.0)));
+      std::make_shared<Player>(QPointF(-3.0, 126.0)));
 }
 
 void Controller::SetMob() {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->AddMob(
-      std::make_shared<Mob>(QPointF(138.0, 126.25), QPointF(0.75, 1.75)));
+      std::make_shared<Mob>(QPointF(15, 126.25), QPointF(0.75, 1.75)));
 }
 
 void Controller::TickEvent() {

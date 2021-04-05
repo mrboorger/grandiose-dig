@@ -32,7 +32,7 @@ class Model {
 
   void AddMob(const std::shared_ptr<Mob>& mob) { mobs_.insert(mob); }
   void DeleteMob(const std::shared_ptr<Mob>& mob) { mobs_.erase(mob); }
-  const std::set<std::shared_ptr<Mob>> GetMobs() const { return mobs_; }
+  const std::set<std::shared_ptr<Mob>>& GetMobs() const { return mobs_; }
 
   void MoveObjects(
       const std::unordered_set<ControllerTypes::Key>& pressed_keys);
