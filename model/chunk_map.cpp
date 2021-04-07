@@ -3,7 +3,7 @@
 #include <utility>
 
 ChunkMap::ChunkMap(AbstractRegionGenerator* generator)
-    : nodes_(), generator_(generator), last_used_(nodes_.end()) {}
+    : generator_(generator), last_used_(nodes_.end()) {}
 
 const Block& ChunkMap::GetBlock(QPoint pos) {
   QPoint chunk_pos{0, 0};

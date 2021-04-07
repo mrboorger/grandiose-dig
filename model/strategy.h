@@ -18,10 +18,15 @@ class BasicStrategy : public AbstractStrategy {
   virtual bool IsActionFinished();
   virtual void PerformAction();
   virtual ~BasicStrategy() = default;
+
   BasicStrategy(const BasicStrategy& strategy) = default;
+
   BasicStrategy(BasicStrategy&& strategy) = default;
+
   BasicStrategy& operator=(const BasicStrategy& strategy) = default;
+
   BasicStrategy& operator=(BasicStrategy&& strategy) = default;
+
   const std::unordered_set<ControllerTypes::Key>& GetKeys() const override {
     return keys_;
   }

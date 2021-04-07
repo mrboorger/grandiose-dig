@@ -20,6 +20,7 @@ uint32_t FlatChunkMapGenerator::FlatRegionGenerator::GetChunkSeed(
 Chunk FlatChunkMapGenerator::FlatRegionGenerator::Generate(QPoint chunk_pos) {
   Chunk chunk;
   std::mt19937 gen(GetChunkSeed(chunk_pos));
+  // TODO(Wind-Eagle): This is temporary code
   for (int32_t y = 0; y < Chunk::kHeight; ++y) {
     for (int32_t x = 0; x < Chunk::kWidth; ++x) {
       if (chunk_pos.y() > 1 || gen() % 20 == 0) {
