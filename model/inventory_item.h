@@ -10,17 +10,21 @@ class InventoryItem {
     kTypesCount,
   };
 
-  InventoryItem() : type_(ItemType::kEmptyItem), count_(count_) {}
+  static constexpr int kTypesCount = static_cast<int>(ItemType::kTypesCount);
+
+  InventoryItem() : type_(ItemType::kEmptyItem), count_(0) {}
 
   InventoryItem(ItemType type, int count) : type_(type), count_(count) {}
 
-  ItemType GetItemType() { return type_; }
-  int GetCount() { return count_; }
+  ItemType GetItemType() const { return type_; }
+  int GetId() const { return static_cast<int>(type_); }
+  int GetCount() const { return count_; }
 
   void ChangeCount(int new_count) { count_ = new_count; }
 
-  int HowManyMoreItemsCanPut();
+  int HowManyMoreItemsCanPut() const;
 
+  // is usefull?
   static int GetMaximumCount(ItemType type);
 
  private:

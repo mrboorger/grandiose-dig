@@ -26,7 +26,7 @@ class Controller {
 
   void SetGeneratedMap(AbstractMapGenerator* generator);
 
-  void SetPlayer();
+  void SetPlayer() const;
 
   static ControllerTypes::Key TranslateKeyCode(int key_code);
 

@@ -2,7 +2,8 @@
 
 #include "model/constants.h"
 
-Player::Player(QPointF pos) : MovingObject(pos, constants::kPlayerSize) {
+Player::Player(QPointF pos) : MovingObject(pos, constants::kPlayerSize),
+                              inventory_(new Inventory) {
   SetGravitySpeed(constants::kPlayerGravitySpeed);
   SetJumpSpeed(constants::kPlayerJumpSpeed);
   SetWalkAcceleration(constants::kPlayerWalkAcceleration);

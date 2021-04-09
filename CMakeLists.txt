@@ -58,7 +58,7 @@ set(SOURCES
         model/player.cpp
         view/view.cpp
         model/inventory.cpp
-        model/inventory_item.cpp)
+        model/inventory_item.cpp view/inventory_drawer.cpp view/inventory_drawer.h)
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${RESOURCES})
 target_link_libraries(${PROJECT_NAME} ${REQUIRED_LIBS_QUALIFIED})

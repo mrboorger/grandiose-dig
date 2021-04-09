@@ -8,6 +8,7 @@
 #include "model/model.h"
 #include "view/abstract_map_drawer.h"
 #include "view/camera.h"
+#include "view/inventory_drawer.h"
 
 class View : public QWidget {
  public:
@@ -22,6 +23,7 @@ class View : public QWidget {
   View& operator=(View&&) = delete;
 
   void SetDrawer(AbstractMapDrawer* drawer) { drawer_.reset(drawer); }
+  void SetInventoryDrawer(InventoryDrawer* drawer);
 
  private:
   constexpr static int kRenderDistance = 70;
@@ -34,6 +36,7 @@ class View : public QWidget {
 
   Camera camera_;
   std::unique_ptr<AbstractMapDrawer> drawer_;
+  std::unique_ptr<InventoryDrawer> inventory_drawer_;
 };
 
 #endif  // VIEW_VIEW_H_

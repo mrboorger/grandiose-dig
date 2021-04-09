@@ -1,5 +1,13 @@
 #include "inventory.h"
 
+Inventory::Inventory() {
+  // TODO(mrboorger): it is a temporary code
+  items_[0] = InventoryItem(InventoryItem::ItemType::kBlockGrass, 999);
+  items_[1] = InventoryItem(InventoryItem::ItemType::kBlockGrass, 99);
+  items_[2] = InventoryItem(InventoryItem::ItemType::kBlockGrass, 9);
+  items_[3] = InventoryItem(InventoryItem::ItemType::kBlockGrass, 1);
+}
+
 void Inventory::AddItem(InventoryItem item) {
   for (InventoryItem& inventory_item : items_) {
     if (item.GetCount() == 0) {

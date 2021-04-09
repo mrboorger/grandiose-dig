@@ -7,10 +7,15 @@
 
 class Inventory {
  public:
-  void AddItem(InventoryItem item);
+  static constexpr int kItemsInColumn = 6;
+  static constexpr int kItemsInRow = 10;
 
+  Inventory();
+
+  const InventoryItem& operator[](int ind) const { return items_[ind]; }
+  void AddItem(InventoryItem item);
  private:
-  static constexpr int kInventorySize = 60;
+  static constexpr int kInventorySize = kItemsInColumn * kItemsInRow;
 
   std::array<InventoryItem, kInventorySize> items_;
 };

@@ -29,10 +29,12 @@ Controller::Controller() : tick_timer_() {
   tick_timer_.start(constants::kTickDurationMsec);
 }
 
-void Controller::SetPlayer() {
+void Controller::SetPlayer() const {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->SetPlayer(
       std::make_shared<Player>(QPointF(148.0, 126.0)));
+  View::GetInstance()->SetInventoryDrawer
+      (new InventoryDrawer(Model::GetInstance()->GetPlayer()->GetInventory()));
 }
 
 void Controller::TickEvent() {
@@ -42,14 +44,10 @@ void Controller::TickEvent() {
 
 ControllerTypes::Key Controller::TranslateKeyCode(int key_code) {
   switch (key_code) {
-    case Qt::Key::Key_Left:
-      return ControllerTypes::Key::kLeft;
-    case Qt::Key::Key_Right:
-      return ControllerTypes::Key::kRight;
-    case Qt::Key::Key_Space:
-      return ControllerTypes::Key::kJump;
-    default:
-      return ControllerTypes::Key::kUnused;
+    case Qt::Key::Key_Left:return ControllerTypes::Key::kLeft;
+    case Qt::Key::Key_Right:return ControllerTypes::Key::kRight;
+    case Qt::Key::Key_Space:return ControllerTypes::Key::kJump;
+    default:return ControllerTypes::Key::kUnused;
   }
 }
 

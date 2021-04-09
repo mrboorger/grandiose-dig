@@ -11,6 +11,6 @@ int InventoryItem::GetMaximumCount(InventoryItem::ItemType type) {
   return maximum_count[static_cast<int>(type)];
 }
 
-int InventoryItem::HowManyMoreItemsCanPut() {
+int InventoryItem::HowManyMoreItemsCanPut() const {
   return maximum_count[static_cast<int>(type_)] - count_;
 }
