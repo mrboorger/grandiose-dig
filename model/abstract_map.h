@@ -19,4 +19,3 @@ class AbstractMap {
 };
 
 #endif  // MODEL_ABSTRACT_MAP_H_
-
