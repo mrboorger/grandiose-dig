@@ -25,9 +25,9 @@ class BufferedMapDrawer : public AbstractMapDrawer {
   static constexpr int32_t kFieldOfView = 64;
   static constexpr int32_t kBufferWidth = 32;
   static constexpr int32_t kBufferHeight = 32;
-  static constexpr int32_t kPixmapXInPixels =
+  static constexpr int32_t kPixmapWidthInPixels =
       constants::kBlockSz * kBufferWidth;
-  static constexpr int32_t kPixmapYInPixels =
+  static constexpr int32_t kPixmapHeightInPixels =
       constants::kBlockSz * kBufferHeight;
 
   static QPoint RoundToBufferPos(QPoint p);

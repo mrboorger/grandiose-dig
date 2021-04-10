@@ -34,8 +34,8 @@ QPoint BufferedMapDrawer::RoundToBufferPos(QPoint p) {
 const QPixmap& BufferedMapDrawer::GetBufferPixmap(QPoint buffer_pos) {
   auto found = buffers_.Get(buffer_pos);
   if (!found) {
-    auto& buffer = buffers_.Insert(buffer_pos,
-                                   QPixmap(kPixmapXInPixels, kPixmapYInPixels));
+    auto& buffer = buffers_.Insert(
+        buffer_pos, QPixmap(kPixmapWidthInPixels, kPixmapHeightInPixels));
     RenderBuffer(&buffer, buffer_pos);
     return buffer;
   }
