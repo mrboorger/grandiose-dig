@@ -3,16 +3,16 @@
 
 #include <vector>
 
-#include "model/block.h"
 #include "model/abstract_map.h"
+#include "model/block.h"
 
-class Map : AbstractMap {
+class Map : public AbstractMap {
   friend class AbstractMapGenerator;
   friend class FlatMapGenerator;
 
  public:
-  const Block& GetBlock(int32_t x, int32_t y) override;
-  void SetBlock(int32_t x, int32_t y, Block block) override;
+  const Block& GetBlock(QPoint pos) override;
+  void SetBlock(QPoint pos, Block block) override;
 
  private:
   Map(int width, int height);

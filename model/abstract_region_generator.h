@@ -1,7 +1,7 @@
 #ifndef MODEL_ABSTRACT_REGION_GENERATOR_H_
 #define MODEL_ABSTRACT_REGION_GENERATOR_H_
 
-#include <model/chunk.h>
+#include "model/chunk.h"
 
 class AbstractRegionGenerator {
  public:
@@ -14,7 +14,7 @@ class AbstractRegionGenerator {
   AbstractRegionGenerator& operator=(const AbstractRegionGenerator&) = default;
   AbstractRegionGenerator& operator=(AbstractRegionGenerator&&) = default;
 
-  virtual Chunk Generate(int32_t chunk_x, int32_t chunk_y) = 0;
+  virtual Chunk Generate(QPoint chunk_pos) = 0;
 };
 
 #endif  // MODEL_ABSTRACT_REGION_GENERATOR_H_

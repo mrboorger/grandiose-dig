@@ -1,6 +1,7 @@
 #ifndef MODEL_CHUNK_H_
 #define MODEL_CHUNK_H_
 
+#include <QPoint>
 #include <cassert>
 #include <cstdint>
 #include <vector>
@@ -12,27 +13,22 @@ class Chunk {
   static constexpr int32_t kWidth = 64;
   static constexpr int32_t kHeight = 64;
 
-  Chunk(int32_t x_pos, int32_t y_pos);
+  Chunk() : blocks_(kWidth * kHeight, Block(Block::Type::kAir)) {}
 
-  const Block& GetBlock(int32_t x, int32_t y) const {
-    assert(0 <= x && x < kWidth);
-    assert(0 <= y && y < kHeight);
-    return blocks_[kWidth * y + x];
+  const Block& GetBlock(QPoint pos) const {
+    assert(0 <= pos.x() && pos.x() < kWidth);
+    assert(0 <= pos.y() && pos.y() < kHeight);
+    return blocks_[kWidth * pos.y() + pos.x()];
   }
 
-  void SetBlock(int32_t x, int32_t y, Block block) {
-    assert(0 <= x && x < kWidth);
-    assert(0 <= y && y < kHeight);
-    blocks_[kWidth * y + x] = block;
+  void SetBlock(QPoint pos, Block block) {
+    assert(0 <= pos.x() && pos.x() < kWidth);
+    assert(0 <= pos.y() && pos.y() < kHeight);
+    blocks_[kWidth * pos.y() + pos.x()] = block;
   }
-
-  int32_t GetPosX() const { return x_pos_; }
-  int32_t GetPosY() const { return y_pos_; }
 
  private:
   std::vector<Block> blocks_;
-  int32_t x_pos_;
-  int32_t y_pos_;
 };
 
 #endif  // MODEL_CHUNK_H_

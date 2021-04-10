@@ -6,7 +6,7 @@
 #include "model/chunk_map.h"
 #include "model/constants.h"
 #include "view/abstract_map_drawer.h"
-#include "view/chunk_map_drawer.h"
+#include "view/buffered_map_drawer.h"
 #include "view/map_drawer.h"
 
 Controller* Controller::GetInstance() {
@@ -17,11 +17,7 @@ Controller* Controller::GetInstance() {
 void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
   auto map = std::shared_ptr<AbstractMap>(generator->GenerateMap());
   Model::GetInstance()->SetMap(map);
-  if (auto chunk_map = std::dynamic_pointer_cast<ChunkMap>(map); chunk_map) {
-    View::GetInstance()->SetDrawer(new ChunkMapDrawer(chunk_map));
-  } else {
-    View::GetInstance()->SetDrawer(new MapDrawer(map));
-  }
+  View::GetInstance()->SetDrawer(new BufferedMapDrawer(map));
 }
 
 Controller::Controller() : tick_timer_() {
@@ -31,10 +27,17 @@ Controller::Controller() : tick_timer_() {
 
 void Controller::SetPlayer() const {
   // TODO(Wind-Eagle): this is temporary code.
+  // std::make_shared<Player>(QPointF(-3.0, 126.0)));
   Model::GetInstance()->SetPlayer(
       std::make_shared<Player>(QPointF(148.0, 126.0)));
   View::GetInstance()->SetInventoryDrawer
       (new InventoryDrawer(Model::GetInstance()->GetPlayer()->GetInventory()));
+}
+
+void Controller::SetMob() {
+  // TODO(Wind-Eagle): this is temporary code.
+  Model::GetInstance()->AddMob(
+      std::make_shared<Mob>(QPointF(15, 126.25), QPointF(0.75, 1.75)));
 }
 
 void Controller::TickEvent() {

@@ -5,13 +5,19 @@
 #include <unordered_set>
 
 #include "controller/controller_types.h"
-#include "model/constants.h"
 #include "model/abstract_map.h"
+#include "model/constants.h"
 #include "model/move_vector.h"
 
 class MovingObject {
  public:
   enum class State { kStay, kWalk, kJump };
+
+  MovingObject(const MovingObject&) = default;
+  MovingObject(MovingObject&&) = default;
+  virtual ~MovingObject() = default;
+  MovingObject& operator=(const MovingObject&) = default;
+  MovingObject& operator=(MovingObject&&) = default;
 
   void SetWalkAcceleration(double speed) { walk_acceleration_ = speed; }
   void SetWalkMaxSpeed(double speed) { walk_max_speed_ = speed; }
@@ -34,18 +40,28 @@ class MovingObject {
   double GetJumpSpeed() const { return jump_speed_; }
 
   QPointF GetPosition() const { return pos_; }
+  QPointF GetSize() const { return size_; }
 
-  void Move(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
+  virtual void Move(
+      const std::unordered_set<ControllerTypes::Key>& pressed_keys);
+
+  static bool IsObjectCollision(QPointF lhs_pos, QPointF lhs_size,
+                                QPointF rhs_pos, QPointF rhs_size);
+
+  bool IsOnGround() const { return pushes_ground_; }
+  bool IsOnCeil() const { return pushes_ceil_; }
+  bool IsPushesLeft() const { return pushes_left_; }
+  bool IsPushesRight() const { return pushes_right_; }
 
  protected:
   MovingObject(QPointF pos, QPointF size);
+  void UpdateState(
+      const std::unordered_set<ControllerTypes::Key>& pressed_keys);
 
  private:
   void UpdateStay(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
   void UpdateWalk(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
   void UpdateJump(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
-  void UpdateState(
-      const std::unordered_set<ControllerTypes::Key>& pressed_keys);
   void CheckCollisions(QPointF old_position);
   bool FindCollisionGround(QPointF old_position, double* ground_y,
                            const std::shared_ptr<AbstractMap>& map) const;

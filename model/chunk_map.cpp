@@ -3,81 +3,66 @@
 #include <utility>
 
 ChunkMap::ChunkMap(AbstractRegionGenerator* generator)
-    : nodes_(), generator_(generator), clear_timer_() {
-  auto clear_unused_chunks = [this]() {
-    ClearUnusedChunks();
-  };
-  clear_timer_.callOnTimeout(clear_unused_chunks);
-  clear_timer_.start(kClearTimeMSec);
+    : generator_(generator), last_used_(nodes_.end()) {}
+
+const Block& ChunkMap::GetBlock(QPoint pos) {
+  QPoint chunk_pos{0, 0};
+  std::tie(chunk_pos, pos) = GetChunkCoords(pos);
+  return FindChunk(chunk_pos)->GetBlock(pos);
 }
 
-const Block& ChunkMap::GetBlock(int32_t x, int32_t y) {
-  int32_t chunk_x = 0;
-  int32_t chunk_y = 0;
-  GetChunkCoords(&x, &y, &chunk_x, &chunk_y);
-  return FindChunk(chunk_x, chunk_y)->GetBlock(x, y);
+void ChunkMap::SetBlock(QPoint pos, Block block) {
+  QPoint chunk_pos{0, 0};
+  std::tie(chunk_pos, pos) = GetChunkCoords(pos);
+  FindChunk(chunk_pos)->SetBlock(pos, block);
 }
 
-void ChunkMap::SetBlock(int32_t x, int32_t y, Block block) {
-  int32_t chunk_x = 0;
-  int32_t chunk_y = 0;
-  GetChunkCoords(&x, &y, &chunk_x, &chunk_y);
-  FindChunk(chunk_x, chunk_y)->SetBlock(x, y, block);
-}
-
-const Chunk& ChunkMap::GetChunk(int32_t chunk_x, int32_t chunk_y) {
-  return *FindChunk(chunk_x, chunk_y);
-}
-
-void ChunkMap::GetChunkCoords(int32_t* x, int32_t* y, int32_t* chunk_x,
-                              int32_t* chunk_y) {
-  *y = *y;
-  *chunk_x = *x / Chunk::kWidth;
-  *x %= Chunk::kWidth;
-  if (*x < 0) {
-    *x += Chunk::kWidth;
-  }
-  *chunk_y = *y / Chunk::kHeight;
-  *y %= Chunk::kHeight;
-  if (*y < 0) {
-    *y += Chunk::kWidth;
+void ChunkMap::CacheRegion(const QRect& region) {
+  QPoint start = GetChunkCoords(region.topLeft()).first;
+  QPoint finish = GetChunkCoords(region.bottomRight()).first;
+  for (int chunk_x = start.x(); chunk_x <= finish.x(); ++chunk_x) {
+    for (int chunk_y = start.y(); chunk_y <= finish.y(); ++chunk_y) {
+      FindChunk(QPoint(chunk_x, chunk_y));
+    }
   }
 }
 
-void ChunkMap::GetChunkCoords(float x, float y, int32_t* chunk_x,
-                              int32_t* chunk_y) {
-  int casted_x = x;
-  int casted_y = y;
-  GetChunkCoords(&casted_x, &casted_y, chunk_x, chunk_y);
+const Chunk& ChunkMap::GetChunk(QPoint chunk_pos) {
+  return *FindChunk(chunk_pos);
 }
 
-QPointF ChunkMap::GetWorldCoords(int32_t chunk_x, int32_t chunk_y) {
-  return QPointF(chunk_x * Chunk::kWidth, chunk_y * Chunk::kHeight);
+std::pair<QPoint, QPoint> ChunkMap::GetChunkCoords(QPoint pos) {
+  QPoint chunk_pos{0, 0};
+  std::tie(chunk_pos.rx(), pos.rx()) =
+      utils::ArithmeticalDivMod(pos.x(), Chunk::kWidth);
+  std::tie(chunk_pos.ry(), pos.ry()) =
+      utils::ArithmeticalDivMod(pos.y(), Chunk::kHeight);
+  return std::make_pair(chunk_pos, pos);
 }
 
-void ChunkMap::UseChunk(int32_t chunk_x, int32_t chunk_y) {
-  FindChunk(chunk_x, chunk_y);
+QPoint ChunkMap::GetChunkCoords(QPointF pos) {
+  QPoint casted{static_cast<int32_t>(pos.x()), static_cast<int32_t>(pos.y())};
+  return GetChunkCoords(casted).first;
 }
 
-void ChunkMap::ClearUnusedChunks() {
-  for (int i = 0; i < static_cast<int>(nodes_.size()); ++i) {
-    if (!nodes_[i].is_used) {
-      std::swap(nodes_[i], nodes_.back());
-      nodes_.pop_back();
-      --i;
+QPointF ChunkMap::GetWorldCoords(QPoint chunk_pos) {
+  return QPointF(chunk_pos.x() * Chunk::kWidth, chunk_pos.y() * Chunk::kHeight);
+}
+
+Chunk* ChunkMap::FindChunk(QPoint chunk_pos) {
+  if (nodes_.IsCleared()) {
+    last_used_ = nodes_.end();
+  }
+  if (last_used_ == nodes_.end() || last_used_->first != chunk_pos) {
+    if (!nodes_.count(chunk_pos)) {
+      last_used_ = nodes_
+                       .emplace(chunk_pos,
+                                MapNode{generator_->Generate(chunk_pos), true})
+                       .first;
     } else {
-      nodes_[i].is_used = false;
+      last_used_ = nodes_.find(chunk_pos);
+      last_used_->second.is_used = true;
     }
   }
-}
-
-Chunk* ChunkMap::FindChunk(int32_t chunk_x, int32_t chunk_y) {
-  for (auto& [chunk, is_used] : nodes_) {
-    if (chunk.GetPosX() == chunk_x && chunk.GetPosY() == chunk_y) {
-      is_used = true;
-      return &chunk;
-    }
-  }
-  nodes_.push_back(MapNode{generator_->Generate(chunk_x, chunk_y), true});
-  return &nodes_.back().chunk;
+  return &last_used_->second.chunk;
 }

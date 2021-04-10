@@ -21,6 +21,22 @@ constexpr double kPlayerWalkMaxAirAcceleration =
 constexpr double kPlayerGravitySpeed = 0.01;  // in blocks per tick
 constexpr double kPlayerJumpSpeed = -0.3;     // in blocks per tick
 
+constexpr double kMobWalkAcceleration =
+    kPlayerWalkAcceleration / 3;  // in blocks per tick
+constexpr double kMobWalkMaxSpeed =
+    kPlayerWalkMaxSpeed / 2;  // in blocks per tick
+constexpr double kMobWalkMaxAirAcceleration =
+    kPlayerWalkMaxAirAcceleration / 2;                    // in blocks per tick
+constexpr double kMobJumpSpeed = kPlayerJumpSpeed / 1.5;  // in blocks per tick
+
+constexpr double kBasicStrategyVisionRadius = 12.0;  // in blocks
+constexpr int kBasicStrategyWalkTicksCount = 300;
+constexpr int kBasicStrategyAttackTicksCount = 100;
+constexpr double kBasicStrategyWalkPrecision = 0.1;  // in blocks
+constexpr double kBasicStrategyRandomWalkChance = 0.01;
+
+constexpr int kDefaultClearTimeMSec = 1'000;
+
 }  // namespace constants
 
 #endif  // MODEL_CONSTANTS_H_

@@ -3,7 +3,6 @@
 
 #include <QKeyEvent>
 #include <QTimer>
-#include <cstdint>
 #include <unordered_set>
 
 #include "controller/controller_types.h"
@@ -27,6 +26,7 @@ class Controller {
   void SetGeneratedMap(AbstractMapGenerator* generator);
 
   void SetPlayer() const;
+  void SetMob();
 
   static ControllerTypes::Key TranslateKeyCode(int key_code);
 
