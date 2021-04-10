@@ -4,10 +4,11 @@
 #include <memory>
 #include <utility>
 
+#include "model/constants.h"
 #include "view/block_drawer.h"
 
 BufferedMapDrawer::BufferedMapDrawer(std::shared_ptr<AbstractMap> map)
-    : map_(std::move(map)) {}
+    : buffers_(constants::kDefaultClearTimeMSec), map_(std::move(map)) {}
 
 void BufferedMapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
                                        const QRect& screen_coords) {
@@ -31,18 +32,14 @@ QPoint BufferedMapDrawer::RoundToBufferPos(QPoint p) {
 }
 
 const QPixmap& BufferedMapDrawer::GetBufferPixmap(QPoint buffer_pos) {
-  if (buffers_.count(buffer_pos) == 0) {
-    auto& node =
-        buffers_
-            .emplace(buffer_pos,
-                     Buffer{QPixmap(kPixmapXInPixels, kPixmapYInPixels), true})
-            .first->second;
-    RenderBuffer(&node.pixmap, buffer_pos);
-    return node.pixmap;
+  auto found = buffers_.Get(buffer_pos);
+  if (!found) {
+    auto& buffer = buffers_.Insert(buffer_pos,
+                                   QPixmap(kPixmapXInPixels, kPixmapYInPixels));
+    RenderBuffer(&buffer, buffer_pos);
+    return buffer;
   }
-  auto& node = buffers_.at(buffer_pos);
-  node.is_used = true;
-  return node.pixmap;
+  return found.value();
 }
 
 void BufferedMapDrawer::RenderBuffer(QPixmap* buffer, QPoint buffer_pos) {
@@ -59,4 +56,3 @@ void BufferedMapDrawer::RenderBuffer(QPixmap* buffer, QPoint buffer_pos) {
     }
   }
 }
-

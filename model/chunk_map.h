@@ -11,7 +11,6 @@
 #include "model/abstract_map.h"
 #include "model/abstract_region_generator.h"
 #include "model/chunk.h"
-#include "model/clearable_map.h"
 #include "model/clearable_cache.h"
 #include "utils.h"
 
