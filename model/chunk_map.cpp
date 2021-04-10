@@ -15,7 +15,7 @@ const Block& ChunkMap::GetBlock(QPoint pos) {
 void ChunkMap::SetBlock(QPoint pos, Block block) {
   QPoint chunk_pos{0, 0};
   std::tie(chunk_pos, pos) = GetChunkCoords(pos);
-  FindChunk(chunk_pos).SetBlock(pos, block);
+  GetChunkMutable(chunk_pos).SetBlock(pos, block);
 }
 
 void ChunkMap::CacheRegion(const QRect& region) {
@@ -23,13 +23,13 @@ void ChunkMap::CacheRegion(const QRect& region) {
   QPoint finish = GetChunkCoords(region.bottomRight()).first;
   for (int chunk_x = start.x(); chunk_x <= finish.x(); ++chunk_x) {
     for (int chunk_y = start.y(); chunk_y <= finish.y(); ++chunk_y) {
-      FindChunk(QPoint(chunk_x, chunk_y));
+      GetChunkMutable(QPoint(chunk_x, chunk_y));
     }
   }
 }
 
 const Chunk& ChunkMap::GetChunk(QPoint chunk_pos) {
-  return FindChunk(chunk_pos);
+  return GetChunkMutable(chunk_pos);
 }
 
 std::pair<QPoint, QPoint> ChunkMap::GetChunkCoords(QPoint pos) {
@@ -50,7 +50,7 @@ QPointF ChunkMap::GetWorldCoords(QPoint chunk_pos) {
   return QPointF(chunk_pos.x() * Chunk::kWidth, chunk_pos.y() * Chunk::kHeight);
 }
 
-Chunk& ChunkMap::FindChunk(QPoint chunk_pos) {
+Chunk& ChunkMap::GetChunkMutable(QPoint chunk_pos) {
   auto found = nodes_.Get(chunk_pos);
   if (!found) {
     return nodes_.Insert(chunk_pos, generator_->Generate(chunk_pos));

@@ -31,7 +31,7 @@ class ChunkMap : public AbstractMap {
  private:
   explicit ChunkMap(AbstractRegionGenerator* generator);
 
-  Chunk& FindChunk(QPoint chunk_pos);
+  Chunk& GetChunkMutable(QPoint chunk_pos);
 
   using NodesContainer =
       containers::ClearableCache<QPoint, Chunk,
