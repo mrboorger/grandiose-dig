@@ -8,6 +8,13 @@
 MovingObject::MovingObject(QPointF pos, QPointF size)
     : pos_(pos), size_(size) {}
 
+bool MovingObject::IsObjectCollision(QPointF lhs_pos, QPointF lhs_size,
+                                     QPointF rhs_pos, QPointF rhs_size) {
+  QRectF lhs(lhs_pos, QSizeF(lhs_size.x(), lhs_size.y()));
+  QRectF rhs(rhs_pos, QSizeF(rhs_size.x(), rhs_size.y()));
+  return lhs.intersects(rhs);
+}
+
 void MovingObject::Move(
     const std::unordered_set<ControllerTypes::Key>& pressed_keys) {
   UpdateState(pressed_keys);
@@ -140,7 +147,7 @@ QPointF DivideSegment(QPointF first, QPointF second, double percentage) {
 
 bool MovingObject::FindCollisionGround(
     QPointF old_position, double* ground_y,
-    const std::shared_ptr<const Map>& map) const {
+    const std::shared_ptr<AbstractMap>& map) const {
   QPointF old_bottom_left = old_position + QPointF(0, size_.y());
   QPointF new_bottom_left = pos_ + QPointF(0, size_.y());
   int end_y = std::floor(new_bottom_left.y());
@@ -154,10 +161,10 @@ bool MovingObject::FindCollisionGround(
             .x();
     double bottom_right_x = bottom_left_x + size_.x() - constants::kEps;
     for (double x = bottom_left_x + constants::kEps;; x += 1) {
-      int block_x = std::floor(x);
-      int block_y = std::floor(y);
-      if (map->GetBlock(block_x, block_y).GetType() != Block::Type::kAir) {
-        *ground_y = block_y - size_.y();
+      QPoint block_pos{static_cast<int>(std::floor(x)),
+                       static_cast<int>(std::floor(y))};
+      if (map->GetBlock(block_pos).GetType() != Block::Type::kAir) {
+        *ground_y = block_pos.y() - size_.y();
         return true;
       }
       if (x >= std::floor(bottom_right_x)) {
@@ -170,7 +177,7 @@ bool MovingObject::FindCollisionGround(
 
 bool MovingObject::FindCollisionCeiling(
     QPointF old_position, double* ceiling_y,
-    const std::shared_ptr<const Map>& map) const {
+    const std::shared_ptr<AbstractMap>& map) const {
   QPointF old_top_left = old_position;
   QPointF new_top_left = pos_;
   int end_y = std::floor(new_top_left.y());
@@ -184,10 +191,10 @@ bool MovingObject::FindCollisionCeiling(
             .x();
     double top_right_x = top_left_x + size_.x() - constants::kEps;
     for (double x = top_left_x + constants::kEps;; x += 1) {
-      int block_x = std::floor(x);
-      int block_y = std::floor(y);
-      if (map->GetBlock(block_x, block_y).GetType() != Block::Type::kAir) {
-        *ceiling_y = block_y + 1;
+      QPoint block_pos{static_cast<int>(std::floor(x)),
+                       static_cast<int>(std::floor(y))};
+      if (map->GetBlock(block_pos).GetType() != Block::Type::kAir) {
+        *ceiling_y = block_pos.y() + 1;
         return true;
       }
       if (x >= std::floor(top_right_x)) {
@@ -200,7 +207,7 @@ bool MovingObject::FindCollisionCeiling(
 
 bool MovingObject::FindCollisionLeft(
     QPointF old_position, double* left_wall_x,
-    const std::shared_ptr<const Map>& map) const {
+    const std::shared_ptr<AbstractMap>& map) const {
   QPointF old_bottom_left =
       old_position + QPointF(0, size_.y() - constants::kEps);
   QPointF new_bottom_left = pos_ + QPointF(0, size_.y() - constants::kEps);
@@ -215,13 +222,13 @@ bool MovingObject::FindCollisionLeft(
             .y();
     double top_left_y = bottom_left_y - size_.y() + constants::kEps;
     for (double y = bottom_left_y;; y -= 1) {
-      int block_x = std::floor(x);
-      int block_y = std::floor(y);
-      if (map->GetBlock(block_x, block_y).GetType() != Block::Type::kAir) {
-        *left_wall_x = block_x + 1;
+      QPoint block_pos{static_cast<int>(std::floor(x)),
+                       static_cast<int>(std::floor(y))};
+      if (map->GetBlock(block_pos).GetType() != Block::Type::kAir) {
+        *left_wall_x = block_pos.x() + 1;
         return true;
       }
-      if (block_y <= top_left_y) {
+      if (block_pos.y() <= top_left_y) {
         break;
       }
     }
@@ -231,7 +238,7 @@ bool MovingObject::FindCollisionLeft(
 
 bool MovingObject::FindCollisionRight(
     QPointF old_position, double* right_wall_x,
-    const std::shared_ptr<const Map>& map) const {
+    const std::shared_ptr<AbstractMap>& map) const {
   QPointF old_bottom_right =
       old_position +
       QPointF(size_.x() - constants::kEps, size_.y() - constants::kEps);
@@ -248,13 +255,13 @@ bool MovingObject::FindCollisionRight(
             .y();
     double top_right_y = bottom_right_y - size_.y() + constants::kEps;
     for (double y = bottom_right_y;; y -= 1) {
-      int block_x = std::floor(x);
-      int block_y = std::floor(y);
-      if (map->GetBlock(block_x, block_y).GetType() != Block::Type::kAir) {
-        *right_wall_x = block_x - size_.x();
+      QPoint block_pos{static_cast<int>(std::floor(x)),
+                       static_cast<int>(std::floor(y))};
+      if (map->GetBlock(block_pos).GetType() != Block::Type::kAir) {
+        *right_wall_x = block_pos.x() - size_.x();
         return true;
       }
-      if (block_y <= top_right_y) {
+      if (block_pos.y() <= top_right_y) {
         break;
       }
     }

@@ -1,34 +1,25 @@
-#include "view.h"
+#include "view/view.h"
 
 #include <QPainter>
 
 #include "controller/controller.h"
 #include "model/constants.h"
 #include "view/block_drawer.h"
+#include "view/mob_drawer.h"
 
 View* View::GetInstance() {
   static View view;
   return &view;
 }
 
-View::View() : QWidget(nullptr), camera_(QPointF(150, 150)) {}
+View::View() : QWidget(nullptr), camera_(QPointF(150, 150)), drawer_(nullptr) {}
 
 void View::paintEvent(QPaintEvent* event) {
   Q_UNUSED(event);
   QPainter painter(this);
-  auto map = Model::GetInstance()->GetMap();
   camera_.SetPoint(Model::GetInstance()->GetPlayer()->GetPosition());
-  for (int y = static_cast<int>(camera_.GetPoint().y() - kRenderDistance);
-       y <= camera_.GetPoint().y() + kRenderDistance; ++y) {
-    for (int x = static_cast<int>(camera_.GetPoint().x() - kRenderDistance);
-         x <= camera_.GetPoint().x() + kRenderDistance; ++x) {
-      QPointF point =
-          (QPointF(x, y) - camera_.GetPoint()) * constants::kBlockSz +
-          rect().center();
+  drawer_->DrawMapWithCenter(&painter, camera_.GetPoint(), rect());
 
-      BlockDrawer::DrawBlock(&painter, point, map->GetBlock(x, y));
-    }
-  }
   // TODO(Wind-Eagle): temporary code; need to make PlayerDrawer
   auto player = Model::GetInstance()->GetPlayer();
   QImage player_image(":/resources/textures/player.png");
@@ -36,6 +27,13 @@ void View::paintEvent(QPaintEvent* event) {
       (player->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
       rect().center();
   painter.drawImage(point, player_image);
+  auto mobs = Model::GetInstance()->GetMobs();
+  for (auto mob : mobs) {
+    QPointF mob_point =
+        (mob->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
+        rect().center();
+    MobDrawer::DrawMob(&painter, mob_point, mob);
+  }
 }
 
 void View::keyPressEvent(QKeyEvent* event) {

@@ -37,17 +37,28 @@ set(RESOURCES resources.qrc)
 set(SOURCES
         controller/controller.cpp
         main.cpp
+        model/chunk_map.cpp
+        model/flat_chunk_map_generator.cpp
         model/flat_map_generator.cpp
         model/map.cpp
+        model/mob.cpp
         model/model.cpp
-        view/block_drawer.cpp
-        view/camera.cpp
-        view/view.cpp
+        model/move_vector.cpp
         model/move_vector.cpp
         model/moving_object.cpp
-        view/camera.cpp
-        view/block_drawer.cpp
+        model/moving_object.cpp
         model/player.cpp
+        model/player.cpp
+        model/strategy.cpp
+        utils.cpp
+        view/block_drawer.cpp
+        view/block_drawer.cpp
+        view/buffered_map_drawer.cpp
+        view/camera.cpp
+        view/camera.cpp
+        view/map_drawer.cpp
+        view/mob_drawer.cpp
+        view/view.cpp
         view/view.cpp
         )
 

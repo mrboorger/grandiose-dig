@@ -1,14 +1,14 @@
-#include "map.h"
+#include "model/map.h"
 
 #include <algorithm>
 #include <utility>
 
-const Block& Map::GetBlock(int x, int y) const {
-  return blocks_[y * width_ + x];
+const Block& Map::GetBlock(QPoint pos) {
+  return blocks_[pos.y() * width_ + pos.x()];
 }
 
-void Map::SetBlock(int x, int y, Block block) {
-  blocks_[y * width_ + x] = block;
+void Map::SetBlock(QPoint pos, Block block) {
+  blocks_[pos.y() * width_ + pos.x()] = block;
 }
 
 Map::Map(int width, int height)

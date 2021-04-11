@@ -1,4 +1,4 @@
-#include "camera.h"
+#include "view/camera.h"
 
 Camera::Camera(QPointF point) : point_(point) {}
 

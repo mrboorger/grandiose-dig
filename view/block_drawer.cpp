@@ -1,4 +1,4 @@
-#include "block_drawer.h"
+#include "view/block_drawer.h"
 
 #include <QString>
 #include <array>

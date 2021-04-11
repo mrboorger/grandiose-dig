@@ -1,8 +1,13 @@
-#include "controller.h"
+#include "controller/controller.h"
 
 #include <memory>
 
+#include "model/abstract_map_generator.h"
+#include "model/chunk_map.h"
 #include "model/constants.h"
+#include "view/abstract_map_drawer.h"
+#include "view/buffered_map_drawer.h"
+#include "view/map_drawer.h"
 
 Controller* Controller::GetInstance() {
   static Controller controller;
@@ -10,7 +15,9 @@ Controller* Controller::GetInstance() {
 }
 
 void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
-  Model::GetInstance()->SetMap(std::make_shared<Map>(generator->GenerateMap()));
+  auto map = std::shared_ptr<AbstractMap>(generator->GenerateMap());
+  Model::GetInstance()->SetMap(map);
+  View::GetInstance()->SetDrawer(new BufferedMapDrawer(map));
 }
 
 Controller::Controller() : tick_timer_() {
@@ -21,7 +28,13 @@ Controller::Controller() : tick_timer_() {
 void Controller::SetPlayer() {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->SetPlayer(
-      std::make_shared<Player>(QPointF(150, 148.25)));
+      std::make_shared<Player>(QPointF(-3.0, 126.0)));
+}
+
+void Controller::SetMob() {
+  // TODO(Wind-Eagle): this is temporary code.
+  Model::GetInstance()->AddMob(
+      std::make_shared<Mob>(QPointF(15, 126.25), QPointF(0.75, 1.75)));
 }
 
 void Controller::TickEvent() {
