@@ -3,6 +3,7 @@
 
 class InventoryItem {
  public:
+  // TODO(mrboorger): change to Type
   enum class ItemType {
     kEmptyItem,
     kBlockGrass,
@@ -14,7 +15,7 @@ class InventoryItem {
 
   InventoryItem() : type_(ItemType::kEmptyItem), count_(0) {}
 
-  InventoryItem(ItemType type, int count) : type_(type), count_(count) {}
+  InventoryItem(ItemType type, int count = 1) : type_(type), count_(count) {}
 
   ItemType GetItemType() const { return type_; }
   int GetId() const { return static_cast<int>(type_); }

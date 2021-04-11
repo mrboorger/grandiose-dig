@@ -13,6 +13,8 @@ class Player : public MovingObject {
 
   std::shared_ptr<const Inventory> GetInventory() const { return inventory_; }
 
+  void PickItem(InventoryItem item) { inventory_->AddItem(item); }
+
  private:
   std::shared_ptr<Inventory> inventory_;
 };

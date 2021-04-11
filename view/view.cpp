@@ -36,7 +36,7 @@ void View::paintEvent(QPaintEvent* event) {
   for (auto mob : mobs) {
     QPointF mob_point =
         (mob->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
-        rect().center();
+            rect().center();
     MobDrawer::DrawMob(&painter, mob_point, mob);
   }
 }
@@ -47,4 +47,12 @@ void View::keyPressEvent(QKeyEvent* event) {
 
 void View::keyReleaseEvent(QKeyEvent* event) {
   Controller::GetInstance()->KeyRelease(event->key());
+}
+
+void View::mousePressEvent(QMouseEvent* event) {
+  Controller::GetInstance()->ButtonPress(event->button());
+}
+
+void View::mouseReleaseEvent(QMouseEvent* event) {
+  Controller::GetInstance()->ButtonRelease(event->button());
 }

@@ -25,6 +25,10 @@ class View : public QWidget {
   void SetDrawer(AbstractMapDrawer* drawer) { drawer_.reset(drawer); }
   void SetInventoryDrawer(InventoryDrawer* drawer);
 
+  QPointF GetCameraPos() { return camera_.GetPoint(); }
+  QRect GetRect() const { return rect(); }
+  QPoint GetCursorPos() const { return QCursor::pos() - geometry().topLeft(); }
+
  private:
   constexpr static int kRenderDistance = 70;
 
@@ -33,6 +37,8 @@ class View : public QWidget {
   void paintEvent(QPaintEvent* event) override;
   void keyPressEvent(QKeyEvent* event) override;
   void keyReleaseEvent(QKeyEvent* event) override;
+  void mousePressEvent(QMouseEvent* event) override;
+  void mouseReleaseEvent(QMouseEvent* event) override;
 
   Camera camera_;
   std::unique_ptr<AbstractMapDrawer> drawer_;
