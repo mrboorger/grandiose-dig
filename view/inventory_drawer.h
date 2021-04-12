@@ -2,6 +2,7 @@
 #define VIEW_INVENTORY_DRAWER_H_
 
 #include <QPainter>
+#include <memory>
 
 #include "model/inventory.h"
 

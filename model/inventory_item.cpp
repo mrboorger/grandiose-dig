@@ -3,11 +3,11 @@
 #include <array>
 
 namespace {
-const std::array<int, static_cast<int>(InventoryItem::ItemType::kTypesCount)>
+const std::array<int, static_cast<int>(InventoryItem::Type::kTypesCount)>
     maximum_count = {0, 999, 999};
 }  // namespace
 
-int InventoryItem::GetMaximumCount(InventoryItem::ItemType type) {
+int InventoryItem::GetMaximumCount(InventoryItem::Type type) {
   return maximum_count[static_cast<int>(type)];
 }
 

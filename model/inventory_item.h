@@ -4,20 +4,21 @@
 class InventoryItem {
  public:
   // TODO(mrboorger): change to Type
-  enum class ItemType {
+  enum class Type {
     kEmptyItem,
     kBlockGrass,
     kBlockDirt,
     kTypesCount,
   };
 
-  static constexpr int kTypesCount = static_cast<int>(ItemType::kTypesCount);
+  static constexpr int kTypesCount = static_cast<int>(Type::kTypesCount);
 
-  InventoryItem() : type_(ItemType::kEmptyItem), count_(0) {}
+  InventoryItem() : type_(Type::kEmptyItem), count_(0) {}
 
-  InventoryItem(ItemType type, int count = 1) : type_(type), count_(count) {}
+  explicit InventoryItem(Type type, int count = 1)
+      : type_(type), count_(count) {}
 
-  ItemType GetItemType() const { return type_; }
+  Type GetType() const { return type_; }
   int GetId() const { return static_cast<int>(type_); }
   int GetCount() const { return count_; }
 
@@ -26,12 +27,11 @@ class InventoryItem {
   int HowManyMoreItemsCanPut() const;
 
   // is usefull?
-  static int GetMaximumCount(ItemType type);
+  static int GetMaximumCount(Type type);
 
  private:
-  ItemType type_;
+  Type type_;
   int count_;
-
 };
 
 #endif  // MODEL_INVENTORY_ITEM_H_

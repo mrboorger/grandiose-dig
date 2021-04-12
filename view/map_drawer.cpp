@@ -1,7 +1,5 @@
 #include "view/map_drawer.h"
 
-#include <utility>
-
 #include "model/constants.h"
 #include "view/block_drawer.h"
 
