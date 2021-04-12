@@ -4,8 +4,8 @@
 #include <QPoint>
 #include <memory>
 
-#include "model/moving_object.h"
 #include "model/inventory.h"
+#include "model/moving_object.h"
 
 class Player : public MovingObject {
  public:

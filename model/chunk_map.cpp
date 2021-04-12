@@ -1,6 +1,7 @@
 #include "model/chunk_map.h"
 
 #include <utility>
+
 #include "model/constants.h"
 
 ChunkMap::ChunkMap(AbstractRegionGenerator* generator)

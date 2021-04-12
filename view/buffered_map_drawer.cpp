@@ -11,7 +11,7 @@ BufferedMapDrawer::BufferedMapDrawer(std::shared_ptr<AbstractMap> map)
     : buffers_(constants::kDefaultClearTimeMSec), map_(std::move(map)) {}
 
 void BufferedMapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
-                                       const QRect& screen_coords) {
+                                          const QRect& screen_coords) {
   QPoint start = RoundToBufferPos(QPoint(pos.x(), pos.y()) -
                                   QPoint(kFieldOfView, kFieldOfView));
   QPoint finish = RoundToBufferPos(QPoint(pos.x(), pos.y()) +

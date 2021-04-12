@@ -17,8 +17,8 @@ class InventoryDrawer {
   static constexpr float kItemsOpacity = 0.85;
   static constexpr float kInscriptionOpacity = 0.95;
 
-  static constexpr int kItemSize = 16;  // in pixels
-  static constexpr int kCellSize = 32;  // in pixels
+  static constexpr int kItemSize = 16;   // in pixels
+  static constexpr int kCellSize = 32;   // in pixels
   static constexpr int kIndentSize = 4;  // in pixels
   static constexpr int kFontSize = 8;
 

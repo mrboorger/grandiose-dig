@@ -19,8 +19,8 @@ void Inventory::AddItem(InventoryItem item) {
       int count_items_to_add =
           std::min(inventory_item.HowManyMoreItemsCanPut(), item.GetCount());
       item.ChangeCount(item.GetCount() - count_items_to_add);
-      inventory_item.ChangeCount(
-          inventory_item.GetCount() + count_items_to_add);
+      inventory_item.ChangeCount(inventory_item.GetCount() +
+                                 count_items_to_add);
     }
   }
   if (item.GetCount() == 0) {

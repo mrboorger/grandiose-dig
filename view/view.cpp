@@ -30,13 +30,13 @@ void View::paintEvent(QPaintEvent* event) {
   QImage player_image(":/resources/textures/player.png");
   QPointF point =
       (player->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
-          rect().center();
+      rect().center();
   painter.drawImage(point, player_image);
   auto mobs = Model::GetInstance()->GetMobs();
   for (auto mob : mobs) {
     QPointF mob_point =
         (mob->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
-            rect().center();
+        rect().center();
     MobDrawer::DrawMob(&painter, mob_point, mob);
   }
 }
@@ -64,4 +64,3 @@ QPoint View::GetCursorPos() const {
 QPointF View::GetTopLeftWindowCoord() const {
   return camera_.GetPoint() - QPointF(rect().center()) / constants::kBlockSz;
 }
-

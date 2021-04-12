@@ -30,8 +30,8 @@ void Controller::SetPlayer() const {
   // std::make_shared<Player>(QPointF(-3.0, 126.0)));
   Model::GetInstance()->SetPlayer(
       std::make_shared<Player>(QPointF(148.0, 126.0)));
-  View::GetInstance()->SetInventoryDrawer
-      (new InventoryDrawer(Model::GetInstance()->GetPlayer()->GetInventory()));
+  View::GetInstance()->SetInventoryDrawer(
+      new InventoryDrawer(Model::GetInstance()->GetPlayer()->GetInventory()));
 }
 
 void Controller::SetMob() {
@@ -43,21 +43,27 @@ void Controller::SetMob() {
 void Controller::TickEvent() {
   Model::GetInstance()->MoveObjects(pressed_keys_);
   if (is_pressed_right_mouse_button) {
-    QPointF block_coord = View::GetInstance()->GetTopLeftWindowCoord()
-        + QPointF(View::GetInstance()->GetCursorPos()) / constants::kBlockSz;
+    QPointF block_coord =
+        View::GetInstance()->GetTopLeftWindowCoord() +
+        QPointF(View::GetInstance()->GetCursorPos()) / constants::kBlockSz;
     Model::GetInstance()->GetMap()->HitBlock(
         QPoint(static_cast<int>(block_coord.x()),
-               static_cast<int>(block_coord.y())), 1);
+               static_cast<int>(block_coord.y())),
+        1);
   }
   View::GetInstance()->repaint();
 }
 
 ControllerTypes::Key Controller::TranslateKeyCode(int key_code) {
   switch (key_code) {
-    case Qt::Key::Key_Left:return ControllerTypes::Key::kLeft;
-    case Qt::Key::Key_Right:return ControllerTypes::Key::kRight;
-    case Qt::Key::Key_Space:return ControllerTypes::Key::kJump;
-    default:return ControllerTypes::Key::kUnused;
+    case Qt::Key::Key_Left:
+      return ControllerTypes::Key::kLeft;
+    case Qt::Key::Key_Right:
+      return ControllerTypes::Key::kRight;
+    case Qt::Key::Key_Space:
+      return ControllerTypes::Key::kJump;
+    default:
+      return ControllerTypes::Key::kUnused;
   }
 }
 

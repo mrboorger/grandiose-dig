@@ -1,7 +1,6 @@
 #include "inventory_drawer.h"
 
 #include <QString>
-
 #include <QTextItem>
 #include <utility>
 
@@ -30,8 +29,7 @@ void InventoryDrawer::DrawInventory(QPainter* painter) {
         continue;
       }
       DrawItemSprite(painter, QPoint(i, j), id);
-      DrawItemCount(painter,
-                    QPoint(i, j),
+      DrawItemCount(painter, QPoint(i, j),
                     (*inventory_)[i * inventory_->kItemsInRow + j].GetCount());
     }
   }
@@ -43,11 +41,10 @@ void InventoryDrawer::DrawItemSprite(QPainter* painter, QPoint pos, int id) {
   }
   painter->save();
   painter->setOpacity(kItemsOpacity);
-  painter->drawImage(QPoint(
-      pos.y() * (kCellSize + kIndentSize) + kItemCorner.x(),
-      pos.x() * (kCellSize + kIndentSize)
-          + kItemCorner.y()),
-                     QImage(":/resources/textures/" + names[id]));
+  painter->drawImage(
+      QPoint(pos.y() * (kCellSize + kIndentSize) + kItemCorner.x(),
+             pos.x() * (kCellSize + kIndentSize) + kItemCorner.y()),
+      QImage(":/resources/textures/" + names[id]));
   painter->restore();
 }
 
@@ -74,9 +71,9 @@ void InventoryDrawer::LoadInventoryBackground() {
   back_painter.setOpacity(kBackgroundOpacity);
   for (int i = 0; i < inventory_->kItemsInColumn; ++i) {
     for (int j = 0; j < inventory_->kItemsInRow; ++j) {
-      back_painter.drawImage(QPoint(j * (kCellSize + kIndentSize),
-                                    i * (kCellSize + kIndentSize)),
-                             QImage(":/resources/textures/inventory_cell.png"));
+      back_painter.drawImage(
+          QPoint(j * (kCellSize + kIndentSize), i * (kCellSize + kIndentSize)),
+          QImage(":/resources/textures/inventory_cell.png"));
     }
   }
 }

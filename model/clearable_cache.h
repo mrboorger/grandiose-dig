@@ -8,7 +8,7 @@
 
 namespace containers {
 
-template<typename Key, typename Value, typename Compare = std::less<>>
+template <typename Key, typename Value, typename Compare = std::less<>>
 class ClearableCache {
  public:
   explicit ClearableCache(int clear_time_msec, Compare compare = Compare())

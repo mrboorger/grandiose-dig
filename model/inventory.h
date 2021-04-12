@@ -14,6 +14,7 @@ class Inventory {
 
   const InventoryItem& operator[](int ind) const { return items_[ind]; }
   void AddItem(InventoryItem item);
+
  private:
   static constexpr int kInventorySize = kItemsInColumn * kItemsInRow;
 

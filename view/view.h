@@ -26,7 +26,7 @@ class View : public QWidget {
   void SetInventoryDrawer(InventoryDrawer* drawer);
 
   QPointF GetTopLeftWindowCoord() const;  // in blocks
-  QPoint GetCursorPos() const;  // in pixels
+  QPoint GetCursorPos() const;            // in pixels
 
  private:
   constexpr static int kRenderDistance = 70;
