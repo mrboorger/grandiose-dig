@@ -11,7 +11,7 @@
 #include "model/abstract_map.h"
 #include "model/abstract_region_generator.h"
 #include "model/chunk.h"
-#include "model/clearable_map.h"
+#include "model/clearable_cache.h"
 #include "utils.h"
 
 class ChunkMap : public AbstractMap {
@@ -29,21 +29,16 @@ class ChunkMap : public AbstractMap {
   static QPointF GetWorldCoords(QPoint chunk_pos);
 
  private:
-  struct MapNode {
-    Chunk chunk;
-    bool is_used;
-  };
-
   explicit ChunkMap(AbstractRegionGenerator* generator);
 
-  Chunk* FindChunk(QPoint chunk_pos);
+  Chunk& GetChunkMutable(QPoint chunk_pos);
 
   using NodesContainer =
-      containers::ClearableMap<QPoint, MapNode,
-                               utils::QPointLexicographicalCompare>;
+      containers::ClearableCache<QPoint, Chunk,
+                                 utils::QPointLexicographicalCompare>;
+
   NodesContainer nodes_;
   std::unique_ptr<AbstractRegionGenerator> generator_;
-  NodesContainer::iterator last_used_;
 };
 
 #endif  // MODEL_CHUNK_MAP_H_

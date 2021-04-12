@@ -12,20 +12,19 @@
 class BasicStrategy : public AbstractStrategy {
  public:
   BasicStrategy();
+  BasicStrategy(const BasicStrategy& strategy) = default;
+  BasicStrategy(BasicStrategy&& strategy) = default;
+
+  virtual ~BasicStrategy() = default;
+
+  BasicStrategy& operator=(const BasicStrategy& strategy) = default;
+  BasicStrategy& operator=(BasicStrategy&& strategy) = default;
+
   void Update() override;
   virtual void SelectNewState();
   virtual void UpdateConditions();
   virtual bool IsActionFinished();
   virtual void PerformAction();
-  virtual ~BasicStrategy() = default;
-
-  BasicStrategy(const BasicStrategy& strategy) = default;
-
-  BasicStrategy(BasicStrategy&& strategy) = default;
-
-  BasicStrategy& operator=(const BasicStrategy& strategy) = default;
-
-  BasicStrategy& operator=(BasicStrategy&& strategy) = default;
 
   const std::unordered_set<ControllerTypes::Key>& GetKeys() const override {
     return keys_;
