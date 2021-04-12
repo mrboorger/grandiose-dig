@@ -9,8 +9,6 @@
 #include "view/buffered_map_drawer.h"
 #include "view/map_drawer.h"
 
-#include <iostream>
-
 Controller* Controller::GetInstance() {
   static Controller controller;
   return &controller;
@@ -45,16 +43,11 @@ void Controller::SetMob() {
 void Controller::TickEvent() {
   Model::GetInstance()->MoveObjects(pressed_keys_);
   if (is_pressed_right_mouse_button) {
-    // TODO(mrboorger): fix
-    QPointF pos = View::GetInstance()->GetCameraPos();
-    QPointF pos2 = View::GetInstance()->GetCursorPos()
-        - View::GetInstance()->GetRect().center();
-    pos2.setX(pos2.x() / constants::kBlockSz);
-    pos2.setY(pos2.y() / constants::kBlockSz);
-    pos += pos2;
-    // TODO(mrboorger): fix
-    std::cerr << pos.y() << std::endl;
-    Model::GetInstance()->GetMap()->HitBlock(QPoint(pos.x(), pos.y()), 1);
+    QPointF block_coord = View::GetInstance()->GetTopLeftWindowCoord()
+        + QPointF(View::GetInstance()->GetCursorPos()) / constants::kBlockSz;
+    Model::GetInstance()->GetMap()->HitBlock(
+        QPoint(static_cast<int>(block_coord.x()),
+               static_cast<int>(block_coord.y())), 1);
   }
   View::GetInstance()->repaint();
 }

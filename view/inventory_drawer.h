@@ -22,7 +22,10 @@ class InventoryDrawer {
   static constexpr int kIndentSize = 4;  // in pixels
   static constexpr int kFontSize = 8;
 
-  static constexpr QPoint kItemCorner{8, 4};
+  static constexpr QPoint kItemCorner{8, 4};  // in pixels
+
+  void DrawItemSprite(QPainter* painter, QPoint pos, int id);
+  void DrawItemCount(QPainter* painter, QPoint pos, int cnt);
 
   void LoadInventoryBackground();
 

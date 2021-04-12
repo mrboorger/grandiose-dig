@@ -56,3 +56,12 @@ void View::mousePressEvent(QMouseEvent* event) {
 void View::mouseReleaseEvent(QMouseEvent* event) {
   Controller::GetInstance()->ButtonRelease(event->button());
 }
+
+QPoint View::GetCursorPos() const {
+  return QCursor::pos() - geometry().topLeft();
+}
+
+QPointF View::GetTopLeftWindowCoord() const {
+  return camera_.GetPoint() - QPointF(rect().center()) / constants::kBlockSz;
+}
+

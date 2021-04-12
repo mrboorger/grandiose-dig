@@ -1,6 +1,8 @@
 #ifndef MODEL_INVENTORY_ITEM_H_
 #define MODEL_INVENTORY_ITEM_H_
 
+#include <cstdint>
+
 class InventoryItem {
  public:
   // TODO(mrboorger): change to Type
@@ -19,7 +21,7 @@ class InventoryItem {
       : type_(type), count_(count) {}
 
   Type GetType() const { return type_; }
-  int GetId() const { return static_cast<int>(type_); }
+  int32_t GetId() const { return static_cast<int32_t>(type_); }
   int GetCount() const { return count_; }
 
   void ChangeCount(int new_count) { count_ = new_count; }
