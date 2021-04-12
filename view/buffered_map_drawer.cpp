@@ -59,4 +59,3 @@ void BufferedMapDrawer::RenderBuffer(QPixmap* buffer, QPoint buffer_pos) {
     }
   }
 }
-

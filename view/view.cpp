@@ -12,10 +12,41 @@ View* View::GetInstance() {
   return &view;
 }
 
-View::View() : QWidget(nullptr), camera_(QPointF(150, 150)), drawer_(nullptr) {}
+View::View()
+    : QWidget(nullptr),
+      camera_(QPointF(150, 150)),
+      game_state_(GameState::kMainMenu),
+      drawer_(nullptr) {
+  main_menu_.reset(new MainMenu(this));
+  connect(main_menu_.data(), &AbstractMenu::GameStateChanged, this,
+          &View::ChangeGameState);
+  main_menu_->setVisible(false);
+}
 
-void View::paintEvent(QPaintEvent* event) {
-  Q_UNUSED(event);
+void View::ChangeGameState(GameState new_state) {
+  switch (game_state_) {
+    case GameState::kMainMenu:
+      main_menu_->setVisible(false);
+      break;
+    default:
+      break;
+  }
+  switch (new_state) {
+    case GameState::kMainMenu:
+      main_menu_->setVisible(true);
+      repaint();
+      main_menu_->setFocus();
+      break;
+    case GameState::kGame:
+      setFocus();
+      break;
+    default:
+      break;
+  }
+  game_state_ = new_state;
+}
+
+void View::DrawGame() {
   QPainter painter(this);
   camera_.SetPoint(Model::GetInstance()->GetPlayer()->GetPosition());
   drawer_->DrawMapWithCenter(&painter, camera_.GetPoint(), rect());
@@ -25,14 +56,28 @@ void View::paintEvent(QPaintEvent* event) {
   QImage player_image(":/resources/textures/player.png");
   QPointF point =
       (player->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
-      rect().center();
+          rect().center();
   painter.drawImage(point, player_image);
   auto mobs = Model::GetInstance()->GetMobs();
   for (auto mob : mobs) {
     QPointF mob_point =
         (mob->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
-        rect().center();
+            rect().center();
     MobDrawer::DrawMob(&painter, mob_point, mob);
+  }
+}
+
+void View::paintEvent(QPaintEvent* event) {
+  Q_UNUSED(event);
+  switch (game_state_) {
+    case GameState::kMainMenu:
+      main_menu_->update();
+      break;
+    case GameState::kGame:
+      DrawGame();
+      break;
+    default:
+      break;
   }
 }
 
@@ -42,4 +87,9 @@ void View::keyPressEvent(QKeyEvent* event) {
 
 void View::keyReleaseEvent(QKeyEvent* event) {
   Controller::GetInstance()->KeyRelease(event->key());
+}
+
+void View::resizeEvent(QResizeEvent* event) {
+  QWidget::resizeEvent(event);
+  main_menu_->Resize(event->size());
 }

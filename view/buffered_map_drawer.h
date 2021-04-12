@@ -46,4 +46,3 @@ class BufferedMapDrawer : public AbstractMapDrawer {
 };
 
 #endif  // VIEW_BUFFERED_MAP_DRAWER_H_
-

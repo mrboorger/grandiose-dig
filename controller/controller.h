@@ -37,7 +37,6 @@ class Controller {
   Controller();
 
   void TickEvent();
-
   QTimer tick_timer_;
   std::unordered_set<ControllerTypes::Key> pressed_keys_;
 };
