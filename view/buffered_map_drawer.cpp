@@ -26,6 +26,24 @@ void BufferedMapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
   }
 }
 
+void BufferedMapDrawer::UpdateBlock(QPoint pos) {
+  auto buffer_pos = RoundToBufferPos(pos);
+  auto buffer = buffers_.Get(buffer_pos);
+  if (!buffer) {
+    return;
+  }
+  QPainter painter(&static_cast<QPixmap&>(buffer.value()));
+  auto block = map_->GetBlock(pos);
+  auto block_drawer_pos =
+      QPointF(pos.x() - buffer_pos.x(), pos.y() - buffer_pos.y()) *
+      constants::kBlockSz;
+  if (block.IsVisible()) {
+    BlockDrawer::DrawBlock(&painter, block_drawer_pos, block);
+  } else {
+    BlockDrawer::ClearBlock(&painter, block_drawer_pos);
+  }
+}
+
 QPoint BufferedMapDrawer::RoundToBufferPos(QPoint p) {
   return QPoint(p.x() - utils::ArithmeticalMod(p.x(), kBufferWidth),
                 p.y() - utils::ArithmeticalMod(p.y(), kBufferHeight));
@@ -43,7 +61,7 @@ const QPixmap& BufferedMapDrawer::GetBufferPixmap(QPoint buffer_pos) {
 }
 
 void BufferedMapDrawer::RenderBuffer(QPixmap* buffer, QPoint buffer_pos) {
-  buffer->fill();
+  buffer->fill(QColorConstants::Transparent);
   QPainter painter(buffer);
   for (int y = 0; y < kBufferHeight; ++y) {
     for (int x = 0; x < kBufferWidth; ++x) {

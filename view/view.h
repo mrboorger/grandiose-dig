@@ -28,6 +28,8 @@ class View : public QWidget {
   QPointF GetTopLeftWindowCoord() const;  // in blocks
   QPoint GetCursorPos() const;            // in pixels
 
+  void UpdateBlock(QPoint pos) { drawer_->UpdateBlock(pos); }
+
  private:
   constexpr static int kRenderDistance = 70;
 

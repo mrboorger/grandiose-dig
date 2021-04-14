@@ -11,7 +11,3 @@ void AbstractMap::HitBlock(QPoint pos, int hit_power) {
   }
 }
 
-Block* AbstractMap::GetChangeableBlock(QPoint pos) {
-  // TODO(mrboorger): change it
-  return const_cast<Block*>(&GetBlock(pos));
-}

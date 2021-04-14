@@ -21,6 +21,12 @@ class Chunk {
     return blocks_[kWidth * pos.y() + pos.x()];
   }
 
+  Block* GetChangeableBlock(QPoint pos) {
+    assert(0 <= pos.x() && pos.x() < kWidth);
+    assert(0 <= pos.y() && pos.y() < kHeight);
+    return &blocks_[kWidth * pos.y() + pos.x()];
+  }
+
   void SetBlock(QPoint pos, Block block) {
     assert(0 <= pos.x() && pos.x() < kWidth);
     assert(0 <= pos.y() && pos.y() < kHeight);

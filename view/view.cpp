@@ -1,4 +1,5 @@
 #include "view/view.h"
+#include <qcolor.h>
 
 #include <QPainter>
 
@@ -21,6 +22,11 @@ void View::SetInventoryDrawer(InventoryDrawer* drawer) {
 void View::paintEvent(QPaintEvent* event) {
   Q_UNUSED(event);
   QPainter painter(this);
+
+  // TODO(degmuk): temporary code; replace with background drawer
+  painter.setBrush(QColorConstants::White);
+  painter.drawRect(rect());
+
   camera_.SetPoint(Model::GetInstance()->GetPlayer()->GetPosition());
   drawer_->DrawMapWithCenter(&painter, camera_.GetPoint(), rect());
   inventory_drawer_->DrawInventory(&painter);

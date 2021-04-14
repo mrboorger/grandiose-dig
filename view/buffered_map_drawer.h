@@ -20,6 +20,8 @@ class BufferedMapDrawer : public AbstractMapDrawer {
   void DrawMapWithCenter(QPainter* painter, const QPointF& pos,
                          const QRect& screen_coords) override;
 
+  void UpdateBlock(QPoint pos) override;
+
  private:
   // In blocks
   static constexpr int32_t kFieldOfView = 64;

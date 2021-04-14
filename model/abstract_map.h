@@ -17,7 +17,7 @@ class AbstractMap {
   AbstractMap& operator=(const AbstractMap&) = default;
   AbstractMap& operator=(AbstractMap&&) = default;
 
-  virtual const Block& GetBlock(QPoint pos) = 0;
+  const Block& GetBlock(QPoint pos) { return *GetChangeableBlock(pos); }
   virtual void SetBlock(QPoint pos, Block block) = 0;
 
   virtual void CacheRegion(const QRect& region) { Q_UNUSED(region); }
@@ -25,7 +25,7 @@ class AbstractMap {
   void HitBlock(QPoint pos, int hit_power);
 
  protected:
-  Block* GetChangeableBlock(QPoint pos);
+  virtual Block* GetChangeableBlock(QPoint pos) = 0;
 };
 
 #endif  // MODEL_ABSTRACT_MAP_H_

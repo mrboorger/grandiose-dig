@@ -37,9 +37,13 @@ set(RESOURCES resources.qrc)
 set(SOURCES
         controller/controller.cpp
         main.cpp
+        model/abstract_map.cpp
+        model/block.cpp
         model/chunk_map.cpp
         model/flat_chunk_map_generator.cpp
         model/flat_map_generator.cpp
+        model/inventory_item.cpp
+        model/inventory.cpp
         model/map.cpp
         model/mob.cpp
         model/model.cpp
@@ -56,12 +60,12 @@ set(SOURCES
         view/buffered_map_drawer.cpp
         view/camera.cpp
         view/camera.cpp
+        view/inventory_drawer.cpp
+        view/inventory_drawer.h
         view/map_drawer.cpp
         view/mob_drawer.cpp
         view/view.cpp
-        view/view.cpp
-        model/inventory.cpp
-        model/inventory_item.cpp view/inventory_drawer.cpp view/inventory_drawer.h model/block.cpp model/abstract_map.cpp)
+        view/view.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${RESOURCES})
 target_link_libraries(${PROJECT_NAME} ${REQUIRED_LIBS_QUALIFIED})

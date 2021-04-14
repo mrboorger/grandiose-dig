@@ -22,3 +22,8 @@ void BlockDrawer::DrawBlock(QPainter* painter, QPointF point, Block block) {
     painter->drawImage(point, images[block.GetId()]);
   }
 }
+
+void BlockDrawer::ClearBlock(QPainter* painter, QPointF point) {
+  painter->eraseRect(point.x(), point.y(), constants::kBlockSz,
+                    constants::kBlockSz);
+}

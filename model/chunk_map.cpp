@@ -7,10 +7,10 @@
 ChunkMap::ChunkMap(AbstractRegionGenerator* generator)
     : nodes_(constants::kDefaultClearTimeMSec), generator_(generator) {}
 
-const Block& ChunkMap::GetBlock(QPoint pos) {
+Block* ChunkMap::GetChangeableBlock(QPoint pos) {
   QPoint chunk_pos{0, 0};
   std::tie(chunk_pos, pos) = GetChunkCoords(pos);
-  return GetChunk(chunk_pos).GetBlock(pos);
+  return GetChunkMutable(chunk_pos).GetChangeableBlock(pos);
 }
 
 void ChunkMap::SetBlock(QPoint pos, Block block) {

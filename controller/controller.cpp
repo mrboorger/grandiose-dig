@@ -17,7 +17,7 @@ Controller* Controller::GetInstance() {
 void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
   auto map = std::shared_ptr<AbstractMap>(generator->GenerateMap());
   Model::GetInstance()->SetMap(map);
-  View::GetInstance()->SetDrawer(new MapDrawer(map));
+  View::GetInstance()->SetDrawer(new BufferedMapDrawer(map));
 }
 
 Controller::Controller() : tick_timer_() {
@@ -46,10 +46,10 @@ void Controller::TickEvent() {
     QPointF block_coord =
         View::GetInstance()->GetTopLeftWindowCoord() +
         QPointF(View::GetInstance()->GetCursorPos()) / constants::kBlockSz;
-    Model::GetInstance()->GetMap()->HitBlock(
-        QPoint(static_cast<int>(block_coord.x()),
-               static_cast<int>(block_coord.y())),
-        1);
+    QPoint block_coords_casted = QPoint(static_cast<int>(block_coord.x()),
+                                        static_cast<int>(block_coord.y()));
+    Model::GetInstance()->GetMap()->HitBlock(block_coords_casted, 1);
+    View::GetInstance()->UpdateBlock(block_coords_casted);
   }
   View::GetInstance()->repaint();
 }
