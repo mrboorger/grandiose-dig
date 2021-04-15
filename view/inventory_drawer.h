@@ -13,7 +13,7 @@ class InventoryDrawer {
   void DrawInventory(QPainter* painter);
 
  private:
-  static constexpr float kBackgroundOpacity = 0.55;
+  static constexpr float kBackgroundOpacity = 0.70;
   static constexpr float kItemsOpacity = 0.85;
   static constexpr float kInscriptionOpacity = 0.95;
 

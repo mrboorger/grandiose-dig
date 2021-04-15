@@ -29,7 +29,7 @@ class Block {
 
  private:
   Type type_;
-  // TODO(mrboorger): it is temporary code
+  // TODO(mrboorger): Make different durability_ of the blocks
   int durability_ = 5;
 };
 

@@ -17,11 +17,11 @@ int InventoryItem::HowManyMoreItemsCanPut() const {
 InventoryItem InventoryItem::GetDropItem(Block block) {
   switch (block.GetType()) {
     case Block::Type::kDirt:
-      return InventoryItem(InventoryItem::Type::kBlockDirt, 1);
+      return InventoryItem(InventoryItem::Type::kBlockDirt);
     case Block::Type::kGrass:
-      return InventoryItem(InventoryItem::Type::kBlockGrass, 1);
+      return InventoryItem(InventoryItem::Type::kBlockGrass);
     case Block::Type::kStone:
-      return InventoryItem(InventoryItem::Type::kBlockStone, 1);
+      return InventoryItem(InventoryItem::Type::kBlockStone);
     default:
       assert(false);
   }

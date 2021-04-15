@@ -7,7 +7,6 @@
 
 class InventoryItem {
  public:
-  // TODO(mrboorger): change to Type
   enum class Type {
     kEmptyItem,
     kBlockDirt,

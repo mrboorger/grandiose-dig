@@ -1,4 +1,5 @@
 #include "view/view.h"
+
 #include <qcolor.h>
 
 #include <QPainter>
@@ -29,6 +30,7 @@ void View::paintEvent(QPaintEvent* event) {
 
   camera_.SetPoint(Model::GetInstance()->GetPlayer()->GetPosition());
   drawer_->DrawMapWithCenter(&painter, camera_.GetPoint(), rect());
+
   inventory_drawer_->DrawInventory(&painter);
 
   // TODO(Wind-Eagle): temporary code; need to make PlayerDrawer
