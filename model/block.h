@@ -8,6 +8,7 @@ class Block {
   enum class Type {
     kAir,
     kDirt,
+    kGrass,
     kStone,
     kTypesCount,
   };

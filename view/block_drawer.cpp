@@ -8,7 +8,7 @@
 
 namespace {
 
-std::array<QString, Block::kTypesCount> names = {"", "grass.png"};
+std::array<QString, Block::kTypesCount> names = {"", "dirt.png", "grass.png"};
 std::array<QImage, Block::kTypesCount> images;
 
 }  // namespace
@@ -25,5 +25,5 @@ void BlockDrawer::DrawBlock(QPainter* painter, QPointF point, Block block) {
 
 void BlockDrawer::ClearBlock(QPainter* painter, QPointF point) {
   painter->eraseRect(point.x(), point.y(), constants::kBlockSz,
-                    constants::kBlockSz);
+                     constants::kBlockSz);
 }

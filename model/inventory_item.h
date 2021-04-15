@@ -3,13 +3,16 @@
 
 #include <cstdint>
 
+#include "model/block.h"
+
 class InventoryItem {
  public:
   // TODO(mrboorger): change to Type
   enum class Type {
     kEmptyItem,
-    kBlockGrass,
     kBlockDirt,
+    kBlockGrass,
+    kBlockStone,
     kTypesCount,
   };
 
@@ -28,8 +31,7 @@ class InventoryItem {
 
   int HowManyMoreItemsCanPut() const;
 
-  // is usefull?
-  static int GetMaximumCount(Type type);
+  static InventoryItem GetDropItem(Block block);
 
  private:
   Type type_;

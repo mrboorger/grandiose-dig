@@ -7,7 +7,8 @@
 namespace {
 
 std::array<QImage, InventoryItem::kTypesCount> images;
-std::array<QString, InventoryItem::kTypesCount> names = {"", "grass.png"};
+std::array<QString, InventoryItem::kTypesCount> names = {"", "dirt.png",
+                                                         "grass.png"};
 
 }  // namespace
 
