@@ -32,7 +32,8 @@ void BufferedMapDrawer::UpdateBlock(QPoint pos) {
   if (!buffer) {
     return;
   }
-  QPainter painter(&static_cast<QPixmap&>(buffer.value()));
+  auto& casted = static_cast<QPixmap&>(buffer.value());
+  QPainter painter(&casted);
   auto block = map_->GetBlock(pos);
   auto block_drawer_pos =
       QPointF(pos.x() - buffer_pos.x(), pos.y() - buffer_pos.y()) *
