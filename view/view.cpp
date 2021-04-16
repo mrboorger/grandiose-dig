@@ -24,7 +24,7 @@ void View::paintEvent(QPaintEvent* event) {
   QPainter painter(this);
 
   // TODO(degmuk): temporary code; replace with background drawer
-  painter.setBrush(QColorConstants::White);
+  painter.setBrush(Qt::white);
   painter.drawRect(rect());
 
   camera_.SetPoint(Model::GetInstance()->GetPlayer()->GetPosition());

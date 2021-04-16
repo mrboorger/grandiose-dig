@@ -1,5 +1,6 @@
 #include "controller/controller.h"
 
+#include <cmath>
 #include <memory>
 
 #include "model/abstract_map_generator.h"
@@ -46,8 +47,8 @@ void Controller::TickEvent() {
     QPointF block_coord =
         View::GetInstance()->GetTopLeftWindowCoord() +
         QPointF(View::GetInstance()->GetCursorPos()) / constants::kBlockSz;
-    QPoint block_coords_casted = QPoint(static_cast<int>(block_coord.x()),
-                                        static_cast<int>(block_coord.y()));
+    QPoint block_coords_casted =
+        QPoint(std::floor(block_coord.x()), std::floor(block_coord.y()));
     Model::GetInstance()->GetMap()->HitBlock(block_coords_casted, 1);
     View::GetInstance()->UpdateBlock(block_coords_casted);
   }

@@ -62,7 +62,7 @@ const QPixmap& BufferedMapDrawer::GetBufferPixmap(QPoint buffer_pos) {
 }
 
 void BufferedMapDrawer::RenderBuffer(QPixmap* buffer, QPoint buffer_pos) {
-  buffer->fill(QColorConstants::Transparent);
+  buffer->fill(Qt::transparent);
   QPainter painter(buffer);
   for (int y = 0; y < kBufferHeight; ++y) {
     for (int x = 0; x < kBufferWidth; ++x) {
