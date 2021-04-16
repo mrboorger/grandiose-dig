@@ -41,6 +41,9 @@ class Controller {
   Controller();
 
   void TickEvent();
+  void BreakBlock();
+  void StartAttack();
+  void PlayerAttack();
 
   QTimer tick_timer_;
   std::unordered_set<ControllerTypes::Key> pressed_keys_;

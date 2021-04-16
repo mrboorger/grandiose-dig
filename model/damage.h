@@ -5,7 +5,7 @@
 
 class Damage {
  public:
-  enum class Type { kMagic, kMob, kFall, kTypesCount };
+  enum class Type { kMagic, kMob, kPlayer, kFall, kTypesCount };
   static constexpr int kTypesCount = static_cast<int>(Type::kTypesCount);
 
   Damage() = default;
