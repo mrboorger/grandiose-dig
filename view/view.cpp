@@ -1,7 +1,6 @@
 #include "view/view.h"
 
-#include <qcolor.h>
-
+#include <QColor>
 #include <QPainter>
 
 #include "controller/controller.h"

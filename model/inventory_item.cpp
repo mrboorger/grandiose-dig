@@ -6,7 +6,7 @@
 
 namespace {
 
-const std::array<int, static_cast<int>(InventoryItem::Type::kTypesCount)>
+constexpr std::array<int, static_cast<int>(InventoryItem::Type::kTypesCount)>
     maximum_count = {0, 999, 999};
 }  // namespace
 

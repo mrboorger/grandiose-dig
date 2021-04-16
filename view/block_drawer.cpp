@@ -8,7 +8,8 @@
 
 namespace {
 
-std::array<QString, Block::kTypesCount> names = {"", "dirt.png", "grass.png"};
+const std::array<QString, Block::kTypesCount> names = {"", "dirt.png",
+                                                       "grass.png"};
 std::array<QImage, Block::kTypesCount> images;
 
 }  // namespace

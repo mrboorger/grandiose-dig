@@ -61,7 +61,6 @@ set(SOURCES
         view/camera.cpp
         view/camera.cpp
         view/inventory_drawer.cpp
-        view/inventory_drawer.h
         view/map_drawer.cpp
         view/mob_drawer.cpp
         view/view.cpp

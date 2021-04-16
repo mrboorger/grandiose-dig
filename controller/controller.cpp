@@ -29,7 +29,7 @@ void Controller::SetPlayer() const {
   // TODO(Wind-Eagle): this is temporary code.
   // std::make_shared<Player>(QPointF(-3.0, 126.0)));
   Model::GetInstance()->SetPlayer(
-      std::make_shared<Player>(QPointF(148.0, 126.0)));
+      std::make_shared<Player>(QPointF(147.0, 126.0)));
   View::GetInstance()->SetInventoryDrawer(
       new InventoryDrawer(Model::GetInstance()->GetPlayer()->GetInventory()));
 }
@@ -37,7 +37,7 @@ void Controller::SetPlayer() const {
 void Controller::SetMob() {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->AddMob(
-      std::make_shared<Mob>(QPointF(15, 126.25), QPointF(0.75, 1.75)));
+      std::make_shared<Mob>(QPointF(147.0, 126.0), QPointF(0.75, 1.75)));
 }
 
 void Controller::TickEvent() {
