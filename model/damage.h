@@ -1,5 +1,5 @@
-#ifndef DAMAGE_H_
-#define DAMAGE_H_
+#ifndef MODEL_DAMAGE_H_
+#define MODEL_DAMAGE_H_
 
 #include <QPointF>
 
@@ -9,7 +9,7 @@ class Damage {
   static constexpr int kTypesCount = static_cast<int>(Type::kTypesCount);
 
   Damage() = default;
-  Damage(QPointF source, Type type = Type::kMagic, int amount = 10);
+  explicit Damage(QPointF source, Type type = Type::kMagic, int amount = 10);
   Damage(Type type, int amount);
 
   void GetSource(QPointF source) { source_ = source; }
@@ -26,4 +26,4 @@ class Damage {
   int amount_;
 };
 
-#endif  // DAMAGE_H_
+#endif  // MODEL_DAMAGE_H_

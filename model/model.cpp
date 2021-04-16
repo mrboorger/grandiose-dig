@@ -1,5 +1,7 @@
 #include "model/model.h"
 
+#include <vector>
+
 Model* Model::GetInstance() {
   static Model model;
   return &model;

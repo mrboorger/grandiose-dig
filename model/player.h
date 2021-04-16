@@ -2,6 +2,7 @@
 #define MODEL_PLAYER_H_
 
 #include <QPoint>
+#include <algorithm>
 #include <memory>
 
 #include "model/inventory.h"
