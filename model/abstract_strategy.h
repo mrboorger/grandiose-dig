@@ -9,10 +9,12 @@
 class MobState {
  public:
   explicit MobState(QPointF pos = {0, 0}, QPointF size = {0, 0},
-                    bool on_ground = false, bool on_ceil = false,
-                    bool pushes_left = false, bool pushes_right = false)
+                    int damage = 10, bool on_ground = false,
+                    bool on_ceil = false, bool pushes_left = false,
+                    bool pushes_right = false)
       : pos_(pos),
         size_(size),
+        damage_(damage),
         on_ground_(on_ground),
         on_ceil_(on_ceil),
         pushes_left_(pushes_left),
@@ -26,6 +28,7 @@ class MobState {
 
   QPointF GetPos() const { return pos_; }
   QPointF GetSize() const { return size_; }
+  int GetDamage() const { return damage_; }
   bool IsOnGround() const { return on_ground_; }
   bool IsOnCeil() const { return on_ceil_; }
   bool IsPushesLeft() const { return pushes_left_; }
@@ -34,6 +37,7 @@ class MobState {
  private:
   QPointF pos_;
   QPointF size_;
+  int damage_;
   bool on_ground_;
   bool on_ceil_;
   bool pushes_left_;

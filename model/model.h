@@ -26,7 +26,7 @@ class Model {
 
   void SetMap(std::shared_ptr<AbstractMap> map) { map_ = std::move(map); }
 
-  std::shared_ptr<const Player> GetPlayer() const { return player_; }
+  std::shared_ptr<Player> GetPlayer() const { return player_; }
 
   void SetPlayer(const std::shared_ptr<Player>& player) { player_ = player; }
 

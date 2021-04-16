@@ -90,7 +90,7 @@ QPointF BasicStrategy::ChooseRandomWalkPosition() const {
 
 void BasicStrategy::UpdateConditions() {
   ClearConditions();
-  std::shared_ptr<const MovingObject> target = EnemySpotted();
+  std::shared_ptr<MovingObject> target = EnemySpotted();
   if (target) {
     AddCondition(Condition::kSeeEnemy);
     if (MovingObject::IsObjectCollision(
@@ -196,14 +196,16 @@ void BasicStrategy::DoWalk() {
 
 void BasicStrategy::DoAttack() {
   // TODO(Wind-Eagle): This is temporary code
-  qDebug() << "Attack";
+  Damage damage(GetMobState().GetPos(), Damage::Type::kMob,
+                GetMobState().GetDamage());
+  attack_target_->DealDamage(damage);
 }
 
 static double EuclidianDistance(QPointF lhs, QPointF rhs) {
   return std::hypot(lhs.x() - rhs.x(), lhs.y() - rhs.y());
 }
 
-std::shared_ptr<const MovingObject> BasicStrategy::EnemySpotted() {
+std::shared_ptr<MovingObject> BasicStrategy::EnemySpotted() {
   if (EuclidianDistance(Model::GetInstance()->GetPlayer()->GetPosition(),
                         GetMobState().GetPos()) <=
       constants::kBasicStrategyVisionRadius) {

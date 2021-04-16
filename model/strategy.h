@@ -32,7 +32,7 @@ class BasicStrategy : public AbstractStrategy {
 
  protected:
   void DecreaseIntervals();
-  std::shared_ptr<const MovingObject> EnemySpotted();
+  std::shared_ptr<MovingObject> EnemySpotted();
   QPointF ChooseRandomWalkPosition() const;
   void DoStay();
   void DoWalk();
@@ -69,7 +69,7 @@ class BasicStrategy : public AbstractStrategy {
   int attack_interval_ = 0;
   int walk_interval_ = 0;
   QPointF walk_target_ = {0, 0};
-  std::shared_ptr<const MovingObject> attack_target_;
+  std::shared_ptr<MovingObject> attack_target_;
   uint32_t conditions_;
   State state_;
 };

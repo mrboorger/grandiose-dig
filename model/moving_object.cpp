@@ -1,5 +1,6 @@
 #include "model/moving_object.h"
 
+#include <QDebug>
 #include <algorithm>
 #include <cmath>
 
@@ -117,6 +118,7 @@ void MovingObject::UpdateState(
     const std::unordered_set<ControllerTypes::Key>& pressed_keys) {
   QPointF old_position = pos_;
   State old_state = state_;
+  damage_ticks_ = std::max(damage_ticks_ - 1, 0);
   switch (state_) {
     case State::kStay:
       UpdateStay(pressed_keys);
@@ -136,7 +138,7 @@ void MovingObject::UpdateState(
   if (state_ != State::kJump) {
     move_vector_.ResetMomentum();
   }
-  CheckCollisions(old_position);
+  MakeMovement(old_position);
 }
 
 namespace {
@@ -269,12 +271,16 @@ bool MovingObject::FindCollisionRight(
   return false;
 }
 
+void MovingObject::MakeMovement(QPointF old_position) {
+  pos_ += move_vector_.GetSpeed();
+  pos_ += move_vector_.GetMomentum();
+  CheckCollisions(old_position);
+}
+
 void MovingObject::CheckCollisions(QPointF old_position) {
   auto map = Model::GetInstance()->GetMap();
   double ground_y = 0, ceiling_y = 0;
   double right_wall_x = 0, left_wall_x = 0;
-  pos_ += move_vector_.GetSpeed();
-  pos_ += move_vector_.GetMomentum();
   if (move_vector_.GetSpeedX() + move_vector_.GetMomentumX() <=
           constants::kEps &&
       FindCollisionLeft(old_position, &left_wall_x, map)) {
@@ -313,6 +319,7 @@ void MovingObject::CheckCollisions(QPointF old_position) {
           -constants::kEps &&
       FindCollisionGround(old_position, &ground_y, map)) {
     pushes_ground_ = true;
+    CheckFallDamage();
     pos_.setY(ground_y);
     move_vector_.SetSpeedY(0);
     move_vector_.SetMomentumY(0);
@@ -320,3 +327,40 @@ void MovingObject::CheckCollisions(QPointF old_position) {
     pushes_ground_ = false;
   }
 }
+
+void MovingObject::CheckFallDamage() {
+  double fall_damage_speed =
+      move_vector_.GetSpeedY() + move_vector_.GetMomentumY();
+  if (fall_damage_speed > constants::kFallDamageMin) {
+    Damage damage(Damage::Type::kFall,
+                  std::ceil((fall_damage_speed - constants::kFallDamageMin) /
+                            constants::kFallDamagePoint));
+    DealDamage(damage);
+  }
+}
+
+void MovingObject::DealDamage(const Damage& damage) {
+  if (damage_ticks_ != 0) {
+    return;
+  }
+  damage_ticks_ = constants::kDamageCooldown;
+  health_ -= damage.GetAmount();
+  if (damage.GetType() == Damage::Type::kMob) {
+    QPointF source = damage.GetSource();
+    QPointF damage_push = damage_acceleration_;
+    if (source.x() > pos_.x()) {
+      damage_push.setX(-damage_push.x());
+    }
+    if (!pushes_ground_) {
+      damage_push.setY(0);
+    }
+    // TranslateSpeed(damage_push) causes a non-realistic behaviour:
+    // in some cases there is to high speed of a damage push
+    move_vector_.SetSpeedX(damage_push.x());
+    move_vector_.TranslateSpeed({0, damage_push.y()});
+    MakeMovement(pos_);
+  }
+  qDebug() << "Damage: " << health_;
+}
+
+bool MovingObject::IsDead() const { return health_ <= 0; }

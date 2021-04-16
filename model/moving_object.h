@@ -7,6 +7,7 @@
 #include "controller/controller_types.h"
 #include "model/abstract_map.h"
 #include "model/constants.h"
+#include "model/damage.h"
 #include "model/move_vector.h"
 
 class MovingObject {
@@ -29,6 +30,12 @@ class MovingObject {
   void SetGravitySpeed(double speed) { gravity_speed_ = speed; }
   void SetJumpSpeed(double speed) { jump_speed_ = speed; }
 
+  void SetHealth(int health) { health_ = health; }
+  void SetDamage(int damage) { damage_ = damage; }
+  void SetDamageAcceleration(QPointF damage_acceleration) {
+    damage_acceleration_ = damage_acceleration;
+  }
+
   double GetWalkAcceleration() const { return walk_acceleration_; }
   double GetWalkMaxSpeed() const { return walk_max_speed_; }
   double GetWalkAirAcceleration() const { return walk_air_acceleration_; }
@@ -42,6 +49,10 @@ class MovingObject {
   QPointF GetPosition() const { return pos_; }
   QPointF GetSize() const { return size_; }
 
+  QPointF GetDamageAcceleration() const { return damage_acceleration_; }
+  int GetHealth() const { return health_; }
+  int GetDamage() const { return damage_; }
+
   virtual void Move(
       const std::unordered_set<ControllerTypes::Key>& pressed_keys);
 
@@ -53,6 +64,11 @@ class MovingObject {
   bool IsPushesLeft() const { return pushes_left_; }
   bool IsPushesRight() const { return pushes_right_; }
 
+  void CheckFallDamage();
+  void DealDamage(const Damage& damage);
+
+  bool IsDead() const;
+
  protected:
   MovingObject(QPointF pos, QPointF size);
   void UpdateState(
@@ -62,6 +78,7 @@ class MovingObject {
   void UpdateStay(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
   void UpdateWalk(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
   void UpdateJump(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
+  void MakeMovement(QPointF old_position);
   void CheckCollisions(QPointF old_position);
   bool FindCollisionGround(QPointF old_position, double* ground_y,
                            const std::shared_ptr<AbstractMap>& map) const;
@@ -84,7 +101,13 @@ class MovingObject {
   double gravity_speed_ = 0.01;
   double jump_speed_ = -0.3;
 
+  QPointF damage_acceleration_ = {0.05, -0.15};
+
+  int health_ = 100;
+  int damage_ = 10;
+
   int state_ticks_ = 0;
+  int damage_ticks_ = 0;
 
   bool pushes_ground_ = false;
   bool pushes_ceil_ = false;

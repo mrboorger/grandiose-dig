@@ -38,7 +38,7 @@ void Controller::SetPlayer() const {
 void Controller::SetMob() {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->AddMob(
-      std::make_shared<Mob>(QPointF(147.0, 126.0), QPointF(0.75, 1.75)));
+      std::make_shared<Mob>(QPointF(157.0, 126.0), QPointF(0.75, 1.75)));
 }
 
 void Controller::TickEvent() {
