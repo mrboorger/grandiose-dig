@@ -91,7 +91,11 @@ bool IsVisible(double x1, double y1, double x2, double y2) {
         DivideSegment(old_center, new_center,
                       static_cast<double>(std::abs(end_y - y)) / dist)
             .x();
-    double center_right_x = center_left_x;
+    double center_right_x =
+        DivideSegment(
+            old_center, new_center,
+            static_cast<double>(std::abs(std::min(dist, end_y - y + 1))) / dist)
+            .x();
     for (double x = center_left_x + constants::kEps;; x += 1) {
       QPoint block_pos{static_cast<int>(std::floor(x)),
                        static_cast<int>(std::floor(y))};
@@ -121,9 +125,9 @@ void Controller::PlayerAttack() {
   double upper_angle = constants::kPlayerLowerAttackAngle +
                        (constants::kPlayerAngleTick) * (attack_tick + 1);
   double center_x = Model::GetInstance()->GetPlayer()->GetPosition().x() +
-                    Model::GetInstance()->GetPlayer()->GetSize().x() / 2;
+                    Model::GetInstance()->GetPlayer()->GetSize().x() / 300;
   double center_y = Model::GetInstance()->GetPlayer()->GetPosition().y() +
-                    Model::GetInstance()->GetPlayer()->GetSize().y() / 2;
+                    Model::GetInstance()->GetPlayer()->GetSize().y() / 300;
   for (auto i : Model::GetInstance()->GetMobs()) {
     double mob_x = i->GetPosition().x() + i->GetSize().x() / 2 - center_x;
     double mob_y = i->GetPosition().y() + i->GetSize().y() / 2 - center_y;

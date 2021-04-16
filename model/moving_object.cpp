@@ -345,7 +345,8 @@ void MovingObject::DealDamage(const Damage& damage) {
   }
   damage_ticks_ = constants::kDamageCooldown;
   health_ -= damage.GetAmount();
-  if (damage.GetType() == Damage::Type::kMob) {
+  if (damage.GetType() == Damage::Type::kMob ||
+      damage.GetType() == Damage::Type::kPlayer) {
     QPointF source = damage.GetSource();
     QPointF damage_push = damage_acceleration_;
     if (source.x() > pos_.x()) {

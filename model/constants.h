@@ -38,12 +38,12 @@ constexpr double kPlayerAngleTick =
 constexpr double kPlayerAttackRadius = 5;
 
 constexpr double kMobWalkAcceleration =
-    kPlayerWalkAcceleration / 3;  // in blocks per tick
+    kPlayerWalkAcceleration / 2.5;  // in blocks per tick
 constexpr double kMobWalkMaxSpeed =
-    kPlayerWalkMaxSpeed / 2;  // in blocks per tick
+    kPlayerWalkMaxSpeed / 1.8;  // in blocks per tick
 constexpr double kMobWalkMaxAirAcceleration =
     kPlayerWalkMaxAirAcceleration / 2;                    // in blocks per tick
-constexpr double kMobJumpSpeed = kPlayerJumpSpeed / 1.5;  // in blocks per tick
+constexpr double kMobJumpSpeed = kPlayerJumpSpeed / 1.4;  // in blocks per tick
 constexpr QPointF kMobDamageAcceleration = {0.1, -0.15};
 constexpr int kMobHealth = 120;
 constexpr int kMobDamage = 15;

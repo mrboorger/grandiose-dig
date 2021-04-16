@@ -192,6 +192,16 @@ void BasicStrategy::DoWalk() {
       }
     }
   }
+  if (src.y() >= dst.y()) {
+    if (Model::GetInstance()
+            ->GetMap()
+            ->GetBlock(QPoint(std::floor(src.x()),
+                              std::floor(src.y() + GetMobState().GetSize().y() +
+                                         constants::kEps)))
+            .GetType() == Block::Type::kAir) {
+      keys_.insert(ControllerTypes::Key::kJump);
+    }
+  }
 }
 
 void BasicStrategy::DoAttack() {
