@@ -1,8 +1,10 @@
 #include "controller/controller.h"
 
 #include <QDebug>
+#include <algorithm>
 #include <cmath>
 #include <memory>
+#include <utility>
 
 #include "model/abstract_map_generator.h"
 #include "model/chunk_map.h"
