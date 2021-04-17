@@ -88,7 +88,6 @@ bool IsVisible(double x1, double y1, double x2, double y2) {
   int end_y = std::floor(new_center.y());
   int begin_y = std::floor(old_center.y());
   int dist = std::max(std::abs(end_y - begin_y), 1);
-  qDebug() << x1 << " " << y1 << " " << x2 << " " << y2;
   for (int y = begin_y; y >= end_y; y--) {
     double center_left_x =
         DivideSegment(old_center, new_center,
@@ -102,7 +101,6 @@ bool IsVisible(double x1, double y1, double x2, double y2) {
     for (double x = center_left_x + constants::kEps;; x += 1) {
       QPoint block_pos{static_cast<int>(std::floor(x)),
                        static_cast<int>(std::floor(y))};
-      qDebug() << block_pos;
       if (Model::GetInstance()->GetMap()->GetBlock(block_pos).GetType() !=
           Block::Type::kAir) {
         return false;
@@ -131,7 +129,7 @@ void Controller::PlayerAttack() {
   double center_x = Model::GetInstance()->GetPlayer()->GetPosition().x() +
                     Model::GetInstance()->GetPlayer()->GetSize().x() / 2;
   double center_y = Model::GetInstance()->GetPlayer()->GetPosition().y() +
-                    Model::GetInstance()->GetPlayer()->GetSize().y() / 2;
+                    Model::GetInstance()->GetPlayer()->GetSize().y() / 3;
   for (auto i : Model::GetInstance()->GetMobs()) {
     double mob_x = i->GetPosition().x() + i->GetSize().x() / 2 - center_x;
     double mob_y = i->GetPosition().y() + i->GetSize().y() / 2 - center_y;

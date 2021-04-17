@@ -63,6 +63,7 @@ class BasicStrategy : public AbstractStrategy {
   }
 
   void ClearConditions() { conditions_ = 0; }
+  bool AlmostNearX(QPointF lhs, QPointF rhs);
 
   std::unordered_set<ControllerTypes::Key> keys_;
 

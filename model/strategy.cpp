@@ -106,8 +106,14 @@ void BasicStrategy::UpdateConditions() {
   attack_target_ = target;
 }
 
-static bool AlmostNearX(QPointF lhs, QPointF rhs) {
-  return std::abs(lhs.x() - rhs.x()) <= constants::kBasicStrategyWalkPrecision;
+bool BasicStrategy::AlmostNearX(QPointF lhs, QPointF rhs) {
+  if (lhs.y() >= rhs.y()) {
+    return std::abs(lhs.x() - rhs.x()) <=
+           constants::kBasicStrategyWalkPrecision;
+  } else {
+    return std::abs(lhs.x() - rhs.x()) <=
+           constants::kBasicStrategyWalkPrecision / 100;
+  }
 }
 
 bool BasicStrategy::IsActionFinished() {
@@ -184,6 +190,17 @@ void BasicStrategy::DoWalk() {
         keys_.insert(ControllerTypes::Key::kJump);
       }
     }
+    if (src.y() >= dst.y() - constants::kMobJumpInBlocks) {
+      if (Model::GetInstance()
+              ->GetMap()
+              ->GetBlock(
+                  QPoint(std::floor(src.x()),
+                         std::floor(src.y() + GetMobState().GetSize().y() +
+                                    constants::kEps)))
+              .GetType() == Block::Type::kAir) {
+        keys_.insert(ControllerTypes::Key::kJump);
+      }
+    }
   } else {
     keys_.insert(ControllerTypes::Key::kRight);
     if (GetMobState().IsPushesRight()) {
@@ -191,15 +208,16 @@ void BasicStrategy::DoWalk() {
         keys_.insert(ControllerTypes::Key::kJump);
       }
     }
-  }
-  if (src.y() >= dst.y()) {
-    if (Model::GetInstance()
-            ->GetMap()
-            ->GetBlock(QPoint(std::floor(src.x()),
-                              std::floor(src.y() + GetMobState().GetSize().y() +
-                                         constants::kEps)))
-            .GetType() == Block::Type::kAir) {
-      keys_.insert(ControllerTypes::Key::kJump);
+    if (src.y() >= dst.y() - constants::kMobJumpInBlocks) {
+      if (Model::GetInstance()
+              ->GetMap()
+              ->GetBlock(
+                  QPoint(std::floor(src.x() + GetMobState().GetSize().x()),
+                         std::floor(src.y() + GetMobState().GetSize().y() +
+                                    constants::kEps)))
+              .GetType() == Block::Type::kAir) {
+        keys_.insert(ControllerTypes::Key::kJump);
+      }
     }
   }
 }
