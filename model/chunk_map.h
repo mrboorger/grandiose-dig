@@ -30,7 +30,7 @@ class ChunkMap : public AbstractMap {
  private:
   explicit ChunkMap(AbstractRegionGenerator* generator);
 
-  Block* GetChangeableBlock(QPoint pos) override;
+  Block* GetBlockMutable(QPoint pos) override;
 
   Chunk& GetChunkMutable(QPoint chunk_pos);
 

@@ -7,45 +7,45 @@
 namespace {
 
 std::array<QImage, InventoryItem::kTypesCount> images;
-std::array<QString, InventoryItem::kTypesCount> names = {"", "dirt.png",
-                                                         "grass.png"};
+std::array<QString, InventoryItem::kTypesCount> kNames = {"", "dirt.png",
+                                                          "grass.png"};
 
 }  // namespace
 
 InventoryDrawer::InventoryDrawer(std::shared_ptr<const Inventory> inventory)
     : inventory_(std::move(inventory)) {
   inventory_background_ =
-      QPixmap((kCellSize + kIndentSize) * inventory_->kItemsInRow,
-              (kCellSize + kIndentSize) * inventory_->kItemsInColumn);
+      QPixmap((kCellSize + kIndentSize) * Inventory::kItemsInRow,
+              (kCellSize + kIndentSize) * Inventory::kItemsInColumn);
   inventory_background_.fill(Qt::transparent);
   LoadInventoryBackground();
 }
 
 void InventoryDrawer::DrawInventory(QPainter* painter) {
   painter->drawPixmap(QPoint(0, 0), inventory_background_);
-  for (int i = 0; i < inventory_->kItemsInColumn; ++i) {
-    for (int j = 0; j < inventory_->kItemsInRow; ++j) {
-      int id = (*inventory_)[i * inventory_->kItemsInRow + j].GetId();
-      if (id == 0) {
+  for (int i = 0; i < Inventory::kItemsInColumn; ++i) {
+    for (int j = 0; j < Inventory::kItemsInRow; ++j) {
+      const auto& item = (*inventory_)[i * Inventory::kItemsInRow + j];
+      if (item.IsEmpty()) {
         continue;
       }
-      DrawItemSprite(painter, QPoint(i, j), id);
-      DrawItemCount(painter, QPoint(i, j),
-                    (*inventory_)[i * inventory_->kItemsInRow + j].GetCount());
+      DrawItemSprite(painter, QPoint(j, i), item.GetId());
+      DrawItemCount(painter, QPoint(j, i),
+                    (*inventory_)[i * Inventory::kItemsInRow + j].GetCount());
     }
   }
 }
 
 void InventoryDrawer::DrawItemSprite(QPainter* painter, QPoint pos, int id) {
   if (images[id].isNull()) {
-    images[id].load(":/resources/textures" + names[id]);
+    images[id].load(":/resources/textures/" + kNames[id]);
   }
   painter->save();
   painter->setOpacity(kItemsOpacity);
   painter->drawImage(
-      QPoint(pos.y() * (kCellSize + kIndentSize) + kItemCorner.x(),
-             pos.x() * (kCellSize + kIndentSize) + kItemCorner.y()),
-      QImage(":/resources/textures/" + names[id]));
+      QPoint(pos.x() * (kCellSize + kIndentSize) + kItemCorner.x(),
+             pos.y() * (kCellSize + kIndentSize) + kItemCorner.y()),
+      images[id]);
   painter->restore();
 }
 
@@ -54,27 +54,28 @@ void InventoryDrawer::DrawItemCount(QPainter* painter, QPoint pos, int cnt) {
   painter->setOpacity(kInscriptionOpacity);
   painter->setFont(QFont("Helvetica [Cronyx]", kFontSize));
   QRect text_rect = QRect(
-      QPoint(pos.y() * (kCellSize + kIndentSize),
-             pos.x() * (kCellSize + kIndentSize) + kItemSize + kItemCorner.y()),
-      QPoint(pos.y() * (kCellSize + kIndentSize) + kCellSize,
-             pos.x() * (kCellSize + kIndentSize) + kCellSize));
+      QPoint(pos.x() * (kCellSize + kIndentSize),
+             pos.y() * (kCellSize + kIndentSize) + kItemSize + kItemCorner.y()),
+      QPoint(pos.x() * (kCellSize + kIndentSize) + kCellSize,
+             pos.y() * (kCellSize + kIndentSize) + kCellSize));
   painter->drawText(text_rect, Qt::AlignCenter, QString::number(cnt));
   painter->restore();
 }
 
 void InventoryDrawer::LoadInventoryBackground() {
   inventory_background_ =
-      QPixmap((kCellSize + kIndentSize) * inventory_->kItemsInRow,
-              (kCellSize + kIndentSize) * inventory_->kItemsInColumn);
+      QPixmap((kCellSize + kIndentSize) * Inventory::kItemsInRow,
+              (kCellSize + kIndentSize) * Inventory::kItemsInColumn);
   inventory_background_.fill(Qt::transparent);
 
   QPainter back_painter(&inventory_background_);
   back_painter.setOpacity(kBackgroundOpacity);
-  for (int i = 0; i < inventory_->kItemsInColumn; ++i) {
-    for (int j = 0; j < inventory_->kItemsInRow; ++j) {
+  QImage cell_png(":/resources/textures/inventory_cell.png");
+  for (int i = 0; i < Inventory::kItemsInColumn; ++i) {
+    for (int j = 0; j < Inventory::kItemsInRow; ++j) {
       back_painter.drawImage(
           QPoint(j * (kCellSize + kIndentSize), i * (kCellSize + kIndentSize)),
-          QImage(":/resources/textures/inventory_cell.png"));
+          cell_png);
     }
   }
 }

@@ -26,9 +26,8 @@ Controller::Controller() : tick_timer_() {
   tick_timer_.start(constants::kTickDurationMsec);
 }
 
-void Controller::SetPlayer() const {
+void Controller::SetPlayer() {
   // TODO(Wind-Eagle): this is temporary code.
-  // std::make_shared<Player>(QPointF(-3.0, 126.0)));
   Model::GetInstance()->SetPlayer(
       std::make_shared<Player>(QPointF(147.0, 126.0)));
   View::GetInstance()->SetInventoryDrawer(
@@ -44,13 +43,9 @@ void Controller::SetMob() {
 void Controller::TickEvent() {
   Model::GetInstance()->MoveObjects(pressed_keys_);
   if (is_pressed_right_mouse_button) {
-    QPointF block_coord =
-        View::GetInstance()->GetTopLeftWindowCoord() +
-        QPointF(View::GetInstance()->GetCursorPos()) / constants::kBlockSz;
-    QPoint block_coords_casted =
-        QPoint(std::floor(block_coord.x()), std::floor(block_coord.y()));
-    Model::GetInstance()->GetMap()->HitBlock(block_coords_casted, 1);
-    View::GetInstance()->UpdateBlock(block_coords_casted);
+    QPoint block_coord = View::GetInstance()->GetBlockUnderCursorCoord();
+    Model::GetInstance()->GetMap()->HitBlock(block_coord, 1);
+    View::GetInstance()->UpdateBlock(block_coord);
   }
   View::GetInstance()->repaint();
 }

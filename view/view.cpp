@@ -2,6 +2,7 @@
 
 #include <QColor>
 #include <QPainter>
+#include <cmath>
 
 #include "controller/controller.h"
 #include "model/constants.h"
@@ -66,6 +67,12 @@ void View::mouseReleaseEvent(QMouseEvent* event) {
 
 QPoint View::GetCursorPos() const {
   return QCursor::pos() - geometry().topLeft();
+}
+
+QPoint View::GetBlockUnderCursorCoord() const {
+  QPointF pos =
+      GetTopLeftWindowCoord() + QPointF(GetCursorPos()) / constants::kBlockSz;
+  return QPoint(std::floor(pos.x()), std::floor(pos.y()));
 }
 
 QPointF View::GetTopLeftWindowCoord() const {

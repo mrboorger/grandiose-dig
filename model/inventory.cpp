@@ -12,7 +12,7 @@ Inventory::Inventory() {
 
 void Inventory::AddItem(InventoryItem item) {
   for (InventoryItem& inventory_item : items_) {
-    if (item.GetCount() == 0) {
+    if (item.IsEmpty()) {
       return;
     }
     if (inventory_item.GetType() == item.GetType()) {
@@ -28,7 +28,7 @@ void Inventory::AddItem(InventoryItem item) {
   }
   for (InventoryItem& inventory_item : items_) {
     if (inventory_item.GetType() == InventoryItem::Type::kEmptyItem) {
-      inventory_item = item;
+      inventory_item = std::move(item);
       return;
     }
   }
