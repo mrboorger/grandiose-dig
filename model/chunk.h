@@ -33,6 +33,8 @@ class Chunk {
     blocks_[kWidth * pos.y() + pos.x()] = block;
   }
 
+  void FillWith(Block block);
+
  private:
   std::vector<Block> blocks_;
 };

@@ -16,6 +16,13 @@ struct QPointLexicographicalCompare {
   bool operator()(QPoint lhs, QPoint rhs) const;
 };
 
+constexpr double MapRange(double value, double from_min, double from_max,
+                          double to_min, double to_max) {
+  return to_min +
+         (value - from_min) / (from_max - from_min) * (to_max - to_min);
+}
+
+
 }  // namespace utils
 
 #endif  // UTILS_H_
