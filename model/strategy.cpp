@@ -194,7 +194,7 @@ void BasicStrategy::DoWalk() {
       if (Model::GetInstance()
               ->GetMap()
               ->GetBlock(
-                  QPoint(std::floor(src.x()),
+                  QPoint(std::floor(src.x() + GetMobState().GetSize().x() / 2),
                          std::floor(src.y() + GetMobState().GetSize().y() +
                                     constants::kEps)))
               .GetType() == Block::Type::kAir) {
@@ -212,7 +212,7 @@ void BasicStrategy::DoWalk() {
       if (Model::GetInstance()
               ->GetMap()
               ->GetBlock(
-                  QPoint(std::floor(src.x() + GetMobState().GetSize().x()),
+                  QPoint(std::floor(src.x() + GetMobState().GetSize().x() / 2),
                          std::floor(src.y() + GetMobState().GetSize().y() +
                                     constants::kEps)))
               .GetType() == Block::Type::kAir) {
