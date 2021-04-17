@@ -1,4 +1,4 @@
-#include "block.h"
+#include "model/block.h"
 
 bool Block::DecreaseDurability(int delta) {
   if (type_ != Type::kAir) {

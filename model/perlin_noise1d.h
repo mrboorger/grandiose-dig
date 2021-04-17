@@ -9,7 +9,7 @@ class PerlinNoise1D {
   static constexpr double kMin = -1.0;
   static constexpr double kMax = 1.0;
 
-  PerlinNoise1D(int seed, int grad_period = 1'000);
+  explicit PerlinNoise1D(int seed, int grad_period = 1'000);
 
   // Returns noise in range [0; 1]
   double operator()(double x) const;
