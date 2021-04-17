@@ -1,6 +1,7 @@
 #include "inventory.h"
 
 #include <algorithm>
+#include <utility>
 
 Inventory::Inventory() {
   // TODO(mrboorger): it is a temporary code
