@@ -7,22 +7,19 @@
 namespace {
 
 constexpr std::array<int, static_cast<int>(InventoryItem::Type::kTypesCount)>
-    maximum_count = {0, 999, 999};
+    kMaximumCount = {0, 999, 999};
+const std::array<InventoryItem,
+                 static_cast<int>(InventoryItem::Type::kTypesCount)>
+    kDropItemOfBlock = {InventoryItem(InventoryItem::Type::kEmptyItem),
+                        InventoryItem(InventoryItem::Type::kBlockDirt),
+                        InventoryItem(InventoryItem::Type::kBlockGrass),
+                        InventoryItem(InventoryItem::Type::kBlockStone)};
 }  // namespace
 
 int InventoryItem::HowManyMoreItemsCanPut() const {
-  return maximum_count[static_cast<int>(type_)] - count_;
+  return kMaximumCount[static_cast<int>(type_)] - count_;
 }
 
 InventoryItem InventoryItem::GetDropItem(Block block) {
-  switch (block.GetType()) {
-    case Block::Type::kDirt:
-      return InventoryItem(InventoryItem::Type::kBlockDirt);
-    case Block::Type::kGrass:
-      return InventoryItem(InventoryItem::Type::kBlockGrass);
-    case Block::Type::kStone:
-      return InventoryItem(InventoryItem::Type::kBlockStone);
-    default:
-      assert(false);
-  }
+  return kDropItemOfBlock[block.GetId()];
 }

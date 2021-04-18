@@ -6,18 +6,14 @@
 
 namespace {
 
-std::array<QImage, InventoryItem::kTypesCount> images;
 std::array<QString, InventoryItem::kTypesCount> kNames = {"", "dirt.png",
                                                           "grass.png"};
+std::array<QImage, InventoryItem::kTypesCount> images;
 
 }  // namespace
 
 InventoryDrawer::InventoryDrawer(std::shared_ptr<const Inventory> inventory)
     : inventory_(std::move(inventory)) {
-  inventory_background_ =
-      QPixmap((kCellSize + kIndentSize) * Inventory::kItemsInRow,
-              (kCellSize + kIndentSize) * Inventory::kItemsInColumn);
-  inventory_background_.fill(Qt::transparent);
   LoadInventoryBackground();
 }
 
