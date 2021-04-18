@@ -57,7 +57,6 @@ void View::paintEvent(QPaintEvent* event) {
 }
 
 void View::DamageDealt(MovingObject::Type type) {
-  qDebug() << "!";
   static std::mt19937 rnd(time(NULL));
   uint32_t sound = rnd();
   switch (type) {
