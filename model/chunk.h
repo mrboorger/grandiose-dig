@@ -28,6 +28,8 @@ class Chunk {
     return kWidth * pos.y() + pos.x();
   }
 
+  void FillWith(Block block);
+
   std::vector<Block> blocks_;
 };
 

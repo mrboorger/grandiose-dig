@@ -1,4 +1,4 @@
-#include "inventory_item.h"
+#include "model/inventory_item.h"
 
 #include <array>
 
