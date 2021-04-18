@@ -129,7 +129,8 @@ void Controller::PlayerAttack() {
   double center_x = Model::GetInstance()->GetPlayer()->GetPosition().x() +
                     Model::GetInstance()->GetPlayer()->GetSize().x() / 2;
   double center_y = Model::GetInstance()->GetPlayer()->GetPosition().y() +
-                    Model::GetInstance()->GetPlayer()->GetSize().y() / 3;
+                    Model::GetInstance()->GetPlayer()->GetSize().y() / 2 -
+                    constants::kEps;
   for (auto i : Model::GetInstance()->GetMobs()) {
     double mob_x = i->GetPosition().x() + i->GetSize().x() / 2 - center_x;
     double mob_y = i->GetPosition().y() + i->GetSize().y() / 2 - center_y;

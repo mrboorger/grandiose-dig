@@ -12,6 +12,7 @@ Mob::Mob(QPointF pos, QPointF size)
   SetDamageAcceleration(constants::kMobDamageAcceleration);
   SetHealth(constants::kMobHealth);
   SetDamage(constants::kMobDamage);
+  SetType(MovingObject::Type::kMob);
 }
 
 void Mob::MoveMob() {

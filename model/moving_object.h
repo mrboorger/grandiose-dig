@@ -13,12 +13,16 @@
 class MovingObject {
  public:
   enum class State { kStay, kWalk, kJump };
+  enum class Type { kUndefined, kPlayer, kMob };
 
   MovingObject(const MovingObject&) = default;
   MovingObject(MovingObject&&) = default;
   virtual ~MovingObject() = default;
   MovingObject& operator=(const MovingObject&) = default;
   MovingObject& operator=(MovingObject&&) = default;
+
+  void SetType(Type type) { type_ = type; }
+  Type GetType() { return type_; }
 
   void SetWalkAcceleration(double speed) { walk_acceleration_ = speed; }
   void SetWalkMaxSpeed(double speed) { walk_max_speed_ = speed; }
@@ -65,6 +69,7 @@ class MovingObject {
   bool IsPushesRight() const { return pushes_right_; }
 
   void CheckFallDamage();
+  bool RecentlyDamaged() const { return damage_ticks_ != 0; }
   void DealDamage(const Damage& damage);
 
   bool IsDead() const;
@@ -102,6 +107,8 @@ class MovingObject {
   double jump_speed_ = -0.3;
 
   QPointF damage_acceleration_ = {0.05, -0.15};
+
+  Type type_ = Type::kUndefined;
 
   int health_ = 100;
   int damage_ = 10;

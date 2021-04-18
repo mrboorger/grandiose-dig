@@ -10,7 +10,8 @@
 #include "model/mob.h"
 #include "model/player.h"
 
-class Model {
+class Model : public QObject {
+  Q_OBJECT
  public:
   static Model* GetInstance();
 
@@ -38,6 +39,11 @@ class Model {
       const std::unordered_set<ControllerTypes::Key>& pressed_keys);
 
   void PickItemToPlayer(InventoryItem item) { player_->PickItem(item); }
+
+ signals:
+  void DamageDealt(MovingObject::Type type);
+  void BecameDead(MovingObject::Type type);
+  void MobSound(MovingObject::Type type);
 
  private:
   Model() = default;

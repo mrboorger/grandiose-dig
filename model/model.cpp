@@ -1,5 +1,7 @@
 #include "model/model.h"
 
+#include <ctime>
+#include <random>
 #include <vector>
 
 Model* Model::GetInstance() {
@@ -24,7 +26,13 @@ void Model::MoveObjects(
   }
 
   player_->Move(pressed_keys);
+
+  static std::mt19937 rnd(time(nullptr));
+  static std::uniform_real_distribution<double> distrib(0.0, 1.0);
   for (auto i : mobs_) {
     i->MoveMob();
+    if (!i->RecentlyDamaged() && distrib(rnd) < constants::kMobSoundChance) {
+      MobSound(i->GetType());
+    }
   }
 }

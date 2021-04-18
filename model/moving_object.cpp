@@ -344,6 +344,7 @@ void MovingObject::DealDamage(const Damage& damage) {
     return;
   }
   damage_ticks_ = constants::kDamageCooldown;
+  int prev_dead = IsDead();
   health_ -= damage.GetAmount();
   if (damage.GetType() == Damage::Type::kMob ||
       damage.GetType() == Damage::Type::kPlayer) {
@@ -360,6 +361,11 @@ void MovingObject::DealDamage(const Damage& damage) {
     move_vector_.SetSpeedX(damage_push.x());
     move_vector_.TranslateSpeed({0, damage_push.y()});
     MakeMovement(pos_);
+  }
+  if (IsDead() && !prev_dead) {
+    Model::GetInstance()->BecameDead(type_);
+  } else {
+    Model::GetInstance()->DamageDealt(type_);
   }
   qDebug() << "Damage: " << health_;
 }

@@ -2,6 +2,8 @@
 
 #include <QColor>
 #include <QPainter>
+#include <ctime>
+#include <random>
 
 #include "controller/controller.h"
 #include "model/constants.h"
@@ -13,7 +15,12 @@ View* View::GetInstance() {
   return &view;
 }
 
-View::View() : QWidget(nullptr), camera_(QPointF(150, 150)), drawer_(nullptr) {}
+View::View() : QWidget(nullptr), camera_(QPointF(150, 150)), drawer_(nullptr) {
+  sound_manager_ = new SoundManager();
+  connect(Model::GetInstance(), &Model::DamageDealt, this, &View::DamageDealt);
+  connect(Model::GetInstance(), &Model::BecameDead, this, &View::BecameDead);
+  connect(Model::GetInstance(), &Model::MobSound, this, &View::MobSound);
+}
 
 void View::SetInventoryDrawer(InventoryDrawer* drawer) {
   inventory_drawer_.reset(drawer);
@@ -45,6 +52,40 @@ void View::paintEvent(QPaintEvent* event) {
         (mob->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
         rect().center();
     MobDrawer::DrawMob(&painter, mob_point, mob);
+  }
+}
+
+void View::DamageDealt(MovingObject::Type type) {
+  qDebug() << "!";
+  static std::mt19937 rnd(time(NULL));
+  uint32_t sound = rnd();
+  switch (type) {
+    case MovingObject::Type::kPlayer:
+      sound_manager_->PlaySound(SoundManager::Sound::kPlayerDamage);
+      break;
+    case MovingObject::Type::kMob:
+      if (sound % 2 == 0) {
+        sound_manager_->PlaySound(SoundManager::Sound::kMobDamage1);
+      } else {
+        sound_manager_->PlaySound(SoundManager::Sound::kMobDamage2);
+      }
+      break;
+    default:
+      break;
+  }
+}
+
+void View::BecameDead(MovingObject::Type type) {
+  sound_manager_->PlaySound(SoundManager::Sound::kMobDeath);
+}
+
+void View::MobSound(MovingObject::Type type) {
+  static std::mt19937 rnd(time(NULL));
+  uint32_t sound = rnd();
+  if (sound % 2 == 0) {
+    sound_manager_->PlaySound(SoundManager::Sound::kMob1);
+  } else {
+    sound_manager_->PlaySound(SoundManager::Sound::kMob2);
   }
 }
 

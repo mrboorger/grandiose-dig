@@ -55,6 +55,8 @@ constexpr int kBasicStrategyAttackTicksCount = 100;
 constexpr double kBasicStrategyWalkPrecision = 0.1;  // in blocks
 constexpr double kBasicStrategyRandomWalkChance = 0.01;
 
+constexpr double kMobSoundChance = 0.001 / 1.5;
+
 constexpr int kDefaultClearTimeMSec = 1'000;
 
 }  // namespace constants

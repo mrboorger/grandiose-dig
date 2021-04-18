@@ -13,4 +13,5 @@ Player::Player(QPointF pos)
   SetDamageAcceleration(constants::kMobDamageAcceleration);
   SetHealth(constants::kPlayerHealth);
   SetDamage(constants::kPlayerDamage);
+  SetType(MovingObject::Type::kPlayer);
 }
