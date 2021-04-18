@@ -54,6 +54,7 @@ set(SOURCES
         model/moving_object.cpp
         model/perlin_chunk_map_generator.cpp
         model/perlin_noise1d.cpp
+        model/perlin_noise2d.cpp
         model/player.cpp
         model/player.cpp
         model/strategy.cpp

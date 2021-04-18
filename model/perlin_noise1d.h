@@ -11,7 +11,7 @@ class PerlinNoise1D {
 
   explicit PerlinNoise1D(int seed, int grad_period = 1'000);
 
-  // Returns noise in range [0; 1]
+  // Returns noise in range [-1; 1]
   double operator()(double x) const;
 
  private:

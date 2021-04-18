@@ -3,6 +3,7 @@
 
 #include <QPoint>
 #include <cassert>
+#include <cmath>
 #include <cstdint>
 #include <utility>
 
@@ -21,7 +22,6 @@ constexpr double MapRange(double value, double from_min, double from_max,
   return to_min +
          (value - from_min) / (from_max - from_min) * (to_max - to_min);
 }
-
 
 }  // namespace utils
 

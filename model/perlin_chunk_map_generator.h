@@ -4,6 +4,7 @@
 #include "model/abstract_map_generator.h"
 #include "model/abstract_region_generator.h"
 #include "model/perlin_noise1d.h"
+#include "model/perlin_noise2d.h"
 #include "model/chunk_map.h"
 
 class PerlinChunkMapGenerator : public AbstractMapGenerator {
@@ -19,7 +20,13 @@ class PerlinChunkMapGenerator : public AbstractMapGenerator {
     Chunk Generate(QPoint chunk_pos) override;
 
    private:
-    PerlinNoise1D noise_;
+    static constexpr double kCavesRate = 0.2;
+    static constexpr double kCavesScale = 10;
+    Chunk BasicGeneration(QPoint chunk_pos);
+    void GenerateCaves(Chunk* chunk, QPoint chunk_pos);
+
+    PerlinNoise1D noise1d_;
+    PerlinNoise2D noise2d_;
   };
 
   uint32_t seed_;
