@@ -48,7 +48,7 @@ void InventoryDrawer::DrawItemSprite(QPainter* painter, QPoint pos, int id) {
 void InventoryDrawer::DrawItemCount(QPainter* painter, QPoint pos, int cnt) {
   painter->save();
   painter->setOpacity(kInscriptionOpacity);
-  painter->setFont(QFont("Helvetica [Cronyx]", kFontSize));
+  painter->setFont(QFont("Calibri", kFontSize));
   QRect text_rect = QRect(
       QPoint(pos.x() * (kCellSize + kIndentSize),
              pos.y() * (kCellSize + kIndentSize) + kItemSize + kItemCorner.y()),

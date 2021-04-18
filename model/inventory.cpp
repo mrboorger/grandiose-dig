@@ -18,7 +18,7 @@ void Inventory::AddItem(InventoryItem item) {
     }
     if (inventory_item.GetType() == item.GetType()) {
       int count_items_to_add =
-          std::min(inventory_item.HowManyMoreItemsCanPut(), item.GetCount());
+          std::min(inventory_item.ItemsLeft(), item.GetCount());
       item.ChangeCount(item.GetCount() - count_items_to_add);
       inventory_item.ChangeCount(inventory_item.GetCount() +
                                  count_items_to_add);
@@ -33,4 +33,5 @@ void Inventory::AddItem(InventoryItem item) {
       return;
     }
   }
+  // We cannot add the item, so it disappears
 }

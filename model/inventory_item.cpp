@@ -1,7 +1,5 @@
 #include "inventory_item.h"
 
-#include <assert.h>
-
 #include <array>
 
 namespace {
@@ -16,7 +14,7 @@ const std::array<InventoryItem,
                         InventoryItem(InventoryItem::Type::kBlockStone)};
 }  // namespace
 
-int InventoryItem::HowManyMoreItemsCanPut() const {
+int InventoryItem::ItemsLeft() const {
   return kMaximumCount[static_cast<int>(type_)] - count_;
 }
 

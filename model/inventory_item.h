@@ -30,7 +30,7 @@ class InventoryItem {
 
   void ChangeCount(int new_count) { count_ = new_count; }
 
-  int HowManyMoreItemsCanPut() const;
+  int ItemsLeft() const;
 
   static InventoryItem GetDropItem(Block block);
 
