@@ -15,19 +15,19 @@ class Chunk {
 
   Chunk() : blocks_(kWidth * kHeight, Block(Block::Type::kAir)) {}
 
-  const Block& GetBlock(QPoint pos) const {
-    assert(0 <= pos.x() && pos.x() < kWidth);
-    assert(0 <= pos.y() && pos.y() < kHeight);
-    return blocks_[kWidth * pos.y() + pos.x()];
-  }
+  const Block& GetBlock(QPoint pos) const { return blocks_[BlockIndex(pos)]; }
 
-  void SetBlock(QPoint pos, Block block) {
-    assert(0 <= pos.x() && pos.x() < kWidth);
-    assert(0 <= pos.y() && pos.y() < kHeight);
-    blocks_[kWidth * pos.y() + pos.x()] = block;
-  }
+  Block* GetBlockMutable(QPoint pos) { return &blocks_[BlockIndex(pos)]; }
+
+  void SetBlock(QPoint pos, Block block) { blocks_[BlockIndex(pos)] = block; }
 
  private:
+  static int BlockIndex(QPoint pos) {
+    assert(0 <= pos.x() && pos.x() < kWidth);
+    assert(0 <= pos.y() && pos.y() < kHeight);
+    return kWidth * pos.y() + pos.x();
+  }
+
   std::vector<Block> blocks_;
 };
 

@@ -21,6 +21,8 @@ class AbstractMapDrawer {
   }
   virtual void DrawMapWithCenter(QPainter* painter, const QPointF& pos,
                                  const QRect& screen_coords) = 0;
+
+  virtual void UpdateBlock(QPoint position) { Q_UNUSED(position); }
 };
 
 #endif  // VIEW_ABSTRACT_MAP_DRAWER_H_

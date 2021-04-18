@@ -8,6 +8,7 @@ class Block {
   enum class Type {
     kAir,
     kDirt,
+    kGrass,
     kStone,
     kTypesCount,
   };
@@ -23,8 +24,13 @@ class Block {
 
   int32_t GetId() const { return static_cast<int32_t>(type_); }
 
+  // returns true, if block is broken
+  bool DecreaseDurability(int delta);
+
  private:
   Type type_;
+  // TODO(mrboorger): Make different durability_ of the blocks
+  int durability_ = 5;
 };
 
 #endif  // MODEL_BLOCK_H_

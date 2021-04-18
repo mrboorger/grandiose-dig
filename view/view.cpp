@@ -1,6 +1,8 @@
 #include "view/view.h"
 
+#include <QColor>
 #include <QPainter>
+#include <cmath>
 
 #include "controller/controller.h"
 #include "model/constants.h"
@@ -14,11 +16,22 @@ View* View::GetInstance() {
 
 View::View() : QWidget(nullptr), camera_(QPointF(150, 150)), drawer_(nullptr) {}
 
+void View::SetInventoryDrawer(InventoryDrawer* drawer) {
+  inventory_drawer_.reset(drawer);
+}
+
 void View::paintEvent(QPaintEvent* event) {
   Q_UNUSED(event);
   QPainter painter(this);
+
+  // TODO(degmuk): temporary code; replace with background drawer
+  painter.setBrush(Qt::white);
+  painter.drawRect(rect());
+
   camera_.SetPoint(Model::GetInstance()->GetPlayer()->GetPosition());
   drawer_->DrawMapWithCenter(&painter, camera_.GetPoint(), rect());
+
+  inventory_drawer_->DrawInventory(&painter);
 
   // TODO(Wind-Eagle): temporary code; need to make PlayerDrawer
   auto player = Model::GetInstance()->GetPlayer();
@@ -42,4 +55,26 @@ void View::keyPressEvent(QKeyEvent* event) {
 
 void View::keyReleaseEvent(QKeyEvent* event) {
   Controller::GetInstance()->KeyRelease(event->key());
+}
+
+void View::mousePressEvent(QMouseEvent* event) {
+  Controller::GetInstance()->ButtonPress(event->button());
+}
+
+void View::mouseReleaseEvent(QMouseEvent* event) {
+  Controller::GetInstance()->ButtonRelease(event->button());
+}
+
+QPoint View::GetCursorPos() const {
+  return QCursor::pos() - geometry().topLeft();
+}
+
+QPoint View::GetBlockCoordUnderCursor() const {
+  QPointF pos =
+      GetTopLeftWindowCoord() + QPointF(GetCursorPos()) / constants::kBlockSz;
+  return QPoint(std::floor(pos.x()), std::floor(pos.y()));
+}
+
+QPointF View::GetTopLeftWindowCoord() const {
+  return camera_.GetPoint() - QPointF(rect().center()) / constants::kBlockSz;
 }

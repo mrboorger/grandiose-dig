@@ -20,6 +20,8 @@ class BufferedMapDrawer : public AbstractMapDrawer {
   void DrawMapWithCenter(QPainter* painter, const QPointF& pos,
                          const QRect& screen_coords) override;
 
+  void UpdateBlock(QPoint pos) override;
+
  private:
   // In blocks
   static constexpr int32_t kFieldOfView = 64;
@@ -33,6 +35,8 @@ class BufferedMapDrawer : public AbstractMapDrawer {
   static QPoint RoundToBufferPos(QPoint p);
 
   const QPixmap& GetBufferPixmap(QPoint buffer_pos);
+  static void RenderBlock(QPainter* painter, QPointF block_drawer_pos,
+                          Block block, bool need_reset = false);
   void RenderBuffer(QPixmap* buffer, QPoint buffer_pos);
 
   containers::ClearableCache<QPoint, QPixmap,
@@ -42,4 +46,3 @@ class BufferedMapDrawer : public AbstractMapDrawer {
 };
 
 #endif  // VIEW_BUFFERED_MAP_DRAWER_H_
-

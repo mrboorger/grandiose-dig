@@ -32,6 +32,10 @@ class Controller {
 
   void KeyPress(int key);
   void KeyRelease(int key);
+  void ButtonPress(Qt::MouseButton button);
+  void ButtonRelease(Qt::MouseButton button);
+
+  void PickItemToPlayer(InventoryItem item);
 
  private:
   Controller();
@@ -40,6 +44,7 @@ class Controller {
 
   QTimer tick_timer_;
   std::unordered_set<ControllerTypes::Key> pressed_keys_;
+  bool is_pressed_right_mouse_button = false;
 };
 
 #endif  // CONTROLLER_CONTROLLER_H_

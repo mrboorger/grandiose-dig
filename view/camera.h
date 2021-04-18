@@ -13,7 +13,7 @@ class Camera {
   void Translate(QPointF delta);
 
  private:
-  QPointF point_;
+  QPointF point_;  // center, in blocks
 };
 
 #endif  // VIEW_CAMERA_H_

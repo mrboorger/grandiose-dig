@@ -18,7 +18,6 @@ class ChunkMap : public AbstractMap {
   friend class FlatChunkMapGenerator;
 
  public:
-  const Block& GetBlock(QPoint pos) override;
   void SetBlock(QPoint pos, Block block) override;
   void CacheRegion(const QRect& region) override;
 
@@ -30,6 +29,8 @@ class ChunkMap : public AbstractMap {
 
  private:
   explicit ChunkMap(AbstractRegionGenerator* generator);
+
+  Block* GetBlockMutable(QPoint pos) override;
 
   Chunk& GetChunkMutable(QPoint chunk_pos);
 

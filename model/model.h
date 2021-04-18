@@ -37,6 +37,8 @@ class Model {
   void MoveObjects(
       const std::unordered_set<ControllerTypes::Key>& pressed_keys);
 
+  void PickItemToPlayer(InventoryItem item) { player_->PickItem(item); }
+
  private:
   Model() = default;
 
