@@ -22,13 +22,15 @@ class InventoryItem {
   explicit InventoryItem(Type type, int count = 1)
       : type_(type), count_(count) {}
 
+  bool IsEmpty() const { return type_ == Type::kEmptyItem; }
+
   Type GetType() const { return type_; }
   int32_t GetId() const { return static_cast<int32_t>(type_); }
   int GetCount() const { return count_; }
 
   void ChangeCount(int new_count) { count_ = new_count; }
 
-  int HowManyMoreItemsCanPut() const;
+  int ItemsLeft() const;
 
   static InventoryItem GetDropItem(Block block);
 

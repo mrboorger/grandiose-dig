@@ -27,8 +27,8 @@ class View : public QWidget {
   void SetDrawer(AbstractMapDrawer* drawer) { drawer_.reset(drawer); }
   void SetInventoryDrawer(InventoryDrawer* drawer);
 
-  QPointF GetTopLeftWindowCoord() const;  // in blocks
-  QPoint GetCursorPos() const;            // in pixels
+  QPoint GetCursorPos() const;              // in pixels
+  QPoint GetBlockCoordUnderCursor() const;  // in blocks
 
   void UpdateBlock(QPoint pos) { drawer_->UpdateBlock(pos); }
 
@@ -39,14 +39,16 @@ class View : public QWidget {
 
  private:
   constexpr static int kRenderDistance = 70;
-
   View();
 
   void paintEvent(QPaintEvent* event) override;
+
   void keyPressEvent(QKeyEvent* event) override;
   void keyReleaseEvent(QKeyEvent* event) override;
   void mousePressEvent(QMouseEvent* event) override;
   void mouseReleaseEvent(QMouseEvent* event) override;
+
+  QPointF GetTopLeftWindowCoord() const;  // in blocks
 
   Camera camera_;
   SoundManager* sound_manager_;

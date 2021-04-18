@@ -8,7 +8,7 @@
 
 namespace {
 
-std::array<QString, Mob::kTypesCount> names = {"mob.png"};
+std::array<QString, Mob::kTypesCount> kNames = {"mob.png"};
 std::array<QImage, Mob::kTypesCount> images;
 
 }  // namespace
@@ -17,7 +17,7 @@ void MobDrawer::DrawMob(QPainter* painter, QPointF point,
                         std::shared_ptr<Mob> mob) {
   if (images[mob->GetId()].isNull()) {
     images[mob->GetId()] =
-        QImage(":/resources/textures/" + names[mob->GetId()]);
+        QImage(":/resources/textures/" + kNames[mob->GetId()]);
   }
   painter->drawImage(point, images[mob->GetId()]);
 }

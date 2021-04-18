@@ -1,6 +1,7 @@
 #include "inventory.h"
 
 #include <algorithm>
+#include <utility>
 
 Inventory::Inventory() {
   // TODO(mrboorger): it is a temporary code
@@ -12,12 +13,12 @@ Inventory::Inventory() {
 
 void Inventory::AddItem(InventoryItem item) {
   for (InventoryItem& inventory_item : items_) {
-    if (item.GetCount() == 0) {
+    if (item.IsEmpty()) {
       return;
     }
     if (inventory_item.GetType() == item.GetType()) {
       int count_items_to_add =
-          std::min(inventory_item.HowManyMoreItemsCanPut(), item.GetCount());
+          std::min(inventory_item.ItemsLeft(), item.GetCount());
       item.ChangeCount(item.GetCount() - count_items_to_add);
       inventory_item.ChangeCount(inventory_item.GetCount() +
                                  count_items_to_add);
@@ -27,9 +28,10 @@ void Inventory::AddItem(InventoryItem item) {
     return;
   }
   for (InventoryItem& inventory_item : items_) {
-    if (inventory_item.GetType() == InventoryItem::Type::kEmptyItem) {
-      inventory_item = item;
+    if (inventory_item.IsEmpty()) {
+      inventory_item = std::move(item);
       return;
     }
   }
+  // We cannot add the item, so it disappears
 }

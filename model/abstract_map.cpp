@@ -3,7 +3,7 @@
 #include "controller/controller.h"
 
 void AbstractMap::HitBlock(QPoint pos, int hit_power) {
-  auto* block = GetChangeableBlock(pos);
+  auto* block = GetBlockMutable(pos);
   if (block->DecreaseDurability(hit_power)) {
     Controller::GetInstance()->PickItemToPlayer(
         InventoryItem::GetDropItem(*block));
