@@ -42,6 +42,8 @@ class BasicStrategy : public AbstractStrategy {
   void UpdateWalk();
   void UpdateAttack();
 
+  bool IsNearPit(QPointF src, int side) const;
+
  private:
   enum class State { kStay, kWalk, kAttack, kStatesCount };
   enum class Condition { kSeeEnemy, kCanAttack, kConditionsCount };

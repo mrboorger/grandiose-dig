@@ -32,7 +32,7 @@ Controller::Controller() : tick_timer_() {
 void Controller::SetPlayer() {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->SetPlayer(
-      std::make_shared<Player>(QPointF(147.0, 126.0)));
+      std::make_shared<Player>(QPointF(147.0, 110.0)));
   View::GetInstance()->SetInventoryDrawer(
       new InventoryDrawer(Model::GetInstance()->GetPlayer()->GetInventory()));
 }
@@ -40,7 +40,7 @@ void Controller::SetPlayer() {
 void Controller::SetMob() {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->AddMob(
-      std::make_shared<Mob>(QPointF(157.0, 126.0), QPointF(0.75, 1.75)));
+      std::make_shared<Mob>(QPointF(157.0, 107.0), QPointF(0.75, 1.75)));
 }
 
 void Controller::BreakBlock() {

@@ -164,6 +164,30 @@ void BasicStrategy::PerformAction() {
 
 void BasicStrategy::DoStay() { keys_.clear(); }
 
+bool BasicStrategy::IsNearPit(QPointF src, int side) const {
+  int x = std::floor(src.x() + GetMobState().GetSize().x() / 2);
+  int y = std::floor(src.y() + GetMobState().GetSize().y() + constants::kEps);
+  bool is_pit1 = true;
+  bool is_pit2 = true;
+  for (int i = 0; i <= constants::kMobJumpInBlocks; i++) {
+    if (Model::GetInstance()->GetMap()->GetBlock(QPoint(x, y + i)).GetType() !=
+        Block::Type::kAir) {
+      is_pit1 = false;
+      break;
+    }
+  }
+  for (int i = 0; i <= constants::kMobJumpInBlocks; i++) {
+    if (Model::GetInstance()
+            ->GetMap()
+            ->GetBlock(QPoint(x + side, y + i))
+            .GetType() != Block::Type::kAir) {
+      is_pit2 = false;
+      break;
+    }
+  }
+  return (is_pit1 | is_pit2);
+}
+
 void BasicStrategy::DoWalk() {
   keys_.clear();
   QPointF src = GetMobState().GetPos();
@@ -191,13 +215,7 @@ void BasicStrategy::DoWalk() {
       }
     }
     if (src.y() >= dst.y() - constants::kMobJumpInBlocks) {
-      if (Model::GetInstance()
-              ->GetMap()
-              ->GetBlock(
-                  QPoint(std::floor(src.x() + GetMobState().GetSize().x() / 2),
-                         std::floor(src.y() + GetMobState().GetSize().y() +
-                                    constants::kEps)))
-              .GetType() == Block::Type::kAir) {
+      if (IsNearPit(src, -1)) {
         keys_.insert(ControllerTypes::Key::kJump);
       }
     }
@@ -209,13 +227,7 @@ void BasicStrategy::DoWalk() {
       }
     }
     if (src.y() >= dst.y() - constants::kMobJumpInBlocks) {
-      if (Model::GetInstance()
-              ->GetMap()
-              ->GetBlock(
-                  QPoint(std::floor(src.x() + GetMobState().GetSize().x() / 2),
-                         std::floor(src.y() + GetMobState().GetSize().y() +
-                                    constants::kEps)))
-              .GetType() == Block::Type::kAir) {
+      if (IsNearPit(src, 1)) {
         keys_.insert(ControllerTypes::Key::kJump);
       }
     }

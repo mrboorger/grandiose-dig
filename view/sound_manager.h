@@ -1,5 +1,5 @@
-#ifndef VIEW_SOUND_MANAGER_H
-#define VIEW_SOUND_MANAGER_H
+#ifndef VIEW_SOUND_MANAGER_H_
+#define VIEW_SOUND_MANAGER_H_
 
 #include <QMediaContent>
 #include <QMediaPlayer>
@@ -33,4 +33,4 @@ class SoundManager {
   std::vector<std::shared_ptr<QMediaPlayer>> sounds_;
 };
 
-#endif  // VIEW_SOUND_MANAGER_H
+#endif  // VIEW_SOUND_MANAGER_H_

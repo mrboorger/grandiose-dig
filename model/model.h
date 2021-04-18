@@ -12,6 +12,7 @@
 
 class Model : public QObject {
   Q_OBJECT
+
  public:
   static Model* GetInstance();
 

@@ -21,14 +21,14 @@ class Chunk {
 
   void SetBlock(QPoint pos, Block block) { blocks_[BlockIndex(pos)] = block; }
 
+  void FillWith(Block block);
+
  private:
   static int BlockIndex(QPoint pos) {
     assert(0 <= pos.x() && pos.x() < kWidth);
     assert(0 <= pos.y() && pos.y() < kHeight);
     return kWidth * pos.y() + pos.x();
   }
-
-  void FillWith(Block block);
 
   std::vector<Block> blocks_;
 };
