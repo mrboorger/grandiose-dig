@@ -43,7 +43,7 @@ void Controller::SetMob() {
 void Controller::TickEvent() {
   Model::GetInstance()->MoveObjects(pressed_keys_);
   if (is_pressed_right_mouse_button) {
-    QPoint block_coord = View::GetInstance()->GetBlockUnderCursorCoord();
+    QPoint block_coord = View::GetInstance()->GetBlockCoordUnderCursor();
     Model::GetInstance()->GetMap()->HitBlock(block_coord, 1);
     View::GetInstance()->UpdateBlock(block_coord);
   }

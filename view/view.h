@@ -26,7 +26,7 @@ class View : public QWidget {
   void SetInventoryDrawer(InventoryDrawer* drawer);
 
   QPoint GetCursorPos() const;              // in pixels
-  QPoint GetBlockUnderCursorCoord() const;  // in blocks
+  QPoint GetBlockCoordUnderCursor() const;  // in blocks
 
   void UpdateBlock(QPoint pos) { drawer_->UpdateBlock(pos); }
 

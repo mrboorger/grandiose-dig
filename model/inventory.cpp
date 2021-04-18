@@ -28,7 +28,7 @@ void Inventory::AddItem(InventoryItem item) {
     return;
   }
   for (InventoryItem& inventory_item : items_) {
-    if (inventory_item.GetType() == InventoryItem::Type::kEmptyItem) {
+    if (inventory_item.IsEmpty()) {
       inventory_item = std::move(item);
       return;
     }

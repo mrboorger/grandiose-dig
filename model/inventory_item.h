@@ -22,7 +22,7 @@ class InventoryItem {
   explicit InventoryItem(Type type, int count = 1)
       : type_(type), count_(count) {}
 
-  bool IsEmpty() const;
+  bool IsEmpty() const { return type_ == Type::kEmptyItem; }
 
   Type GetType() const { return type_; }
   int32_t GetId() const { return static_cast<int32_t>(type_); }

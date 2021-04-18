@@ -10,8 +10,6 @@ constexpr std::array<int, static_cast<int>(InventoryItem::Type::kTypesCount)>
     maximum_count = {0, 999, 999};
 }  // namespace
 
-bool InventoryItem::IsEmpty() const { return type_ == Type::kEmptyItem; }
-
 int InventoryItem::HowManyMoreItemsCanPut() const {
   return maximum_count[static_cast<int>(type_)] - count_;
 }
