@@ -35,6 +35,8 @@ class BufferedMapDrawer : public AbstractMapDrawer {
   static QPoint RoundToBufferPos(QPoint p);
 
   const QPixmap& GetBufferPixmap(QPoint buffer_pos);
+  static void RenderBlock(QPainter* painter, QPointF block_drawer_pos,
+                          Block block, bool need_reset = false);
   void RenderBuffer(QPixmap* buffer, QPoint buffer_pos);
 
   containers::ClearableCache<QPoint, QPixmap,
