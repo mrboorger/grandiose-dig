@@ -29,6 +29,7 @@ class View : public QWidget {
 
   QPoint GetCursorPos() const;              // in pixels
   QPoint GetBlockCoordUnderCursor() const;  // in blocks
+  QPointF GetTopLeftWindowCoord() const;    // in blocks
 
   void UpdateBlock(QPoint pos) { drawer_->UpdateBlock(pos); }
 
@@ -47,8 +48,6 @@ class View : public QWidget {
   void keyReleaseEvent(QKeyEvent* event) override;
   void mousePressEvent(QMouseEvent* event) override;
   void mouseReleaseEvent(QMouseEvent* event) override;
-
-  QPointF GetTopLeftWindowCoord() const;  // in blocks
 
   Camera camera_;
   SoundManager* sound_manager_;
