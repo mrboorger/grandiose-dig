@@ -6,21 +6,23 @@
 
 #include "view/abstract_menu.h"
 
-class MainMenu : public AbstractMenu {
+class MainMenu final : public AbstractMenu {
   Q_OBJECT
 
  public:
   explicit MainMenu(QWidget* parent = nullptr);
-  ~MainMenu() override = default;
+  ~MainMenu() final = default;
 
-  void Resize(QSize size);
+  void Resize(const QSize& size) final;
 
-  void setVisible(bool visible) override;
+  void ReTranslateButtons() final;
 
  protected:
-  void PlaceButtons() override;
+  void PlaceButtons() final;
 
  private:
+  void paintEvent(QPaintEvent* event) final;
+
   QScopedPointer<QPushButton> single_player_button_;
   QScopedPointer<QPushButton> settings_button_;
   QScopedPointer<QPushButton> exit_button_;

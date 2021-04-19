@@ -48,12 +48,14 @@ set(SOURCES
         model/player.cpp
         model/strategy.cpp
         utils.cpp
-        view/abstract_menu.h
+        view/abstract_menu.cpp
         view/block_drawer.cpp
         view/buffered_map_drawer.cpp
         view/camera.cpp
         view/main_menu.cpp
         view/mob_drawer.cpp
+        view/pause_menu.cpp
+        view/settings_menu.cpp
         view/view.cpp
         )
 

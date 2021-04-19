@@ -10,10 +10,10 @@
 #include "view/abstract_map_drawer.h"
 #include "view/camera.h"
 #include "view/main_menu.h"
+#include "view/settings_menu.h"
+#include "view/pause_menu.h"
 
 class View : public QWidget {
- Q_OBJECT
-
  public:
   static View* GetInstance();
 
@@ -25,7 +25,7 @@ class View : public QWidget {
   View& operator=(const View&) = delete;
   View& operator=(View&&) = delete;
 
-  static GameState GetGameState() { return GetInstance()->game_state_; };
+  GameState GetGameState() { return game_state_; };
 
   void SetDrawer(AbstractMapDrawer* drawer) { drawer_.reset(drawer); }
 
@@ -41,15 +41,19 @@ class View : public QWidget {
 
   void DrawGame();
 
-  void paintEvent(QPaintEvent* event) override;
+  void changeEvent(QEvent* event) override;
   void keyPressEvent(QKeyEvent* event) override;
   void keyReleaseEvent(QKeyEvent* event) override;
+  void paintEvent(QPaintEvent* event) override;
   void resizeEvent(QResizeEvent* event) override;
 
   Camera camera_;
-  GameState game_state_;
   std::unique_ptr<AbstractMapDrawer> drawer_;
   QScopedPointer<MainMenu> main_menu_;
+  QScopedPointer<PauseMenu> pause_menu_;
+  QScopedPointer<SettingsMenu> settings_menu_;
+  GameState game_state_;
+  GameState previous_game_state_;
 };
 
 #endif  // VIEW_VIEW_H_

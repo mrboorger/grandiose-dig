@@ -16,11 +16,22 @@ View::View()
     : QWidget(nullptr),
       camera_(QPointF(150, 150)),
       game_state_(GameState::kMainMenu),
+      previous_game_state_(GameState::kMainMenu),
       drawer_(nullptr) {
   main_menu_.reset(new MainMenu(this));
   connect(main_menu_.data(), &AbstractMenu::GameStateChanged, this,
           &View::ChangeGameState);
-  main_menu_->setVisible(false);
+  main_menu_->setVisible(true);
+
+  pause_menu_.reset(new PauseMenu(this));
+  connect(pause_menu_.data(), &AbstractMenu::GameStateChanged, this,
+          &View::ChangeGameState);
+  pause_menu_->setVisible(false);
+
+  settings_menu_.reset(new SettingsMenu(this));
+  connect(settings_menu_.data(), &AbstractMenu::GameStateChanged, this,
+          &View::ChangeGameState);
+  settings_menu_->setVisible(false);
 }
 
 void View::ChangeGameState(GameState new_state) {
@@ -28,22 +39,40 @@ void View::ChangeGameState(GameState new_state) {
     case GameState::kMainMenu:
       main_menu_->setVisible(false);
       break;
+    case GameState::kPaused:
+      pause_menu_->setVisible(false);
+      break;
+    case GameState::kSettings:
+      settings_menu_->setVisible(false);
+      break;
     default:
       break;
   }
   switch (new_state) {
     case GameState::kMainMenu:
       main_menu_->setVisible(true);
-      repaint();
       main_menu_->setFocus();
       break;
     case GameState::kGame:
       setFocus();
       break;
+    case GameState::kPaused:
+      pause_menu_->setVisible(true);
+      pause_menu_->setFocus();
+      break;
+    case GameState::kSettings:
+      settings_menu_->setVisible(true);
+      settings_menu_->setFocus();
+      break;
+    case GameState::kSwitchingToPrevious:
+      ChangeGameState(previous_game_state_);
+      return;
     default:
       break;
   }
+  previous_game_state_ = game_state_;
   game_state_ = new_state;
+  repaint();
 }
 
 void View::DrawGame() {
@@ -56,29 +85,24 @@ void View::DrawGame() {
   QImage player_image(":/resources/textures/player.png");
   QPointF point =
       (player->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
-          rect().center();
+      rect().center();
   painter.drawImage(point, player_image);
   auto mobs = Model::GetInstance()->GetMobs();
   for (auto mob : mobs) {
     QPointF mob_point =
         (mob->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
-            rect().center();
+        rect().center();
     MobDrawer::DrawMob(&painter, mob_point, mob);
   }
 }
 
-void View::paintEvent(QPaintEvent* event) {
-  Q_UNUSED(event);
-  switch (game_state_) {
-    case GameState::kMainMenu:
-      main_menu_->update();
-      break;
-    case GameState::kGame:
-      DrawGame();
-      break;
-    default:
-      break;
+void View::changeEvent(QEvent* event) {
+  if (event->type() == QEvent::LanguageChange) {
+    main_menu_->ReTranslateButtons();
+    pause_menu_->ReTranslateButtons();
+    settings_menu_->ReTranslateButtons();
   }
+  QWidget::changeEvent(event);
 }
 
 void View::keyPressEvent(QKeyEvent* event) {
@@ -92,4 +116,24 @@ void View::keyReleaseEvent(QKeyEvent* event) {
 void View::resizeEvent(QResizeEvent* event) {
   QWidget::resizeEvent(event);
   main_menu_->Resize(event->size());
+  pause_menu_->Resize(event->size());
+  settings_menu_->Resize(event->size());
+}
+
+void View::paintEvent(QPaintEvent* event) {
+  QWidget::paintEvent(event);
+  switch (game_state_) {
+    case GameState::kMainMenu:
+      main_menu_->update();
+      break;
+    case GameState::kGame:
+      DrawGame();
+      break;
+    case GameState::kPaused:
+      DrawGame();
+      pause_menu_->update();
+      break;
+    default:
+      break;
+  }
 }

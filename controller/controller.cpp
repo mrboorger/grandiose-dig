@@ -40,19 +40,22 @@ void Controller::SetMob() {
 void Controller::TickEvent() {
   if (pressed_keys_.count(ControllerTypes::Key::kExit)) {
     pressed_keys_.erase(ControllerTypes::Key::kExit);
-    switch (View::GetGameState()) {
+    switch (View::GetInstance()->GetGameState()) {
       case GameState::kGame:
         View::GetInstance()->ChangeGameState(GameState::kPaused);
-        break;
-      case GameState::kPaused:
-      case GameState::kSettings:
-        View::GetInstance()->ChangeGameState(GameState::kMainMenu);
         break;
       case GameState::kMainMenu:
         View::Quit();
         break;
+      case GameState::kPaused:
+        View::GetInstance()->ChangeGameState(GameState::kMainMenu);
+        break;
+      case GameState::kSettings:
+        View::GetInstance()->ChangeGameState(GameState::kSwitchingToPrevious);
+      default:
+        break;
     }
-  } else if (View::GetGameState() == GameState::kGame) {
+  } else if (View::GetInstance()->GetGameState() == GameState::kGame) {
     Model::GetInstance()->MoveObjects(pressed_keys_);
     View::GetInstance()->repaint();
   }
@@ -68,6 +71,7 @@ ControllerTypes::Key Controller::TranslateKeyCode(int key_code) {
       return ControllerTypes::Key::kJump;
     case Qt::Key::Key_Escape:
     case Qt::Key::Key_Exit:
+    case Qt::Key::Key_Menu:
       return ControllerTypes::Key::kExit;
     default:
       return ControllerTypes::Key::kUnused;

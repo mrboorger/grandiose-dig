@@ -3,5 +3,9 @@
         <file>resources/textures/grass.png</file>
         <file>resources/textures/player.png</file>
         <file>resources/textures/mob.png</file>
+        <file>resources/translations/en_US.ts</file>
+        <file>resources/translations/en_US.qm</file>
+        <file>resources/translations/ru_RU.ts</file>
+        <file>resources/translations/ru_RU.qm</file>
     </qresource>
 </RCC>

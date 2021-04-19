@@ -3,7 +3,13 @@
 
 #include <QWidget>
 
-enum class GameState { kMainMenu, kSettings, kGame, kPaused };
+enum class GameState {
+  kMainMenu,
+  kSettings,
+  kGame,
+  kPaused,
+  kSwitchingToPrevious
+};
 
 class AbstractMenu : public QWidget {
   Q_OBJECT
@@ -16,7 +22,13 @@ class AbstractMenu : public QWidget {
   AbstractMenu& operator=(const AbstractMenu&) = delete;
   AbstractMenu& operator=(AbstractMenu&&) = delete;
 
-  ~AbstractMenu() = default;
+  ~AbstractMenu() override = default;
+
+  virtual void Resize(const QSize& size) = 0;
+
+  virtual void ReTranslateButtons() = 0;
+
+  void setVisible(bool visible) override;
 
  signals:
   void GameStateChanged(GameState);
