@@ -2,6 +2,7 @@
 #define UTILS_H_
 
 #include <QPoint>
+#include <QPointF>
 #include <cassert>
 #include <cmath>
 #include <cstdint>
@@ -22,6 +23,8 @@ constexpr double MapRange(double value, double from_min, double from_max,
   return to_min +
          (value - from_min) / (from_max - from_min) * (to_max - to_min);
 }
+
+QPointF DivideSegment(QPointF first, QPointF second, double percentage);
 
 }  // namespace utils
 

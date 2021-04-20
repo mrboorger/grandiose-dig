@@ -16,8 +16,11 @@ View* View::GetInstance() {
   return &view;
 }
 
-View::View() : QWidget(nullptr), camera_(QPointF(150, 150)), drawer_(nullptr) {
-  sound_manager_ = new SoundManager();
+View::View()
+    : QWidget(nullptr),
+      camera_(QPointF(150, 150)),
+      drawer_(nullptr),
+      sound_manager_(new SoundManager()) {
   connect(Model::GetInstance(), &Model::DamageDealt, this, &View::DamageDealt);
   connect(Model::GetInstance(), &Model::BecameDead, this, &View::BecameDead);
   connect(Model::GetInstance(), &Model::MobSound, this, &View::MobSound);
@@ -76,10 +79,12 @@ void View::DamageDealt(MovingObject::Type type) {
 }
 
 void View::BecameDead(MovingObject::Type type) {
+  Q_UNUSED(type);
   sound_manager_->PlaySound(SoundManager::Sound::kMobDeath);
 }
 
 void View::MobSound(MovingObject::Type type) {
+  Q_UNUSED(type);
   static std::mt19937 rnd(time(NULL));
   uint32_t sound = rnd();
   if (sound % 2 == 0) {

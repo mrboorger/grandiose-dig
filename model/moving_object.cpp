@@ -5,6 +5,7 @@
 #include <cmath>
 
 #include "model/model.h"
+#include "utils.h"
 
 MovingObject::MovingObject(QPointF pos, QPointF size)
     : pos_(pos), size_(size) {}
@@ -141,12 +142,6 @@ void MovingObject::UpdateState(
   MakeMovement(old_position);
 }
 
-namespace {
-QPointF DivideSegment(QPointF first, QPointF second, double percentage) {
-  return first * percentage + second * (1.0 - percentage);
-}
-}  // namespace
-
 bool MovingObject::FindCollisionGround(
     QPointF old_position, double* ground_y,
     const std::shared_ptr<AbstractMap>& map) const {
@@ -158,8 +153,8 @@ bool MovingObject::FindCollisionGround(
   int dist = std::max(std::abs(end_y - begin_y), 1);
   for (int y = begin_y; y <= end_y; y++) {
     double bottom_left_x =
-        DivideSegment(old_bottom_left, new_bottom_left,
-                      static_cast<double>(std::abs(end_y - y)) / dist)
+        utils::DivideSegment(old_bottom_left, new_bottom_left,
+                             static_cast<double>(std::abs(end_y - y)) / dist)
             .x();
     double bottom_right_x = bottom_left_x + size_.x() - constants::kEps;
     for (double x = bottom_left_x + constants::kEps;; x += 1) {
@@ -188,8 +183,8 @@ bool MovingObject::FindCollisionCeiling(
   int dist = std::max(std::abs(end_y - begin_y), 1);
   for (int y = begin_y; y >= end_y; y--) {
     double top_left_x =
-        DivideSegment(old_top_left, new_top_left,
-                      static_cast<double>(std::abs(end_y - y)) / dist)
+        utils::DivideSegment(old_top_left, new_top_left,
+                             static_cast<double>(std::abs(end_y - y)) / dist)
             .x();
     double top_right_x = top_left_x + size_.x() - constants::kEps;
     for (double x = top_left_x + constants::kEps;; x += 1) {
@@ -219,8 +214,8 @@ bool MovingObject::FindCollisionLeft(
   int dist = std::max(std::abs(end_x - begin_x), 1);
   for (int x = begin_x; x >= end_x; x--) {
     double bottom_left_y =
-        DivideSegment(old_bottom_left, new_bottom_left,
-                      static_cast<double>(std::abs(end_x - x)) / dist)
+        utils::DivideSegment(old_bottom_left, new_bottom_left,
+                             static_cast<double>(std::abs(end_x - x)) / dist)
             .y();
     double top_left_y = bottom_left_y - size_.y() + constants::kEps;
     for (double y = bottom_left_y;; y -= 1) {
@@ -252,8 +247,8 @@ bool MovingObject::FindCollisionRight(
   int dist = std::max(std::abs(end_x - begin_x), 1);
   for (int x = begin_x; x <= end_x; x++) {
     double bottom_right_y =
-        DivideSegment(old_bottom_right, new_bottom_right,
-                      static_cast<double>(std::abs(end_x - x)) / dist)
+        utils::DivideSegment(old_bottom_right, new_bottom_right,
+                             static_cast<double>(std::abs(end_x - x)) / dist)
             .y();
     double top_right_y = bottom_right_y - size_.y() + constants::kEps;
     for (double y = bottom_right_y;; y -= 1) {
@@ -340,11 +335,11 @@ void MovingObject::CheckFallDamage() {
 }
 
 void MovingObject::DealDamage(const Damage& damage) {
-  if (damage_ticks_ != 0) {
+  if (RecentlyDamaged()) {
     return;
   }
   damage_ticks_ = constants::kDamageCooldown;
-  int prev_dead = IsDead();
+  bool prev_dead = IsDead();
   health_ -= damage.GetAmount();
   if (damage.GetType() == Damage::Type::kMob ||
       damage.GetType() == Damage::Type::kPlayer) {
@@ -357,7 +352,7 @@ void MovingObject::DealDamage(const Damage& damage) {
       damage_push.setY(0);
     }
     // TranslateSpeed(damage_push) causes a non-realistic behaviour:
-    // in some cases there is to high speed of a damage push
+    // in some cases there is too high speed of a damage push
     move_vector_.SetSpeedX(damage_push.x());
     move_vector_.TranslateSpeed({0, damage_push.y()});
     MakeMovement(pos_);

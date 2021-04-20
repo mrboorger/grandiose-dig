@@ -31,6 +31,9 @@ class Player : public MovingObject {
     attack_interval_ = std::max(attack_interval_ - 1, 0);
   }
 
+  bool IsAttackFinished() const { return attack_tick_ == 0; }
+  bool CanStartAttack() const { return attack_interval_ == 0; }
+
  private:
   std::shared_ptr<Inventory> inventory_;
   int attack_tick_ = 0;

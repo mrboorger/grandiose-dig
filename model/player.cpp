@@ -10,7 +10,7 @@ Player::Player(QPointF pos)
   SetWalkAirAcceleration(constants::kPlayerWalkAirAcceleration);
   SetWalkMaxAirAcceleration(constants::kPlayerWalkMaxAirAcceleration);
   SetWalkMaxSpeed(constants::kPlayerWalkMaxSpeed);
-  SetDamageAcceleration(constants::kMobDamageAcceleration);
+  SetDamageAcceleration(constants::kPlayerDamageAcceleration);
   SetHealth(constants::kPlayerHealth);
   SetDamage(constants::kPlayerDamage);
   SetType(MovingObject::Type::kPlayer);

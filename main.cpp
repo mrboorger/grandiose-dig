@@ -1,7 +1,6 @@
 #include <QApplication>
 
 #include "controller/controller.h"
-#include "model/flat_chunk_map_generator.h"
 #include "model/perlin_chunk_map_generator.h"
 #include "view/view.h"
 

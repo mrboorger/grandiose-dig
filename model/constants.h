@@ -2,7 +2,6 @@
 #define MODEL_CONSTANTS_H_
 
 #include <QPointF>
-#include <cmath>
 
 namespace constants {
 
@@ -44,7 +43,8 @@ constexpr double kMobWalkMaxSpeed =
 constexpr double kMobWalkMaxAirAcceleration =
     kPlayerWalkMaxAirAcceleration / 2;                    // in blocks per tick
 constexpr double kMobJumpSpeed = kPlayerJumpSpeed / 1.4;  // in blocks per tick
-constexpr double kMobJumpInBlocks = 2;                    // in blocks
+constexpr double kMobJumpHeightInBlocks = 2;              // in blocks
+constexpr double kMobJumpLengthInBlocks = 2;              // in blocks
 constexpr QPointF kMobDamageAcceleration = {0.1, -0.15};
 constexpr int kMobHealth = 120;
 constexpr int kMobDamage = 15;

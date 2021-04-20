@@ -9,12 +9,15 @@ class Damage {
   static constexpr int kTypesCount = static_cast<int>(Type::kTypesCount);
 
   Damage() = default;
-  explicit Damage(QPointF source, Type type = Type::kMagic, int amount = 10);
-  Damage(Type type, int amount);
 
-  void GetSource(QPointF source) { source_ = source; }
-  void GetType(Type type) { type_ = type; }
-  void GetAmount(int amount) { amount_ = amount; }
+  Damage(QPointF source, Type type, int amount)
+      : source_(source), type_(type), amount_(amount) {}
+
+  Damage(Type type, int amount) : type_(type), amount_(amount) {}
+
+  void SetSource(QPointF source) { source_ = source; }
+  void SetType(Type type) { type_ = type; }
+  void SetAmount(int amount) { amount_ = amount; }
 
   QPointF GetSource() const { return source_; }
   Type GetType() const { return type_; }

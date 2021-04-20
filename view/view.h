@@ -51,7 +51,7 @@ class View : public QWidget {
   void mouseReleaseEvent(QMouseEvent* event) override;
 
   Camera camera_;
-  SoundManager* sound_manager_;
+  std::unique_ptr<SoundManager> sound_manager_;
   std::unique_ptr<AbstractMapDrawer> drawer_;
   std::unique_ptr<InventoryDrawer> inventory_drawer_;
 };

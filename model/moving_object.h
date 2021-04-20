@@ -98,20 +98,20 @@ class MovingObject {
   QPointF size_;
   State state_ = MovingObject::State::kStay;
 
-  double walk_acceleration_ = 0.01;
-  double walk_max_speed_ = 0.1;
-  double walk_air_acceleration_ = 0.01;
-  double walk_max_air_acceleration_ = 0.1;
+  double walk_acceleration_ = constants::kPlayerWalkAcceleration;
+  double walk_max_speed_ = constants::kPlayerWalkMaxSpeed;
+  double walk_air_acceleration_ = constants::kPlayerWalkAirAcceleration;
+  double walk_max_air_acceleration_ = constants::kPlayerWalkMaxAirAcceleration;
 
-  double gravity_speed_ = 0.01;
-  double jump_speed_ = -0.3;
+  double gravity_speed_ = constants::kPlayerGravitySpeed;
+  double jump_speed_ = constants::kPlayerJumpSpeed;
 
-  QPointF damage_acceleration_ = {0.05, -0.15};
+  QPointF damage_acceleration_ = constants::kPlayerDamageAcceleration;
 
   Type type_ = Type::kUndefined;
 
-  int health_ = 100;
-  int damage_ = 10;
+  int health_ = constants::kPlayerHealth;
+  int damage_ = constants::kPlayerDamage;
 
   int state_ticks_ = 0;
   int damage_ticks_ = 0;

@@ -1,9 +1,7 @@
 #ifndef VIEW_SOUND_MANAGER_H_
 #define VIEW_SOUND_MANAGER_H_
 
-#include <QMediaContent>
 #include <QMediaPlayer>
-#include <QMediaPlaylist>
 #include <memory>
 #include <vector>
 

@@ -29,10 +29,10 @@ void Model::MoveObjects(
 
   static std::mt19937 rnd(time(nullptr));
   static std::uniform_real_distribution<double> distrib(0.0, 1.0);
-  for (auto i : mobs_) {
-    i->MoveMob();
-    if (!i->RecentlyDamaged() && distrib(rnd) < constants::kMobSoundChance) {
-      MobSound(i->GetType());
+  for (auto mob : mobs_) {
+    mob->MoveMob();
+    if (!mob->RecentlyDamaged() && distrib(rnd) < constants::kMobSoundChance) {
+      emit MobSound(mob->GetType());
     }
   }
 }

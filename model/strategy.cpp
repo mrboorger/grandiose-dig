@@ -110,10 +110,8 @@ bool BasicStrategy::AlmostNearX(QPointF lhs, QPointF rhs) {
   if (lhs.y() >= rhs.y()) {
     return std::abs(lhs.x() - rhs.x()) <=
            constants::kBasicStrategyWalkPrecision;
-  } else {
-    return std::abs(lhs.x() - rhs.x()) <=
-           constants::kBasicStrategyWalkPrecision / 100;
   }
+  return std::abs(lhs.x() - rhs.x()) <= constants::kEps;
 }
 
 bool BasicStrategy::IsActionFinished() {
@@ -167,25 +165,22 @@ void BasicStrategy::DoStay() { keys_.clear(); }
 bool BasicStrategy::IsNearPit(QPointF src, int side) const {
   int x = std::floor(src.x() + GetMobState().GetSize().x() / 2);
   int y = std::floor(src.y() + GetMobState().GetSize().y() + constants::kEps);
-  bool is_pit1 = true;
-  bool is_pit2 = true;
-  for (int i = 0; i <= constants::kMobJumpInBlocks; i++) {
-    if (Model::GetInstance()->GetMap()->GetBlock(QPoint(x, y + i)).GetType() !=
-        Block::Type::kAir) {
-      is_pit1 = false;
-      break;
+  for (int j = 0; j < constants::kMobJumpLengthInBlocks; j++) {
+    for (int i = 0; i <= constants::kMobJumpHeightInBlocks; i++) {
+      bool is_pit_near = true;
+      if (Model::GetInstance()
+              ->GetMap()
+              ->GetBlock(QPoint(x + side * j, y + i))
+              .GetType() != Block::Type::kAir) {
+        is_pit_near = false;
+        break;
+      }
+      if (is_pit_near) {
+        return true;
+      }
     }
   }
-  for (int i = 0; i <= constants::kMobJumpInBlocks; i++) {
-    if (Model::GetInstance()
-            ->GetMap()
-            ->GetBlock(QPoint(x + side, y + i))
-            .GetType() != Block::Type::kAir) {
-      is_pit2 = false;
-      break;
-    }
-  }
-  return (is_pit1 | is_pit2);
+  return false;
 }
 
 void BasicStrategy::DoWalk() {
@@ -214,7 +209,7 @@ void BasicStrategy::DoWalk() {
         keys_.insert(ControllerTypes::Key::kJump);
       }
     }
-    if (src.y() >= dst.y() - constants::kMobJumpInBlocks) {
+    if (src.y() >= dst.y() - constants::kMobJumpHeightInBlocks) {
       if (IsNearPit(src, -1)) {
         keys_.insert(ControllerTypes::Key::kJump);
       }
@@ -226,7 +221,7 @@ void BasicStrategy::DoWalk() {
         keys_.insert(ControllerTypes::Key::kJump);
       }
     }
-    if (src.y() >= dst.y() - constants::kMobJumpInBlocks) {
+    if (src.y() >= dst.y() - constants::kMobJumpHeightInBlocks) {
       if (IsNearPit(src, 1)) {
         keys_.insert(ControllerTypes::Key::kJump);
       }
@@ -235,7 +230,6 @@ void BasicStrategy::DoWalk() {
 }
 
 void BasicStrategy::DoAttack() {
-  // TODO(Wind-Eagle): This is temporary code
   Damage damage(GetMobState().GetPos(), Damage::Type::kMob,
                 GetMobState().GetDamage());
   attack_target_->DealDamage(damage);
