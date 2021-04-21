@@ -44,6 +44,7 @@ void Controller::SetMob() {
 
 void Controller::BreakBlock() {
   QPoint block_coords = View::GetInstance()->GetBlockCoordUnderCursor();
+  Model::GetInstance()->GetMap()->HitBlock(block_coords, 1);
   View::GetInstance()->UpdateBlock(block_coords);
 }
 
@@ -110,6 +111,9 @@ bool Controller::CanAttackMob(std::shared_ptr<MovingObject> mob,
   }
   double distance = std::hypot(mob_point.x(), mob_point.y());
   double angle = std::atan2(mob_point.y(), mob_point.x());
+  if (distance < constants::kEps) {
+    return true;
+  }
   return angle >= lower_angle && angle <= upper_angle &&
          distance <= constants::kPlayerAttackRadius &&
          IsVisible(player_center, mob_point + player_center);
@@ -126,11 +130,8 @@ void Controller::PlayerAttack() {
                        constants::kPlayerAngleTick * attack_tick;
   double upper_angle = constants::kPlayerLowerAttackAngle +
                        (constants::kPlayerAngleTick) * (attack_tick + 1);
-  QPointF player_center(
-      Model::GetInstance()->GetPlayer()->GetPosition().x() +
-          Model::GetInstance()->GetPlayer()->GetSize().x() / 2,
-      Model::GetInstance()->GetPlayer()->GetPosition().y() +
-          Model::GetInstance()->GetPlayer()->GetSize().y() / 2);
+  QPointF player_center = Model::GetInstance()->GetPlayer()->GetPosition() +
+                          Model::GetInstance()->GetPlayer()->GetSize() / 2;
   for (auto mob : Model::GetInstance()->GetMobs()) {
     if (CanAttackMob(mob, player_center, lower_angle, upper_angle)) {
       Damage damage(Model::GetInstance()->GetPlayer()->GetPosition(),

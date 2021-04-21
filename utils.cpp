@@ -30,6 +30,10 @@ bool QPointLexicographicalCompare::operator()(QPoint lhs, QPoint rhs) const {
   return lhs.y() < rhs.y();
 }
 
+double DivideDouble(double first, double second, double percentage) {
+  return first * percentage + second * (1.0 - percentage);
+}
+
 QPointF DivideSegment(QPointF first, QPointF second, double percentage) {
   return first * percentage + second * (1.0 - percentage);
 }

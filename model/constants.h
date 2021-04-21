@@ -26,7 +26,7 @@ constexpr double kPlayerWalkMaxAirAcceleration =
 constexpr double kPlayerGravitySpeed = 0.01;  // in blocks per tick
 constexpr double kPlayerJumpSpeed = -0.3;     // in blocks per tick
 constexpr QPointF kPlayerDamageAcceleration = {0.1, -0.15};
-constexpr int kPlayerHealth = 100;
+constexpr int kPlayerHealth = 100000;
 constexpr int kPlayerDamage = 10;
 constexpr double kPlayerUpperAttackAngle = pi / 4.0;
 constexpr double kPlayerLowerAttackAngle = -pi / 4.0;
@@ -46,7 +46,7 @@ constexpr double kMobJumpSpeed = kPlayerJumpSpeed / 1.4;  // in blocks per tick
 constexpr double kMobJumpHeightInBlocks = 2;              // in blocks
 constexpr double kMobJumpLengthInBlocks = 2;              // in blocks
 constexpr QPointF kMobDamageAcceleration = {0.1, -0.15};
-constexpr int kMobHealth = 120;
+constexpr int kMobHealth = 120000;
 constexpr int kMobDamage = 15;
 
 constexpr double kBasicStrategyVisionRadius = 12.0;  // in blocks

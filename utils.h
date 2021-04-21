@@ -30,6 +30,8 @@ constexpr double MapRange(double value, double from_min, double from_max,
          (value - from_min) / (from_max - from_min) * (to_max - to_min);
 }
 
+double DivideDouble(double first, double second, double percentage);
+
 QPointF DivideSegment(QPointF first, QPointF second, double percentage);
 
 double GetRandomDouble(double left_bound = 0, double right_bound = 1);

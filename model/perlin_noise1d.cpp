@@ -2,12 +2,14 @@
 
 #include <random>
 
+#include "utils.h"
+
 PerlinNoise1D::PerlinNoise1D(int seed, int grad_period)
     : grad_values_(grad_period) {
   std::mt19937 gen(seed);
   std::uniform_int_distribution<> distrib(0, 1);
-  for (auto& i : grad_values_) {
-    i = 1 - 2 * distrib(gen);
+  for (auto& grad : grad_values_) {
+    grad = 1 - 2 * distrib(gen);
   }
 }
 
@@ -35,5 +37,5 @@ double PerlinNoise1D::Noise(double p) const {
   double fade_t = Fade(t);
   double g0 = Grad(p0);
   double g1 = Grad(p1);
-  return (1.0 - fade_t) * g0 * (p - p0) + fade_t * g1 * (p - p1);
+  return utils::DivideDouble(g1 * (p - p1), g0 * (p - p0), fade_t);
 }

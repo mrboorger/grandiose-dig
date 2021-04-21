@@ -17,17 +17,8 @@ void Model::MoveObjects(
   if (player_->IsDead()) {
     exit(0);
   }
-  /*auto old_size = c.size();
-  for (auto i = c.begin(), last = c.end(); i != last;) {
-    if (pred(*i)) {
-      i = c.erase(i);
-    } else {
-      ++i;
-    }
-  }
-  return old_size - c.size();*/
   for (auto i = mobs_.begin(), last = mobs_.end(); i != last;) {
-    if (i->get()->IsDead()) {
+    if ((*i)->IsDead()) {
       i = mobs_.erase(i);
     } else {
       i++;

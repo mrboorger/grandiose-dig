@@ -27,6 +27,8 @@ class Player : public MovingObject {
     attack_direction_ = attack_direction;
   }
 
+  utils::Direction GetAttackDirection() const { return attack_direction_; }
+
   bool IsAttackDirectionLeft() const {
     return attack_direction_ == utils::Direction::kLeft;
   }

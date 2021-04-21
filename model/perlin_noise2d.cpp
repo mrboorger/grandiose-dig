@@ -4,20 +4,19 @@
 #include <random>
 
 #include "model/constants.h"
+#include "utils.h"
 
 PerlinNoise2D::PerlinNoise2D(int seed, int grad_period)
     : grad_size_(grad_period), grad_values_(grad_period * grad_period) {
   std::mt19937 gen(seed);
   std::uniform_real_distribution<> distrib(-1.0, 1.0);
-  for (auto& j : grad_values_) {
+  for (auto& grad : grad_values_) {
     double l = 0.0;
     do {
-      j = QPointF(distrib(gen), distrib(gen));
-      l = std::hypot(j.x(), j.y());
-      if (l > constants::kEps) {
-        j /= l;
-      }
+      grad = QPointF(distrib(gen), distrib(gen));
+      l = std::hypot(grad.x(), grad.y());
     } while (l <= constants::kEps);
+    grad /= l;
   }
 }
 
@@ -59,12 +58,10 @@ double PerlinNoise2D::Noise(QPointF p) const {
   double t1 = p.y() - p0.y();
   double fade_t1 = Fade(t1);
 
-  auto dot = [](QPointF a, QPointF b) { return a.x() * b.x() + a.y() * b.y(); };
+  double p0p1 = (1.0 - fade_t0) * QPointF::dotProduct(g0, (p - p0)) +
+                fade_t0 * QPointF::dotProduct(g1, (p - p1));
+  double p2p3 = (1.0 - fade_t0) * QPointF::dotProduct(g2, (p - p2)) +
+                fade_t0 * QPointF::dotProduct(g3, (p - p3));
 
-  double p0p1 =
-      (1.0 - fade_t0) * dot(g0, (p - p0)) + fade_t0 * dot(g1, (p - p1));
-  double p2p3 =
-      (1.0 - fade_t0) * dot(g2, (p - p2)) + fade_t0 * dot(g3, (p - p3));
-
-  return (1.0 - fade_t1) * p0p1 + fade_t1 * p2p3;
+  return utils::DivideDouble(p2p3, p0p1, fade_t1);
 }
