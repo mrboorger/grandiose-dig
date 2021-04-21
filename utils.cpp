@@ -1,6 +1,11 @@
 #include "utils.h"
 
+#include <chrono>
+
 namespace utils {
+
+std::mt19937 random(
+    std::chrono::steady_clock::now().time_since_epoch().count());
 
 std::pair<int64_t, int64_t> ArithmeticalDivMod(int64_t a, int64_t b) {
   assert(b > 0);
@@ -30,10 +35,8 @@ QPointF DivideSegment(QPointF first, QPointF second, double percentage) {
 }
 
 double GetRandomDouble(double left_bound, double right_bound) {
-  double ans = random();
-  return static_cast<double>(ans) / static_cast<double>(1LL << 32) /
-             (right_bound - left_bound) +
-         left_bound;
+  std::uniform_real_distribution<double> distrib(left_bound, right_bound);
+  return distrib(random);
 }
 
 }  // namespace utils

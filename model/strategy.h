@@ -8,6 +8,7 @@
 
 #include "model/abstract_strategy.h"
 #include "model/moving_object.h"
+#include "utils.h"
 
 class BasicStrategy : public AbstractStrategy {
  public:
@@ -42,7 +43,7 @@ class BasicStrategy : public AbstractStrategy {
   void UpdateWalk();
   void UpdateAttack();
 
-  bool IsNearPit(QPointF src, int side) const;
+  bool IsNearPit(QPointF src, utils::Direction side) const;
 
  private:
   enum class State { kStay, kWalk, kAttack, kStatesCount };
@@ -65,7 +66,7 @@ class BasicStrategy : public AbstractStrategy {
   }
 
   void ClearConditions() { conditions_ = 0; }
-  bool AlmostNearX(QPointF lhs, QPointF rhs);
+  virtual bool AlmostNearX(QPointF lhs, QPointF rhs);
 
   std::unordered_set<ControllerTypes::Key> keys_;
 

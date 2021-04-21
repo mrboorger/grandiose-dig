@@ -41,7 +41,6 @@ set(SOURCES
         model/block.cpp
         model/chunk.cpp
         model/chunk_map.cpp
-        model/damage.cpp
         model/flat_chunk_map_generator.cpp
         model/flat_map_generator.cpp
         model/inventory_item.cpp

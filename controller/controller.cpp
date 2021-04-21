@@ -51,17 +51,14 @@ void Controller::StartAttack() {
   if (!Model::GetInstance()->GetPlayer()->CanStartAttack()) {
     return;
   }
-  QPointF click_coord =
-      View::GetInstance()->GetTopLeftWindowCoord() +
-      QPointF(View::GetInstance()->GetCursorPos()) / constants::kBlockSz;
-  if (click_coord.x() < Model::GetInstance()->GetPlayer()->GetPosition().x()) {
-    Model::GetInstance()->GetPlayer()->SetAttackLeft(true);
-  } else {
-    Model::GetInstance()->GetPlayer()->SetAttackLeft(false);
-  }
+  QPointF click_coord = View::GetInstance()->GetCoordUnderCursor();
+  Model::GetInstance()->GetPlayer()->SetAttackDirection(
+      (click_coord.x() < Model::GetInstance()->GetPlayer()->GetPosition().x())
+          ? utils::Direction::kLeft
+          : utils::Direction::kRight);
   Model::GetInstance()->GetPlayer()->SetAttackTick(
       constants::kPlayerAttackTime);
-  Model::GetInstance()->GetPlayer()->SetAttackInterval(
+  Model::GetInstance()->GetPlayer()->SetAttackCooldownInterval(
       constants::kPlayerAttackCooldown);
 }
 
@@ -107,10 +104,8 @@ bool Controller::IsVisible(QPointF player_center, QPointF mob_point) const {
 bool Controller::CanAttackMob(std::shared_ptr<MovingObject> mob,
                               QPointF player_center, double lower_angle,
                               double upper_angle) const {
-  QPointF mob_point(
-      mob->GetPosition().x() + mob->GetSize().x() / 2 - player_center.x(),
-      mob->GetPosition().y() + mob->GetSize().y() / 2 - player_center.y());
-  if (Model::GetInstance()->GetPlayer()->IsAttackLeft()) {
+  QPointF mob_point = mob->GetPosition() + mob->GetSize() / 2 - player_center;
+  if (Model::GetInstance()->GetPlayer()->IsAttackDirectionLeft()) {
     mob_point *= -1;
   }
   double distance = std::hypot(mob_point.x(), mob_point.y());
@@ -121,7 +116,7 @@ bool Controller::CanAttackMob(std::shared_ptr<MovingObject> mob,
 }
 
 void Controller::PlayerAttack() {
-  Model::GetInstance()->GetPlayer()->DecAttackInterval();
+  Model::GetInstance()->GetPlayer()->DecAttackCooldownInterval();
   if (Model::GetInstance()->GetPlayer()->IsAttackFinished()) {
     return;
   }
@@ -135,16 +130,13 @@ void Controller::PlayerAttack() {
       Model::GetInstance()->GetPlayer()->GetPosition().x() +
           Model::GetInstance()->GetPlayer()->GetSize().x() / 2,
       Model::GetInstance()->GetPlayer()->GetPosition().y() +
-          Model::GetInstance()->GetPlayer()->GetSize().y() / 2 -
-          constants::kEps);
+          Model::GetInstance()->GetPlayer()->GetSize().y() / 2);
   for (auto mob : Model::GetInstance()->GetMobs()) {
-    {
+    if (CanAttackMob(mob, player_center, lower_angle, upper_angle)) {
       Damage damage(Model::GetInstance()->GetPlayer()->GetPosition(),
                     Damage::Type::kPlayer,
                     Model::GetInstance()->GetPlayer()->GetDamage());
-      if (CanAttackMob(mob, player_center, lower_angle, upper_angle)) {
-        mob->DealDamage(damage);
-      }
+      mob->DealDamage(damage);
     }
   }
 }

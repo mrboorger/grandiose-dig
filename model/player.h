@@ -7,6 +7,7 @@
 
 #include "model/inventory.h"
 #include "model/moving_object.h"
+#include "utils.h"
 
 class Player : public MovingObject {
  public:
@@ -16,29 +17,33 @@ class Player : public MovingObject {
 
   void PickItem(InventoryItem item) { inventory_->AddItem(item); }
   void SetAttackTick(int attack_tick) { attack_tick_ = attack_tick; }
-  void SetAttackInterval(int attack_interval) {
-    attack_interval_ = attack_interval;
+  void SetAttackCooldownInterval(int attack_interval) {
+    attack_cooldown_interval_ = attack_interval;
   }
   int GetAttackTick() const { return attack_tick_; }
-  int GetAttackInterval() const { return attack_interval_; }
+  int GetAttackCooldownInterval() const { return attack_cooldown_interval_; }
 
-  void SetAttackLeft(bool attack_left) { attack_left_ = attack_left; }
+  void SetAttackDirection(utils::Direction attack_direction) {
+    attack_direction_ = attack_direction;
+  }
 
-  bool IsAttackLeft() const { return attack_left_; }
+  bool IsAttackDirectionLeft() const {
+    return attack_direction_ == utils::Direction::kLeft;
+  }
 
   void DecAttackTick() { attack_tick_ = std::max(attack_tick_ - 1, 0); }
-  void DecAttackInterval() {
-    attack_interval_ = std::max(attack_interval_ - 1, 0);
+  void DecAttackCooldownInterval() {
+    attack_cooldown_interval_ = std::max(attack_cooldown_interval_ - 1, 0);
   }
 
   bool IsAttackFinished() const { return attack_tick_ == 0; }
-  bool CanStartAttack() const { return attack_interval_ == 0; }
+  bool CanStartAttack() const { return attack_cooldown_interval_ == 0; }
 
  private:
   std::shared_ptr<Inventory> inventory_;
   int attack_tick_ = 0;
-  int attack_interval_ = 0;
-  bool attack_left_ = true;
+  int attack_cooldown_interval_ = 0;
+  utils::Direction attack_direction_ = utils::Direction::kLeft;
 };
 
 #endif  // MODEL_PLAYER_H_

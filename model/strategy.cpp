@@ -163,7 +163,8 @@ void BasicStrategy::PerformAction() {
 
 void BasicStrategy::DoStay() { keys_.clear(); }
 
-bool BasicStrategy::IsNearPit(QPointF src, int side) const {
+bool BasicStrategy::IsNearPit(QPointF src, utils::Direction side) const {
+  int direction = (side == utils::Direction::kLeft) ? -1 : 1;
   int x = std::floor(src.x() + GetMobState().GetSize().x() / 2);
   int y = std::floor(src.y() + GetMobState().GetSize().y() + constants::kEps);
   for (int j = 0; j < constants::kMobJumpLengthInBlocks; j++) {
@@ -171,7 +172,7 @@ bool BasicStrategy::IsNearPit(QPointF src, int side) const {
     for (int i = 0; i <= constants::kMobJumpHeightInBlocks; i++) {
       if (Model::GetInstance()
               ->GetMap()
-              ->GetBlock(QPoint(x + side * j, y + i))
+              ->GetBlock(QPoint(x + direction * j, y + i))
               .GetType() != Block::Type::kAir) {
         is_pit_near = false;
         break;
@@ -211,7 +212,7 @@ void BasicStrategy::DoWalk() {
       }
     }
     if (src.y() >= dst.y() - constants::kMobJumpHeightInBlocks) {
-      if (IsNearPit(src, -1)) {
+      if (IsNearPit(src, utils::Direction::kLeft)) {
         keys_.insert(ControllerTypes::Key::kJump);
       }
     }
@@ -223,7 +224,7 @@ void BasicStrategy::DoWalk() {
       }
     }
     if (src.y() >= dst.y() - constants::kMobJumpHeightInBlocks) {
-      if (IsNearPit(src, 1)) {
+      if (IsNearPit(src, utils::Direction::kRight)) {
         keys_.insert(ControllerTypes::Key::kJump);
       }
     }

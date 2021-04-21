@@ -335,12 +335,19 @@ void MovingObject::CheckFallDamage() {
 }
 
 void MovingObject::DealDamage(const Damage& damage) {
+  if (IsDead()) {
+    return;
+  }
   if (RecentlyDamaged()) {
     return;
   }
   damage_ticks_ = constants::kDamageCooldown;
-  bool prev_dead = IsDead();
   health_ -= damage.GetAmount();
+  if (IsDead()) {
+    emit Model::GetInstance()->BecameDead(type_);
+  } else {
+    emit Model::GetInstance()->DamageDealt(type_);
+  }
   if (damage.GetType() == Damage::Type::kMob ||
       damage.GetType() == Damage::Type::kPlayer) {
     QPointF source = damage.GetSource();
@@ -356,11 +363,6 @@ void MovingObject::DealDamage(const Damage& damage) {
     move_vector_.SetSpeedX(damage_push.x());
     move_vector_.TranslateSpeed({0, damage_push.y()});
     MakeMovement(pos_);
-  }
-  if (IsDead() && !prev_dead) {
-    emit Model::GetInstance()->BecameDead(type_);
-  } else {
-    emit Model::GetInstance()->DamageDealt(type_);
   }
   qDebug() << "Damage: " << health_;
 }

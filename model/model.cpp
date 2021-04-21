@@ -17,14 +17,21 @@ void Model::MoveObjects(
   if (player_->IsDead()) {
     exit(0);
   }
-  std::vector<std::shared_ptr<Mob>> delete_mobs;
-  for (auto i : mobs_) {
-    if (i->IsDead()) {
-      delete_mobs.push_back(i);
+  /*auto old_size = c.size();
+  for (auto i = c.begin(), last = c.end(); i != last;) {
+    if (pred(*i)) {
+      i = c.erase(i);
+    } else {
+      ++i;
     }
   }
-  for (auto i : delete_mobs) {
-    mobs_.erase(i);
+  return old_size - c.size();*/
+  for (auto i = mobs_.begin(), last = mobs_.end(); i != last;) {
+    if (i->get()->IsDead()) {
+      i = mobs_.erase(i);
+    } else {
+      i++;
+    }
   }
 
   player_->Move(pressed_keys);

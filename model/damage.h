@@ -13,8 +13,7 @@ class Damage {
   Damage(QPointF source, Type type, int amount)
       : source_(source), type_(type), amount_(amount) {}
 
-  Damage(Type type, int amount)
-      : source_(QPointF{0, 0}), type_(type), amount_(amount) {}
+  Damage(Type type, int amount) : source_(0, 0), type_(type), amount_(amount) {}
 
   void SetSource(QPointF source) { source_ = source; }
   void SetType(Type type) { type_ = type; }

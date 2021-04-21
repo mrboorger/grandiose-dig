@@ -113,9 +113,13 @@ QPoint View::GetCursorPos() const {
   return QCursor::pos() - geometry().topLeft();
 }
 
+QPointF View::GetCoordUnderCursor() const {
+  return GetTopLeftWindowCoord() +
+         QPointF(GetCursorPos()) / constants::kBlockSz;
+}
+
 QPoint View::GetBlockCoordUnderCursor() const {
-  QPointF pos =
-      GetTopLeftWindowCoord() + QPointF(GetCursorPos()) / constants::kBlockSz;
+  QPointF pos = GetCoordUnderCursor();
   return QPoint(std::floor(pos.x()), std::floor(pos.y()));
 }
 

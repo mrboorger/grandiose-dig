@@ -8,12 +8,11 @@
 PerlinNoise2D::PerlinNoise2D(int seed, int grad_period)
     : grad_size_(grad_period), grad_values_(grad_period * grad_period) {
   std::mt19937 gen(seed);
-  std::uniform_real_distribution<> distrib(0.0, 1.0);
+  std::uniform_real_distribution<> distrib(-1.0, 1.0);
   for (auto& j : grad_values_) {
     double l = 0.0;
     do {
       j = QPointF(distrib(gen), distrib(gen));
-      j = 2.0 * j - QPointF(1.0, 1.0);
       l = std::hypot(j.x(), j.y());
       if (l > constants::kEps) {
         j /= l;

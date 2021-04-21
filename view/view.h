@@ -30,6 +30,7 @@ class View : public QWidget {
 
   QPoint GetCursorPos() const;              // in pixels
   QPoint GetBlockCoordUnderCursor() const;  // in blocks
+  QPointF GetCoordUnderCursor() const;      // in blocks
   QPointF GetTopLeftWindowCoord() const;    // in blocks
 
   void UpdateBlock(QPoint pos) { drawer_->UpdateBlock(pos); }
