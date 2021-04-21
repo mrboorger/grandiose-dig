@@ -8,6 +8,7 @@
 
 #include "controller/controller.h"
 #include "model/constants.h"
+#include "utils.h"
 #include "view/block_drawer.h"
 #include "view/mob_drawer.h"
 
@@ -19,8 +20,8 @@ View* View::GetInstance() {
 View::View()
     : QWidget(nullptr),
       camera_(QPointF(150, 150)),
-      drawer_(nullptr),
-      sound_manager_(new SoundManager()) {
+      sound_manager_(new SoundManager()),
+      drawer_(nullptr) {
   connect(Model::GetInstance(), &Model::DamageDealt, this, &View::DamageDealt);
   connect(Model::GetInstance(), &Model::BecameDead, this, &View::BecameDead);
   connect(Model::GetInstance(), &Model::MobSound, this, &View::MobSound);
@@ -60,14 +61,13 @@ void View::paintEvent(QPaintEvent* event) {
 }
 
 void View::DamageDealt(MovingObject::Type type) {
-  static std::mt19937 rnd(time(NULL));
-  uint32_t sound = rnd();
+  static std::uniform_int_distribution<int> distrib(0, 1);
   switch (type) {
     case MovingObject::Type::kPlayer:
       sound_manager_->PlaySound(SoundManager::Sound::kPlayerDamage);
       break;
     case MovingObject::Type::kMob:
-      if (sound % 2 == 0) {
+      if (distrib(utils::random) == 0) {
         sound_manager_->PlaySound(SoundManager::Sound::kMobDamage1);
       } else {
         sound_manager_->PlaySound(SoundManager::Sound::kMobDamage2);
@@ -85,9 +85,8 @@ void View::BecameDead(MovingObject::Type type) {
 
 void View::MobSound(MovingObject::Type type) {
   Q_UNUSED(type);
-  static std::mt19937 rnd(time(NULL));
-  uint32_t sound = rnd();
-  if (sound % 2 == 0) {
+  static std::uniform_int_distribution<int> distrib(0, 1);
+  if (distrib(utils::random) == 0) {
     sound_manager_->PlaySound(SoundManager::Sound::kMob1);
   } else {
     sound_manager_->PlaySound(SoundManager::Sound::kMob2);

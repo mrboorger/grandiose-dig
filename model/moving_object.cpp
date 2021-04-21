@@ -358,9 +358,9 @@ void MovingObject::DealDamage(const Damage& damage) {
     MakeMovement(pos_);
   }
   if (IsDead() && !prev_dead) {
-    Model::GetInstance()->BecameDead(type_);
+    emit Model::GetInstance()->BecameDead(type_);
   } else {
-    Model::GetInstance()->DamageDealt(type_);
+    emit Model::GetInstance()->DamageDealt(type_);
   }
   qDebug() << "Damage: " << health_;
 }

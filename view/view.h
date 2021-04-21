@@ -34,7 +34,7 @@ class View : public QWidget {
 
   void UpdateBlock(QPoint pos) { drawer_->UpdateBlock(pos); }
 
- public slots:
+ private slots:
   void DamageDealt(MovingObject::Type type);
   void BecameDead(MovingObject::Type type);
   void MobSound(MovingObject::Type type);

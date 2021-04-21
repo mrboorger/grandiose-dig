@@ -8,6 +8,7 @@
 #include <random>
 
 #include "model/model.h"
+#include "utils.h"
 
 BasicStrategy::BasicStrategy() { state_ = State::kStay; }
 
@@ -82,10 +83,11 @@ void BasicStrategy::SelectNewState() {
 }
 
 QPointF BasicStrategy::ChooseRandomWalkPosition() const {
-  // TODO(Wind-Eagle): This is temporary code.
-  static std::mt19937 rnd(time(nullptr));
-  return {GetMobState().GetPos().x() + static_cast<double>(rnd() % 21) - 10,
-          GetMobState().GetPos().y()};
+  return {
+      GetMobState().GetPos().x() +
+          utils::GetRandomDouble(-constants::kBasicStrategyRandomWalkDistance,
+                                 constants::kBasicStrategyRandomWalkDistance),
+      GetMobState().GetPos().y()};
 }
 
 void BasicStrategy::UpdateConditions() {
@@ -115,14 +117,13 @@ bool BasicStrategy::AlmostNearX(QPointF lhs, QPointF rhs) {
 }
 
 bool BasicStrategy::IsActionFinished() {
-  static std::mt19937 rnd(time(nullptr));
   switch (state_) {
     case State::kStay:
       if (HasCondition(Condition::kSeeEnemy)) {
         return true;
       }
       static std::uniform_real_distribution<double> distrib(0.0, 1.0);
-      return distrib(rnd) < constants::kBasicStrategyRandomWalkChance;
+      return distrib(utils::random) < constants::kBasicStrategyRandomWalkChance;
     case State::kWalk:
       if (HasCondition(Condition::kCanAttack) && attack_interval_ == 0) {
         return true;
@@ -166,8 +167,8 @@ bool BasicStrategy::IsNearPit(QPointF src, int side) const {
   int x = std::floor(src.x() + GetMobState().GetSize().x() / 2);
   int y = std::floor(src.y() + GetMobState().GetSize().y() + constants::kEps);
   for (int j = 0; j < constants::kMobJumpLengthInBlocks; j++) {
+    bool is_pit_near = true;
     for (int i = 0; i <= constants::kMobJumpHeightInBlocks; i++) {
-      bool is_pit_near = true;
       if (Model::GetInstance()
               ->GetMap()
               ->GetBlock(QPoint(x + side * j, y + i))
@@ -175,9 +176,9 @@ bool BasicStrategy::IsNearPit(QPointF src, int side) const {
         is_pit_near = false;
         break;
       }
-      if (is_pit_near) {
-        return true;
-      }
+    }
+    if (is_pit_near) {
+      return true;
     }
   }
   return false;

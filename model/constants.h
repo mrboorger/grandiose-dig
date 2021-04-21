@@ -54,8 +54,9 @@ constexpr int kBasicStrategyWalkTicksCount = 300;
 constexpr int kBasicStrategyAttackTicksCount = 100;
 constexpr double kBasicStrategyWalkPrecision = 0.1;  // in blocks
 constexpr double kBasicStrategyRandomWalkChance = 0.01;
+constexpr double kBasicStrategyRandomWalkDistance = 10;  // in blocks
 
-constexpr double kMobSoundChance = 0.001 / 1.5;
+constexpr double kMobSoundChance = 1.0 / 1500.0;  // once in 1500 ticks
 
 constexpr int kDefaultClearTimeMSec = 1'000;
 

@@ -29,4 +29,11 @@ QPointF DivideSegment(QPointF first, QPointF second, double percentage) {
   return first * percentage + second * (1.0 - percentage);
 }
 
+double GetRandomDouble(double left_bound, double right_bound) {
+  double ans = random();
+  return static_cast<double>(ans) / static_cast<double>(1LL << 32) /
+             (right_bound - left_bound) +
+         left_bound;
+}
+
 }  // namespace utils

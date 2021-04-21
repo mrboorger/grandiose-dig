@@ -4,6 +4,8 @@
 #include <random>
 #include <vector>
 
+#include "utils.h"
+
 Model* Model::GetInstance() {
   static Model model;
   return &model;
@@ -27,11 +29,11 @@ void Model::MoveObjects(
 
   player_->Move(pressed_keys);
 
-  static std::mt19937 rnd(time(nullptr));
   static std::uniform_real_distribution<double> distrib(0.0, 1.0);
   for (auto mob : mobs_) {
     mob->MoveMob();
-    if (!mob->RecentlyDamaged() && distrib(rnd) < constants::kMobSoundChance) {
+    if (!mob->RecentlyDamaged() &&
+        distrib(utils::random) < constants::kMobSoundChance) {
       emit MobSound(mob->GetType());
     }
   }
