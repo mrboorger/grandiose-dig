@@ -13,7 +13,7 @@ class Player : public MovingObject {
  public:
   explicit Player(QPointF pos);
 
-  std::shared_ptr<const Inventory> GetInventory() const { return inventory_; }
+  std::shared_ptr<Inventory> GetInventory() { return inventory_; }
 
   void PickItem(InventoryItem item) { inventory_->AddItem(item); }
   void SetAttackTick(int attack_tick) { attack_tick_ = attack_tick; }

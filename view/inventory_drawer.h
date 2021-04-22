@@ -26,6 +26,7 @@ class InventoryDrawer {
 
   void DrawItemSprite(QPainter* painter, QPoint pos, int id);
   void DrawItemCount(QPainter* painter, QPoint pos, int cnt);
+  void DrawSelectionBox(QPainter* painter);
 
   void LoadInventoryBackground();
 

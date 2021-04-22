@@ -50,6 +50,8 @@ class Controller {
   bool CanAttackMob(std::shared_ptr<MovingObject> mob, QPointF player_center,
                     double lower_angle, double upper_angle) const;
 
+  static void ParseInventoryKey(ControllerTypes::Key translated_key);
+
   QTimer tick_timer_;
   std::unordered_set<ControllerTypes::Key> pressed_keys_;
   bool is_pressed_right_mouse_button = false;

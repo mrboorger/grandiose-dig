@@ -10,6 +10,9 @@ std::array<QString, InventoryItem::kTypesCount> kNames = {"", "dirt.png",
                                                           "grass.png"};
 std::array<QImage, InventoryItem::kTypesCount> images;
 
+QString selection_box_name = "selection_box.png";
+QImage selection_box;
+
 }  // namespace
 
 InventoryDrawer::InventoryDrawer(std::shared_ptr<const Inventory> inventory)
@@ -19,6 +22,7 @@ InventoryDrawer::InventoryDrawer(std::shared_ptr<const Inventory> inventory)
 
 void InventoryDrawer::DrawInventory(QPainter* painter) {
   painter->drawPixmap(QPoint(0, 0), inventory_background_);
+  DrawSelectionBox(painter);
   for (int i = 0; i < Inventory::kItemsInColumn; ++i) {
     for (int j = 0; j < Inventory::kItemsInRow; ++j) {
       const auto& item = (*inventory_)[i * Inventory::kItemsInRow + j];
@@ -74,4 +78,13 @@ void InventoryDrawer::LoadInventoryBackground() {
           cell_png);
     }
   }
+}
+
+void InventoryDrawer::DrawSelectionBox(QPainter* painter) {
+  if (selection_box.isNull()) {
+    selection_box.load(":/resources/textures/" + selection_box_name);
+  }
+  assert(!selection_box.isNull());
+  painter->drawImage(inventory_->GetSelectedItem() * (kCellSize + kIndentSize),
+                     0, selection_box);
 }
