@@ -18,8 +18,8 @@ bool MovingObject::IsObjectCollision(QPointF lhs_pos, QPointF lhs_size,
 }
 
 void MovingObject::Move(
-    const std::unordered_set<ControllerTypes::Key>& pressed_keys) {
-  UpdateState(pressed_keys);
+    const std::unordered_set<ControllerTypes::Key>& pressed_keys, double time) {
+  UpdateState(pressed_keys, time);
 }
 
 void MovingObject::UpdateStay(
@@ -116,10 +116,10 @@ void MovingObject::UpdateJump(
 }
 
 void MovingObject::UpdateState(
-    const std::unordered_set<ControllerTypes::Key>& pressed_keys) {
+    const std::unordered_set<ControllerTypes::Key>& pressed_keys, double time) {
   QPointF old_position = pos_;
   State old_state = state_;
-  damage_ticks_ = std::max(damage_ticks_ - 1, 0);
+  damage_time_ = std::max(damage_time_ - time, 0.0);
   switch (state_) {
     case State::kStay:
       UpdateStay(pressed_keys);
@@ -132,14 +132,14 @@ void MovingObject::UpdateState(
       break;
   }
   if (old_state == state_) {
-    state_ticks_++;
+    state_time_ += time;
   } else {
-    state_ticks_ = 0;
+    state_time_ = 0;
   }
   if (state_ != State::kJump) {
     move_vector_.ResetMomentum();
   }
-  MakeMovement(old_position);
+  MakeMovement(old_position, time);
 }
 
 bool MovingObject::FindCollisionGround(
@@ -266,9 +266,9 @@ bool MovingObject::FindCollisionRight(
   return false;
 }
 
-void MovingObject::MakeMovement(QPointF old_position) {
-  pos_ += move_vector_.GetSpeed();
-  pos_ += move_vector_.GetMomentum();
+void MovingObject::MakeMovement(QPointF old_position, double time) {
+  pos_ += move_vector_.GetSpeed() * time;
+  pos_ += move_vector_.GetMomentum() * time;
   CheckCollisions(old_position);
 }
 
@@ -341,7 +341,7 @@ void MovingObject::DealDamage(const Damage& damage) {
   if (RecentlyDamaged()) {
     return;
   }
-  damage_ticks_ = constants::kDamageCooldown;
+  damage_time_ = constants::kDamageCooldown;
   health_ -= damage.GetAmount();
   if (IsDead()) {
     emit Model::GetInstance()->BecameDead(type_);
@@ -362,7 +362,7 @@ void MovingObject::DealDamage(const Damage& damage) {
     // in some cases there is too high speed of a damage push
     move_vector_.SetSpeedX(damage_push.x());
     move_vector_.TranslateSpeed({0, damage_push.y()});
-    MakeMovement(pos_);
+    MakeMovement(pos_, constants::kEps);
   }
   qDebug() << "Damage: " << health_;
 }

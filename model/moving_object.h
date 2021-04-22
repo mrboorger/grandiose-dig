@@ -58,7 +58,8 @@ class MovingObject {
   int GetDamage() const { return damage_; }
 
   virtual void Move(
-      const std::unordered_set<ControllerTypes::Key>& pressed_keys);
+      const std::unordered_set<ControllerTypes::Key>& pressed_keys,
+      double time);
 
   static bool IsObjectCollision(QPointF lhs_pos, QPointF lhs_size,
                                 QPointF rhs_pos, QPointF rhs_size);
@@ -69,21 +70,21 @@ class MovingObject {
   bool IsPushesRight() const { return pushes_right_; }
 
   void CheckFallDamage();
-  bool RecentlyDamaged() const { return damage_ticks_ != 0; }
+  bool RecentlyDamaged() const { return damage_time_ > constants::kEps; }
   void DealDamage(const Damage& damage);
 
   bool IsDead() const;
 
  protected:
   MovingObject(QPointF pos, QPointF size);
-  void UpdateState(
-      const std::unordered_set<ControllerTypes::Key>& pressed_keys);
+  void UpdateState(const std::unordered_set<ControllerTypes::Key>& pressed_keys,
+                   double time);
 
  private:
   void UpdateStay(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
   void UpdateWalk(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
   void UpdateJump(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
-  void MakeMovement(QPointF old_position);
+  void MakeMovement(QPointF old_position, double time);
   void CheckCollisions(QPointF old_position);
   bool FindCollisionGround(QPointF old_position, double* ground_y,
                            const std::shared_ptr<AbstractMap>& map) const;
@@ -113,8 +114,8 @@ class MovingObject {
   int health_ = constants::kPlayerHealth;
   int damage_ = constants::kPlayerDamage;
 
-  int state_ticks_ = 0;
-  int damage_ticks_ = 0;
+  double state_time_ = 0;
+  double damage_time_ = 0;
 
   bool pushes_ground_ = false;
   bool pushes_ceil_ = false;
