@@ -39,6 +39,7 @@ set(SOURCES
         main.cpp
         model/abstract_map.cpp
         model/block.cpp
+        model/chunk.cpp
         model/chunk_map.cpp
         model/flat_chunk_map_generator.cpp
         model/flat_map_generator.cpp
@@ -51,6 +52,9 @@ set(SOURCES
         model/move_vector.cpp
         model/moving_object.cpp
         model/moving_object.cpp
+        model/perlin_chunk_map_generator.cpp
+        model/perlin_noise1d.cpp
+        model/perlin_noise2d.cpp
         model/player.cpp
         model/player.cpp
         model/strategy.cpp
@@ -63,6 +67,7 @@ set(SOURCES
         view/inventory_drawer.cpp
         view/map_drawer.cpp
         view/mob_drawer.cpp
+        view/sound_manager.cpp
         view/view.cpp
         view/view.cpp)
 

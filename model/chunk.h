@@ -21,6 +21,8 @@ class Chunk {
 
   void SetBlock(QPoint pos, Block block) { blocks_[BlockIndex(pos)] = block; }
 
+  void FillWith(Block block);
+
  private:
   static int BlockIndex(QPoint pos) {
     assert(0 <= pos.x() && pos.x() < kWidth);

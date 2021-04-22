@@ -9,11 +9,16 @@ Mob::Mob(QPointF pos, QPointF size)
   SetWalkMaxSpeed(constants::kMobWalkMaxSpeed);
   SetWalkMaxAirAcceleration(constants::kMobWalkMaxAirAcceleration);
   SetJumpSpeed(constants::kMobJumpSpeed);
+  SetDamageAcceleration(constants::kMobDamageAcceleration);
+  SetHealth(constants::kMobHealth);
+  SetDamage(constants::kMobDamage);
+  SetType(MovingObject::Type::kMob);
 }
 
 void Mob::MoveMob() {
-  strategy_->SetMobState(MobState(GetPosition(), GetSize(), IsOnGround(),
-                                  IsOnCeil(), IsPushesLeft(), IsPushesRight()));
+  strategy_->SetMobState(MobState(GetPosition(), GetSize(), GetDamage(),
+                                  IsOnGround(), IsOnCeil(), IsPushesLeft(),
+                                  IsPushesRight()));
   strategy_->Update();
   UpdateState(strategy_->GetKeys());
 }

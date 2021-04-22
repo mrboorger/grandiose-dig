@@ -10,7 +10,9 @@
 #include "model/mob.h"
 #include "model/player.h"
 
-class Model {
+class Model : public QObject {
+  Q_OBJECT
+
  public:
   static Model* GetInstance();
 
@@ -26,7 +28,7 @@ class Model {
 
   void SetMap(std::shared_ptr<AbstractMap> map) { map_ = std::move(map); }
 
-  std::shared_ptr<const Player> GetPlayer() const { return player_; }
+  std::shared_ptr<Player> GetPlayer() const { return player_; }
 
   void SetPlayer(const std::shared_ptr<Player>& player) { player_ = player; }
 
@@ -38,6 +40,11 @@ class Model {
       const std::unordered_set<ControllerTypes::Key>& pressed_keys);
 
   void PickItemToPlayer(InventoryItem item) { player_->PickItem(item); }
+
+ signals:
+  void DamageDealt(MovingObject::Type type);
+  void BecameDead(MovingObject::Type type);
+  void MobSound(MovingObject::Type type);
 
  private:
   Model() = default;

@@ -3,9 +3,12 @@
 #include <QColor>
 #include <QPainter>
 #include <cmath>
+#include <ctime>
+#include <random>
 
 #include "controller/controller.h"
 #include "model/constants.h"
+#include "utils.h"
 #include "view/block_drawer.h"
 #include "view/mob_drawer.h"
 
@@ -14,7 +17,15 @@ View* View::GetInstance() {
   return &view;
 }
 
-View::View() : QWidget(nullptr), camera_(QPointF(150, 150)), drawer_(nullptr) {}
+View::View()
+    : QWidget(nullptr),
+      camera_(QPointF(150, 150)),
+      sound_manager_(new SoundManager()),
+      drawer_(nullptr) {
+  connect(Model::GetInstance(), &Model::DamageDealt, this, &View::DamageDealt);
+  connect(Model::GetInstance(), &Model::BecameDead, this, &View::BecameDead);
+  connect(Model::GetInstance(), &Model::MobSound, this, &View::MobSound);
+}
 
 void View::SetInventoryDrawer(InventoryDrawer* drawer) {
   inventory_drawer_.reset(drawer);
@@ -49,6 +60,39 @@ void View::paintEvent(QPaintEvent* event) {
   }
 }
 
+void View::DamageDealt(MovingObject::Type type) {
+  static std::uniform_int_distribution<int> distrib(0, 1);
+  switch (type) {
+    case MovingObject::Type::kPlayer:
+      sound_manager_->PlaySound(SoundManager::Sound::kPlayerDamage);
+      break;
+    case MovingObject::Type::kMob:
+      if (distrib(utils::random) == 0) {
+        sound_manager_->PlaySound(SoundManager::Sound::kMobDamage1);
+      } else {
+        sound_manager_->PlaySound(SoundManager::Sound::kMobDamage2);
+      }
+      break;
+    default:
+      break;
+  }
+}
+
+void View::BecameDead(MovingObject::Type type) {
+  Q_UNUSED(type);
+  sound_manager_->PlaySound(SoundManager::Sound::kMobDeath);
+}
+
+void View::MobSound(MovingObject::Type type) {
+  Q_UNUSED(type);
+  static std::uniform_int_distribution<int> distrib(0, 1);
+  if (distrib(utils::random) == 0) {
+    sound_manager_->PlaySound(SoundManager::Sound::kMob1);
+  } else {
+    sound_manager_->PlaySound(SoundManager::Sound::kMob2);
+  }
+}
+
 void View::keyPressEvent(QKeyEvent* event) {
   Controller::GetInstance()->KeyPress(event->key());
 }
@@ -69,9 +113,13 @@ QPoint View::GetCursorPos() const {
   return QCursor::pos() - geometry().topLeft();
 }
 
+QPointF View::GetCoordUnderCursor() const {
+  return GetTopLeftWindowCoord() +
+         QPointF(GetCursorPos()) / constants::kBlockSz;
+}
+
 QPoint View::GetBlockCoordUnderCursor() const {
-  QPointF pos =
-      GetTopLeftWindowCoord() + QPointF(GetCursorPos()) / constants::kBlockSz;
+  QPointF pos = GetCoordUnderCursor();
   return QPoint(std::floor(pos.x()), std::floor(pos.y()));
 }
 

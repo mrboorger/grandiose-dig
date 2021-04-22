@@ -9,8 +9,11 @@
 #include "view/abstract_map_drawer.h"
 #include "view/camera.h"
 #include "view/inventory_drawer.h"
+#include "view/sound_manager.h"
 
 class View : public QWidget {
+  Q_OBJECT
+
  public:
   static View* GetInstance();
 
@@ -27,8 +30,14 @@ class View : public QWidget {
 
   QPoint GetCursorPos() const;              // in pixels
   QPoint GetBlockCoordUnderCursor() const;  // in blocks
+  QPointF GetCoordUnderCursor() const;      // in blocks
 
   void UpdateBlock(QPoint pos) { drawer_->UpdateBlock(pos); }
+
+ private slots:
+  void DamageDealt(MovingObject::Type type);
+  void BecameDead(MovingObject::Type type);
+  void MobSound(MovingObject::Type type);
 
  private:
   constexpr static int kRenderDistance = 70;
@@ -44,6 +53,7 @@ class View : public QWidget {
   QPointF GetTopLeftWindowCoord() const;  // in blocks
 
   Camera camera_;
+  std::unique_ptr<SoundManager> sound_manager_;
   std::unique_ptr<AbstractMapDrawer> drawer_;
   std::unique_ptr<InventoryDrawer> inventory_drawer_;
 };

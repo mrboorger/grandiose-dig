@@ -8,6 +8,7 @@
 #include <random>
 
 #include "model/model.h"
+#include "utils.h"
 
 BasicStrategy::BasicStrategy() { state_ = State::kStay; }
 
@@ -82,15 +83,16 @@ void BasicStrategy::SelectNewState() {
 }
 
 QPointF BasicStrategy::ChooseRandomWalkPosition() const {
-  // TODO(Wind-Eagle): This is temporary code.
-  static std::mt19937 rnd(time(nullptr));
-  return {GetMobState().GetPos().x() + static_cast<double>(rnd() % 21) - 10,
-          GetMobState().GetPos().y()};
+  return {
+      GetMobState().GetPos().x() +
+          utils::GetRandomDouble(-constants::kBasicStrategyRandomWalkDistance,
+                                 constants::kBasicStrategyRandomWalkDistance),
+      GetMobState().GetPos().y()};
 }
 
 void BasicStrategy::UpdateConditions() {
   ClearConditions();
-  std::shared_ptr<const MovingObject> target = EnemySpotted();
+  std::shared_ptr<MovingObject> target = EnemySpotted();
   if (target) {
     AddCondition(Condition::kSeeEnemy);
     if (MovingObject::IsObjectCollision(
@@ -106,19 +108,22 @@ void BasicStrategy::UpdateConditions() {
   attack_target_ = target;
 }
 
-static bool AlmostNearX(QPointF lhs, QPointF rhs) {
-  return std::abs(lhs.x() - rhs.x()) <= constants::kBasicStrategyWalkPrecision;
+bool BasicStrategy::AlmostNearX(QPointF lhs, QPointF rhs) {
+  if (lhs.y() >= rhs.y()) {
+    return std::abs(lhs.x() - rhs.x()) <=
+           constants::kBasicStrategyWalkPrecision;
+  }
+  return std::abs(lhs.x() - rhs.x()) <= constants::kEps;
 }
 
 bool BasicStrategy::IsActionFinished() {
-  static std::mt19937 rnd(time(nullptr));
   switch (state_) {
     case State::kStay:
       if (HasCondition(Condition::kSeeEnemy)) {
         return true;
       }
       static std::uniform_real_distribution<double> distrib(0.0, 1.0);
-      return distrib(rnd) < constants::kBasicStrategyRandomWalkChance;
+      return distrib(utils::random) < constants::kBasicStrategyRandomWalkChance;
     case State::kWalk:
       if (HasCondition(Condition::kCanAttack) && attack_interval_ == 0) {
         return true;
@@ -158,6 +163,28 @@ void BasicStrategy::PerformAction() {
 
 void BasicStrategy::DoStay() { keys_.clear(); }
 
+bool BasicStrategy::IsNearPit(QPointF src, utils::Direction side) const {
+  int direction = (side == utils::Direction::kLeft) ? -1 : 1;
+  int x = std::floor(src.x() + GetMobState().GetSize().x() / 2);
+  int y = std::floor(src.y() + GetMobState().GetSize().y() + constants::kEps);
+  for (int j = 0; j < constants::kMobJumpLengthInBlocks; j++) {
+    bool is_pit_near = true;
+    for (int i = 0; i <= constants::kMobJumpHeightInBlocks; i++) {
+      if (Model::GetInstance()
+              ->GetMap()
+              ->GetBlock(QPoint(x + direction * j, y + i))
+              .GetType() != Block::Type::kAir) {
+        is_pit_near = false;
+        break;
+      }
+    }
+    if (is_pit_near) {
+      return true;
+    }
+  }
+  return false;
+}
+
 void BasicStrategy::DoWalk() {
   keys_.clear();
   QPointF src = GetMobState().GetPos();
@@ -184,6 +211,11 @@ void BasicStrategy::DoWalk() {
         keys_.insert(ControllerTypes::Key::kJump);
       }
     }
+    if (src.y() >= dst.y() - constants::kMobJumpHeightInBlocks) {
+      if (IsNearPit(src, utils::Direction::kLeft)) {
+        keys_.insert(ControllerTypes::Key::kJump);
+      }
+    }
   } else {
     keys_.insert(ControllerTypes::Key::kRight);
     if (GetMobState().IsPushesRight()) {
@@ -191,19 +223,25 @@ void BasicStrategy::DoWalk() {
         keys_.insert(ControllerTypes::Key::kJump);
       }
     }
+    if (src.y() >= dst.y() - constants::kMobJumpHeightInBlocks) {
+      if (IsNearPit(src, utils::Direction::kRight)) {
+        keys_.insert(ControllerTypes::Key::kJump);
+      }
+    }
   }
 }
 
 void BasicStrategy::DoAttack() {
-  // TODO(Wind-Eagle): This is temporary code
-  qDebug() << "Attack";
+  Damage damage(GetMobState().GetPos(), Damage::Type::kMob,
+                GetMobState().GetDamage());
+  attack_target_->DealDamage(damage);
 }
 
 static double EuclidianDistance(QPointF lhs, QPointF rhs) {
   return std::hypot(lhs.x() - rhs.x(), lhs.y() - rhs.y());
 }
 
-std::shared_ptr<const MovingObject> BasicStrategy::EnemySpotted() {
+std::shared_ptr<MovingObject> BasicStrategy::EnemySpotted() {
   if (EuclidianDistance(Model::GetInstance()->GetPlayer()->GetPosition(),
                         GetMobState().GetPos()) <=
       constants::kBasicStrategyVisionRadius) {

@@ -5,5 +5,11 @@
         <file>resources/textures/player.png</file>
         <file>resources/textures/inventory_cell.png</file>
         <file>resources/textures/mob.png</file>
+        <file>resources/sounds/player_damage.mp3</file>
+        <file>resources/sounds/zombie_death.mp3</file>
+        <file>resources/sounds/zombie_damage2.mp3</file>
+        <file>resources/sounds/zombie_damage1.mp3</file>
+        <file>resources/sounds/zombie2.mp3</file>
+        <file>resources/sounds/zombie1.mp3</file>
     </qresource>
 </RCC>

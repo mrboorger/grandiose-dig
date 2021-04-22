@@ -8,6 +8,7 @@
 
 #include "model/abstract_strategy.h"
 #include "model/moving_object.h"
+#include "utils.h"
 
 class BasicStrategy : public AbstractStrategy {
  public:
@@ -32,7 +33,7 @@ class BasicStrategy : public AbstractStrategy {
 
  protected:
   void DecreaseIntervals();
-  std::shared_ptr<const MovingObject> EnemySpotted();
+  std::shared_ptr<MovingObject> EnemySpotted();
   QPointF ChooseRandomWalkPosition() const;
   void DoStay();
   void DoWalk();
@@ -41,6 +42,8 @@ class BasicStrategy : public AbstractStrategy {
   void UpdateStay();
   void UpdateWalk();
   void UpdateAttack();
+
+  bool IsNearPit(QPointF src, utils::Direction side) const;
 
  private:
   enum class State { kStay, kWalk, kAttack, kStatesCount };
@@ -63,13 +66,14 @@ class BasicStrategy : public AbstractStrategy {
   }
 
   void ClearConditions() { conditions_ = 0; }
+  virtual bool AlmostNearX(QPointF lhs, QPointF rhs);
 
   std::unordered_set<ControllerTypes::Key> keys_;
 
   int attack_interval_ = 0;
   int walk_interval_ = 0;
   QPointF walk_target_ = {0, 0};
-  std::shared_ptr<const MovingObject> attack_target_;
+  std::shared_ptr<MovingObject> attack_target_;
   uint32_t conditions_;
   State state_;
 };

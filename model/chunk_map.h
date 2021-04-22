@@ -16,6 +16,7 @@
 
 class ChunkMap : public AbstractMap {
   friend class FlatChunkMapGenerator;
+  friend class PerlinChunkMapGenerator;
 
  public:
   void SetBlock(QPoint pos, Block block) override;
@@ -27,9 +28,9 @@ class ChunkMap : public AbstractMap {
   static QPoint GetChunkCoords(QPointF pos);
   static QPointF GetWorldCoords(QPoint chunk_pos);
 
- private:
   explicit ChunkMap(AbstractRegionGenerator* generator);
 
+ private:
   Block* GetBlockMutable(QPoint pos) override;
 
   Chunk& GetChunkMutable(QPoint chunk_pos);

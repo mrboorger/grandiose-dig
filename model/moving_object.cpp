@@ -1,9 +1,11 @@
 #include "model/moving_object.h"
 
+#include <QDebug>
 #include <algorithm>
 #include <cmath>
 
 #include "model/model.h"
+#include "utils.h"
 
 MovingObject::MovingObject(QPointF pos, QPointF size)
     : pos_(pos), size_(size) {}
@@ -117,6 +119,7 @@ void MovingObject::UpdateState(
     const std::unordered_set<ControllerTypes::Key>& pressed_keys) {
   QPointF old_position = pos_;
   State old_state = state_;
+  damage_ticks_ = std::max(damage_ticks_ - 1, 0);
   switch (state_) {
     case State::kStay:
       UpdateStay(pressed_keys);
@@ -136,14 +139,8 @@ void MovingObject::UpdateState(
   if (state_ != State::kJump) {
     move_vector_.ResetMomentum();
   }
-  CheckCollisions(old_position);
+  MakeMovement(old_position);
 }
-
-namespace {
-QPointF DivideSegment(QPointF first, QPointF second, double percentage) {
-  return first * percentage + second * (1.0 - percentage);
-}
-}  // namespace
 
 bool MovingObject::FindCollisionGround(
     QPointF old_position, double* ground_y,
@@ -156,8 +153,8 @@ bool MovingObject::FindCollisionGround(
   int dist = std::max(std::abs(end_y - begin_y), 1);
   for (int y = begin_y; y <= end_y; y++) {
     double bottom_left_x =
-        DivideSegment(old_bottom_left, new_bottom_left,
-                      static_cast<double>(std::abs(end_y - y)) / dist)
+        utils::DivideSegment(old_bottom_left, new_bottom_left,
+                             static_cast<double>(std::abs(end_y - y)) / dist)
             .x();
     double bottom_right_x = bottom_left_x + size_.x() - constants::kEps;
     for (double x = bottom_left_x + constants::kEps;; x += 1) {
@@ -186,8 +183,8 @@ bool MovingObject::FindCollisionCeiling(
   int dist = std::max(std::abs(end_y - begin_y), 1);
   for (int y = begin_y; y >= end_y; y--) {
     double top_left_x =
-        DivideSegment(old_top_left, new_top_left,
-                      static_cast<double>(std::abs(end_y - y)) / dist)
+        utils::DivideSegment(old_top_left, new_top_left,
+                             static_cast<double>(std::abs(end_y - y)) / dist)
             .x();
     double top_right_x = top_left_x + size_.x() - constants::kEps;
     for (double x = top_left_x + constants::kEps;; x += 1) {
@@ -217,8 +214,8 @@ bool MovingObject::FindCollisionLeft(
   int dist = std::max(std::abs(end_x - begin_x), 1);
   for (int x = begin_x; x >= end_x; x--) {
     double bottom_left_y =
-        DivideSegment(old_bottom_left, new_bottom_left,
-                      static_cast<double>(std::abs(end_x - x)) / dist)
+        utils::DivideSegment(old_bottom_left, new_bottom_left,
+                             static_cast<double>(std::abs(end_x - x)) / dist)
             .y();
     double top_left_y = bottom_left_y - size_.y() + constants::kEps;
     for (double y = bottom_left_y;; y -= 1) {
@@ -250,8 +247,8 @@ bool MovingObject::FindCollisionRight(
   int dist = std::max(std::abs(end_x - begin_x), 1);
   for (int x = begin_x; x <= end_x; x++) {
     double bottom_right_y =
-        DivideSegment(old_bottom_right, new_bottom_right,
-                      static_cast<double>(std::abs(end_x - x)) / dist)
+        utils::DivideSegment(old_bottom_right, new_bottom_right,
+                             static_cast<double>(std::abs(end_x - x)) / dist)
             .y();
     double top_right_y = bottom_right_y - size_.y() + constants::kEps;
     for (double y = bottom_right_y;; y -= 1) {
@@ -269,12 +266,16 @@ bool MovingObject::FindCollisionRight(
   return false;
 }
 
+void MovingObject::MakeMovement(QPointF old_position) {
+  pos_ += move_vector_.GetSpeed();
+  pos_ += move_vector_.GetMomentum();
+  CheckCollisions(old_position);
+}
+
 void MovingObject::CheckCollisions(QPointF old_position) {
   auto map = Model::GetInstance()->GetMap();
   double ground_y = 0, ceiling_y = 0;
   double right_wall_x = 0, left_wall_x = 0;
-  pos_ += move_vector_.GetSpeed();
-  pos_ += move_vector_.GetMomentum();
   if (move_vector_.GetSpeedX() + move_vector_.GetMomentumX() <=
           constants::kEps &&
       FindCollisionLeft(old_position, &left_wall_x, map)) {
@@ -313,6 +314,7 @@ void MovingObject::CheckCollisions(QPointF old_position) {
           -constants::kEps &&
       FindCollisionGround(old_position, &ground_y, map)) {
     pushes_ground_ = true;
+    CheckFallDamage();
     pos_.setY(ground_y);
     move_vector_.SetSpeedY(0);
     move_vector_.SetMomentumY(0);
@@ -320,3 +322,49 @@ void MovingObject::CheckCollisions(QPointF old_position) {
     pushes_ground_ = false;
   }
 }
+
+void MovingObject::CheckFallDamage() {
+  double fall_damage_speed =
+      move_vector_.GetSpeedY() + move_vector_.GetMomentumY();
+  if (fall_damage_speed > constants::kFallDamageMin) {
+    Damage damage(Damage::Type::kFall,
+                  std::ceil((fall_damage_speed - constants::kFallDamageMin) /
+                            constants::kFallDamagePoint));
+    DealDamage(damage);
+  }
+}
+
+void MovingObject::DealDamage(const Damage& damage) {
+  if (IsDead()) {
+    return;
+  }
+  if (RecentlyDamaged()) {
+    return;
+  }
+  damage_ticks_ = constants::kDamageCooldown;
+  health_ -= damage.GetAmount();
+  if (IsDead()) {
+    emit Model::GetInstance()->BecameDead(type_);
+  } else {
+    emit Model::GetInstance()->DamageDealt(type_);
+  }
+  if (damage.GetType() == Damage::Type::kMob ||
+      damage.GetType() == Damage::Type::kPlayer) {
+    QPointF source = damage.GetSource();
+    QPointF damage_push = damage_acceleration_;
+    if (source.x() > pos_.x()) {
+      damage_push.setX(-damage_push.x());
+    }
+    if (!pushes_ground_) {
+      damage_push.setY(0);
+    }
+    // TranslateSpeed(damage_push) causes a non-realistic behaviour:
+    // in some cases there is too high speed of a damage push
+    move_vector_.SetSpeedX(damage_push.x());
+    move_vector_.TranslateSpeed({0, damage_push.y()});
+    MakeMovement(pos_);
+  }
+  qDebug() << "Damage: " << health_;
+}
+
+bool MovingObject::IsDead() const { return health_ <= 0; }

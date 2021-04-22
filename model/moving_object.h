@@ -7,17 +7,22 @@
 #include "controller/controller_types.h"
 #include "model/abstract_map.h"
 #include "model/constants.h"
+#include "model/damage.h"
 #include "model/move_vector.h"
 
 class MovingObject {
  public:
   enum class State { kStay, kWalk, kJump };
+  enum class Type { kUndefined, kPlayer, kMob };
 
   MovingObject(const MovingObject&) = default;
   MovingObject(MovingObject&&) = default;
   virtual ~MovingObject() = default;
   MovingObject& operator=(const MovingObject&) = default;
   MovingObject& operator=(MovingObject&&) = default;
+
+  void SetType(Type type) { type_ = type; }
+  Type GetType() { return type_; }
 
   void SetWalkAcceleration(double speed) { walk_acceleration_ = speed; }
   void SetWalkMaxSpeed(double speed) { walk_max_speed_ = speed; }
@@ -28,6 +33,12 @@ class MovingObject {
 
   void SetGravitySpeed(double speed) { gravity_speed_ = speed; }
   void SetJumpSpeed(double speed) { jump_speed_ = speed; }
+
+  void SetHealth(int health) { health_ = health; }
+  void SetDamage(int damage) { damage_ = damage; }
+  void SetDamageAcceleration(QPointF damage_acceleration) {
+    damage_acceleration_ = damage_acceleration;
+  }
 
   double GetWalkAcceleration() const { return walk_acceleration_; }
   double GetWalkMaxSpeed() const { return walk_max_speed_; }
@@ -42,6 +53,10 @@ class MovingObject {
   QPointF GetPosition() const { return pos_; }
   QPointF GetSize() const { return size_; }
 
+  QPointF GetDamageAcceleration() const { return damage_acceleration_; }
+  int GetHealth() const { return health_; }
+  int GetDamage() const { return damage_; }
+
   virtual void Move(
       const std::unordered_set<ControllerTypes::Key>& pressed_keys);
 
@@ -53,6 +68,12 @@ class MovingObject {
   bool IsPushesLeft() const { return pushes_left_; }
   bool IsPushesRight() const { return pushes_right_; }
 
+  void CheckFallDamage();
+  bool RecentlyDamaged() const { return damage_ticks_ != 0; }
+  void DealDamage(const Damage& damage);
+
+  bool IsDead() const;
+
  protected:
   MovingObject(QPointF pos, QPointF size);
   void UpdateState(
@@ -62,6 +83,7 @@ class MovingObject {
   void UpdateStay(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
   void UpdateWalk(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
   void UpdateJump(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
+  void MakeMovement(QPointF old_position);
   void CheckCollisions(QPointF old_position);
   bool FindCollisionGround(QPointF old_position, double* ground_y,
                            const std::shared_ptr<AbstractMap>& map) const;
@@ -76,15 +98,23 @@ class MovingObject {
   QPointF size_;
   State state_ = MovingObject::State::kStay;
 
-  double walk_acceleration_ = 0.01;
-  double walk_max_speed_ = 0.1;
-  double walk_air_acceleration_ = 0.01;
-  double walk_max_air_acceleration_ = 0.1;
+  double walk_acceleration_ = constants::kPlayerWalkAcceleration;
+  double walk_max_speed_ = constants::kPlayerWalkMaxSpeed;
+  double walk_air_acceleration_ = constants::kPlayerWalkAirAcceleration;
+  double walk_max_air_acceleration_ = constants::kPlayerWalkMaxAirAcceleration;
 
-  double gravity_speed_ = 0.01;
-  double jump_speed_ = -0.3;
+  double gravity_speed_ = constants::kPlayerGravitySpeed;
+  double jump_speed_ = constants::kPlayerJumpSpeed;
+
+  QPointF damage_acceleration_ = constants::kPlayerDamageAcceleration;
+
+  Type type_ = Type::kUndefined;
+
+  int health_ = constants::kPlayerHealth;
+  int damage_ = constants::kPlayerDamage;
 
   int state_ticks_ = 0;
+  int damage_ticks_ = 0;
 
   bool pushes_ground_ = false;
   bool pushes_ceil_ = false;

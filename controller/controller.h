@@ -3,6 +3,7 @@
 
 #include <QKeyEvent>
 #include <QTimer>
+#include <memory>
 #include <unordered_set>
 
 #include "controller/controller_types.h"
@@ -41,6 +42,13 @@ class Controller {
   Controller();
 
   void TickEvent();
+  void BreakBlock();
+  void StartAttack();
+  void PlayerAttack();
+
+  bool IsVisible(QPointF player_center, QPointF mob_point) const;
+  bool CanAttackMob(std::shared_ptr<MovingObject> mob, QPointF player_center,
+                    double lower_angle, double upper_angle) const;
 
   QTimer tick_timer_;
   std::unordered_set<ControllerTypes::Key> pressed_keys_;

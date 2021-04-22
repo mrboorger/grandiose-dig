@@ -1,4 +1,4 @@
-#include "inventory_drawer.h"
+#include "view/inventory_drawer.h"
 
 #include <QString>
 #include <QTextItem>
