@@ -12,7 +12,7 @@ Model* Model::GetInstance() {
 }
 
 void Model::MoveObjects(
-    const std::unordered_set<ControllerTypes::Key>& pressed_keys) {
+    const std::unordered_set<ControllerTypes::Key>& pressed_keys, double time) {
   // TODO(Wind-Eagle): this is temporary code.
   if (player_->IsDead()) {
     exit(0);
@@ -25,11 +25,15 @@ void Model::MoveObjects(
     }
   }
 
-  player_->Move(pressed_keys);
+  player_->Move(pressed_keys, time);
+
+  for (auto mob : mobs_) {
+    mob->CalculateMobMovement(time);
+  }
 
   static std::uniform_real_distribution<double> distrib(0.0, 1.0);
   for (auto mob : mobs_) {
-    mob->MoveMob();
+    mob->MoveMob(time);
     if (!mob->RecentlyDamaged() &&
         distrib(utils::random) < constants::kMobSoundChance) {
       emit MobSound(mob->GetType());

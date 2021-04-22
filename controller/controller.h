@@ -44,9 +44,11 @@ class Controller {
   void TickEvent();
   void BreakBlock();
   void StartAttack();
-  void PlayerAttack();
+  void PlayerAttack(double time);
 
   bool IsVisible(QPointF player_center, QPointF mob_point) const;
+  bool CanAttackMobAtPoint(QPointF mob_point, QPointF player_center,
+                           double lower_angle, double upper_angle) const;
   bool CanAttackMob(std::shared_ptr<MovingObject> mob, QPointF player_center,
                     double lower_angle, double upper_angle) const;
 

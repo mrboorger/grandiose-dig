@@ -15,10 +15,14 @@ Mob::Mob(QPointF pos, QPointF size)
   SetType(MovingObject::Type::kMob);
 }
 
-void Mob::MoveMob() {
+void Mob::CalculateMobMovement(double time) {
   strategy_->SetMobState(MobState(GetPosition(), GetSize(), GetDamage(),
                                   IsOnGround(), IsOnCeil(), IsPushesLeft(),
                                   IsPushesRight()));
-  strategy_->Update();
-  UpdateState(strategy_->GetKeys());
+  strategy_->Update(time);
+}
+
+void Mob::MoveMob(double time) {
+  UpdateState(strategy_->GetKeys(),
+              time);  // maybe better to call MovingObject::Move
 }

@@ -12,13 +12,13 @@
 
 BasicStrategy::BasicStrategy() { state_ = State::kStay; }
 
-void BasicStrategy::DecreaseIntervals() {
-  attack_interval_ = std::max(attack_interval_ - 1, 0);
-  walk_interval_ = std::max(walk_interval_ - 1, 0);
+void BasicStrategy::DecreaseIntervals(double time) {
+  attack_interval_ = std::max(attack_interval_ - time, 0.0);
+  walk_interval_ = std::max(walk_interval_ - time, 0.0);
 }
 
-void BasicStrategy::Update() {
-  DecreaseIntervals();
+void BasicStrategy::Update(double time) {
+  DecreaseIntervals(time);
   UpdateConditions();
   if (IsActionFinished()) {
     SelectNewState();
@@ -32,13 +32,13 @@ void BasicStrategy::UpdateStay() {
       HasCondition(Condition::kCanAttack)) {
     if (attack_interval_ == 0) {
       state_ = State::kAttack;
-      attack_interval_ = constants::kBasicStrategyAttackTicksCount;
+      attack_interval_ = constants::kBasicStrategyAttackTimeCount;
     }
     can_walk = false;
   }
   if (can_walk) {
     state_ = State::kWalk;
-    walk_interval_ = constants::kBasicStrategyWalkTicksCount;
+    walk_interval_ = constants::kBasicStrategyWalkTimeCount;
     walk_target_ = ChooseRandomWalkPosition();
   }
 }
@@ -48,21 +48,21 @@ void BasicStrategy::UpdateWalk() {
     if (HasCondition(Condition::kCanAttack)) {
       if (attack_interval_ == 0) {
         state_ = State::kAttack;
-        attack_interval_ = constants::kBasicStrategyAttackTicksCount;
+        attack_interval_ = constants::kBasicStrategyAttackTimeCount;
       } else {
         state_ = State::kStay;
       }
       return;
     }
     walk_target_ = attack_target_->GetPosition();
-    walk_interval_ = constants::kBasicStrategyWalkTicksCount;
+    walk_interval_ = constants::kBasicStrategyWalkTimeCount;
     return;
   }
   state_ = State::kStay;
 }
 void BasicStrategy::UpdateAttack() {
   state_ = State::kWalk;
-  walk_interval_ = constants::kBasicStrategyWalkTicksCount;
+  walk_interval_ = constants::kBasicStrategyWalkTimeCount;
 }
 
 void BasicStrategy::SelectNewState() {
