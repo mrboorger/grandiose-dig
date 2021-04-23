@@ -125,17 +125,17 @@ bool Controller::CanAttackMob(std::shared_ptr<MovingObject> mob,
   return CanAttackMobAtPoint(
              mob->GetPosition() + mob->GetSize() / 2 - player_center,
              player_center, lower_angle, upper_angle) ||
-         CanAttackMobAtPoint(mob->GetPosition() + QPointF{0, 0} - player_center,
+         CanAttackMobAtPoint(mob->GetPosition() + QPointF(0, 0) - player_center,
                              player_center, lower_angle, upper_angle) ||
          CanAttackMobAtPoint(mob->GetPosition() +
-                                 QPointF{mob->GetSize().x(), 0} - player_center,
+                                 QPointF(mob->GetSize().x(), 0) - player_center,
                              player_center, lower_angle, upper_angle) ||
          CanAttackMobAtPoint(mob->GetPosition() +
-                                 QPointF{0, mob->GetSize().y()} - player_center,
+                                 QPointF(0, mob->GetSize().y()) - player_center,
                              player_center, lower_angle, upper_angle) ||
          CanAttackMobAtPoint(
              mob->GetPosition() +
-                 QPointF{mob->GetSize().x(), mob->GetSize().y()} -
+                 QPointF(mob->GetSize().x(), mob->GetSize().y()) -
                  player_center,
              player_center, lower_angle, upper_angle);
 }
