@@ -64,6 +64,7 @@ set(SOURCES
         view/buffered_map_drawer.cpp
         view/camera.cpp
         view/camera.cpp
+        view/gl_map_drawer.cpp
         view/inventory_drawer.cpp
         view/map_drawer.cpp
         view/mob_drawer.cpp

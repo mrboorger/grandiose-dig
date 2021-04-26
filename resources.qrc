@@ -11,5 +11,7 @@
         <file>resources/sounds/zombie_damage1.mp3</file>
         <file>resources/sounds/zombie2.mp3</file>
         <file>resources/sounds/zombie1.mp3</file>
+        <file>resources/shaders/vertex.glsl</file>
+        <file>resources/shaders/fragment.glsl</file>
     </qresource>
 </RCC>

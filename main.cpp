@@ -1,3 +1,4 @@
+#include <qnamespace.h>
 #include <QApplication>
 
 #include "controller/controller.h"
@@ -16,5 +17,6 @@ int main(int argc, char* argv[]) {
   controller->SetMob();
   // }
   view->show();
+  view->setWindowState(Qt::WindowMaximized);
   return QApplication::exec();
 }

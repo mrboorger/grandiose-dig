@@ -34,6 +34,7 @@ void View::SetInventoryDrawer(InventoryDrawer* drawer) {
 void View::paintEvent(QPaintEvent* event) {
   Q_UNUSED(event);
   QPainter painter(this);
+  painter.beginNativePainting();
 
   // TODO(degmuk): temporary code; replace with background drawer
   painter.setBrush(Qt::white);
@@ -58,6 +59,7 @@ void View::paintEvent(QPaintEvent* event) {
         rect().center();
     MobDrawer::DrawMob(&painter, mob_point, mob);
   }
+  painter.endNativePainting();
 }
 
 void View::DamageDealt(MovingObject::Type type) {

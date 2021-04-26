@@ -2,7 +2,7 @@
 #define VIEW_VIEW_H_
 
 #include <QHBoxLayout>
-#include <QMainWindow>
+#include <QOpenGLWidget>
 #include <memory>
 
 #include "model/model.h"
