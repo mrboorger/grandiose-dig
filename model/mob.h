@@ -17,8 +17,6 @@ class Mob : public MovingObject {
 
   int32_t GetId() const { return static_cast<int32_t>(type_); }
 
-  void CalculateMobMovement(double time);
-
   void MoveMob(double time);
 
   void SetStrategy(std::shared_ptr<AbstractStrategy> strategy) {

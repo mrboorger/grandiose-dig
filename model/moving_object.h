@@ -81,9 +81,12 @@ class MovingObject {
                    double time);
 
  private:
-  void UpdateStay(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
-  void UpdateWalk(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
-  void UpdateJump(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
+  void UpdateStay(const std::unordered_set<ControllerTypes::Key>& pressed_keys,
+                  double time);
+  void UpdateWalk(const std::unordered_set<ControllerTypes::Key>& pressed_keys,
+                  double time);
+  void UpdateJump(const std::unordered_set<ControllerTypes::Key>& pressed_keys,
+                  double time);
   void MakeMovement(QPointF old_position, double time);
   void CheckCollisions(QPointF old_position);
   bool FindCollisionGround(QPointF old_position, double* ground_y,

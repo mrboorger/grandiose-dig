@@ -16,15 +16,15 @@ constexpr int kDamageCooldown = 500;        // in ms
 constexpr double kFallDamageMin = 0.04;
 constexpr double kFallDamagePoint = 0.0005;
 
-constexpr QPointF kPlayerSize{0.75, 1.75};         // in blocks
-constexpr double kPlayerWalkAcceleration = 0.001;  // in blocks per ms
-constexpr double kPlayerWalkMaxSpeed = 0.01;       // in blocks per ms
+constexpr QPointF kPlayerSize{1.125, 2.5};              // in blocks
+constexpr double kPlayerWalkAcceleration = 0.001 / 10;  // in blocks per ms
+constexpr double kPlayerWalkMaxSpeed = 0.01;            // in blocks per ms
 constexpr double kPlayerWalkAirAcceleration =
     kPlayerWalkAcceleration;  // in blocks per tick
 constexpr double kPlayerWalkMaxAirAcceleration =
-    kPlayerWalkMaxSpeed;                       // in blocks per ms
-constexpr double kPlayerGravitySpeed = 0.001;  // in blocks per ms
-constexpr double kPlayerJumpSpeed = -0.03;     // in blocks per ms
+    kPlayerWalkMaxSpeed;                            // in blocks per ms
+constexpr double kPlayerGravitySpeed = 0.001 / 10;  // in blocks per ms
+constexpr double kPlayerJumpSpeed = -0.03;          // in blocks per ms
 constexpr QPointF kPlayerDamageAcceleration = {0.01, -0.015};
 constexpr int kPlayerHealth = 100;
 constexpr int kPlayerDamage = 10;

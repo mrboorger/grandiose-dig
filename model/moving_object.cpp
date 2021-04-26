@@ -23,7 +23,8 @@ void MovingObject::Move(
 }
 
 void MovingObject::UpdateStay(
-    const std::unordered_set<ControllerTypes::Key>& pressed_keys) {
+    const std::unordered_set<ControllerTypes::Key>& pressed_keys, double time) {
+  Q_UNUSED(time);
   if (!pushes_ground_) {
     state_ = State::kJump;
     move_vector_.SetMomentum(move_vector_.GetSpeed());
@@ -42,7 +43,7 @@ void MovingObject::UpdateStay(
 
 // TODO(Wind-Eagle): Do not reset acceleration when jumping off the block
 void MovingObject::UpdateWalk(
-    const std::unordered_set<ControllerTypes::Key>& pressed_keys) {
+    const std::unordered_set<ControllerTypes::Key>& pressed_keys, double time) {
   if (pressed_keys.count(ControllerTypes::Key::kLeft) ==
       pressed_keys.count(ControllerTypes::Key::kRight)) {
     state_ = State::kStay;
@@ -51,14 +52,14 @@ void MovingObject::UpdateWalk(
     if (pushes_right_) {
       move_vector_.SetSpeedX(0);
     } else {
-      move_vector_.TranslateSpeedXIfNearerToBounds(walk_acceleration_, 0,
+      move_vector_.TranslateSpeedXIfNearerToBounds(walk_acceleration_ * time, 0,
                                                    walk_max_speed_);
     }
   } else if (pressed_keys.count(ControllerTypes::Key::kLeft)) {
     if (pushes_left_) {
       move_vector_.SetSpeedX(0);
     } else {
-      move_vector_.TranslateSpeedXIfNearerToBounds(-walk_acceleration_,
+      move_vector_.TranslateSpeedXIfNearerToBounds(-walk_acceleration_ * time,
                                                    -walk_max_speed_, 0);
     }
   }
@@ -74,8 +75,8 @@ void MovingObject::UpdateWalk(
 }
 
 void MovingObject::UpdateJump(
-    const std::unordered_set<ControllerTypes::Key>& pressed_keys) {
-  move_vector_.TranslateSpeedWithLimits(0, gravity_speed_);
+    const std::unordered_set<ControllerTypes::Key>& pressed_keys, double time) {
+  move_vector_.TranslateSpeedWithLimits(0, gravity_speed_ * time);
   if (pressed_keys.count(ControllerTypes::Key::kLeft) ==
       pressed_keys.count(ControllerTypes::Key::kRight)) {
     // Do nothing
@@ -84,7 +85,7 @@ void MovingObject::UpdateJump(
       move_vector_.SetSpeedX(0);
     } else {
       move_vector_.TranslateSpeedXIfNearerToBounds(
-          walk_air_acceleration_,
+          walk_air_acceleration_ * time,
           -walk_max_air_acceleration_ + move_vector_.GetMomentumX(),
           walk_max_air_acceleration_ - move_vector_.GetMomentumX());
     }
@@ -93,7 +94,7 @@ void MovingObject::UpdateJump(
       move_vector_.SetSpeedX(0);
     } else {
       move_vector_.TranslateSpeedXIfNearerToBounds(
-          -walk_air_acceleration_,
+          -walk_air_acceleration_ * time,
           -walk_max_air_acceleration_ - move_vector_.GetMomentumX(),
           walk_max_air_acceleration_ + move_vector_.GetMomentumX());
     }
@@ -122,13 +123,13 @@ void MovingObject::UpdateState(
   damage_time_ = std::max(damage_time_ - time, 0.0);
   switch (state_) {
     case State::kStay:
-      UpdateStay(pressed_keys);
+      UpdateStay(pressed_keys, time);
       break;
     case State::kWalk:
-      UpdateWalk(pressed_keys);
+      UpdateWalk(pressed_keys, time);
       break;
     case State::kJump:
-      UpdateJump(pressed_keys);
+      UpdateJump(pressed_keys, time);
       break;
   }
   if (old_state == state_) {

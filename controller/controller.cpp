@@ -32,7 +32,7 @@ Controller::Controller() : tick_timer_() {
 void Controller::SetPlayer() {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->SetPlayer(
-      std::make_shared<Player>(QPointF(147.0, 110.0)));
+      std::make_shared<Player>(QPointF(147.0, 109.0)));
   View::GetInstance()->SetInventoryDrawer(
       new InventoryDrawer(Model::GetInstance()->GetPlayer()->GetInventory()));
 }
@@ -40,7 +40,7 @@ void Controller::SetPlayer() {
 void Controller::SetMob() {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->AddMob(
-      std::make_shared<Mob>(QPointF(157.0, 107.0), QPointF(0.75, 1.75)));
+      std::make_shared<Mob>(QPointF(157.0, 106.0), constants::kPlayerSize));
 }
 
 void Controller::BreakBlock() {
@@ -122,22 +122,17 @@ bool Controller::CanAttackMobAtPoint(QPointF mob_point, QPointF player_center,
 bool Controller::CanAttackMob(std::shared_ptr<MovingObject> mob,
                               QPointF player_center, double lower_angle,
                               double upper_angle) const {
-  return CanAttackMobAtPoint(
-             mob->GetPosition() + mob->GetSize() / 2 - player_center,
-             player_center, lower_angle, upper_angle) ||
-         CanAttackMobAtPoint(mob->GetPosition() + QPointF(0, 0) - player_center,
-                             player_center, lower_angle, upper_angle) ||
-         CanAttackMobAtPoint(mob->GetPosition() +
-                                 QPointF(mob->GetSize().x(), 0) - player_center,
-                             player_center, lower_angle, upper_angle) ||
-         CanAttackMobAtPoint(mob->GetPosition() +
-                                 QPointF(0, mob->GetSize().y()) - player_center,
-                             player_center, lower_angle, upper_angle) ||
-         CanAttackMobAtPoint(
-             mob->GetPosition() +
-                 QPointF(mob->GetSize().x(), mob->GetSize().y()) -
-                 player_center,
-             player_center, lower_angle, upper_angle);
+  auto check = [&](QPointF pos_on_mob) {
+    QPointF pos_on_mob_scaled(pos_on_mob.x() * mob->GetSize().x(),
+                              pos_on_mob.y() * mob->GetSize().y());
+    return CanAttackMobAtPoint(
+        mob->GetPosition() + pos_on_mob_scaled - player_center, player_center,
+        lower_angle, upper_angle);
+  };
+
+  return check(QPointF(0.5, 0.5)) || check(QPointF(0.0, 0.0)) ||
+         check(QPointF(0.0, 1.0)) || check(QPointF(1.0, 0.0)) ||
+         check(QPointF(1.0, 1.0));
 }
 
 void Controller::PlayerAttack(double time) {
@@ -164,11 +159,11 @@ void Controller::PlayerAttack(double time) {
 }
 
 void Controller::TickEvent() {
-  static auto prev = std::chrono::high_resolution_clock::now();
   auto cur = std::chrono::high_resolution_clock::now();
   double time =
-      std::chrono::duration_cast<std::chrono::milliseconds>(cur - prev).count();
-  prev = cur;
+      std::chrono::duration_cast<std::chrono::milliseconds>(cur - prev_time_)
+          .count();
+  prev_time_ = cur;
   Model::GetInstance()->MoveObjects(pressed_keys_, time);
   if (is_pressed_right_mouse_button) {
     BreakBlock();
