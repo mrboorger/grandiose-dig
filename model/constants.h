@@ -16,7 +16,7 @@ constexpr int kDamageCooldown = 500;        // in ms
 constexpr double kFallDamageMin = 0.04;
 constexpr double kFallDamagePoint = 0.0005;
 
-constexpr QPointF kPlayerSize{1.125, 2.5};              // in blocks
+constexpr QPointF kPlayerSize{1.25, 2.5};               // in blocks
 constexpr double kPlayerWalkAcceleration = 0.001 / 10;  // in blocks per ms
 constexpr double kPlayerWalkMaxSpeed = 0.01;            // in blocks per ms
 constexpr double kPlayerWalkAirAcceleration =
@@ -35,6 +35,10 @@ constexpr int kPlayerAttackCooldown = 700;
 constexpr double kPlayerAngleTick =
     (kPlayerUpperAttackAngle - kPlayerLowerAttackAngle) / kPlayerAttackTime;
 constexpr double kPlayerAttackRadius = 5;
+constexpr int kPlayerWalkAnimation = 50;  // in ms
+constexpr int kPlayerWalkPictures = 4;
+constexpr int kPlayerAttackAnimation = 50;  // in ms
+constexpr int kPlayerAttackPictures = 4;
 
 constexpr double kMobWalkAcceleration =
     kPlayerWalkAcceleration / 2.5;  // in blocks per ms
@@ -48,6 +52,10 @@ constexpr double kMobJumpLengthInBlocks = 2;              // in blocks
 constexpr QPointF kMobDamageAcceleration = {0.01, -0.015};
 constexpr int kMobHealth = 120;
 constexpr int kMobDamage = 15;
+constexpr int kMobWalkAnimation = 100;  // in ms
+constexpr int kMobWalkPictures = 4;
+constexpr int kMobAttackAnimation = 100;  // in ms
+constexpr int kMobAttackPictures = 4;
 
 constexpr double kBasicStrategyVisionRadius = 12.0;  // in blocks
 constexpr double kBasicStrategyWalkTimeCount = 3000;

@@ -9,6 +9,7 @@
 #include "model/constants.h"
 #include "model/damage.h"
 #include "model/move_vector.h"
+#include "utils.h"
 
 class MovingObject {
  public:
@@ -75,6 +76,13 @@ class MovingObject {
 
   bool IsDead() const;
 
+  void SetDirection(utils::Direction direction) { direction_ = direction; }
+  utils::Direction GetDirection() const { return direction_; }
+
+  State GetState() const { return state_; }
+
+  double GetStateTime() const { return state_time_; }
+
  protected:
   MovingObject(QPointF pos, QPointF size);
   void UpdateState(const std::unordered_set<ControllerTypes::Key>& pressed_keys,
@@ -124,6 +132,8 @@ class MovingObject {
   bool pushes_ceil_ = false;
   bool pushes_left_ = false;
   bool pushes_right_ = false;
+
+  utils::Direction direction_ = utils::Direction::kRight;
 };
 
 #endif  // MODEL_MOVING_OBJECT_H_

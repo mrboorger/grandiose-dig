@@ -2,14 +2,24 @@
     <qresource prefix="/">
         <file>resources/textures/dirt.png</file>
         <file>resources/textures/grass.png</file>
-        <file>resources/textures/player.png</file>
         <file>resources/textures/inventory_cell.png</file>
-        <file>resources/textures/mob.png</file>
         <file>resources/sounds/player_damage.mp3</file>
         <file>resources/sounds/zombie_death.mp3</file>
         <file>resources/sounds/zombie_damage2.mp3</file>
         <file>resources/sounds/zombie_damage1.mp3</file>
         <file>resources/sounds/zombie2.mp3</file>
         <file>resources/sounds/zombie1.mp3</file>
+        <file>resources/textures/player1.png</file>
+        <file>resources/textures/player2.png</file>
+        <file>resources/textures/player0.png</file>
+        <file>resources/textures/player3.png</file>
+        <file>resources/textures/player_attack0.png</file>
+        <file>resources/textures/player_attack1.png</file>
+        <file>resources/textures/player_attack2.png</file>
+        <file>resources/textures/player_attack3.png</file>
+        <file>resources/textures/mob2.png</file>
+        <file>resources/textures/mob1.png</file>
+        <file>resources/textures/mob3.png</file>
+        <file>resources/textures/mob0.png</file>
     </qresource>
 </RCC>

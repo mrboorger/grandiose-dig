@@ -11,6 +11,7 @@ class MobDrawer {
  public:
   static void DrawMob(QPainter* painter, QPointF point,
                       std::shared_ptr<Mob> mob);
+  static QString GetMobImage(std::shared_ptr<Mob> mob, QString name);
 };
 
 #endif  // VIEW_MOB_DRAWER_H_

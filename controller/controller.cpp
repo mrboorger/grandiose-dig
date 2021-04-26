@@ -45,6 +45,11 @@ void Controller::SetMob() {
 
 void Controller::BreakBlock() {
   QPoint block_coords = View::GetInstance()->GetBlockCoordUnderCursor();
+  Model::GetInstance()->GetPlayer()->SetDirection(
+      (View::GetInstance()->GetBlockCoordUnderCursor().x() <
+       Model::GetInstance()->GetPlayer()->GetPosition().x())
+          ? utils::Direction::kLeft
+          : utils::Direction::kRight);
   Model::GetInstance()->GetMap()->HitBlock(block_coords, 1);
   View::GetInstance()->UpdateBlock(block_coords);
 }
@@ -58,6 +63,8 @@ void Controller::StartAttack() {
       (click_coord.x() < Model::GetInstance()->GetPlayer()->GetPosition().x())
           ? utils::Direction::kLeft
           : utils::Direction::kRight);
+  Model::GetInstance()->GetPlayer()->SetDirection(
+      Model::GetInstance()->GetPlayer()->GetAttackDirection());
   Model::GetInstance()->GetPlayer()->SetAttackTick(
       constants::kPlayerAttackTime);
   Model::GetInstance()->GetPlayer()->SetAttackCooldownInterval(

@@ -140,6 +140,14 @@ void MovingObject::UpdateState(
   if (state_ != State::kJump) {
     move_vector_.ResetMomentum();
   }
+  if (pressed_keys.count(ControllerTypes::Key::kLeft) ==
+      pressed_keys.count(ControllerTypes::Key::kRight)) {
+    // Do nothing
+  } else if (pressed_keys.count(ControllerTypes::Key::kRight)) {
+    SetDirection(utils::Direction::kRight);
+  } else if (pressed_keys.count(ControllerTypes::Key::kLeft)) {
+    SetDirection(utils::Direction::kLeft);
+  }
   MakeMovement(old_position, time);
 }
 

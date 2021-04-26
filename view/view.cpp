@@ -31,6 +31,62 @@ void View::SetInventoryDrawer(InventoryDrawer* drawer) {
   inventory_drawer_.reset(drawer);
 }
 
+QString View::GetPlayerImage() {
+  QString player_picture = ":/resources/textures/player";
+  if (Model::GetInstance()->GetPlayer()->GetState() !=
+      MovingObject::State::kWalk) {
+    return player_picture + "0.png";
+  }
+  int state_time =
+      std::floor(Model::GetInstance()->GetPlayer()->GetStateTime());
+  int picture_number = (state_time / constants::kPlayerWalkAnimation) %
+                       constants::kPlayerWalkPictures;
+  return player_picture + QString::number(picture_number) + ".png";
+}
+
+QString View::GetPlayerAttackImage() {
+  QString player_picture = ":/resources/textures/player_attack";
+  int state_time = std::floor(
+      constants::kPlayerAttackTime -
+      Model::GetInstance()->GetPlayer()->GetAttackTick() - constants::kEps);
+  int picture_number =
+      (state_time /
+       static_cast<int>((std::floor(constants::kPlayerAttackTime)) /
+                        (constants::kPlayerAttackPictures - 1))) %
+          (constants::kPlayerAttackAnimation - 1) +
+      1;
+  return player_picture + QString::number(picture_number) + ".png";
+}
+
+void View::DrawPlayer(QPainter* painter) {
+  auto player = Model::GetInstance()->GetPlayer();
+  QImage player_image(GetPlayerImage());
+  if (Model::GetInstance()->GetPlayer()->GetDirection() ==
+      utils::Direction::kLeft) {
+    player_image = player_image.mirrored(true, false);
+  }
+  QPointF point =
+      (player->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
+      rect().center();
+
+  if (Model::GetInstance()->GetPlayer()->IsAttackFinished() == false) {
+    QImage player_attack_image(GetPlayerAttackImage());
+    if (Model::GetInstance()->GetPlayer()->GetDirection() ==
+        utils::Direction::kLeft) {
+      player_attack_image = player_attack_image.mirrored(true, false);
+    }
+    player_image = player_image.copy(QRect(
+        QPoint(0, player_attack_image.size().height()), player_image.size()));
+    painter->drawImage(point + QPoint(0, player_attack_image.size().height()),
+                       player_image);
+    painter->drawImage(point, player_attack_image);
+  } else {
+    painter->drawImage(point, player_image);
+  }
+  // TODO(Wind-Eagle): make animation for block breaking: will be done when
+  // blocks will not break immediately
+}
+
 void View::paintEvent(QPaintEvent* event) {
   Q_UNUSED(event);
   QPainter painter(this);
@@ -45,12 +101,7 @@ void View::paintEvent(QPaintEvent* event) {
   inventory_drawer_->DrawInventory(&painter);
 
   // TODO(Wind-Eagle): temporary code; need to make PlayerDrawer
-  auto player = Model::GetInstance()->GetPlayer();
-  QImage player_image(":/resources/textures/player.png");
-  QPointF point =
-      (player->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
-      rect().center();
-  painter.drawImage(point, player_image);
+  DrawPlayer(&painter);
   auto mobs = Model::GetInstance()->GetMobs();
   for (auto mob : mobs) {
     QPointF mob_point =
