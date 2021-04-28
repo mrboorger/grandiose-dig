@@ -40,22 +40,40 @@ constexpr int kPlayerWalkPictures = 4;
 constexpr int kPlayerAttackAnimation = 50;  // in ms
 constexpr int kPlayerAttackPictures = 4;
 
-constexpr double kMobWalkAcceleration =
+constexpr double kZombieWalkAcceleration =
     kPlayerWalkAcceleration / 2.5;  // in blocks per ms
-constexpr double kMobWalkMaxSpeed =
+constexpr double kZombieWalkMaxSpeed =
     kPlayerWalkMaxSpeed / 1.8;  // in blocks per ms
-constexpr double kMobWalkMaxAirAcceleration =
-    kPlayerWalkMaxAirAcceleration / 2;                    // in blocks per ms
-constexpr double kMobJumpSpeed = kPlayerJumpSpeed / 1.4;  // in blocks per ms
-constexpr double kMobJumpHeightInBlocks = 2;              // in blocks
-constexpr double kMobJumpLengthInBlocks = 2;              // in blocks
-constexpr QPointF kMobDamageAcceleration = {0.01, -0.015};
-constexpr int kMobHealth = 120;
-constexpr int kMobDamage = 15;
-constexpr int kMobWalkAnimation = 100;  // in ms
-constexpr int kMobWalkPictures = 4;
-constexpr int kMobAttackAnimation = 100;  // in ms
-constexpr int kMobAttackPictures = 4;
+constexpr double kZombieWalkMaxAirAcceleration =
+    kPlayerWalkMaxAirAcceleration / 2;                       // in blocks per ms
+constexpr double kZombieJumpSpeed = kPlayerJumpSpeed / 1.4;  // in blocks per ms
+constexpr QPoint kZombieJumpInBlocks = {2, 2};               // in blocks
+constexpr QPointF kZombieSize = kPlayerSize;
+constexpr QPointF kZombieDamageAcceleration = {0.01, -0.015};
+constexpr int kZombieHealth = 120;
+constexpr int kZombieDamage = 15;
+constexpr int kZombieWalkAnimation = 100;  // in ms
+constexpr int kZombieWalkPictures = 4;
+constexpr int kZombieAttackAnimation = 100;  // in ms
+constexpr int kZombieAttackPictures = 4;
+
+constexpr double kZombieLordWalkAcceleration =
+    kPlayerWalkAcceleration / 1.5;  // in blocks per ms
+constexpr double kZombieLordWalkMaxSpeed =
+    kPlayerWalkMaxSpeed / 1.3;  // in blocks per ms
+constexpr double kZombieLordWalkMaxAirAcceleration =
+    kPlayerWalkMaxAirAcceleration / 1.2;  // in blocks per ms
+constexpr double kZombieLordJumpSpeed =
+    kPlayerJumpSpeed / 1.2;                         // in blocks per ms
+constexpr QPoint kZombieLordJumpInBlocks = {4, 3};  // in blocks
+constexpr QPointF kZombieLordSize = {1.875, 3.75};
+constexpr QPointF kZombieLordDamageAcceleration = {0.025, -0.025};
+constexpr int kZombieLordHealth = 200;
+constexpr int kZombieLordDamage = 5;
+constexpr int kZombieLordWalkAnimation = 100;  // in ms
+constexpr int kZombieLordWalkPictures = 4;
+constexpr int kZombieLordAttackAnimation = 100;  // in ms
+constexpr int kZombieLordAttackPictures = 4;
 
 constexpr double kBasicStrategyVisionRadius = 12.0;  // in blocks
 constexpr double kBasicStrategyWalkTimeCount = 3000;
@@ -64,7 +82,7 @@ constexpr double kBasicStrategyWalkPrecision = 0.1;  // in blocks
 constexpr double kBasicStrategyRandomWalkChance = 0.01;
 constexpr double kBasicStrategyRandomWalkDistance = 10;  // in blocks
 
-constexpr double kMobSoundChance = 1.0 / 1500.0;  // once in 1500 ticks
+constexpr double kZombieSoundChance = 1.0 / 1500.0;  // once in 1500 ticks
 
 constexpr int kDefaultClearTimeMSec = 1'000;
 

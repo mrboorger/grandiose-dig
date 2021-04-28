@@ -10,10 +10,10 @@
 
 class Mob : public MovingObject {
  public:
-  enum class Type { kMob, kTypesCount };
+  enum class Type { kZombie, kZombieLord, kTypesCount };
   static constexpr int kTypesCount = static_cast<int>(Type::kTypesCount);
 
-  Mob(QPointF pos, QPointF size);
+  Mob(QPointF pos, Type type);
 
   int32_t GetId() const { return static_cast<int32_t>(type_); }
 

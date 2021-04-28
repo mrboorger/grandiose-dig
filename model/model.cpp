@@ -31,7 +31,7 @@ void Model::MoveObjects(
   for (auto mob : mobs_) {
     mob->MoveMob(time);
     if (!mob->RecentlyDamaged() &&
-        distrib(utils::random) < constants::kMobSoundChance) {
+        distrib(utils::random) < constants::kZombieSoundChance) {
       emit MobSound(mob->GetType());
     }
   }

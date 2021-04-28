@@ -119,9 +119,9 @@ void View::DamageDealt(MovingObject::Type type) {
       break;
     case MovingObject::Type::kMob:
       if (distrib(utils::random) == 0) {
-        sound_manager_->PlaySound(SoundManager::Sound::kMobDamage1);
+        sound_manager_->PlaySound(SoundManager::Sound::kZombieDamage1);
       } else {
-        sound_manager_->PlaySound(SoundManager::Sound::kMobDamage2);
+        sound_manager_->PlaySound(SoundManager::Sound::kZombieDamage2);
       }
       break;
     default:
@@ -131,16 +131,16 @@ void View::DamageDealt(MovingObject::Type type) {
 
 void View::BecameDead(MovingObject::Type type) {
   Q_UNUSED(type);
-  sound_manager_->PlaySound(SoundManager::Sound::kMobDeath);
+  sound_manager_->PlaySound(SoundManager::Sound::kZombieDeath);
 }
 
 void View::MobSound(MovingObject::Type type) {
   Q_UNUSED(type);
   static std::uniform_int_distribution<int> distrib(0, 1);
   if (distrib(utils::random) == 0) {
-    sound_manager_->PlaySound(SoundManager::Sound::kMob1);
+    sound_manager_->PlaySound(SoundManager::Sound::kZombie1);
   } else {
-    sound_manager_->PlaySound(SoundManager::Sound::kMob2);
+    sound_manager_->PlaySound(SoundManager::Sound::kZombie2);
   }
 }
 

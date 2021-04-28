@@ -338,7 +338,8 @@ void MovingObject::CheckFallDamage() {
   if (fall_damage_speed > constants::kFallDamageMin) {
     Damage damage(Damage::Type::kFall,
                   std::ceil((fall_damage_speed - constants::kFallDamageMin) /
-                            constants::kFallDamagePoint));
+                            constants::kFallDamagePoint),
+                  QPointF(0, 0));
     DealDamage(damage);
   }
 }
@@ -360,7 +361,7 @@ void MovingObject::DealDamage(const Damage& damage) {
   if (damage.GetType() == Damage::Type::kMob ||
       damage.GetType() == Damage::Type::kPlayer) {
     QPointF source = damage.GetSource();
-    QPointF damage_push = damage_acceleration_;
+    QPointF damage_push = damage.GetDamageAcceleration();
     if (source.x() > pos_.x()) {
       damage_push.setX(-damage_push.x());
     }

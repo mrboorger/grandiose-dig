@@ -17,9 +17,13 @@
         <file>resources/textures/player_attack1.png</file>
         <file>resources/textures/player_attack2.png</file>
         <file>resources/textures/player_attack3.png</file>
-        <file>resources/textures/mob2.png</file>
-        <file>resources/textures/mob1.png</file>
-        <file>resources/textures/mob3.png</file>
-        <file>resources/textures/mob0.png</file>
+        <file>resources/textures/zombie_lord2.png</file>
+        <file>resources/textures/zombie_lord1.png</file>
+        <file>resources/textures/zombie_lord3.png</file>
+        <file>resources/textures/zombie_lord0.png</file>
+        <file>resources/textures/zombie3.png</file>
+        <file>resources/textures/zombie2.png</file>
+        <file>resources/textures/zombie1.png</file>
+        <file>resources/textures/zombie0.png</file>
     </qresource>
 </RCC>

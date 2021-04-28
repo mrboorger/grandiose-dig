@@ -40,7 +40,7 @@ void Controller::SetPlayer() {
 void Controller::SetMob() {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->AddMob(
-      std::make_shared<Mob>(QPointF(157.0, 106.0), constants::kPlayerSize));
+      std::make_shared<Mob>(QPointF(162.0, 104.0), Mob::Type::kZombieLord));
 }
 
 void Controller::BreakBlock() {
@@ -110,9 +110,10 @@ bool Controller::IsVisible(QPointF player_center, QPointF mob_point) const {
   return true;
 }
 
-bool Controller::CanAttackMobAtPoint(QPointF mob_point, QPointF player_center,
-                                     double lower_angle,
-                                     double upper_angle) const {
+bool Controller::CanAttackZombieAtPoint(QPointF mob_point,
+                                        QPointF player_center,
+                                        double lower_angle,
+                                        double upper_angle) const {
   if (Model::GetInstance()->GetPlayer()->IsAttackDirectionLeft()) {
     mob_point *= -1;
   }
@@ -126,13 +127,13 @@ bool Controller::CanAttackMobAtPoint(QPointF mob_point, QPointF player_center,
          IsVisible(player_center, mob_point + player_center);
 }
 
-bool Controller::CanAttackMob(std::shared_ptr<MovingObject> mob,
-                              QPointF player_center, double lower_angle,
-                              double upper_angle) const {
+bool Controller::CanAttackZombie(std::shared_ptr<MovingObject> mob,
+                                 QPointF player_center, double lower_angle,
+                                 double upper_angle) const {
   auto check = [&](QPointF pos_on_mob) {
     QPointF pos_on_mob_scaled(pos_on_mob.x() * mob->GetSize().x(),
                               pos_on_mob.y() * mob->GetSize().y());
-    return CanAttackMobAtPoint(
+    return CanAttackZombieAtPoint(
         mob->GetPosition() + pos_on_mob_scaled - player_center, player_center,
         lower_angle, upper_angle);
   };
@@ -156,10 +157,11 @@ void Controller::PlayerAttack(double time) {
   QPointF player_center = Model::GetInstance()->GetPlayer()->GetPosition() +
                           Model::GetInstance()->GetPlayer()->GetSize() / 2;
   for (auto mob : Model::GetInstance()->GetMobs()) {
-    if (CanAttackMob(mob, player_center, lower_angle, upper_angle)) {
+    if (CanAttackZombie(mob, player_center, lower_angle, upper_angle)) {
       Damage damage(Model::GetInstance()->GetPlayer()->GetPosition(),
                     Damage::Type::kPlayer,
-                    Model::GetInstance()->GetPlayer()->GetDamage());
+                    Model::GetInstance()->GetPlayer()->GetDamage(),
+                    constants::kPlayerDamageAcceleration);
       mob->DealDamage(damage);
     }
   }

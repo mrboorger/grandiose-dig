@@ -47,9 +47,9 @@ class Controller {
   void PlayerAttack(double time);
 
   bool IsVisible(QPointF player_center, QPointF mob_point) const;
-  bool CanAttackMobAtPoint(QPointF mob_point, QPointF player_center,
+  bool CanAttackZombieAtPoint(QPointF mob_point, QPointF player_center,
                            double lower_angle, double upper_angle) const;
-  bool CanAttackMob(std::shared_ptr<MovingObject> mob, QPointF player_center,
+  bool CanAttackZombie(std::shared_ptr<MovingObject> mob, QPointF player_center,
                     double lower_angle, double upper_angle) const;
 
   QTimer tick_timer_;

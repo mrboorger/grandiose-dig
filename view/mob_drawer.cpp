@@ -9,7 +9,7 @@
 
 namespace {
 
-std::array<QString, Mob::kTypesCount> kNames = {"mob"};
+std::array<QString, Mob::kTypesCount> kNames = {"zombie", "zombie_lord"};
 
 }  // namespace
 
@@ -19,8 +19,8 @@ QString MobDrawer::GetMobImage(std::shared_ptr<Mob> mob, QString name) {
     return mob_picture + "0.png";
   }
   int state_time = std::floor(mob->GetStateTime());
-  int picture_number =
-      (state_time / constants::kMobWalkAnimation) % constants::kMobWalkPictures;
+  int picture_number = (state_time / constants::kZombieWalkAnimation) %
+                       constants::kZombieWalkPictures;
   return mob_picture + QString::number(picture_number) + ".png";
 }
 
