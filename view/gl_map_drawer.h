@@ -1,6 +1,7 @@
 #ifndef VIEW_GL_MAP_DRAWER_H_
 #define VIEW_GL_MAP_DRAWER_H_
 
+#include <qopenglbuffer.h>
 #include <QOpenGLBuffer>
 #include <QOpenGLContext>
 #include <QOpenGLShaderProgram>
@@ -25,8 +26,8 @@ class GLMapDrawer {
  private:
   // In blocks
   static constexpr int32_t kFieldOfView = 64;
-  static constexpr int32_t kMeshWidth = 1/*32*/;
-  static constexpr int32_t kMeshHeight = 1/*32*/;
+  static constexpr int32_t kMeshWidth = 32;
+  static constexpr int32_t kMeshHeight = 32;
   static constexpr int32_t kMeshSize = kMeshWidth * kMeshHeight;
   static constexpr int32_t kElementsCount = 2 * 3 * kMeshSize;
 
@@ -54,6 +55,8 @@ class GLMapDrawer {
   QOpenGLBuffer* GetMesh(QPoint buffer_pos);
   void GenerateMesh(QOpenGLBuffer* buffer, QPoint buffer_pos);
   static BlockData GetBlockData(Block block, QPoint block_pos);
+
+  static void InitGLBuffer(QOpenGLBuffer* buffer, void* data, size_t size);
 
   containers::ClearableCache<QPoint, QOpenGLBuffer,
                              utils::QPointLexicographicalCompare>

@@ -25,19 +25,25 @@ void GLMapDrawer::DrawMapWithCenter(const QPointF& pos,
 
   QPoint start = RoundToMeshPos(QPoint(pos.x(), pos.y()) -
                                   QPoint(kFieldOfView, kFieldOfView));
-  auto finish = start;
-//  QPoint finish = RoundToMeshPos(QPoint(pos.x(), pos.y()) +
-//                                   QPoint(kFieldOfView, kFieldOfView));
+  QPoint finish = RoundToMeshPos(QPoint(pos.x(), pos.y()) +
+                                   QPoint(kFieldOfView, kFieldOfView));
   map_->CacheRegion(QRect(start, finish));
-//  shader_.setUniformValue("screen_width", screen_coords.width());
-//  shader_.setUniformValue("screen_height", screen_coords.height());
+//  shader_.setUniformValue(
+//      "screen_width",
+//      static_cast<GLfloat>(screen_coords.width()) / constants::kBlockSz);
+  shader_.setUniformValue(
+      "screen_width",
+      static_cast<GLfloat>(screen_coords.height()) / constants::kBlockSz);
+  shader_.setUniformValue(
+      "screen_height",
+      static_cast<GLfloat>(screen_coords.height()) / constants::kBlockSz);
 
   index_buffer_.bind();
 
   for (int32_t x = start.x(); x <= finish.x(); x += kMeshWidth) {
     for (int32_t y = start.y(); y <= finish.y(); y += kMeshHeight) {
-      QPointF point =
-          (QPointF(x, y) - pos) * constants::kBlockSz + screen_coords.center();
+      QPointF point = (QPointF(x, y) -
+                       pos) /*+ screen_coords.center() / constants::kBlockSz*/;
       shader_.setUniformValue("buffer_pos", point);
       auto* mesh = GetMesh(QPoint(x, y));
 
@@ -80,22 +86,19 @@ QPoint GLMapDrawer::RoundToMeshPos(QPoint p) {
 }
 
 void GLMapDrawer::GenerateIndexBuffer(QOpenGLBuffer* index_buffer) {
-  std::array<GLuint, kElementsCount> buffer;
+  std::array<GLuint, kElementsCount> data;
   for (int y = 0; y < kMeshHeight; ++y) {
     for (int x = 0; x < kMeshWidth; ++x) {
-      int i = 6 * (y * kMeshWidth + x);
-      buffer[i + 0] = i + 0;
-      buffer[i + 1] = i + 1;
-      buffer[i + 2] = i + 2;
-      buffer[i + 3] = i + 3;
-      buffer[i + 4] = i + 0;
-      buffer[i + 5] = i + 2;
+      int i = y * kMeshWidth + x;
+      data[6 * i + 0] = 4 * i + 0;
+      data[6 * i + 1] = 4 * i + 1;
+      data[6 * i + 2] = 4 * i + 2;
+      data[6 * i + 3] = 4 * i + 1;
+      data[6 * i + 4] = 4 * i + 2;
+      data[6 * i + 5] = 4 * i + 3;
     }
   }
-  index_buffer->create();
-  index_buffer->bind();
-  index_buffer->allocate(buffer.data(), sizeof(buffer));
-  index_buffer->release();
+  InitGLBuffer(index_buffer, data.data(), sizeof(data));
 }
 
 void GLMapDrawer::LoadShader(QOpenGLShaderProgram* shader) {
@@ -119,11 +122,18 @@ QOpenGLBuffer* GLMapDrawer::GetMesh(QPoint buffer_pos) {
   return &casted;
 }
 
-void GLMapDrawer::GenerateMesh(QOpenGLBuffer* buffer, QPoint buffer_pos) {
-  Q_UNUSED(buffer_pos);
+void GLMapDrawer::InitGLBuffer(QOpenGLBuffer* buffer, void* data, size_t size) {
   if (buffer->isCreated()) {
     buffer->destroy();
   }
+  buffer->create();
+  buffer->bind();
+  buffer->allocate(data, size);
+  buffer->release();
+}
+
+void GLMapDrawer::GenerateMesh(QOpenGLBuffer* buffer, QPoint buffer_pos) {
+  Q_UNUSED(buffer_pos);
 
   std::array<BlockData, kMeshSize> data;
   for (int y = 0; y < kMeshHeight; ++y) {
@@ -134,39 +144,33 @@ void GLMapDrawer::GenerateMesh(QOpenGLBuffer* buffer, QPoint buffer_pos) {
     }
   }
 
-  buffer->create();
-  buffer->bind();
-  buffer->allocate(data.data(), sizeof(data));
-  buffer->release();
+  InitGLBuffer(buffer, data.data(), sizeof(data));
 }
 
 GLMapDrawer::BlockData GLMapDrawer::GetBlockData(Block block,
                                                  QPoint block_pos) {
-  Q_UNUSED(block);
-  Q_UNUSED(block_pos);
-  return BlockData{
-      VertexData{-0.5F, -0.5F, 1.0F, 0.0F, 0.0F, 1.0F},
-      VertexData{-0.5F,  0.5F, 0.0F, 1.0F, 0.0F, 1.0F},
-      VertexData{ 0.5F,  0.5F, 0.0F, 0.0F, 1.0F, 1.0F},
-      VertexData{ 0.5F, -0.5F, 0.0F, 1.0F, 0.0F, 1.0F},
-  };
   // TODO(degmuk): This is temporary code.
-  //  if (!block.IsVisible()) {
-  //    data.up_left = data.up_right = data.down_left = data.down_right =
-  //        VertexData{static_cast<GLfloat>(block_pos.x() *
-  //        constants::kBlockSz),
-  //                   static_cast<GLfloat>(block_pos.y() *
-  //                   constants::kBlockSz), 0.0F, 0.0F, 0.0F, 1.0F};
-  //  } else {
-  //    data.up_left = data.up_right = data.down_left = data.down_right =
-  //        VertexData{static_cast<GLfloat>(block_pos.x() *
-  //        constants::kBlockSz),
-  //                   static_cast<GLfloat>(block_pos.y() *
-  //                   constants::kBlockSz), 1.0F, 1.0F, 0.0F, 1.0F};
-  //  }
-  //  data.up_right.pos_x += constants::kBlockSz;
-  //  data.down_right.pos_x += constants::kBlockSz;
-  //  data.down_left.pos_y += constants::kBlockSz;
-  //  data.down_right.pos_y += constants::kBlockSz;
-  //  return data;
+  BlockData data{};
+  if (!block.IsVisible()) {
+    data.up_left = data.up_right = data.down_left = data.down_right =
+        VertexData{static_cast<GLfloat>(block_pos.x()),
+                   static_cast<GLfloat>(block_pos.y()),
+                   0.0F,
+                   0.0F,
+                   0.0F,
+                   1.0F};
+  } else {
+    data.up_left = data.up_right = data.down_left = data.down_right =
+        VertexData{static_cast<GLfloat>(block_pos.x()),
+                   static_cast<GLfloat>(block_pos.y()),
+                   1.0F,
+                   1.0F,
+                   0.0F,
+                   1.0F};
+  }
+  data.up_right.pos_x += 1.0F;
+  data.down_right.pos_x += 1.0F;
+  data.up_left.pos_y += 1.0F;
+  data.up_right.pos_y += 1.0F;
+  return data;
 }
