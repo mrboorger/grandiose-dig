@@ -25,8 +25,8 @@ class GLMapDrawer {
  private:
   // In blocks
   static constexpr int32_t kFieldOfView = 64;
-  static constexpr int32_t kMeshWidth = 32;
-  static constexpr int32_t kMeshHeight = 32;
+  static constexpr int32_t kMeshWidth = 1/*32*/;
+  static constexpr int32_t kMeshHeight = 1/*32*/;
   static constexpr int32_t kMeshSize = kMeshWidth * kMeshHeight;
   static constexpr int32_t kElementsCount = 2 * 3 * kMeshSize;
 
@@ -45,7 +45,6 @@ class GLMapDrawer {
     VertexData down_left;
     VertexData down_right;
   };
-
 
   static QPoint RoundToMeshPos(QPoint p);
 

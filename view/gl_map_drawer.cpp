@@ -25,19 +25,23 @@ void GLMapDrawer::DrawMapWithCenter(const QPointF& pos,
 
   QPoint start = RoundToMeshPos(QPoint(pos.x(), pos.y()) -
                                   QPoint(kFieldOfView, kFieldOfView));
-  QPoint finish = RoundToMeshPos(QPoint(pos.x(), pos.y()) +
-                                   QPoint(kFieldOfView, kFieldOfView));
+  auto finish = start;
+//  QPoint finish = RoundToMeshPos(QPoint(pos.x(), pos.y()) +
+//                                   QPoint(kFieldOfView, kFieldOfView));
   map_->CacheRegion(QRect(start, finish));
-  shader_.setUniformValue("screen_width", screen_coords.width());
-  shader_.setUniformValue("screen_height", screen_coords.height());
+//  shader_.setUniformValue("screen_width", screen_coords.width());
+//  shader_.setUniformValue("screen_height", screen_coords.height());
+
+  index_buffer_.bind();
+
   for (int32_t x = start.x(); x <= finish.x(); x += kMeshWidth) {
     for (int32_t y = start.y(); y <= finish.y(); y += kMeshHeight) {
       QPointF point =
           (QPointF(x, y) - pos) * constants::kBlockSz + screen_coords.center();
       shader_.setUniformValue("buffer_pos", point);
       auto* mesh = GetMesh(QPoint(x, y));
+
       mesh->bind();
-      gl->glBindBuffer(GL_ARRAY_BUFFER, mesh->bufferId());
 
       gl->glEnableVertexAttribArray(0);
       gl->glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData),
@@ -46,8 +50,8 @@ void GLMapDrawer::DrawMapWithCenter(const QPointF& pos,
       gl->glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(VertexData),
                                 (void*)(2 * sizeof(GLfloat)));
 
-      gl->glDrawArrays(GL_TRIANGLES, 0, 6);
-//      gl->glDrawElements(GL_TRIANGLES, kElementsCount, GL_INT, nullptr);
+      gl->glDrawElements(GL_TRIANGLES, kElementsCount, GL_UNSIGNED_INT,
+                         nullptr);
       mesh->release();
     }
   }
@@ -83,13 +87,15 @@ void GLMapDrawer::GenerateIndexBuffer(QOpenGLBuffer* index_buffer) {
       buffer[i + 0] = i + 0;
       buffer[i + 1] = i + 1;
       buffer[i + 2] = i + 2;
-      buffer[i + 3] = i + 1;
-      buffer[i + 4] = i + 2;
-      buffer[i + 5] = i + 3;
+      buffer[i + 3] = i + 3;
+      buffer[i + 4] = i + 0;
+      buffer[i + 5] = i + 2;
     }
   }
   index_buffer->create();
-  index_buffer->allocate(buffer.data(), sizeof(buffer[0]) * buffer.size());
+  index_buffer->bind();
+  index_buffer->allocate(buffer.data(), sizeof(buffer));
+  index_buffer->release();
 }
 
 void GLMapDrawer::LoadShader(QOpenGLShaderProgram* shader) {
@@ -118,36 +124,32 @@ void GLMapDrawer::GenerateMesh(QOpenGLBuffer* buffer, QPoint buffer_pos) {
   if (buffer->isCreated()) {
     buffer->destroy();
   }
-  std::array<float, (2 + 4) * 6> data{
-      -0.5F, -0.5F, 1.0F, 0.0F, 0.0F, 1.0F,
-      -0.5F,  0.5F, 0.0F, 1.0F, 0.0F, 1.0F,
-       0.5F,  0.5F, 0.0F, 0.0F, 1.0F, 1.0F,
-      -0.5F, -0.5F, 1.0F, 0.0F, 0.0F, 1.0F,
-       0.5F, -0.5F, 0.0F, 1.0F, 0.0F, 1.0F,
-       0.5F,  0.5F, 0.0F, 0.0F, 1.0F, 1.0F,
-  };
+
+  std::array<BlockData, kMeshSize> data;
+  for (int y = 0; y < kMeshHeight; ++y) {
+    for (int x = 0; x < kMeshWidth; ++x) {
+      data[y * kMeshWidth + x] = GetBlockData(
+          map_->GetBlock(QPoint(buffer_pos.x() + x, buffer_pos.y() + y)),
+          QPoint(x, y));
+    }
+  }
+
   buffer->create();
   buffer->bind();
   buffer->allocate(data.data(), sizeof(data));
   buffer->release();
-  //  std::array<BlockData, kMeshSize> data;
-  //
-  //  for (int y = 0; y < kMeshHeight; ++y) {
-  //    for (int x = 0; x < kMeshWidth; ++x) {
-  //      data[y * kMeshWidth + x] = GetBlockData(
-  //          map_->GetBlock(QPoint(buffer_pos.x() + x, buffer_pos.y() + y)),
-  //          QPoint(x, y));
-  //    }
-  //  }
-  //  buffer->allocate(data.data(), sizeof(data));
-  //  buffer->release();
 }
 
 GLMapDrawer::BlockData GLMapDrawer::GetBlockData(Block block,
                                                  QPoint block_pos) {
   Q_UNUSED(block);
   Q_UNUSED(block_pos);
-  return BlockData{};
+  return BlockData{
+      VertexData{-0.5F, -0.5F, 1.0F, 0.0F, 0.0F, 1.0F},
+      VertexData{-0.5F,  0.5F, 0.0F, 1.0F, 0.0F, 1.0F},
+      VertexData{ 0.5F,  0.5F, 0.0F, 0.0F, 1.0F, 1.0F},
+      VertexData{ 0.5F, -0.5F, 0.0F, 1.0F, 0.0F, 1.0F},
+  };
   // TODO(degmuk): This is temporary code.
   //  if (!block.IsVisible()) {
   //    data.up_left = data.up_right = data.down_left = data.down_right =
