@@ -165,9 +165,9 @@ void BasicStrategy::DoStay() { keys_.clear(); }
 
 bool BasicStrategy::IsNearPit(QPointF src, utils::Direction side) const {
   int direction = (side == utils::Direction::kLeft) ? -1 : 1;
-  int x = (side == utils::Direction::kLeft)
-              ? std::floor(src.x() + 0.5)
-              : std::floor(src.x() + GetMobState().GetSize().x() - 0.5);
+  int x = std::floor((side == utils::Direction::kLeft)
+                         ? src.x() + 0.5
+                         : src.x() + GetMobState().GetSize().x() - 0.5);
   int y = std::floor(src.y() + GetMobState().GetSize().y() + constants::kEps);
   for (int j = 0; j < constants::kMobJumpLengthInBlocks; j++) {
     bool is_pit_near = true;

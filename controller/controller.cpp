@@ -122,7 +122,8 @@ bool Controller::CanAttackMobAtPoint(QPointF mob_point, QPointF player_center,
 bool Controller::CanAttackMob(std::shared_ptr<MovingObject> mob,
                               QPointF player_center, double lower_angle,
                               double upper_angle) const {
-  auto check = [&](QPointF pos_on_mob) {
+  auto check = [mob, player_center, lower_angle, upper_angle,
+                this](QPointF pos_on_mob) {
     QPointF pos_on_mob_scaled(pos_on_mob.x() * mob->GetSize().x(),
                               pos_on_mob.y() * mob->GetSize().y());
     return CanAttackMobAtPoint(
@@ -166,6 +167,7 @@ void Controller::TickEvent() {
   prev_time_ = cur;
   Model::GetInstance()->MoveObjects(pressed_keys_, time);
   if (is_pressed_right_mouse_button) {
+    // TODO(Wind-Eagle): make BreakBlock() dependible on time
     BreakBlock();
     StartAttack();
   }

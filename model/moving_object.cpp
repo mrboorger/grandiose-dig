@@ -363,7 +363,9 @@ void MovingObject::DealDamage(const Damage& damage) {
     // in some cases there is too high speed of a damage push
     move_vector_.SetSpeedX(damage_push.x());
     move_vector_.TranslateSpeed({0, damage_push.y()});
-    MakeMovement(pos_, constants::kEps);
+    MakeMovement(
+        pos_,
+        constants::kEps);  // recalculates many parameters, excluding position
   }
   qDebug() << "Damage: " << health_;
 }
