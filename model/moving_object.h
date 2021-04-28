@@ -8,6 +8,7 @@
 #include "model/abstract_map.h"
 #include "model/constants.h"
 #include "model/damage.h"
+#include "model/effects.h"
 #include "model/move_vector.h"
 #include "utils.h"
 
@@ -84,6 +85,9 @@ class MovingObject {
 
   double GetStateTime() const { return state_time_; }
 
+  void AddEffect(Effect effect);
+  void DeleteEffect(Effect::Type type);
+
  protected:
   MovingObject(QPointF pos, QPointF size);
   void UpdateState(const std::unordered_set<ControllerTypes::Key>& pressed_keys,
@@ -106,6 +110,17 @@ class MovingObject {
                          const std::shared_ptr<AbstractMap>& map) const;
   bool FindCollisionRight(QPointF old_position, double* right_wall_x,
                           const std::shared_ptr<AbstractMap>& map) const;
+
+  void DecEffects(double time);
+
+  void ProcessEffect(Effect effect, double k);
+  void ApplySingularEffect(Effect effect);
+  void ApplyEffect(Effect effect) { ProcessEffect(effect, 1); }
+  void RemoveEffect(Effect effect) { ProcessEffect(effect, -1); }
+  void CheckEffects();
+
+  std::vector<Effect> effects_;
+
   MoveVector move_vector_ = MoveVector(0, 0, 0, 0);
   QPointF pos_;
   QPointF size_;

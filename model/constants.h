@@ -26,7 +26,7 @@ constexpr double kPlayerWalkMaxAirAcceleration =
 constexpr double kPlayerGravitySpeed = 0.001 / 10;  // in blocks per ms
 constexpr double kPlayerJumpSpeed = -0.03;          // in blocks per ms
 constexpr QPointF kPlayerDamageAcceleration = {0.01, -0.015};
-constexpr int kPlayerHealth = 100000;
+constexpr int kPlayerHealth = 100;
 constexpr int kPlayerDamage = 10;
 constexpr double kPlayerUpperAttackAngle = pi / 4.0;
 constexpr double kPlayerLowerAttackAngle = -pi / 4.0;
@@ -39,6 +39,15 @@ constexpr int kPlayerWalkAnimation = 50;  // in ms
 constexpr int kPlayerWalkPictures = 4;
 constexpr int kPlayerAttackAnimation = 50;  // in ms
 constexpr int kPlayerAttackPictures = 4;
+
+constexpr double kSpeedEffect = 1.2;
+constexpr double kSlownessEffect = 0.8;
+constexpr double kStrengthEffect = 1.5;
+constexpr double kWeaknessEffect = 1.0 / 1.5;
+constexpr double kPoisonEffect = 5;
+constexpr double kRegenerationEffect = 5;
+constexpr double kLightnessEffect = 0.5;
+constexpr double kHeavynessEffect = 1.0 / 0.5;
 
 constexpr double kZombieWalkAcceleration =
     kPlayerWalkAcceleration / 2.5;  // in blocks per ms
