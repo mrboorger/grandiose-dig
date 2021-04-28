@@ -1,4 +1,5 @@
 #include "view/view.h"
+#include <qopenglshaderprogram.h>
 
 #include <QColor>
 #include <QPainter>
@@ -6,11 +7,17 @@
 #include <ctime>
 #include <random>
 
+#include <QOpenGLBuffer>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLVertexArrayObject>
+
 #include "controller/controller.h"
 #include "model/constants.h"
 #include "utils.h"
 #include "view/block_drawer.h"
 #include "view/mob_drawer.h"
+#include "view/gl_func.h"
+#include <QDebug>
 
 View* View::GetInstance() {
   static View view;
@@ -18,7 +25,7 @@ View* View::GetInstance() {
 }
 
 View::View()
-    : QWidget(nullptr),
+    : QOpenGLWidget(nullptr),
       camera_(QPointF(150, 150)),
       sound_manager_(new SoundManager()),
       drawer_(nullptr) {
@@ -31,17 +38,38 @@ void View::SetInventoryDrawer(InventoryDrawer* drawer) {
   inventory_drawer_.reset(drawer);
 }
 
-void View::paintEvent(QPaintEvent* event) {
-  Q_UNUSED(event);
+static QOpenGLVertexArrayObject vao;
+static QOpenGLShaderProgram shader;
+static QOpenGLBuffer vbo(QOpenGLBuffer::VertexBuffer);
+
+void View::initializeGL() {
+  qDebug() << "GL init";
+  assert(context());
+  makeCurrent();
+  auto* gl = GLFunctions::GetInstance();
+  gl->initializeOpenGLFunctions();
+  gl->glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+  if (native_drawer_) {
+    native_drawer_->Init();
+  }
+  qDebug() << "GL init success";
+}
+
+void View::paintGL() {
+  auto* gl = GLFunctions::GetInstance();
+
   QPainter painter(this);
   painter.beginNativePainting();
 
-  // TODO(degmuk): temporary code; replace with background drawer
-  painter.setBrush(Qt::white);
-  painter.drawRect(rect());
+  gl->glClear(GL_COLOR_BUFFER_BIT);
 
   camera_.SetPoint(Model::GetInstance()->GetPlayer()->GetPosition());
-  drawer_->DrawMapWithCenter(&painter, camera_.GetPoint(), rect());
+  if (native_drawer_) {
+    native_drawer_->DrawMapWithCenter(camera_.GetPoint(), rect());
+  } else {
+    drawer_->DrawMapWithCenter(&painter, camera_.GetPoint(), rect());
+  }
 
   inventory_drawer_->DrawInventory(&painter);
 
@@ -61,6 +89,39 @@ void View::paintEvent(QPaintEvent* event) {
   }
   painter.endNativePainting();
 }
+
+//void View::paintEvent(QPaintEvent* event) {
+//  Q_UNUSED(event);
+//  QPainter painter(this);
+//  painter.beginNativePainting();
+//
+//  GLFunctions::GetInstance()->glClear(GL_COLOR_BUFFER_BIT);
+//
+//  camera_.SetPoint(Model::GetInstance()->GetPlayer()->GetPosition());
+//  if (native_drawer_) {
+//    native_drawer_->DrawMapWithCenter(camera_.GetPoint(), rect());
+//  } else {
+//    drawer_->DrawMapWithCenter(&painter, camera_.GetPoint(), rect());
+//  }
+//
+//  inventory_drawer_->DrawInventory(&painter);
+//
+//  // TODO(Wind-Eagle): temporary code; need to make PlayerDrawer
+//  auto player = Model::GetInstance()->GetPlayer();
+//  QImage player_image(":/resources/textures/player.png");
+//  QPointF point =
+//      (player->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
+//      rect().center();
+//  painter.drawImage(point, player_image);
+//  auto mobs = Model::GetInstance()->GetMobs();
+//  for (auto mob : mobs) {
+//    QPointF mob_point =
+//        (mob->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
+//        rect().center();
+//    MobDrawer::DrawMob(&painter, mob_point, mob);
+//  }
+//  painter.endNativePainting();
+//}
 
 void View::DamageDealt(MovingObject::Type type) {
   static std::uniform_int_distribution<int> distrib(0, 1);

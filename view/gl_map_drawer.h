@@ -3,19 +3,20 @@
 
 #include <QOpenGLBuffer>
 #include <QOpenGLContext>
-#include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
-#include <QOpenGLVertexArrayObject>
 #include <memory>
 
 #include "model/abstract_map.h"
 #include "model/clearable_cache.h"
 #include "model/constants.h"
+#include "view/gl_func.h"
 #include "utils.h"
 
-class GlMapDrawer : protected QOpenGLFunctions {
+class GLMapDrawer {
  public:
-  explicit GlMapDrawer(std::shared_ptr<AbstractMap> map);
+  explicit GLMapDrawer(std::shared_ptr<AbstractMap> map);
+
+  void Init();
 
   void DrawMapWithCenter(const QPointF& pos, const QRect& screen_coords);
 
@@ -26,6 +27,8 @@ class GlMapDrawer : protected QOpenGLFunctions {
   static constexpr int32_t kFieldOfView = 64;
   static constexpr int32_t kMeshWidth = 32;
   static constexpr int32_t kMeshHeight = 32;
+  static constexpr int32_t kMeshSize = kMeshWidth * kMeshHeight;
+  static constexpr int32_t kElementsCount = 2 * 3 * kMeshSize;
 
   struct VertexData {
     GLfloat pos_x;
@@ -43,17 +46,11 @@ class GlMapDrawer : protected QOpenGLFunctions {
     VertexData down_right;
   };
 
-  static constexpr int32_t kMeshSize =
-      kMeshWidth * kMeshHeight * sizeof(BlockData);
-  static constexpr int32_t kElementsCount =
-      2 * kMeshWidth * kMeshHeight;
 
   static QPoint RoundToMeshPos(QPoint p);
 
   static void GenerateIndexBuffer(QOpenGLBuffer* index_buffer);
   static void LoadShader(QOpenGLShaderProgram* shader);
-  static void GenerateVAO(QOpenGLShaderProgram* shader,
-                          QOpenGLVertexArrayObject* vao);
 
   QOpenGLBuffer* GetMesh(QPoint buffer_pos);
   void GenerateMesh(QOpenGLBuffer* buffer, QPoint buffer_pos);
@@ -63,7 +60,6 @@ class GlMapDrawer : protected QOpenGLFunctions {
                              utils::QPointLexicographicalCompare>
       buffers_;
   QOpenGLBuffer index_buffer_;
-  QOpenGLVertexArrayObject vao_;
   QOpenGLShaderProgram shader_;
   std::shared_ptr<AbstractMap> map_;
 };

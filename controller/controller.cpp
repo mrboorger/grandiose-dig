@@ -11,6 +11,7 @@
 #include "view/abstract_map_drawer.h"
 #include "view/buffered_map_drawer.h"
 #include "view/map_drawer.h"
+#include "view/gl_map_drawer.h"
 
 Controller* Controller::GetInstance() {
   static Controller controller;
@@ -21,6 +22,7 @@ void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
   auto map = std::shared_ptr<AbstractMap>(generator->GenerateMap());
   Model::GetInstance()->SetMap(map);
   View::GetInstance()->SetDrawer(new BufferedMapDrawer(map));
+  View::GetInstance()->SetNativeDrawer(new GLMapDrawer(map));
 }
 
 Controller::Controller() : tick_timer_() {
