@@ -72,6 +72,7 @@ class MovingObject {
 
   void CheckFallDamage();
   bool RecentlyDamaged() const { return damage_time_ > constants::kEps; }
+  double GetDamageTime() const { return damage_time_; }
   void DealDamage(const Damage& damage);
 
   bool IsDead() const;

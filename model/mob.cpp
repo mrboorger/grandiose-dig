@@ -39,7 +39,7 @@ Mob::Mob(QPointF pos, Type type)
       SetHealth(constants::kZombieLordHealth);
       SetDamage(constants::kZombieLordDamage);
       SetType(MovingObject::Type::kMob);
-      SetStrategy(std::make_shared<BasicStrategy>());
+      SetStrategy(std::make_shared<BasicSummonerStrategy>());
       break;
     default:
       break;
@@ -47,11 +47,11 @@ Mob::Mob(QPointF pos, Type type)
 }
 
 void Mob::MoveMob(double time) {
-  strategy_->SetMobState(
-      MobState(GetPosition(), GetSize(),
-               kMobDamageAccelerations[static_cast<int>(GetId())],
-               kMobJumps[static_cast<int>(GetId())], GetDamage(), IsOnGround(),
-               IsOnCeil(), IsPushesLeft(), IsPushesRight()));
+  strategy_->SetMobState(MobState(
+      GetPosition(), GetSize(),
+      kMobDamageAccelerations[static_cast<int>(GetId())],
+      kMobJumps[static_cast<int>(GetId())], GetDamageTime(), GetDamage(),
+      IsOnGround(), IsOnCeil(), IsPushesLeft(), IsPushesRight()));
   strategy_->Update(time);
   UpdateState(strategy_->GetKeys(),
               time);  // maybe better to call MovingObject::Move

@@ -10,7 +10,15 @@
 #include "model/model.h"
 #include "utils.h"
 
-BasicStrategy::BasicStrategy() { state_ = State::kStay; }
+BasicStrategy::BasicStrategy() {
+  vision_radius_ = constants::kBasicStrategyVisionRadius;
+  walk_time_count_ = constants::kBasicStrategyWalkTimeCount;
+  attack_time_count_ = constants::kBasicStrategyAttackTimeCount;
+  walk_precision_ = constants::kBasicStrategyWalkPrecision;
+  random_walk_chance_ = constants::kBasicStrategyRandomWalkChance;
+  random_walk_distance_ = constants::kBasicStrategyRandomWalkDistance;
+  state_ = State::kStay;
+}
 
 void BasicStrategy::DecreaseIntervals(double time) {
   attack_interval_ = std::max(attack_interval_ - time, 0.0);
@@ -170,16 +178,18 @@ bool BasicStrategy::IsNearPit(QPointF src, utils::Direction side) const {
   int height = GetMobState().GetJump().y();
   for (int j = 0; j < length; j++) {
     bool is_pit_near = true;
+    int position = height + 1;
     for (int i = 0; i <= height; i++) {
       if (Model::GetInstance()
               ->GetMap()
               ->GetBlock(QPoint(x + direction * j, y + i))
               .GetType() != Block::Type::kAir) {
         is_pit_near = false;
+        position = i;
         break;
       }
     }
-    if (j == 0 && !is_pit_near) {
+    if (j == 0 && position <= 1) {
       return false;
     }
     if (is_pit_near) {
@@ -187,6 +197,10 @@ bool BasicStrategy::IsNearPit(QPointF src, utils::Direction side) const {
     }
   }
   return false;
+}
+
+void BasicStrategy::DoWalkActions() {
+  // Do nothing
 }
 
 void BasicStrategy::DoWalk() {
@@ -233,6 +247,7 @@ void BasicStrategy::DoWalk() {
       }
     }
   }
+  DoWalkActions();
 }
 
 void BasicStrategy::DoAttack() {
@@ -254,4 +269,53 @@ std::shared_ptr<MovingObject> BasicStrategy::EnemySpotted() {
     return target;
   }
   return nullptr;
+}
+
+BasicSummonerStrategy::BasicSummonerStrategy() : BasicStrategy() {
+  vision_radius_ = constants::kBasicSummonerStrategyVisionRadius;
+  walk_time_count_ = constants::kBasicSummonerStrategyWalkTimeCount;
+  attack_time_count_ = constants::kBasicSummonerStrategyAttackTimeCount;
+  walk_precision_ = constants::kBasicSummonerStrategyWalkPrecision;
+  random_walk_chance_ = constants::kBasicSummonerStrategyRandomWalkChance;
+  random_walk_distance_ = constants::kBasicSummonerStrategyRandomWalkDistance;
+}
+
+void BasicSummonerStrategy::DecreaseIntervals(double time) {
+  attack_interval_ = std::max(attack_interval_ - time, 0.0);
+  walk_interval_ = std::max(walk_interval_ - time, 0.0);
+  summon_interval = std::max(summon_interval - time, 0.0);
+}
+
+void BasicSummonerStrategy::SummonZombie() {
+  for (int op = constants::kBasicSummonerStrategySummonAttempts; op > 0; op--) {
+    std::uniform_real_distribution<double> distrib_x(
+        GetMobState().GetPos().x() -
+            constants::kBasicSummonerStrategySummonDistance,
+        GetMobState().GetPos().x() +
+            constants::kBasicSummonerStrategySummonDistance);
+    std::uniform_real_distribution<double> distrib_y(
+        GetMobState().GetPos().y() -
+            constants::kBasicSummonerStrategySummonDistance,
+        GetMobState().GetPos().y() +
+            constants::kBasicSummonerStrategySummonDistance);
+    double pos_x = distrib_x(utils::random);
+    double pos_y = distrib_y(utils::random);
+    if (Model::GetInstance()->CanBeSummoned(QPointF(pos_x, pos_y),
+                                            GetMobState().GetSize())) {
+      Model::GetInstance()->AddMob(
+          std::make_shared<Mob>(QPointF(pos_x, pos_y), Mob::Type::kZombie));
+      return;
+    }
+  }
+}
+
+void BasicSummonerStrategy::DoWalkActions() {
+  if (GetMobState().GetDamageTime() > constants::kEps && summon_interval == 0) {
+    summon_interval = constants::kBasicSummonerStrategySummonTimeCount;
+    static std::uniform_real_distribution<double> distrib(0.0, 1.0);
+    if (distrib(utils::random) <
+        constants::kBasicSummonerStrategySummonChance) {
+      SummonZombie();
+    }
+  }
 }

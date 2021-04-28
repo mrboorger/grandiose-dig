@@ -32,12 +32,15 @@ class BasicStrategy : public AbstractStrategy {
   }
 
  protected:
-  void DecreaseIntervals(double times);
+  virtual void DecreaseIntervals(double times);
   std::shared_ptr<MovingObject> EnemySpotted();
   QPointF ChooseRandomWalkPosition() const;
-  void DoStay();
-  void DoWalk();
-  void DoAttack();
+
+  virtual void DoStay();
+  virtual void DoWalk();
+  virtual void DoAttack();
+
+  virtual void DoWalkActions();
 
   void UpdateStay();
   void UpdateWalk();
@@ -45,7 +48,6 @@ class BasicStrategy : public AbstractStrategy {
 
   bool IsNearPit(QPointF src, utils::Direction side) const;
 
- private:
   enum class State { kStay, kWalk, kAttack, kStatesCount };
   enum class Condition { kSeeEnemy, kCanAttack, kConditionsCount };
 
@@ -70,12 +72,30 @@ class BasicStrategy : public AbstractStrategy {
 
   std::unordered_set<ControllerTypes::Key> keys_;
 
+  double vision_radius_;
+  double walk_time_count_;
+  double attack_time_count_;
+  double walk_precision_;
+  double random_walk_chance_;
+  double random_walk_distance_;
+
   double attack_interval_ = 0;
   double walk_interval_ = 0;
   QPointF walk_target_ = {0, 0};
   std::shared_ptr<MovingObject> attack_target_;
   uint32_t conditions_;
   State state_;
+};
+
+class BasicSummonerStrategy : public BasicStrategy {
+ public:
+  BasicSummonerStrategy();
+
+ protected:
+  virtual void DecreaseIntervals(double times) override;
+  virtual void DoWalkActions() override;
+  void SummonZombie();
+  double summon_interval = 0;
 };
 
 #endif  // MODEL_STRATEGY_H_

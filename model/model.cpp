@@ -1,5 +1,6 @@
 #include "model/model.h"
 
+#include <QDebug>
 #include <ctime>
 #include <random>
 #include <vector>
@@ -35,4 +36,25 @@ void Model::MoveObjects(
       emit MobSound(mob->GetType());
     }
   }
+}
+
+bool Model::CanBeSummoned(QPointF pos, QPointF size) const {
+  for (int j = std::floor(pos.x());
+       j < std::floor(pos.x() + size.x() - constants::kEps); j++) {
+    for (int i = std::floor(pos.y());
+         i < std::floor(pos.y() + size.y() - constants::kEps); i++) {
+      if (Model::GetInstance()->GetMap()->GetBlock(QPoint(j, i)).GetType() !=
+          Block::Type::kAir) {
+        return false;
+      }
+    }
+    if (Model::GetInstance()
+            ->GetMap()
+            ->GetBlock(
+                QPoint(j, std::floor(pos.y() + size.y() + 1 - constants::kEps)))
+            .GetType() == Block::Type::kAir) {
+      return false;
+    }
+  }
+  return true;
 }
