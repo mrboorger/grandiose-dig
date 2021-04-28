@@ -35,14 +35,6 @@ void Controller::SetPlayer() {
       std::make_shared<Player>(QPointF(147.0, 109.0)));
   View::GetInstance()->SetInventoryDrawer(
       new InventoryDrawer(Model::GetInstance()->GetPlayer()->GetInventory()));
-  Model::GetInstance()->GetPlayer()->AddEffect(
-      Effect(Effect::Type::kSlowness, 15000, 100));
-  Model::GetInstance()->GetPlayer()->AddEffect(
-      Effect(Effect::Type::kSpeed, 10000, 5));
-  Model::GetInstance()->GetPlayer()->AddEffect(
-      Effect(Effect::Type::kRegeneration, 15000, 1));
-  Model::GetInstance()->GetPlayer()->AddEffect(
-      Effect(Effect::Type::kLightness, 20000, 1));
 }
 
 void Controller::SetMob() {
