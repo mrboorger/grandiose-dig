@@ -12,13 +12,13 @@
 
 BasicStrategy::BasicStrategy() { state_ = State::kStay; }
 
-void BasicStrategy::DecreaseIntervals() {
-  attack_interval_ = std::max(attack_interval_ - 1, 0);
-  walk_interval_ = std::max(walk_interval_ - 1, 0);
+void BasicStrategy::DecreaseIntervals(double time) {
+  attack_interval_ = std::max(attack_interval_ - time, 0.0);
+  walk_interval_ = std::max(walk_interval_ - time, 0.0);
 }
 
-void BasicStrategy::Update() {
-  DecreaseIntervals();
+void BasicStrategy::Update(double time) {
+  DecreaseIntervals(time);
   UpdateConditions();
   if (IsActionFinished()) {
     SelectNewState();
@@ -32,13 +32,13 @@ void BasicStrategy::UpdateStay() {
       HasCondition(Condition::kCanAttack)) {
     if (attack_interval_ == 0) {
       state_ = State::kAttack;
-      attack_interval_ = constants::kBasicStrategyAttackTicksCount;
+      attack_interval_ = constants::kBasicStrategyAttackTimeCount;
     }
     can_walk = false;
   }
   if (can_walk) {
     state_ = State::kWalk;
-    walk_interval_ = constants::kBasicStrategyWalkTicksCount;
+    walk_interval_ = constants::kBasicStrategyWalkTimeCount;
     walk_target_ = ChooseRandomWalkPosition();
   }
 }
@@ -48,21 +48,21 @@ void BasicStrategy::UpdateWalk() {
     if (HasCondition(Condition::kCanAttack)) {
       if (attack_interval_ == 0) {
         state_ = State::kAttack;
-        attack_interval_ = constants::kBasicStrategyAttackTicksCount;
+        attack_interval_ = constants::kBasicStrategyAttackTimeCount;
       } else {
         state_ = State::kStay;
       }
       return;
     }
     walk_target_ = attack_target_->GetPosition();
-    walk_interval_ = constants::kBasicStrategyWalkTicksCount;
+    walk_interval_ = constants::kBasicStrategyWalkTimeCount;
     return;
   }
   state_ = State::kStay;
 }
 void BasicStrategy::UpdateAttack() {
   state_ = State::kWalk;
-  walk_interval_ = constants::kBasicStrategyWalkTicksCount;
+  walk_interval_ = constants::kBasicStrategyWalkTimeCount;
 }
 
 void BasicStrategy::SelectNewState() {
@@ -165,24 +165,19 @@ void BasicStrategy::DoStay() { keys_.clear(); }
 
 bool BasicStrategy::IsNearPit(QPointF src, utils::Direction side) const {
   int direction = (side == utils::Direction::kLeft) ? -1 : 1;
-  int x = std::floor(src.x() + GetMobState().GetSize().x() / 2);
+  int x = std::floor((side == utils::Direction::kLeft)
+                         ? src.x() + 0.5
+                         : src.x() + GetMobState().GetSize().x() - 0.5);
   int y = std::floor(src.y() + GetMobState().GetSize().y() + constants::kEps);
-  for (int j = 0; j < constants::kMobJumpLengthInBlocks; j++) {
-    bool is_pit_near = true;
-    for (int i = 0; i <= constants::kMobJumpHeightInBlocks; i++) {
-      if (Model::GetInstance()
-              ->GetMap()
-              ->GetBlock(QPoint(x + direction * j, y + i))
-              .GetType() != Block::Type::kAir) {
-        is_pit_near = false;
-        break;
-      }
-    }
-    if (is_pit_near) {
-      return true;
+  bool is_pit_near = true;
+  for (int i = 0; i <= constants::kMobJumpHeightInBlocks; i++) {
+    if (Model::GetInstance()->GetMap()->GetBlock(QPoint(x, y + i)).GetType() !=
+        Block::Type::kAir) {
+      is_pit_near = false;
+      break;
     }
   }
-  return false;
+  return is_pit_near;
 }
 
 void BasicStrategy::DoWalk() {

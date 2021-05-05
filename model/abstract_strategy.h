@@ -55,7 +55,7 @@ class AbstractStrategy {
   AbstractStrategy& operator=(const AbstractStrategy&) = default;
   AbstractStrategy& operator=(AbstractStrategy&&) = default;
 
-  virtual void Update() = 0;
+  virtual void Update(double time) = 0;
 
   virtual const std::unordered_set<ControllerTypes::Key>& GetKeys() const = 0;
   void SetMobState(const MobState& mob_state) { mob_state_ = mob_state; }

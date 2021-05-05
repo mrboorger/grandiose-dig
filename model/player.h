@@ -33,13 +33,17 @@ class Player : public MovingObject {
     return attack_direction_ == utils::Direction::kLeft;
   }
 
-  void DecAttackTick() { attack_tick_ = std::max(attack_tick_ - 1, 0); }
-  void DecAttackCooldownInterval() {
-    attack_cooldown_interval_ = std::max(attack_cooldown_interval_ - 1, 0);
+  void DecAttackTick(double time) {
+    attack_tick_ = std::max(attack_tick_ - time, 0.0);
+  }
+  void DecAttackCooldownInterval(double time) {
+    attack_cooldown_interval_ = std::max(attack_cooldown_interval_ - time, 0.0);
   }
 
-  bool IsAttackFinished() const { return attack_tick_ == 0; }
-  bool CanStartAttack() const { return attack_cooldown_interval_ == 0; }
+  bool IsAttackFinished() const { return attack_tick_ <= constants::kEps; }
+  bool CanStartAttack() const {
+    return attack_cooldown_interval_ <= constants::kEps;
+  }
 
  private:
   std::shared_ptr<Inventory> inventory_;
