@@ -92,8 +92,8 @@ class BasicSummonerStrategy : public BasicStrategy {
   BasicSummonerStrategy();
 
  protected:
-  virtual void DecreaseIntervals(double times) override;
-  virtual void DoWalkActions() override;
+  void DecreaseIntervals(double times) override;
+  void DoWalkActions() override;
   void SummonZombie();
   double summon_interval = 0;
 };
@@ -103,7 +103,7 @@ class MagicStrategy : public BasicStrategy {
   MagicStrategy();
 
  protected:
-  virtual void DoAttack() override;
+  void DoAttack() override;
 };
 
 #endif  // MODEL_STRATEGY_H_

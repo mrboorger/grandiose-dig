@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <unordered_set>
+#include <vector>
 
 #include "controller/controller_types.h"
 #include "model/abstract_map.h"
