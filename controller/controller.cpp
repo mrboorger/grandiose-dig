@@ -122,7 +122,7 @@ bool Controller::CanAttackMobAtPoint(QPointF mob_point, QPointF player_center,
 bool Controller::CanAttackMob(std::shared_ptr<MovingObject> mob,
                               QPointF player_center, double lower_angle,
                               double upper_angle) const {
-  auto check = [mob, player_center, lower_angle, upper_angle,
+  auto check = [&mob, &player_center, &lower_angle, &upper_angle,
                 this](QPointF pos_on_mob) {
     QPointF pos_on_mob_scaled(pos_on_mob.x() * mob->GetSize().x(),
                               pos_on_mob.y() * mob->GetSize().y());

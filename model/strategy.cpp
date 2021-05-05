@@ -169,25 +169,15 @@ bool BasicStrategy::IsNearPit(QPointF src, utils::Direction side) const {
                          ? src.x() + 0.5
                          : src.x() + GetMobState().GetSize().x() - 0.5);
   int y = std::floor(src.y() + GetMobState().GetSize().y() + constants::kEps);
-  for (int j = 0; j < constants::kMobJumpLengthInBlocks; j++) {
-    bool is_pit_near = true;
-    for (int i = 0; i <= constants::kMobJumpHeightInBlocks; i++) {
-      if (Model::GetInstance()
-              ->GetMap()
-              ->GetBlock(QPoint(x + direction * j, y + i))
-              .GetType() != Block::Type::kAir) {
-        is_pit_near = false;
-        break;
-      }
-    }
-    if (j == 0 && !is_pit_near) {
-      return false;
-    }
-    if (is_pit_near) {
-      return true;
+  bool is_pit_near = true;
+  for (int i = 0; i <= constants::kMobJumpHeightInBlocks; i++) {
+    if (Model::GetInstance()->GetMap()->GetBlock(QPoint(x, y + i)).GetType() !=
+        Block::Type::kAir) {
+      is_pit_near = false;
+      break;
     }
   }
-  return false;
+  return is_pit_near;
 }
 
 void BasicStrategy::DoWalk() {
