@@ -26,7 +26,7 @@ constexpr double kPlayerWalkMaxAirAcceleration =
 constexpr double kPlayerGravitySpeed = 0.001 / 10;  // in blocks per ms
 constexpr double kPlayerJumpSpeed = -0.03;          // in blocks per ms
 constexpr QPointF kPlayerDamageAcceleration = {0.01, -0.015};
-constexpr int kPlayerHealth = 100;
+constexpr int kPlayerHealth = 100000;
 constexpr int kPlayerDamage = 10;
 constexpr double kPlayerUpperAttackAngle = pi / 4.0;
 constexpr double kPlayerLowerAttackAngle = -pi / 4.0;
@@ -46,8 +46,8 @@ constexpr double kStrengthEffect = 1.5;
 constexpr double kWeaknessEffect = 1.0 / 1.5;
 constexpr double kPoisonEffect = 5;
 constexpr double kRegenerationEffect = 5;
-constexpr double kLightnessEffect = 0.5;
-constexpr double kHeavynessEffect = 1.0 / 0.5;
+constexpr double kLightnessEffect = 0.8;
+constexpr double kHeavynessEffect = 1.0 / 0.8;
 
 constexpr double kZombieWalkAcceleration =
     kPlayerWalkAcceleration / 2.5;  // in blocks per ms
@@ -83,6 +83,28 @@ constexpr int kZombieLordWalkAnimation = 100;  // in ms
 constexpr int kZombieLordWalkPictures = 4;
 constexpr int kZombieLordAttackAnimation = 100;  // in ms
 constexpr int kZombieLordAttackPictures = 4;
+
+constexpr double kQuioxWalkAcceleration =
+    kPlayerWalkAcceleration * 1.5;  // in blocks per ms
+constexpr double kQuioxWalkMaxSpeed =
+    kPlayerWalkMaxSpeed * 0.9;  // in blocks per ms
+constexpr double kQuioxWalkMaxAirAcceleration =
+    kPlayerWalkMaxAirAcceleration * 1.1;                    // in blocks per ms
+constexpr double kQuioxJumpSpeed = kPlayerJumpSpeed / 1.4;  // in blocks per ms
+constexpr QPoint kQuioxJumpInBlocks = {4, 2};               // in blocks
+constexpr QPointF kQuioxSize = {2.875, 1.375};
+constexpr QPointF kQuioxDamageAcceleration = {0.01, -0.015};
+constexpr int kQuioxHealth = 150;
+constexpr int kQuioxDamage = 15;
+constexpr int kQuioxWalkAnimation = 100;  // in ms
+constexpr int kQuioxWalkPictures = 2;
+constexpr int kQuioxAttackAnimation = 100;  // in ms
+constexpr int kQuioxAttackPictures = 2;
+
+constexpr int kMagicQuioxHealth = 200;
+constexpr int kMagicQuioxDamage = 10;
+constexpr int kMagicQuioxEffectDuration = 10000;
+constexpr double kMagicQuioxEffectChance = 0.2;
 
 constexpr double kBasicStrategyVisionRadius = 16.0;  // in blocks
 constexpr double kBasicStrategyWalkTimeCount = 3000;

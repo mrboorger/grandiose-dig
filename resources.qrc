@@ -25,5 +25,9 @@
         <file>resources/textures/zombie2.png</file>
         <file>resources/textures/zombie1.png</file>
         <file>resources/textures/zombie0.png</file>
+        <file>resources/textures/quiox0.png</file>
+        <file>resources/textures/quiox1.png</file>
+        <file>resources/textures/magic_quiox1.png</file>
+        <file>resources/textures/magic_quiox0.png</file>
     </qresource>
 </RCC>

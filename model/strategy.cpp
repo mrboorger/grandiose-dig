@@ -319,3 +319,41 @@ void BasicSummonerStrategy::DoWalkActions() {
     }
   }
 }
+
+MagicStrategy::MagicStrategy() : BasicStrategy() {}
+
+void MagicStrategy::DoAttack() {
+  Damage damage(GetMobState().GetPos(), Damage::Type::kMob,
+                GetMobState().GetDamage(),
+                GetMobState().GetDamageAcceleration());
+  attack_target_->DealDamage(damage);
+  static std::uniform_real_distribution<double> check_distrib(0.0, 1.0);
+  if (check_distrib(utils::random) > constants::kMagicQuioxEffectChance) {
+    return;
+  }
+  Effect effect(Effect::Type::kPoison);
+  static std::uniform_int_distribution<int> distrib(0, 3);
+  static std::uniform_real_distribution<double> distrib2(1.0, 1.25);
+  effect.SetStrength(distrib2(utils::random));
+  effect.SetTime(constants::kMagicQuioxEffectDuration);
+  int effect_id = distrib(utils::random);
+  switch (effect_id) {
+    case 0:
+      effect.SetType(Effect::Type::kPoison);
+      break;
+    case 1:
+      effect.SetType(Effect::Type::kSlowness);
+      break;
+    case 2:
+      effect.SetType(Effect::Type::kWeakness);
+      break;
+    case 3:
+      effect.SetType(Effect::Type::kHeavyness);
+      break;
+    default:
+      break;
+  }
+  qDebug() << effect_id << " " << effect.GetStrength() << " "
+           << effect.GetTime();
+  attack_target_->AddEffect(effect);
+}

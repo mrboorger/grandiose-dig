@@ -9,7 +9,8 @@
 
 namespace {
 
-std::array<QString, Mob::kTypesCount> kNames = {"zombie", "zombie_lord"};
+std::array<QString, Mob::kTypesCount> kNames = {"zombie", "zombie_lord",
+                                                "quiox", "magic_quiox"};
 
 }  // namespace
 
@@ -18,9 +19,32 @@ QString MobDrawer::GetMobImage(std::shared_ptr<Mob> mob, QString name) {
   if (mob->GetState() != MovingObject::State::kWalk) {
     return mob_picture + "0.png";
   }
+  Mob::Type type = mob->GetMobType();
+  int walk_animation = 100;
+  int walk_pictures = 1;
+  switch (type) {
+    case Mob::Type::kZombie:
+      walk_animation = constants::kZombieWalkAnimation;
+      walk_pictures = constants::kZombieWalkPictures;
+      break;
+    case Mob::Type::kZombieLord:
+      walk_animation = constants::kZombieLordWalkAnimation;
+      walk_pictures = constants::kZombieLordWalkPictures;
+      break;
+    case Mob::Type::kQuiox:
+      walk_animation = constants::kQuioxWalkAnimation;
+      walk_pictures = constants::kQuioxWalkPictures;
+      break;
+    case Mob::Type::kMagicQuiox:
+      walk_animation = constants::kQuioxWalkAnimation;
+      walk_pictures = constants::kQuioxWalkPictures;
+      break;
+    default:
+      break;
+  }
+
   int state_time = std::floor(mob->GetStateTime());
-  int picture_number = (state_time / constants::kZombieWalkAnimation) %
-                       constants::kZombieWalkPictures;
+  int picture_number = (state_time / walk_animation) % walk_pictures;
   return mob_picture + QString::number(picture_number) + ".png";
 }
 

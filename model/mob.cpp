@@ -2,15 +2,18 @@
 
 namespace {
 
-std::array<QPointF, Mob::kTypesCount> kMobSizes = {constants::kZombieSize,
-                                                   constants::kZombieLordSize};
+std::array<QPointF, Mob::kTypesCount> kMobSizes = {
+    constants::kZombieSize, constants::kZombieLordSize, constants::kQuioxSize,
+    constants::kQuioxSize};
 
 std::array<QPoint, Mob::kTypesCount> kMobJumps = {
-    constants::kZombieJumpInBlocks, constants::kZombieLordJumpInBlocks};
+    constants::kZombieJumpInBlocks, constants::kZombieLordJumpInBlocks,
+    constants::kQuioxJumpInBlocks, constants::kQuioxJumpInBlocks};
 
 std::array<QPointF, Mob::kTypesCount> kMobDamageAccelerations = {
     constants::kZombieDamageAcceleration,
-    constants::kZombieLordDamageAcceleration};
+    constants::kZombieLordDamageAcceleration,
+    constants::kQuioxDamageAcceleration, constants::kQuioxDamageAcceleration};
 
 }  // namespace
 
@@ -40,6 +43,28 @@ Mob::Mob(QPointF pos, Type type)
       SetDamage(constants::kZombieLordDamage);
       SetType(MovingObject::Type::kMob);
       SetStrategy(std::make_shared<BasicSummonerStrategy>());
+      break;
+    case Type::kQuiox:
+      SetWalkAcceleration(constants::kQuioxWalkAcceleration);
+      SetWalkMaxSpeed(constants::kQuioxWalkMaxSpeed);
+      SetWalkMaxAirAcceleration(constants::kQuioxWalkMaxAirAcceleration);
+      SetJumpSpeed(constants::kQuioxJumpSpeed);
+      SetDamageAcceleration(constants::kQuioxDamageAcceleration);
+      SetHealth(constants::kQuioxHealth);
+      SetDamage(constants::kQuioxDamage);
+      SetType(MovingObject::Type::kMob);
+      SetStrategy(std::make_shared<BasicStrategy>());
+      break;
+    case Type::kMagicQuiox:
+      SetWalkAcceleration(constants::kQuioxWalkAcceleration);
+      SetWalkMaxSpeed(constants::kQuioxWalkMaxSpeed);
+      SetWalkMaxAirAcceleration(constants::kQuioxWalkMaxAirAcceleration);
+      SetJumpSpeed(constants::kQuioxJumpSpeed);
+      SetDamageAcceleration(constants::kQuioxDamageAcceleration);
+      SetHealth(constants::kMagicQuioxHealth);
+      SetDamage(constants::kMagicQuioxDamage);
+      SetType(MovingObject::Type::kMob);
+      SetStrategy(std::make_shared<MagicStrategy>());
       break;
     default:
       break;

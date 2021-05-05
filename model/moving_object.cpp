@@ -478,6 +478,7 @@ void MovingObject::ProcessEffect(Effect effect, double k) {
       break;
     case Effect::Type::kWeakness:
       damage_ *= std::pow(constants::kWeaknessEffect * effect.GetStrength(), k);
+      break;
     case Effect::Type::kLightness:
       gravity_speed_ *=
           std::pow(constants::kLightnessEffect * effect.GetStrength(), k);

@@ -21,9 +21,10 @@ class Effect {
 
   explicit Effect(Type type, double time = 10, double strength = 1);
 
+  void SetType(Type type) { type_ = type; }
   void DecTime(double time) { time_ = std::max(time_ - time, 0.0); }
   void SetTime(double time) { time_ = time; }
-  void SetStrength(double strength) { strength_ = strength; }
+  void SetStrength(double strength);
   void ActivateEffect() { is_active_ = true; }
   void DeactivateEffect() { is_active_ = false; }
 

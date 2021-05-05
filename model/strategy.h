@@ -98,4 +98,12 @@ class BasicSummonerStrategy : public BasicStrategy {
   double summon_interval = 0;
 };
 
+class MagicStrategy : public BasicStrategy {
+ public:
+  MagicStrategy();
+
+ protected:
+  virtual void DoAttack() override;
+};
+
 #endif  // MODEL_STRATEGY_H_
