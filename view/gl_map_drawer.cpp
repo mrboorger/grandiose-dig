@@ -1,6 +1,7 @@
 #include "view/gl_map_drawer.h"
 
 #include <QDebug>
+#include <QMatrix4x4>
 #include <QOpenGLFunctions>
 #include <cassert>
 
@@ -28,22 +29,28 @@ void GLMapDrawer::DrawMapWithCenter(const QPointF& pos,
   QPoint finish = RoundToMeshPos(QPoint(pos.x(), pos.y()) +
                                    QPoint(kFieldOfView, kFieldOfView));
   map_->CacheRegion(QRect(start, finish));
-//  shader_.setUniformValue(
-//      "screen_width",
-//      static_cast<GLfloat>(screen_coords.width()) / constants::kBlockSz);
-  shader_.setUniformValue(
-      "screen_width",
-      static_cast<GLfloat>(screen_coords.height()) / constants::kBlockSz);
-  shader_.setUniformValue(
-      "screen_height",
-      static_cast<GLfloat>(screen_coords.height()) / constants::kBlockSz);
+  {
+    QMatrix4x4 proj_matrix;
+    assert(proj_matrix.isIdentity());
+    float left =
+        -((screen_coords.width() + 1) / 2) / (1.0F * constants::kBlockSz);
+    float right =
+        (screen_coords.width() / 2 + 1) / (1.0F * constants::kBlockSz);
+    float up =
+        -((screen_coords.height() + 1) / 2) / (1.0F * constants::kBlockSz);
+    float down =
+        (screen_coords.height() / 2) / (1.0F * constants::kBlockSz);
+    proj_matrix.ortho(left, right, up, down, 1.0F, 100.0F);
+    proj_matrix.lookAt({0.0F, 0.0F, 0.0F}, {0.0F, 0.0F, 1.0F},
+                       {0.0F, -1.0F, 0.0F});
+    shader_.setUniformValue("proj_matrix", proj_matrix);
+  }
 
   index_buffer_.bind();
 
   for (int32_t x = start.x(); x <= finish.x(); x += kMeshWidth) {
     for (int32_t y = start.y(); y <= finish.y(); y += kMeshHeight) {
-      QPointF point = (QPointF(x, y) -
-                       pos) /*+ screen_coords.center() / constants::kBlockSz*/;
+      QPointF point = (QPointF(x, y) - pos);
       shader_.setUniformValue("buffer_pos", point);
       auto* mesh = GetMesh(QPoint(x, y));
 

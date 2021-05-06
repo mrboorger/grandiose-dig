@@ -1,7 +1,6 @@
 #ifndef VIEW_GL_MAP_DRAWER_H_
 #define VIEW_GL_MAP_DRAWER_H_
 
-#include <qopenglbuffer.h>
 #include <QOpenGLBuffer>
 #include <QOpenGLContext>
 #include <QOpenGLShaderProgram>
