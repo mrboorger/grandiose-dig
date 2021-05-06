@@ -21,7 +21,7 @@ class BasicStrategy : public AbstractStrategy {
   BasicStrategy& operator=(const BasicStrategy& strategy) = default;
   BasicStrategy& operator=(BasicStrategy&& strategy) = default;
 
-  void Update() override;
+  void Update(double time) override;
   virtual void SelectNewState();
   virtual void UpdateConditions();
   virtual bool IsActionFinished();
@@ -32,7 +32,7 @@ class BasicStrategy : public AbstractStrategy {
   }
 
  protected:
-  void DecreaseIntervals();
+  void DecreaseIntervals(double times);
   std::shared_ptr<MovingObject> EnemySpotted();
   QPointF ChooseRandomWalkPosition() const;
   void DoStay();
@@ -70,8 +70,8 @@ class BasicStrategy : public AbstractStrategy {
 
   std::unordered_set<ControllerTypes::Key> keys_;
 
-  int attack_interval_ = 0;
-  int walk_interval_ = 0;
+  double attack_interval_ = 0;
+  double walk_interval_ = 0;
   QPointF walk_target_ = {0, 0};
   std::shared_ptr<MovingObject> attack_target_;
   uint32_t conditions_;
