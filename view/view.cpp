@@ -42,8 +42,8 @@ void View::initializeGL() {
   gl->initializeOpenGLFunctions();
   gl->glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-  if (native_drawer_) {
-    native_drawer_->Init();
+  if (drawer_) {
+    drawer_->Init();
   }
   qDebug() << "GL init success";
 }
@@ -57,10 +57,7 @@ void View::paintGL() {
   gl->glClear(GL_COLOR_BUFFER_BIT);
 
   camera_.SetPoint(Model::GetInstance()->GetPlayer()->GetPosition());
-  if (native_drawer_) {
-    native_drawer_->DrawMapWithCenter(camera_.GetPoint(), rect());
-  }
-//  drawer_->DrawMapWithCenter(&painter, camera_.GetPoint(), rect());
+  drawer_->DrawMapWithCenter(&painter, camera_.GetPoint(), rect());
 
   inventory_drawer_->DrawInventory(&painter);
 

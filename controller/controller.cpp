@@ -21,8 +21,7 @@ Controller* Controller::GetInstance() {
 void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
   auto map = std::shared_ptr<AbstractMap>(generator->GenerateMap());
   Model::GetInstance()->SetMap(map);
-  View::GetInstance()->SetDrawer(new BufferedMapDrawer(map));
-  View::GetInstance()->SetNativeDrawer(new GLMapDrawer(map));
+  View::GetInstance()->SetDrawer(new GLMapDrawer(map));
 }
 
 Controller::Controller() : tick_timer_() {

@@ -9,19 +9,21 @@
 #include "model/abstract_map.h"
 #include "model/clearable_cache.h"
 #include "model/constants.h"
+#include "utils.h"
+#include "view/abstract_map_drawer.h"
 #include "view/gl_func.h"
 #include "view/texture_atlas.h"
-#include "utils.h"
 
-class GLMapDrawer {
+class GLMapDrawer : public AbstractMapDrawer {
  public:
   explicit GLMapDrawer(std::shared_ptr<AbstractMap> map);
 
-  void Init();
+  void Init() override;
 
-  void DrawMapWithCenter(const QPointF& pos, const QRect& screen_coords);
+  void DrawMapWithCenter(QPainter* painter, const QPointF& pos,
+                         const QRect& screen_coords) override;
 
-  void UpdateBlock(QPoint pos);
+  void UpdateBlock(QPoint position) override;
 
  private:
   // In blocks

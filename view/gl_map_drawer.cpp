@@ -20,8 +20,9 @@ void GLMapDrawer::Init() {
   atlas_.Init();
 }
 
-void GLMapDrawer::DrawMapWithCenter(const QPointF& pos,
+void GLMapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
                                     const QRect& screen_coords) {
+  Q_UNUSED(painter);
   auto* gl = GLFunctions::GetInstance();
 
   atlas_.bind();
@@ -76,18 +77,19 @@ void GLMapDrawer::DrawMapWithCenter(const QPointF& pos,
   atlas_.release();
 }
 
-void GLMapDrawer::UpdateBlock(QPoint pos) {
-  auto buffer_pos = RoundToMeshPos(pos);
+void GLMapDrawer::UpdateBlock(QPoint position) {
+  auto buffer_pos = RoundToMeshPos(position);
   auto buffer = buffers_.Get(buffer_pos);
   if (!buffer) {
     return;
   }
   QOpenGLBuffer& casted = buffer.value();
   casted.bind();
-  Block block = map_->GetBlock(pos);
-  auto data = GetBlockData(block, pos - RoundToMeshPos(pos));
-  casted.write((pos.y() * kMeshWidth + pos.x()) * sizeof(BlockData), &data,
-               sizeof(BlockData));
+  Block block = map_->GetBlock(position);
+  position -= buffer_pos;
+  auto data = GetBlockData(block, position);
+  casted.write((position.y() * kMeshWidth + position.x()) * sizeof(BlockData),
+               &data, sizeof(BlockData));
   casted.release();
 }
 

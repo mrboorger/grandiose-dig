@@ -27,7 +27,6 @@ class View : public QOpenGLWidget {
   View& operator=(View&&) = delete;
 
   void SetDrawer(AbstractMapDrawer* drawer) { drawer_.reset(drawer); }
-  void SetNativeDrawer(GLMapDrawer* drawer) { native_drawer_.reset(drawer); }
   void SetInventoryDrawer(InventoryDrawer* drawer);
 
   QPoint GetCursorPos() const;              // in pixels
@@ -47,7 +46,6 @@ class View : public QOpenGLWidget {
 
   void initializeGL() override;
   void paintGL() override;
-//  void paintEvent(QPaintEvent* event) override;
 
   void keyPressEvent(QKeyEvent* event) override;
   void keyReleaseEvent(QKeyEvent* event) override;
@@ -59,7 +57,6 @@ class View : public QOpenGLWidget {
   Camera camera_;
   std::unique_ptr<SoundManager> sound_manager_;
   std::unique_ptr<AbstractMapDrawer> drawer_;
-  std::unique_ptr<GLMapDrawer> native_drawer_;
   std::unique_ptr<InventoryDrawer> inventory_drawer_;
 };
 

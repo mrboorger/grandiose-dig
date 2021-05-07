@@ -15,6 +15,7 @@ class AbstractMapDrawer {
   AbstractMapDrawer& operator=(const AbstractMapDrawer&) = default;
   AbstractMapDrawer& operator=(AbstractMapDrawer&&) = default;
 
+  virtual void Init() {}
   virtual void DrawMapWithCenter(QPainter* painter, double x, double y,
                                  const QRect& screen_coords) {
     return DrawMapWithCenter(painter, QPointF(x, y), screen_coords);
