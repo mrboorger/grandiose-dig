@@ -9,11 +9,11 @@ class SoundManager {
  public:
   enum class Sound {
     kPlayerDamage,
-    kMobDamage1,
-    kMobDamage2,
-    kMobDeath,
-    kMob1,
-    kMob2,
+    kZombieDamage1,
+    kZombieDamage2,
+    kZombieDeath,
+    kZombie1,
+    kZombie2,
     kMusic1,
     kSoundsCount
   };

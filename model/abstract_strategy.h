@@ -9,11 +9,16 @@
 class MobState {
  public:
   explicit MobState(QPointF pos = {0, 0}, QPointF size = {0, 0},
+                    QPointF damage_acceleration = {0.01, -0.015},
+                    QPoint jump = {2, 2}, double damage_time = 0,
                     int damage = 10, bool on_ground = false,
                     bool on_ceil = false, bool pushes_left = false,
                     bool pushes_right = false)
       : pos_(pos),
         size_(size),
+        damage_acceleration_(damage_acceleration),
+        jump_(jump),
+        damage_time_(damage_time),
         damage_(damage),
         on_ground_(on_ground),
         on_ceil_(on_ceil),
@@ -28,6 +33,9 @@ class MobState {
 
   QPointF GetPos() const { return pos_; }
   QPointF GetSize() const { return size_; }
+  QPointF GetDamageAcceleration() const { return damage_acceleration_; }
+  QPoint GetJump() const { return jump_; }
+  double GetDamageTime() const { return damage_time_; }
   int GetDamage() const { return damage_; }
   bool IsOnGround() const { return on_ground_; }
   bool IsOnCeil() const { return on_ceil_; }
@@ -37,6 +45,9 @@ class MobState {
  private:
   QPointF pos_;
   QPointF size_;
+  QPointF damage_acceleration_;
+  QPoint jump_;
+  double damage_time_;
   int damage_;
   bool on_ground_;
   bool on_ceil_;

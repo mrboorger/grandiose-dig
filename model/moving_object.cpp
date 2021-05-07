@@ -140,6 +140,15 @@ void MovingObject::UpdateState(
   if (state_ != State::kJump) {
     move_vector_.ResetMomentum();
   }
+  if (pressed_keys.count(ControllerTypes::Key::kLeft) ==
+      pressed_keys.count(ControllerTypes::Key::kRight)) {
+    // Do nothing
+  } else if (pressed_keys.count(ControllerTypes::Key::kRight)) {
+    SetDirection(utils::Direction::kRight);
+  } else if (pressed_keys.count(ControllerTypes::Key::kLeft)) {
+    SetDirection(utils::Direction::kLeft);
+  }
+  DecEffects(time);
   MakeMovement(old_position, time);
 }
 
@@ -330,7 +339,8 @@ void MovingObject::CheckFallDamage() {
   if (fall_damage_speed > constants::kFallDamageMin) {
     Damage damage(Damage::Type::kFall,
                   std::ceil((fall_damage_speed - constants::kFallDamageMin) /
-                            constants::kFallDamagePoint));
+                            constants::kFallDamagePoint),
+                  QPointF(0, 0));
     DealDamage(damage);
   }
 }
@@ -339,7 +349,7 @@ void MovingObject::DealDamage(const Damage& damage) {
   if (IsDead()) {
     return;
   }
-  if (RecentlyDamaged()) {
+  if (damage.GetType() != Damage::Type::kMagic && RecentlyDamaged()) {
     return;
   }
   damage_time_ = constants::kDamageCooldown;
@@ -352,7 +362,7 @@ void MovingObject::DealDamage(const Damage& damage) {
   if (damage.GetType() == Damage::Type::kMob ||
       damage.GetType() == Damage::Type::kPlayer) {
     QPointF source = damage.GetSource();
-    QPointF damage_push = damage_acceleration_;
+    QPointF damage_push = damage.GetDamageAcceleration();
     if (source.x() > pos_.x()) {
       damage_push.setX(-damage_push.x());
     }
@@ -363,11 +373,147 @@ void MovingObject::DealDamage(const Damage& damage) {
     // in some cases there is too high speed of a damage push
     move_vector_.SetSpeedX(damage_push.x());
     move_vector_.TranslateSpeed({0, damage_push.y()});
-    MakeMovement(
-        pos_,
-        constants::kEps);  // recalculates many parameters, excluding position
+    MakeMovement(pos_, constants::kEps);
   }
   qDebug() << "Damage: " << health_;
 }
 
 bool MovingObject::IsDead() const { return health_ <= 0; }
+
+void MovingObject::AddEffect(Effect effect) {
+  Effect::Type type = effect.GetType();
+  DeleteEffect(type);
+  switch (type) {
+    case Effect::Type::kSpeed:
+      DeleteEffect(Effect::Type::kSlowness);
+      break;
+    case Effect::Type::kSlowness:
+      DeleteEffect(Effect::Type::kSpeed);
+      break;
+    case Effect::Type::kStrength:
+      DeleteEffect(Effect::Type::kWeakness);
+      break;
+    case Effect::Type::kWeakness:
+      DeleteEffect(Effect::Type::kStrength);
+    case Effect::Type::kRegeneration:
+      DeleteEffect(Effect::Type::kPoison);
+      break;
+    case Effect::Type::kPoison:
+      DeleteEffect(Effect::Type::kRegeneration);
+    case Effect::Type::kLightness:
+      DeleteEffect(Effect::Type::kHeavyness);
+      break;
+    case Effect::Type::kHeavyness:
+      DeleteEffect(Effect::Type::kLightness);
+      break;
+    default:
+      break;
+  }
+  effects_.push_back(effect);
+  ApplyEffect(effect);
+}
+
+void MovingObject::DeleteEffect(Effect::Type type) {
+  auto element = std::find_if(
+      effects_.begin(), effects_.end(),
+      [&type](const Effect& effect) { return effect.GetType() == type; });
+  if (element == effects_.end()) {
+    return;
+  }
+  Effect effect = effects_[element - effects_.begin()];
+  RemoveEffect(effect);
+  effects_.erase(std::remove_if(effects_.begin(), effects_.end(),
+                                [&type](const Effect& effect) {
+                                  return effect.GetType() == type;
+                                }),
+                 effects_.end());
+}
+
+void MovingObject::DecEffects(double time) {
+  for (auto& i : effects_) {
+    double prev = i.GetTime();
+    i.DecTime(time);
+    if (std::round(i.GetTime() / 1000) != std::round(prev / 1000)) {
+      i.ActivateEffect();
+    }
+  }
+  for (auto& i : effects_) {
+    if (i.GetTime() < constants::kEps) {
+      RemoveEffect(i);
+    }
+  }
+  effects_.erase(std::remove_if(effects_.begin(), effects_.end(),
+                                [](const Effect& effect) {
+                                  return effect.GetTime() < constants::kEps;
+                                }),
+                 effects_.end());
+  CheckEffects();
+}
+
+void MovingObject::ProcessEffect(Effect effect, double k) {
+  Effect::Type type = effect.GetType();
+  switch (type) {
+    case Effect::Type::kSpeed:
+      walk_acceleration_ *=
+          std::pow(constants::kSpeedEffect * effect.GetStrength(), k);
+      walk_max_speed_ *=
+          std::pow(constants::kSpeedEffect * effect.GetStrength(), k);
+      walk_air_acceleration_ *=
+          std::pow(constants::kSpeedEffect * effect.GetStrength(), k);
+      walk_max_air_acceleration_ *=
+          std::pow(constants::kSpeedEffect * effect.GetStrength(), k);
+      break;
+    case Effect::Type::kSlowness:
+      walk_acceleration_ *=
+          std::pow(constants::kSpeedEffect * effect.GetStrength(), k);
+      walk_max_speed_ *=
+          std::pow(constants::kSpeedEffect * effect.GetStrength(), k);
+      walk_air_acceleration_ *=
+          std::pow(constants::kSpeedEffect * effect.GetStrength(), k);
+      walk_max_air_acceleration_ *=
+          std::pow(constants::kSpeedEffect * effect.GetStrength(), k);
+      break;
+    case Effect::Type::kStrength:
+      damage_ *= std::pow(constants::kStrengthEffect * effect.GetStrength(), k);
+      break;
+    case Effect::Type::kWeakness:
+      damage_ *= std::pow(constants::kWeaknessEffect * effect.GetStrength(), k);
+      break;
+    case Effect::Type::kLightness:
+      gravity_speed_ *=
+          std::pow(constants::kLightnessEffect * effect.GetStrength(), k);
+      break;
+    case Effect::Type::kHeavyness:
+      gravity_speed_ *=
+          std::pow(constants::kHeavynessEffect * effect.GetStrength(), k);
+      break;
+    default:
+      break;
+  }
+}
+
+void MovingObject::ApplySingularEffect(Effect effect) {
+  Effect::Type type = effect.GetType();
+  switch (type) {
+    case Effect::Type::kRegeneration:
+      health_ += constants::kRegenerationEffect * effect.GetStrength();
+      break;
+    case Effect::Type::kPoison:
+      DealDamage(Damage(
+          Damage::Type::kMagic,
+          static_cast<int>(constants::kPoisonEffect * effect.GetStrength()),
+          QPointF(0, 0)));
+      break;
+    default:
+      break;
+  }
+}
+
+void MovingObject::CheckEffects() {
+  for (auto& i : effects_) {
+    if (i.IsActive()) {
+      ApplySingularEffect(i);
+      i.DeactivateEffect();
+    }
+  }
+}
