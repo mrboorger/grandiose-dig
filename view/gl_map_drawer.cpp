@@ -7,6 +7,7 @@
 
 #include "model/constants.h"
 #include "view/gl_func.h"
+#include "view/texture_atlas.h"
 
 GLMapDrawer::GLMapDrawer(std::shared_ptr<AbstractMap> map)
     : buffers_(constants::kDefaultClearTimeMSec),
@@ -16,12 +17,14 @@ GLMapDrawer::GLMapDrawer(std::shared_ptr<AbstractMap> map)
 void GLMapDrawer::Init() {
   GenerateIndexBuffer(&index_buffer_);
   LoadShader(&shader_);
+  atlas_.Init();
 }
 
 void GLMapDrawer::DrawMapWithCenter(const QPointF& pos,
                                     const QRect& screen_coords) {
   auto* gl = GLFunctions::GetInstance();
 
+  atlas_.bind();
   shader_.bind();
 
   QPoint start = RoundToMeshPos(QPoint(pos.x(), pos.y()) -
@@ -60,7 +63,7 @@ void GLMapDrawer::DrawMapWithCenter(const QPointF& pos,
       gl->glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData),
                                 (void*)(0 * sizeof(GLfloat)));
       gl->glEnableVertexAttribArray(1);
-      gl->glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(VertexData),
+      gl->glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData),
                                 (void*)(2 * sizeof(GLfloat)));
 
       gl->glDrawElements(GL_TRIANGLES, kElementsCount, GL_UNSIGNED_INT,
@@ -70,6 +73,7 @@ void GLMapDrawer::DrawMapWithCenter(const QPointF& pos,
   }
   index_buffer_.release();
   shader_.release();
+  atlas_.release();
 }
 
 void GLMapDrawer::UpdateBlock(QPoint pos) {
@@ -160,24 +164,36 @@ GLMapDrawer::BlockData GLMapDrawer::GetBlockData(Block block,
   BlockData data{};
   if (!block.IsVisible()) {
     data.up_left = data.up_right = data.down_left = data.down_right =
-        VertexData{static_cast<GLfloat>(block_pos.x()),
-                   static_cast<GLfloat>(block_pos.y()),
-                   0.0F,
-                   0.0F,
-                   0.0F,
-                   1.0F};
-  } else {
-    data.up_left = data.up_right = data.down_left = data.down_right =
-        VertexData{static_cast<GLfloat>(block_pos.x()),
-                   static_cast<GLfloat>(block_pos.y()),
-                   1.0F,
-                   1.0F,
-                   0.0F,
-                   1.0F};
+        VertexData{-100.0F, -100.0F, 0.0F, 0.0F};
+    return data;
   }
-  data.up_right.pos_x += 1.0F;
-  data.down_right.pos_x += 1.0F;
-  data.up_left.pos_y += 1.0F;
-  data.up_right.pos_y += 1.0F;
+  QPointF tex_coords = TextureAtlas::GetBlockTCLT(block);
+  data.up_left = VertexData{
+      static_cast<GLfloat>(block_pos.x()),
+      static_cast<GLfloat>(block_pos.y()),
+      static_cast<GLfloat>(tex_coords.x()),
+      static_cast<GLfloat>(tex_coords.y()),
+  };
+  tex_coords = TextureAtlas::GetBlockTCRT(block);
+  data.up_right = VertexData{
+      static_cast<GLfloat>(block_pos.x() + 1),
+      static_cast<GLfloat>(block_pos.y()),
+      static_cast<GLfloat>(tex_coords.x()),
+      static_cast<GLfloat>(tex_coords.y()),
+  };
+  tex_coords = TextureAtlas::GetBlockTCLB(block);
+  data.down_left = VertexData{
+      static_cast<GLfloat>(block_pos.x()),
+      static_cast<GLfloat>(block_pos.y() + 1),
+      static_cast<GLfloat>(tex_coords.x()),
+      static_cast<GLfloat>(tex_coords.y()),
+  };
+  tex_coords = TextureAtlas::GetBlockTCRB(block);
+  data.down_right = VertexData{
+      static_cast<GLfloat>(block_pos.x() + 1),
+      static_cast<GLfloat>(block_pos.y() + 1),
+      static_cast<GLfloat>(tex_coords.x()),
+      static_cast<GLfloat>(tex_coords.y()),
+  };
   return data;
 }

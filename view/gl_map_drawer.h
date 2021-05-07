@@ -10,6 +10,7 @@
 #include "model/clearable_cache.h"
 #include "model/constants.h"
 #include "view/gl_func.h"
+#include "view/texture_atlas.h"
 #include "utils.h"
 
 class GLMapDrawer {
@@ -33,10 +34,8 @@ class GLMapDrawer {
   struct VertexData {
     GLfloat pos_x;
     GLfloat pos_y;
-    GLfloat color_r;
-    GLfloat color_g;
-    GLfloat color_b;
-    GLfloat color_a;
+    GLfloat tex_u;
+    GLfloat tex_v;
   };
 
   struct BlockData {
@@ -62,6 +61,7 @@ class GLMapDrawer {
       buffers_;
   QOpenGLBuffer index_buffer_;
   QOpenGLShaderProgram shader_;
+  TextureAtlas atlas_;
   std::shared_ptr<AbstractMap> map_;
 };
 

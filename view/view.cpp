@@ -60,7 +60,7 @@ void View::paintGL() {
   if (native_drawer_) {
     native_drawer_->DrawMapWithCenter(camera_.GetPoint(), rect());
   }
-  drawer_->DrawMapWithCenter(&painter, camera_.GetPoint(), rect());
+//  drawer_->DrawMapWithCenter(&painter, camera_.GetPoint(), rect());
 
   inventory_drawer_->DrawInventory(&painter);
 

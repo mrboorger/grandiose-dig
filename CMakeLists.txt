@@ -70,6 +70,7 @@ set(SOURCES
         view/map_drawer.cpp
         view/mob_drawer.cpp
         view/sound_manager.cpp
+        view/texture_atlas.cpp
         view/view.cpp
         view/view.cpp)
 

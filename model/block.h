@@ -6,13 +6,15 @@
 class Block {
  public:
   enum class Type {
-    kAir,
+    kFirst,
+    kAir = kFirst,
     kDirt,
     kGrass,
     kStone,
     kTypesCount,
   };
 
+  static constexpr int kFirstType = static_cast<int>(Type::kFirst);
   static constexpr int kTypesCount = static_cast<int>(Type::kTypesCount);
 
   explicit Block(Type type) : type_(type) {}
