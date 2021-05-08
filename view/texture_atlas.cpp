@@ -31,7 +31,7 @@ QImage TextureAtlas::GetImage(const QPixmap& pixmap) {
   return image;
 }
 
-QPointF TextureAtlas::GetBlockPC(int32_t id){
+QPointF TextureAtlas::GetBlockPC(int32_t id) {
   return QPointF((id % kWidth), (id / kWidth)) * constants::kBlockSz;
 }
 

@@ -4,6 +4,7 @@
 #include <QMatrix4x4>
 #include <QOpenGLFunctions>
 #include <cassert>
+#include <utility>
 
 #include "model/constants.h"
 #include "view/gl_func.h"
@@ -62,10 +63,10 @@ void GLMapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
 
       gl->glEnableVertexAttribArray(0);
       gl->glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData),
-                                (void*)(0 * sizeof(GLfloat)));
+                                reinterpret_cast<void*>(0 * sizeof(GLfloat)));
       gl->glEnableVertexAttribArray(1);
       gl->glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData),
-                                (void*)(2 * sizeof(GLfloat)));
+                                reinterpret_cast<void*>(2 * sizeof(GLfloat)));
 
       gl->glDrawElements(GL_TRIANGLES, kElementsCount, GL_UNSIGNED_INT,
                          nullptr);

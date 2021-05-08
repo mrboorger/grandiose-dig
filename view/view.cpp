@@ -1,7 +1,6 @@
 #include "view/view.h"
 
 #include <QColor>
-#include <QDebug>
 #include <QPainter>
 #include <chrono>
 #include <cmath>
@@ -35,7 +34,6 @@ void View::SetInventoryDrawer(InventoryDrawer* drawer) {
 }
 
 void View::initializeGL() {
-  qDebug() << "GL init";
   assert(context());
   makeCurrent();
   auto* gl = GLFunctions::GetInstance();
