@@ -43,6 +43,18 @@ class MovingObject {
     damage_acceleration_ = damage_acceleration;
   }
 
+  void SetParamaters(const MobParameters& parameters) {
+    damage_ = parameters.damage_;
+    damage_acceleration_ = parameters.damage_acceleration_;
+    health_ = parameters.health_;
+    jump_speed_ = parameters.jump_speed_;
+    size_ = parameters.size_;
+    walk_acceleration_ = parameters.walk_acceleration_;
+    walk_air_acceleration_ = parameters.walk_air_acceleration_;
+    walk_max_air_acceleration_ = parameters.walk_max_air_acceleration_;
+    walk_max_speed_ = parameters.walk_max_speed_;
+  }
+
   double GetWalkAcceleration() const { return walk_acceleration_; }
   double GetWalkMaxSpeed() const { return walk_max_speed_; }
   double GetWalkAirAcceleration() const { return walk_air_acceleration_; }

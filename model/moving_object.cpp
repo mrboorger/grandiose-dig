@@ -1,6 +1,5 @@
 #include "model/moving_object.h"
 
-#include <QDebug>
 #include <algorithm>
 #include <cmath>
 

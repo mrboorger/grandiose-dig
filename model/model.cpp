@@ -1,6 +1,5 @@
 #include "model/model.h"
 
-#include <QDebug>
 #include <ctime>
 #include <random>
 #include <vector>

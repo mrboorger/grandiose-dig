@@ -352,7 +352,7 @@ void MagicStrategy::DoAttack() {
     default:
       break;
   }
-  qDebug() << effect_id << " " << effect.GetStrength() << " "
+  qDebug() << "Effect:" << effect_id << " " << effect.GetStrength() << " "
            << effect.GetTime();
   attack_target_->AddEffect(effect);
 }

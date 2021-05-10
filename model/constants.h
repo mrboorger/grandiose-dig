@@ -1,7 +1,10 @@
 #ifndef MODEL_CONSTANTS_H_
 #define MODEL_CONSTANTS_H_
 
+#include <QDebug>
 #include <QPointF>
+
+#include "types.h"
 
 namespace constants {
 
@@ -50,60 +53,70 @@ constexpr double kRegenerationEffectMultiplier = 5;
 constexpr double kLightnessEffectMultiplier = 0.8;
 constexpr double kHeavinessEffectMultiplier = 1.0 / 0.8;
 
-constexpr double kZombieWalkAcceleration =
-    kPlayerWalkAcceleration / 2.5;  // in blocks per ms
-constexpr double kZombieWalkMaxSpeed =
-    kPlayerWalkMaxSpeed / 1.8;  // in blocks per ms
-constexpr double kZombieWalkMaxAirAcceleration =
-    kPlayerWalkMaxAirAcceleration / 2;                       // in blocks per ms
-constexpr double kZombieJumpSpeed = kPlayerJumpSpeed / 1.4;  // in blocks per ms
-constexpr QPoint kZombieJumpInBlocks = {2, 2};               // in blocks
-constexpr QPointF kZombieSize = kPlayerSize;
-constexpr QPointF kZombieDamageAcceleration = {0.01, -0.015};
-constexpr int kZombieHealth = 120;
-constexpr int kZombieDamage = 15;
-constexpr int kZombieWalkAnimation = 100;  // in ms
-constexpr int kZombieWalkPictures = 4;
-constexpr int kZombieAttackAnimation = 100;  // in ms
-constexpr int kZombieAttackPictures = 4;     // number of pictures in animation
+constexpr MobParameters kZombieParameters = {
+    /* walk_acceleration */ kPlayerWalkAcceleration / 2.5,
+    /* walk_max_speed */ kPlayerWalkMaxSpeed / 1.8,
+    /* walk_air_acceleration */ kPlayerWalkAirAcceleration,
+    /* walk_max_air_acceleration */ kPlayerWalkMaxAirAcceleration / 2,
+    /* jump_speed */ kPlayerJumpSpeed / 1.4,
+    /* jump_in_blocks */ {2, 2},
+    /* size */ kPlayerSize,
+    /* damage_acceleration */ {0.01, -0.015},
+    /* health */ 120,
+    /* damage */ 15,
+    /* walk_animation */ 100,
+    /* walk_pictures */ 4,
+    /* attack_animation */ 100,
+    /* attack_pictures */ 4};
 
-constexpr double kZombieLordWalkAcceleration =
-    kPlayerWalkAcceleration / 1.5;  // in blocks per ms
-constexpr double kZombieLordWalkMaxSpeed =
-    kPlayerWalkMaxSpeed / 1.3;  // in blocks per ms
-constexpr double kZombieLordWalkMaxAirAcceleration =
-    kPlayerWalkMaxAirAcceleration / 1.2;  // in blocks per ms
-constexpr double kZombieLordJumpSpeed =
-    kPlayerJumpSpeed / 1.2;                         // in blocks per ms
-constexpr QPoint kZombieLordJumpInBlocks = {4, 3};  // in blocks
-constexpr QPointF kZombieLordSize = {1.875, 3.75};
-constexpr QPointF kZombieLordDamageAcceleration = {0.025, -0.025};
-constexpr int kZombieLordHealth = 200;
-constexpr int kZombieLordDamage = 25;
-constexpr int kZombieLordWalkAnimation = 100;  // in ms
-constexpr int kZombieLordWalkPictures = 4;
-constexpr int kZombieLordAttackAnimation = 100;  // in ms
-constexpr int kZombieLordAttackPictures = 4;  // number of pictures in animation
+constexpr MobParameters kZombieLordParameters = {
+    /* walk_acceleration */ kPlayerWalkAcceleration / 1.5,
+    /* walk_max_speed */ kPlayerWalkMaxSpeed / 1.3,
+    /* walk_air_acceleration */ kPlayerWalkAirAcceleration,
+    /* walk_max_air_acceleration */ kPlayerWalkMaxAirAcceleration / 1.2,
+    /* jump_speed */ kPlayerJumpSpeed / 1.2,
+    /* jump_in_blocks */ {4, 3},
+    /* size */ {1.875, 3.75},
+    /* damage_acceleration */ {0.025, -0.025},
+    /* health */ 200,
+    /* damage */ 25,
+    /* walk_animation */ 100,
+    /* walk_pictures */ 4,
+    /* attack_animation */ 100,
+    /* attack_pictures */ 4};
 
-constexpr double kQuioxWalkAcceleration =
-    kPlayerWalkAcceleration * 1.5;  // in blocks per ms
-constexpr double kQuioxWalkMaxSpeed =
-    kPlayerWalkMaxSpeed * 0.9;  // in blocks per ms
-constexpr double kQuioxWalkMaxAirAcceleration =
-    kPlayerWalkMaxAirAcceleration * 1.1;                    // in blocks per ms
-constexpr double kQuioxJumpSpeed = kPlayerJumpSpeed / 1.4;  // in blocks per ms
-constexpr QPoint kQuioxJumpInBlocks = {4, 2};               // in blocks
-constexpr QPointF kQuioxSize = {2.875, 1.375};
-constexpr QPointF kQuioxDamageAcceleration = {0.01, -0.015};
-constexpr int kQuioxHealth = 150;
-constexpr int kQuioxDamage = 15;
-constexpr int kQuioxWalkAnimation = 100;  // in ms
-constexpr int kQuioxWalkPictures = 2;
-constexpr int kQuioxAttackAnimation = 100;  // in ms
-constexpr int kQuioxAttackPictures = 2;     // number of pictures in animation
+constexpr MobParameters kQuioxParameters = {
+    /* walk_acceleration */ kPlayerWalkAcceleration * 1.5,
+    /* walk_max_speed */ kPlayerWalkMaxSpeed * 0.9,
+    /* walk_air_acceleration */ kPlayerWalkAirAcceleration,
+    /* walk_max_air_acceleration */ kPlayerWalkMaxAirAcceleration * 1.1,
+    /* jump_speed */ kPlayerJumpSpeed / 1.4,
+    /* jump_in_blocks */ {4, 2},
+    /* size */ {2.875, 1.375},
+    /* damage_acceleration */ {0.01, -0.015},
+    /* health */ 150,
+    /* damage */ 15,
+    /* walk_animation */ 100,
+    /* walk_pictures */ 2,
+    /* attack_animation */ 100,
+    /* attack_pictures */ 2};
 
-constexpr int kMagicQuioxHealth = 200;
-constexpr int kMagicQuioxDamage = 10;
+constexpr MobParameters kMagicQuioxParameters = {
+    /* walk_acceleration */ kPlayerWalkAcceleration * 1.5,
+    /* walk_max_speed */ kPlayerWalkMaxSpeed * 0.9,
+    /* walk_air_acceleration */ kPlayerWalkAirAcceleration,
+    /* walk_max_air_acceleration */ kPlayerWalkMaxAirAcceleration * 1.1,
+    /* jump_speed */ kPlayerJumpSpeed / 1.4,
+    /* jump_in_blocks */ {4, 2},
+    /* size */ {2.875, 1.375},
+    /* damage_acceleration */ {0.01, -0.015},
+    /* health */ 200,
+    /* damage */ 10,
+    /* walk_animation */ 100,
+    /* walk_pictures */ 2,
+    /* attack_animation */ 100,
+    /* attack_pictures */ 2};
+
 constexpr int kMagicStrategyEffectDuration = 10000;
 constexpr double kMagicStrategyEffectChance = 0.2;
 

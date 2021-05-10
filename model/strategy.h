@@ -95,6 +95,7 @@ class ZombieSummonerStrategy : public BasicStrategy {
   void DecreaseIntervals(double times) override;
   void DoWalkActions() override;
   void SummonZombie();
+
   double summon_interval = 0;
 };
 
