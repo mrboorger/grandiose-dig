@@ -110,10 +110,9 @@ bool Controller::IsVisible(QPointF player_center, QPointF mob_point) const {
   return true;
 }
 
-bool Controller::CanAttackZombieAtPoint(QPointF mob_point,
-                                        QPointF player_center,
-                                        double lower_angle,
-                                        double upper_angle) const {
+bool Controller::CanAttackMobAtPoint(QPointF mob_point, QPointF player_center,
+                                     double lower_angle,
+                                     double upper_angle) const {
   if (Model::GetInstance()->GetPlayer()->IsAttackDirectionLeft()) {
     mob_point *= -1;
   }
@@ -127,14 +126,14 @@ bool Controller::CanAttackZombieAtPoint(QPointF mob_point,
          IsVisible(player_center, mob_point + player_center);
 }
 
-bool Controller::CanAttackZombie(std::shared_ptr<MovingObject> mob,
-                                 QPointF player_center, double lower_angle,
-                                 double upper_angle) const {
+bool Controller::CanAttackMob(std::shared_ptr<MovingObject> mob,
+                              QPointF player_center, double lower_angle,
+                              double upper_angle) const {
   auto check = [&mob, &player_center, &lower_angle, &upper_angle,
                 this](QPointF pos_on_mob) {
     QPointF pos_on_mob_scaled(pos_on_mob.x() * mob->GetSize().x(),
                               pos_on_mob.y() * mob->GetSize().y());
-    return CanAttackZombieAtPoint(
+    return CanAttackMobAtPoint(
         mob->GetPosition() + pos_on_mob_scaled - player_center, player_center,
         lower_angle, upper_angle);
   };
@@ -158,7 +157,7 @@ void Controller::PlayerAttack(double time) {
   QPointF player_center = Model::GetInstance()->GetPlayer()->GetPosition() +
                           Model::GetInstance()->GetPlayer()->GetSize() / 2;
   for (auto mob : Model::GetInstance()->GetMobs()) {
-    if (CanAttackZombie(mob, player_center, lower_angle, upper_angle)) {
+    if (CanAttackMob(mob, player_center, lower_angle, upper_angle)) {
       Damage damage(Model::GetInstance()->GetPlayer()->GetPosition(),
                     Damage::Type::kPlayer,
                     Model::GetInstance()->GetPlayer()->GetDamage(),

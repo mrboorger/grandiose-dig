@@ -8,28 +8,26 @@
 
 class MobState {
  public:
-  explicit MobState(QPointF pos = {0, 0}, QPointF size = {0, 0},
-                    QPointF damage_acceleration = {0.01, -0.015},
-                    QPoint jump = {2, 2}, double damage_time = 0,
-                    int damage = 10, bool on_ground = false,
-                    bool on_ceil = false, bool pushes_left = false,
-                    bool pushes_right = false)
-      : pos_(pos),
-        size_(size),
-        damage_acceleration_(damage_acceleration),
-        jump_(jump),
-        damage_time_(damage_time),
-        damage_(damage),
-        on_ground_(on_ground),
-        on_ceil_(on_ceil),
-        pushes_left_(pushes_left),
-        pushes_right_(pushes_right) {}
+  MobState() = default;
 
   MobState(const MobState&) = default;
   MobState(MobState&&) = default;
   virtual ~MobState() = default;
   MobState& operator=(const MobState&) = default;
   MobState& operator=(MobState&&) = default;
+
+  void SetPos(QPointF pos) { pos_ = pos; }
+  void SetSize(QPointF size) { size_ = size; }
+  void SetDamageAcceleration(QPointF damage_acceleration) {
+    damage_acceleration_ = damage_acceleration;
+  }
+  void SetJump(QPoint jump) { jump_ = jump; }
+  void SetDamageTime(double damage_time) { damage_time_ = damage_time; }
+  void SetDamage(int damage) { damage_ = damage; }
+  void SetGroundTouch(bool on_ground) { on_ground_ = on_ground; }
+  void SetCeilTouch(bool on_ceil) { on_ceil_ = on_ceil; }
+  void SetLeftTouch(bool pushes_left) { pushes_left_ = pushes_left; }
+  void SetRightTouch(bool pushes_right) { pushes_right_ = pushes_right; }
 
   QPointF GetPos() const { return pos_; }
   QPointF GetSize() const { return size_; }
@@ -43,16 +41,16 @@ class MobState {
   bool IsPushesRight() const { return pushes_right_; }
 
  private:
-  QPointF pos_;
-  QPointF size_;
-  QPointF damage_acceleration_;
-  QPoint jump_;
-  double damage_time_;
-  int damage_;
-  bool on_ground_;
-  bool on_ceil_;
-  bool pushes_left_;
-  bool pushes_right_;
+  QPointF pos_ = {0, 0};
+  QPointF size_ = {0, 0};
+  QPointF damage_acceleration_ = {0.01, -0.015};
+  QPoint jump_ = {2, 2};
+  double damage_time_ = 0;
+  int damage_ = 10;
+  bool on_ground_ = false;
+  bool on_ceil_ = false;
+  bool pushes_left_ = false;
+  bool pushes_right_ = false;
 };
 
 class AbstractStrategy {

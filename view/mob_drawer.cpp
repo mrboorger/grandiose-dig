@@ -1,6 +1,5 @@
 #include "view/mob_drawer.h"
 
-#include <QDebug>
 #include <QString>
 #include <array>
 

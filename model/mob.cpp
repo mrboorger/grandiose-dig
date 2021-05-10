@@ -19,8 +19,11 @@ std::array<QPointF, Mob::kTypesCount> kMobDamageAccelerations = {
 
 Mob::Mob(QPointF pos, Type type)
     : MovingObject(pos, kMobSizes[static_cast<int>(type)]),
-      mob_state_(GetPosition(), GetSize(), kMobJumps[static_cast<int>(type)]),
+      mob_state_(),
       type_(type) {
+  mob_state_.SetPos(GetPosition());
+  mob_state_.SetSize(GetSize());
+  mob_state_.SetJump(kMobJumps[static_cast<int>(type)]);
   switch (type) {
     case Type::kZombie:
       SetWalkAcceleration(constants::kZombieWalkAcceleration);
@@ -42,7 +45,7 @@ Mob::Mob(QPointF pos, Type type)
       SetHealth(constants::kZombieLordHealth);
       SetDamage(constants::kZombieLordDamage);
       SetType(MovingObject::Type::kMob);
-      SetStrategy(std::make_shared<BasicSummonerStrategy>());
+      SetStrategy(std::make_shared<ZombieSummonerStrategy>());
       break;
     case Type::kQuiox:
       SetWalkAcceleration(constants::kQuioxWalkAcceleration);
@@ -72,11 +75,19 @@ Mob::Mob(QPointF pos, Type type)
 }
 
 void Mob::MoveMob(double time) {
-  strategy_->SetMobState(MobState(
-      GetPosition(), GetSize(),
-      kMobDamageAccelerations[static_cast<int>(GetId())],
-      kMobJumps[static_cast<int>(GetId())], GetDamageTime(), GetDamage(),
-      IsOnGround(), IsOnCeil(), IsPushesLeft(), IsPushesRight()));
+  MobState mob_state;
+  mob_state.SetPos(GetPosition());
+  mob_state.SetSize(GetSize());
+  mob_state.SetDamageAcceleration(
+      kMobDamageAccelerations[static_cast<int>(GetId())]);
+  mob_state.SetJump(kMobJumps[static_cast<int>(GetId())]);
+  mob_state.SetDamageTime(GetDamageTime());
+  mob_state.SetDamage(GetDamage());
+  mob_state.SetGroundTouch(IsOnGround());
+  mob_state.SetCeilTouch(IsOnCeil());
+  mob_state.SetLeftTouch(IsPushesLeft());
+  mob_state.SetRightTouch(IsPushesRight());
+  strategy_->SetMobState(mob_state);
   strategy_->Update(time);
   UpdateState(strategy_->GetKeys(),
               time);  // maybe better to call MovingObject::Move

@@ -117,8 +117,8 @@ class MovingObject {
   void ProcessEffect(Effect effect, double k);
   void ApplySingularEffect(Effect effect);
   void ApplyEffect(Effect effect) { ProcessEffect(effect, 1); }
-  void RemoveEffect(Effect effect) { ProcessEffect(effect, -1); }
-  void CheckEffects();
+  void UnapplyEffect(Effect effect) { ProcessEffect(effect, -1); }
+  void CheckSingularEffects();
 
   std::vector<Effect> effects_;
 

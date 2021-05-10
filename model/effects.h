@@ -13,7 +13,7 @@ class Effect {
     kRegeneration,
     kPoison,
     kLightness,
-    kHeavyness,
+    kHeaviness,
     kTypesCount
   };
 
@@ -24,7 +24,7 @@ class Effect {
   void SetType(Type type) { type_ = type; }
   void DecTime(double time) { time_ = std::max(time_ - time, 0.0); }
   void SetTime(double time) { time_ = time; }
-  void SetStrength(double strength);
+  void SetStrength(double strength) { strength_ = std::max(strength, 1.0); }
   void ActivateEffect() { is_active_ = true; }
   void DeactivateEffect() { is_active_ = false; }
 

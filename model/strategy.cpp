@@ -271,22 +271,21 @@ std::shared_ptr<MovingObject> BasicStrategy::EnemySpotted() {
   return nullptr;
 }
 
-BasicSummonerStrategy::BasicSummonerStrategy() : BasicStrategy() {
+ZombieSummonerStrategy::ZombieSummonerStrategy() : BasicStrategy() {
   vision_radius_ = constants::kBasicSummonerStrategyVisionRadius;
-  walk_time_count_ = constants::kBasicSummonerStrategyWalkTimeCount;
-  attack_time_count_ = constants::kBasicSummonerStrategyAttackTimeCount;
+  walk_time_count_ = constants::kBasicSummonerStrategyWalkTime;
+  attack_time_count_ = constants::kBasicSummonerStrategyAttackTime;
   walk_precision_ = constants::kBasicSummonerStrategyWalkPrecision;
   random_walk_chance_ = constants::kBasicSummonerStrategyRandomWalkChance;
   random_walk_distance_ = constants::kBasicSummonerStrategyRandomWalkDistance;
 }
 
-void BasicSummonerStrategy::DecreaseIntervals(double time) {
-  attack_interval_ = std::max(attack_interval_ - time, 0.0);
-  walk_interval_ = std::max(walk_interval_ - time, 0.0);
+void ZombieSummonerStrategy::DecreaseIntervals(double time) {
+  BasicStrategy::DecreaseIntervals(time);
   summon_interval = std::max(summon_interval - time, 0.0);
 }
 
-void BasicSummonerStrategy::SummonZombie() {
+void ZombieSummonerStrategy::SummonZombie() {
   for (int op = constants::kBasicSummonerStrategySummonAttempts; op > 0; op--) {
     std::uniform_real_distribution<double> distrib_x(
         GetMobState().GetPos().x() -
@@ -300,7 +299,7 @@ void BasicSummonerStrategy::SummonZombie() {
             constants::kBasicSummonerStrategySummonDistance);
     double pos_x = distrib_x(utils::random);
     double pos_y = distrib_y(utils::random);
-    if (Model::GetInstance()->CanBeSummoned(QPointF(pos_x, pos_y),
+    if (Model::GetInstance()->CanSpawnMobAt(QPointF(pos_x, pos_y),
                                             GetMobState().GetSize())) {
       Model::GetInstance()->AddMob(
           std::make_shared<Mob>(QPointF(pos_x, pos_y), Mob::Type::kZombie));
@@ -309,9 +308,9 @@ void BasicSummonerStrategy::SummonZombie() {
   }
 }
 
-void BasicSummonerStrategy::DoWalkActions() {
+void ZombieSummonerStrategy::DoWalkActions() {
   if (GetMobState().GetDamageTime() > constants::kEps && summon_interval == 0) {
-    summon_interval = constants::kBasicSummonerStrategySummonTimeCount;
+    summon_interval = constants::kBasicSummonerStrategySummonTime;
     static std::uniform_real_distribution<double> distrib(0.0, 1.0);
     if (distrib(utils::random) <
         constants::kBasicSummonerStrategySummonChance) {
@@ -320,7 +319,7 @@ void BasicSummonerStrategy::DoWalkActions() {
   }
 }
 
-MagicStrategy::MagicStrategy() : BasicStrategy() {}
+MagicStrategy::MagicStrategy() {}
 
 void MagicStrategy::DoAttack() {
   Damage damage(GetMobState().GetPos(), Damage::Type::kMob,
@@ -328,15 +327,15 @@ void MagicStrategy::DoAttack() {
                 GetMobState().GetDamageAcceleration());
   attack_target_->DealDamage(damage);
   static std::uniform_real_distribution<double> check_distrib(0.0, 1.0);
-  if (check_distrib(utils::random) > constants::kMagicQuioxEffectChance) {
+  if (check_distrib(utils::random) > constants::kMagicStrategyEffectChance) {
     return;
   }
   Effect effect(Effect::Type::kPoison);
-  static std::uniform_int_distribution<int> distrib(0, 3);
-  static std::uniform_real_distribution<double> distrib2(1.0, 1.25);
-  effect.SetStrength(distrib2(utils::random));
-  effect.SetTime(constants::kMagicQuioxEffectDuration);
-  int effect_id = distrib(utils::random);
+  static std::uniform_int_distribution<int> id_distrib(0, 3);
+  static std::uniform_real_distribution<double> strength_distrib(1.0, 1.25);
+  effect.SetStrength(strength_distrib(utils::random));
+  effect.SetTime(constants::kMagicStrategyEffectDuration);
+  int effect_id = id_distrib(utils::random);
   switch (effect_id) {
     case 0:
       effect.SetType(Effect::Type::kPoison);
@@ -348,7 +347,7 @@ void MagicStrategy::DoAttack() {
       effect.SetType(Effect::Type::kWeakness);
       break;
     case 3:
-      effect.SetType(Effect::Type::kHeavyness);
+      effect.SetType(Effect::Type::kHeaviness);
       break;
     default:
       break;

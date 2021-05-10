@@ -41,7 +41,7 @@ class Model : public QObject {
 
   void PickItemToPlayer(InventoryItem item) { player_->PickItem(item); }
 
-  bool CanBeSummoned(QPointF pos, QPointF size) const;
+  bool CanSpawnMobAt(QPointF pos, QPointF size) const;
 
  signals:
   void DamageDealt(MovingObject::Type type);

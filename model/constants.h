@@ -26,7 +26,8 @@ constexpr double kPlayerWalkMaxAirAcceleration =
 constexpr double kPlayerGravitySpeed = 0.001 / 10;  // in blocks per ms
 constexpr double kPlayerJumpSpeed = -0.03;          // in blocks per ms
 constexpr QPointF kPlayerDamageAcceleration = {0.01, -0.015};
-constexpr int kPlayerHealth = 100000;
+constexpr int kPlayerHealth =
+    100000;  // TODO(Wind-Eagle): this is temporary value
 constexpr int kPlayerDamage = 10;
 constexpr double kPlayerUpperAttackAngle = pi / 4.0;
 constexpr double kPlayerLowerAttackAngle = -pi / 4.0;
@@ -38,16 +39,16 @@ constexpr double kPlayerAttackRadius = 5;
 constexpr int kPlayerWalkAnimation = 50;  // in ms
 constexpr int kPlayerWalkPictures = 4;
 constexpr int kPlayerAttackAnimation = 50;  // in ms
-constexpr int kPlayerAttackPictures = 4;
+constexpr int kPlayerAttackPictures = 4;    // number of pictures in animation
 
-constexpr double kSpeedEffect = 1.2;
-constexpr double kSlownessEffect = 0.8;
-constexpr double kStrengthEffect = 1.5;
-constexpr double kWeaknessEffect = 1.0 / 1.5;
-constexpr double kPoisonEffect = 5;
-constexpr double kRegenerationEffect = 5;
-constexpr double kLightnessEffect = 0.8;
-constexpr double kHeavynessEffect = 1.0 / 0.8;
+constexpr double kSpeedEffectMultiplier = 1.2;
+constexpr double kSlownessEffectMultiplier = 0.8;
+constexpr double kStrengthEffectMultiplier = 1.5;
+constexpr double kWeaknessEffectMultiplier = 1.0 / 1.5;
+constexpr double kPoisonEffectMultiplier = 5;
+constexpr double kRegenerationEffectMultiplier = 5;
+constexpr double kLightnessEffectMultiplier = 0.8;
+constexpr double kHeavinessEffectMultiplier = 1.0 / 0.8;
 
 constexpr double kZombieWalkAcceleration =
     kPlayerWalkAcceleration / 2.5;  // in blocks per ms
@@ -64,7 +65,7 @@ constexpr int kZombieDamage = 15;
 constexpr int kZombieWalkAnimation = 100;  // in ms
 constexpr int kZombieWalkPictures = 4;
 constexpr int kZombieAttackAnimation = 100;  // in ms
-constexpr int kZombieAttackPictures = 4;
+constexpr int kZombieAttackPictures = 4;     // number of pictures in animation
 
 constexpr double kZombieLordWalkAcceleration =
     kPlayerWalkAcceleration / 1.5;  // in blocks per ms
@@ -82,7 +83,7 @@ constexpr int kZombieLordDamage = 25;
 constexpr int kZombieLordWalkAnimation = 100;  // in ms
 constexpr int kZombieLordWalkPictures = 4;
 constexpr int kZombieLordAttackAnimation = 100;  // in ms
-constexpr int kZombieLordAttackPictures = 4;
+constexpr int kZombieLordAttackPictures = 4;  // number of pictures in animation
 
 constexpr double kQuioxWalkAcceleration =
     kPlayerWalkAcceleration * 1.5;  // in blocks per ms
@@ -99,12 +100,12 @@ constexpr int kQuioxDamage = 15;
 constexpr int kQuioxWalkAnimation = 100;  // in ms
 constexpr int kQuioxWalkPictures = 2;
 constexpr int kQuioxAttackAnimation = 100;  // in ms
-constexpr int kQuioxAttackPictures = 2;
+constexpr int kQuioxAttackPictures = 2;     // number of pictures in animation
 
 constexpr int kMagicQuioxHealth = 200;
 constexpr int kMagicQuioxDamage = 10;
-constexpr int kMagicQuioxEffectDuration = 10000;
-constexpr double kMagicQuioxEffectChance = 0.2;
+constexpr int kMagicStrategyEffectDuration = 10000;
+constexpr double kMagicStrategyEffectChance = 0.2;
 
 constexpr double kBasicStrategyVisionRadius = 16.0;  // in blocks
 constexpr double kBasicStrategyWalkTimeCount = 3000;
@@ -114,9 +115,9 @@ constexpr double kBasicStrategyRandomWalkChance = 0.01;
 constexpr double kBasicStrategyRandomWalkDistance = 10;  // in blocks
 
 constexpr double kBasicSummonerStrategyVisionRadius = 24.0;  // in blocks
-constexpr double kBasicSummonerStrategyWalkTimeCount = 5000;
-constexpr double kBasicSummonerStrategyAttackTimeCount = 1250;
-constexpr double kBasicSummonerStrategySummonTimeCount = 1000;  // before check
+constexpr double kBasicSummonerStrategyWalkTime = 5000;
+constexpr double kBasicSummonerStrategyAttackTime = 1250;
+constexpr double kBasicSummonerStrategySummonTime = 1000;  // before check
 constexpr double kBasicSummonerStrategySummonDistance = 7.5;
 constexpr double kBasicSummonerStrategySummonChance = 0.2;
 constexpr int kBasicSummonerStrategySummonAttempts = 200;    // in blocks
@@ -124,7 +125,8 @@ constexpr double kBasicSummonerStrategyWalkPrecision = 0.1;  // in blocks
 constexpr double kBasicSummonerStrategyRandomWalkChance = 0.015;
 constexpr double kBasicSummonerStrategyRandomWalkDistance = 15;  // in blocks
 
-constexpr double kZombieSoundChance = 1.0 / 1500.0;  // once in 1500 ticks
+constexpr double kEffectInterval = 1000;          // in ms
+constexpr double kMobSoundChance = 1.0 / 1500.0;  // once in 1500 ticks
 
 constexpr int kDefaultClearTimeMSec = 1'000;
 

@@ -87,9 +87,9 @@ class BasicStrategy : public AbstractStrategy {
   State state_;
 };
 
-class BasicSummonerStrategy : public BasicStrategy {
+class ZombieSummonerStrategy : public BasicStrategy {
  public:
-  BasicSummonerStrategy();
+  ZombieSummonerStrategy();
 
  protected:
   void DecreaseIntervals(double times) override;

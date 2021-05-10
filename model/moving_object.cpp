@@ -373,7 +373,9 @@ void MovingObject::DealDamage(const Damage& damage) {
     // in some cases there is too high speed of a damage push
     move_vector_.SetSpeedX(damage_push.x());
     move_vector_.TranslateSpeed({0, damage_push.y()});
-    MakeMovement(pos_, constants::kEps);
+    MakeMovement(
+        pos_,
+        constants::kEps);  // recalculates many parameters, excluding position
   }
   qDebug() << "Damage: " << health_;
 }
@@ -395,15 +397,17 @@ void MovingObject::AddEffect(Effect effect) {
       break;
     case Effect::Type::kWeakness:
       DeleteEffect(Effect::Type::kStrength);
+      break;
     case Effect::Type::kRegeneration:
       DeleteEffect(Effect::Type::kPoison);
       break;
     case Effect::Type::kPoison:
       DeleteEffect(Effect::Type::kRegeneration);
-    case Effect::Type::kLightness:
-      DeleteEffect(Effect::Type::kHeavyness);
       break;
-    case Effect::Type::kHeavyness:
+    case Effect::Type::kLightness:
+      DeleteEffect(Effect::Type::kHeaviness);
+      break;
+    case Effect::Type::kHeaviness:
       DeleteEffect(Effect::Type::kLightness);
       break;
     default:
@@ -420,26 +424,23 @@ void MovingObject::DeleteEffect(Effect::Type type) {
   if (element == effects_.end()) {
     return;
   }
-  Effect effect = effects_[element - effects_.begin()];
-  RemoveEffect(effect);
-  effects_.erase(std::remove_if(effects_.begin(), effects_.end(),
-                                [&type](const Effect& effect) {
-                                  return effect.GetType() == type;
-                                }),
-                 effects_.end());
+  auto effect = *element;
+  UnapplyEffect(effect);
+  effects_.erase(element);
 }
 
 void MovingObject::DecEffects(double time) {
-  for (auto& i : effects_) {
-    double prev = i.GetTime();
-    i.DecTime(time);
-    if (std::round(i.GetTime() / 1000) != std::round(prev / 1000)) {
-      i.ActivateEffect();
+  for (auto& effect : effects_) {
+    double prev = effect.GetTime();
+    effect.DecTime(time);
+    if (std::round(effect.GetTime() / constants::kEffectInterval) !=
+        std::round(prev / constants::kEffectInterval)) {
+      effect.ActivateEffect();
     }
   }
-  for (auto& i : effects_) {
-    if (i.GetTime() < constants::kEps) {
-      RemoveEffect(i);
+  for (auto& effect : effects_) {
+    if (effect.GetTime() < constants::kEps) {
+      UnapplyEffect(effect);
     }
   }
   effects_.erase(std::remove_if(effects_.begin(), effects_.end(),
@@ -447,7 +448,7 @@ void MovingObject::DecEffects(double time) {
                                   return effect.GetTime() < constants::kEps;
                                 }),
                  effects_.end());
-  CheckEffects();
+  CheckSingularEffects();
 }
 
 void MovingObject::ProcessEffect(Effect effect, double k) {
@@ -455,37 +456,39 @@ void MovingObject::ProcessEffect(Effect effect, double k) {
   switch (type) {
     case Effect::Type::kSpeed:
       walk_acceleration_ *=
-          std::pow(constants::kSpeedEffect * effect.GetStrength(), k);
+          std::pow(constants::kSpeedEffectMultiplier * effect.GetStrength(), k);
       walk_max_speed_ *=
-          std::pow(constants::kSpeedEffect * effect.GetStrength(), k);
+          std::pow(constants::kSpeedEffectMultiplier * effect.GetStrength(), k);
       walk_air_acceleration_ *=
-          std::pow(constants::kSpeedEffect * effect.GetStrength(), k);
+          std::pow(constants::kSpeedEffectMultiplier * effect.GetStrength(), k);
       walk_max_air_acceleration_ *=
-          std::pow(constants::kSpeedEffect * effect.GetStrength(), k);
+          std::pow(constants::kSpeedEffectMultiplier * effect.GetStrength(), k);
       break;
     case Effect::Type::kSlowness:
       walk_acceleration_ *=
-          std::pow(constants::kSpeedEffect * effect.GetStrength(), k);
+          std::pow(constants::kSpeedEffectMultiplier * effect.GetStrength(), k);
       walk_max_speed_ *=
-          std::pow(constants::kSpeedEffect * effect.GetStrength(), k);
+          std::pow(constants::kSpeedEffectMultiplier * effect.GetStrength(), k);
       walk_air_acceleration_ *=
-          std::pow(constants::kSpeedEffect * effect.GetStrength(), k);
+          std::pow(constants::kSpeedEffectMultiplier * effect.GetStrength(), k);
       walk_max_air_acceleration_ *=
-          std::pow(constants::kSpeedEffect * effect.GetStrength(), k);
+          std::pow(constants::kSpeedEffectMultiplier * effect.GetStrength(), k);
       break;
     case Effect::Type::kStrength:
-      damage_ *= std::pow(constants::kStrengthEffect * effect.GetStrength(), k);
+      damage_ *= std::pow(
+          constants::kStrengthEffectMultiplier * effect.GetStrength(), k);
       break;
     case Effect::Type::kWeakness:
-      damage_ *= std::pow(constants::kWeaknessEffect * effect.GetStrength(), k);
+      damage_ *= std::pow(
+          constants::kWeaknessEffectMultiplier * effect.GetStrength(), k);
       break;
     case Effect::Type::kLightness:
-      gravity_speed_ *=
-          std::pow(constants::kLightnessEffect * effect.GetStrength(), k);
+      gravity_speed_ *= std::pow(
+          constants::kLightnessEffectMultiplier * effect.GetStrength(), k);
       break;
-    case Effect::Type::kHeavyness:
-      gravity_speed_ *=
-          std::pow(constants::kHeavynessEffect * effect.GetStrength(), k);
+    case Effect::Type::kHeaviness:
+      gravity_speed_ *= std::pow(
+          constants::kHeavinessEffectMultiplier * effect.GetStrength(), k);
       break;
     default:
       break;
@@ -495,25 +498,27 @@ void MovingObject::ProcessEffect(Effect effect, double k) {
 void MovingObject::ApplySingularEffect(Effect effect) {
   Effect::Type type = effect.GetType();
   switch (type) {
-    case Effect::Type::kRegeneration:
-      health_ += constants::kRegenerationEffect * effect.GetStrength();
+    case Effect::Type::kRegeneration:  // TODO(Wind-Eagle): health can become
+                                       // bigger, than initial/maximal value
+      health_ +=
+          constants::kRegenerationEffectMultiplier * effect.GetStrength();
       break;
     case Effect::Type::kPoison:
-      DealDamage(Damage(
-          Damage::Type::kMagic,
-          static_cast<int>(constants::kPoisonEffect * effect.GetStrength()),
-          QPointF(0, 0)));
+      DealDamage(Damage(Damage::Type::kMagic,
+                        static_cast<int>(constants::kPoisonEffectMultiplier *
+                                         effect.GetStrength()),
+                        QPointF(0, 0)));
       break;
     default:
       break;
   }
 }
 
-void MovingObject::CheckEffects() {
-  for (auto& i : effects_) {
-    if (i.IsActive()) {
-      ApplySingularEffect(i);
-      i.DeactivateEffect();
+void MovingObject::CheckSingularEffects() {
+  for (auto& effect : effects_) {
+    if (effect.IsActive()) {
+      ApplySingularEffect(effect);
+      effect.DeactivateEffect();
     }
   }
 }
