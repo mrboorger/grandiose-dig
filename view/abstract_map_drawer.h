@@ -3,6 +3,7 @@
 
 #include <QPainter>
 #include <QPointF>
+#include <QRect>
 
 class AbstractMapDrawer {
  public:
@@ -22,6 +23,7 @@ class AbstractMapDrawer {
   }
   virtual void DrawMapWithCenter(QPainter* painter, const QPointF& pos,
                                  const QRect& screen_coords) = 0;
+  virtual QRect GetDrawRegion(QPoint center) const = 0;
 
   virtual void UpdateBlock(QPoint position) { Q_UNUSED(position); }
 };

@@ -25,6 +25,8 @@ class GLMapDrawer : public AbstractMapDrawer {
 
   void UpdateBlock(QPoint position) override;
 
+  QRect GetDrawRegion(QPoint center) const override;
+
  private:
   // In blocks
   static constexpr int32_t kFieldOfView = 64;

@@ -24,6 +24,7 @@ class Block {
 
   bool IsVisible() const { return GetCharactistics(GetId()).is_visible; }
   Light GetLuminosity() const { return GetCharactistics(GetId()).luminosity; }
+  bool IsOpaque() const { return GetCharactistics(GetId()).is_opaque; }
 
   Type GetType() const { return type_; }
 
@@ -37,9 +38,10 @@ class Block {
     Light luminosity;
     int default_durability;
     bool is_visible;
+    bool is_opaque;
   };
   static constexpr Characteristics kDefaultBlockCharactestics{Light(0, 0, 0, 0),
-                                                              5, true};
+                                                              5, true, true};
 
   static const Characteristics& GetCharactistics(int32_t id);
 

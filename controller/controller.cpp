@@ -8,6 +8,7 @@
 #include "model/abstract_map_generator.h"
 #include "model/chunk_map.h"
 #include "model/constants.h"
+#include "model/model.h"
 #include "view/abstract_map_drawer.h"
 #include "view/buffered_map_drawer.h"
 #include "view/map_drawer.h"
@@ -22,6 +23,7 @@ void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
   auto map = std::shared_ptr<AbstractMap>(generator->GenerateMap());
   Model::GetInstance()->SetMap(map);
   View::GetInstance()->SetDrawer(new GLMapDrawer(map));
+  View::GetInstance()->SetLightMap(new LightMap(map));
 }
 
 Controller::Controller() : tick_timer_() {
@@ -45,7 +47,9 @@ void Controller::SetMob() {
 
 void Controller::BreakBlock() {
   QPoint block_coords = View::GetInstance()->GetBlockCoordUnderCursor();
-  Model::GetInstance()->GetMap()->HitBlock(block_coords, 1);
+  if (Model::GetInstance()->GetMap()->HitBlock(block_coords, 1)) {
+    View::GetInstance()->GetLightMap()->UpdateLight(block_coords);
+  }
   View::GetInstance()->UpdateBlock(block_coords);
 }
 

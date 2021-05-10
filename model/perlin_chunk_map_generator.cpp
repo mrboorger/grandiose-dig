@@ -25,9 +25,9 @@ Chunk PerlinChunkMapGenerator::PerlinRegionGenerator::Generate(
 Chunk PerlinChunkMapGenerator::PerlinRegionGenerator::BasicGeneration(
     QPoint chunk_pos) {
   Chunk chunk;
-  if (chunk_pos.y() > 1) {
+  if (chunk_pos.y() > kUpperChunk) {
     chunk.FillWith(Block(Block::Type::kDirt));
-  } else if (chunk_pos.y() == 1) {
+  } else if (chunk_pos.y() == kUpperChunk) {
     std::array<int32_t, Chunk::kWidth> height_map;
     for (int i = 0; i < Chunk::kWidth; ++i) {
       height_map[i] = utils::MapRange(

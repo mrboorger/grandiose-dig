@@ -1,6 +1,7 @@
 #include "view/view.h"
 
 #include <QColor>
+#include <QDebug>
 #include <QPainter>
 #include <chrono>
 #include <cmath>
@@ -55,7 +56,16 @@ void View::paintGL() {
   gl->glClear(GL_COLOR_BUFFER_BIT);
 
   camera_.SetPoint(Model::GetInstance()->GetPlayer()->GetPosition());
-  drawer_->DrawMapWithCenter(&painter, camera_.GetPoint(), rect());
+  QPointF camera_pos = camera_.GetPoint();
+  light_map_->CalculateRegion(
+      drawer_->GetDrawRegion(QPoint(camera_pos.x(), camera_pos.y())));
+  for (auto* to_update = light_map_->UpdateList();
+       !to_update->empty();) {
+    // TODO(degmuk): temporary code; need to use this for light update in mesh
+    qDebug() << "Update size:" << to_update->size();
+    to_update->clear();
+  }
+  drawer_->DrawMapWithCenter(&painter, camera_pos, rect());
 
   inventory_drawer_->DrawInventory(&painter);
 

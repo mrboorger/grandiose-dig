@@ -14,11 +14,12 @@ const Block::Characteristics& Block::GetCharactistics(int32_t id) {
       is_set[static_cast<int>(type)] = true;
     };
     is_initialized = true;
-    set(Type::kAir, Characteristics{Light(0, 0, 0, 0), 0, false});
+    set(Type::kAir, Characteristics{Light(0, 0, 0, 0), 0, false, false});
     set(Type::kDirt, kDefaultBlockCharactestics);
     set(Type::kGrass, kDefaultBlockCharactestics);
     set(Type::kStone, kDefaultBlockCharactestics);
-    set(Type::kTorch, Characteristics{Light(120, 120, 120, 0), 1, false});
+    set(Type::kTorch,
+        Characteristics{Light(120, 120, 120, 0), 1, false, false});
   }
   assert(is_set[id]);
   return characteristics[id];

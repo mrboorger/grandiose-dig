@@ -99,6 +99,11 @@ QPoint GLMapDrawer::RoundToMeshPos(QPoint p) {
                 p.y() - utils::ArithmeticalMod(p.y(), kMeshHeight));
 }
 
+QRect GLMapDrawer::GetDrawRegion(QPoint center) const {
+  return QRect(center.x() - kFieldOfView, center.y() - kFieldOfView,
+               center.x() + kFieldOfView, center.y() + kFieldOfView);
+}
+
 void GLMapDrawer::GenerateIndexBuffer(QOpenGLBuffer* index_buffer) {
   std::array<GLuint, kElementsCount> data;
   for (int y = 0; y < kMeshHeight; ++y) {
