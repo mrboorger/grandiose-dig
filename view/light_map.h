@@ -10,12 +10,11 @@
 
 #include "model/abstract_map.h"
 #include "utils.h"
-#include "view/light_buffer.h"
 
 class LightMap {
  public:
   explicit LightMap(std::shared_ptr<AbstractMap> map) : map_(std::move(map)) {}
-  
+
   void UpdateLight(QPoint pos);
   const Light& GetLight(QPoint pos) const;
   void CalculateRegion(const QRect& region);
