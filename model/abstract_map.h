@@ -20,7 +20,7 @@ class AbstractMap {
   const Block& GetBlock(QPoint pos) { return *GetBlockMutable(pos); }
   virtual void SetBlock(QPoint pos, Block block) = 0;
 
-  static int32_t GroundLevel() { return 0; }
+  static int32_t GroundLevel() { return 150; }
 
   virtual void CacheRegion(const QRect& region) { Q_UNUSED(region); }
 

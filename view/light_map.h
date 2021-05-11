@@ -16,7 +16,11 @@ class LightMap {
   explicit LightMap(std::shared_ptr<AbstractMap> map) : map_(std::move(map)) {}
 
   void UpdateLight(QPoint pos);
-  const Light& GetLight(QPoint pos) const;
+  Light GetLight(QPoint pos) const;
+  Light GetLightLT(QPoint pos) const;
+  Light GetLightLB(QPoint pos) const;
+  Light GetLightRT(QPoint pos) const;
+  Light GetLightRB(QPoint pos) const;
   void CalculateRegion(const QRect& region);
 
   std::set<QPoint, utils::QPointLexicographicalCompare>* UpdateList() {
@@ -24,6 +28,9 @@ class LightMap {
   }
 
  private:
+  static constexpr int kUpdateDeep = 3;
+  void SetPointUpdated(QPoint pos, int iteration = kUpdateDeep);
+
   Light GetLuminosity(QPoint pos);
 
   std::map<QPoint, Light, utils::QPointLexicographicalCompare> data_;

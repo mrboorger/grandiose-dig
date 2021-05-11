@@ -39,6 +39,7 @@ class Light {
   bool IsDepended(const Light& light) const;
   bool IsDark() const;
   void Combine(const Light& light);
+  void GetMax(const Light& light);
   void Reset();
 
  private:

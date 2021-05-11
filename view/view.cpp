@@ -57,16 +57,20 @@ void View::paintGL() {
 
   camera_.SetPoint(Model::GetInstance()->GetPlayer()->GetPosition());
   QPointF camera_pos = camera_.GetPoint();
+
   light_map_->CalculateRegion(
       drawer_->GetDrawRegion(QPoint(camera_pos.x(), camera_pos.y())));
   for (auto* to_update = light_map_->UpdateList();
        !to_update->empty();) {
     // TODO(degmuk): temporary code; need to use this for light update in mesh
-    qDebug() << "Update size:" << to_update->size();
+    for (auto pos : *to_update) {
+      drawer_->UpdateBlock(pos);
+    }
+    qDebug() << "Update" << to_update->size();
     to_update->clear();
   }
-  drawer_->DrawMapWithCenter(&painter, camera_pos, rect());
 
+  drawer_->DrawMapWithCenter(&painter, camera_pos, rect());
   inventory_drawer_->DrawInventory(&painter);
 
   // TODO(Wind-Eagle): temporary code; need to make PlayerDrawer

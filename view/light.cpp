@@ -10,6 +10,7 @@ Light Light::GetNearLight() const {
   }
   return result;
 }
+
 bool Light::CanBeUpdated(const Light& light) const {
   for (int i = 0; i < kNChannels; ++i) {
     if (light.data_[i] - kDecreaseFactor > data_[i]) {
@@ -40,6 +41,12 @@ bool Light::IsDark() const {
 void Light::Combine(const Light& light) {
   for (int i = 0; i < kNChannels; ++i) {
     data_[i] = std::max(1 * data_[i], light.data_[i] - kDecreaseFactor);
+  }
+}
+
+void Light::GetMax(const Light& light) {
+  for (int i = 0; i < kNChannels; ++i) {
+    data_[i] = std::max(data_[i], light.data_[i]);
   }
 }
 

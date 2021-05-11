@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QMatrix4x4>
 #include <QOpenGLFunctions>
+#include <algorithm>
 #include <cassert>
 #include <utility>
 
@@ -10,10 +11,12 @@
 #include "view/gl_func.h"
 #include "view/texture_atlas.h"
 
-GLMapDrawer::GLMapDrawer(std::shared_ptr<AbstractMap> map)
+GLMapDrawer::GLMapDrawer(std::shared_ptr<AbstractMap> map,
+                         std::shared_ptr<LightMap> light_map)
     : buffers_(constants::kDefaultClearTimeMSec),
       index_buffer_(QOpenGLBuffer::Type::IndexBuffer),
-      map_(std::move(map)) {}
+      map_(std::move(map)),
+      light_map_(std::move(light_map)) {}
 
 void GLMapDrawer::Init() {
   GenerateIndexBuffer(&index_buffer_);
@@ -67,6 +70,9 @@ void GLMapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
       gl->glEnableVertexAttribArray(1);
       gl->glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData),
                                 reinterpret_cast<void*>(2 * sizeof(GLfloat)));
+      gl->glEnableVertexAttribArray(2);
+      gl->glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData),
+                                reinterpret_cast<void*>(4 * sizeof(GLfloat)));
 
       gl->glDrawElements(GL_TRIANGLES, kElementsCount, GL_UNSIGNED_INT,
                          nullptr);
@@ -86,9 +92,8 @@ void GLMapDrawer::UpdateBlock(QPoint position) {
   }
   QOpenGLBuffer& casted = buffer.value();
   casted.bind();
-  Block block = map_->GetBlock(position);
+  auto data = GetBlockData(position, position - buffer_pos);
   position -= buffer_pos;
-  auto data = GetBlockData(block, position);
   casted.write((position.y() * kMeshWidth + position.x()) * sizeof(BlockData),
                &data, sizeof(BlockData));
   casted.release();
@@ -158,50 +163,66 @@ void GLMapDrawer::GenerateMesh(QOpenGLBuffer* buffer, QPoint buffer_pos) {
   for (int y = 0; y < kMeshHeight; ++y) {
     for (int x = 0; x < kMeshWidth; ++x) {
       data[y * kMeshWidth + x] = GetBlockData(
-          map_->GetBlock(QPoint(buffer_pos.x() + x, buffer_pos.y() + y)),
-          QPoint(x, y));
+          QPoint(buffer_pos.x() + x, buffer_pos.y() + y), QPoint(x, y));
     }
   }
 
   InitGLBuffer(buffer, data.data(), sizeof(data));
 }
 
-GLMapDrawer::BlockData GLMapDrawer::GetBlockData(Block block,
-                                                 QPoint block_pos) {
+GLMapDrawer::BlockData GLMapDrawer::GetBlockData(QPoint world_pos,
+                                                 QPoint mesh_pos) {
   // TODO(degmuk): This is temporary code.
   BlockData data{};
+  Block block = map_->GetBlock(world_pos);
   if (!block.IsVisible()) {
     data.up_left = data.up_right = data.down_left = data.down_right =
-        VertexData{-100.0F, -100.0F, 0.0F, 0.0F};
+        VertexData{-100.0F, -100.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F};
     return data;
   }
   QPointF tex_coords = TextureAtlas::GetBlockTCLT(block);
+  Light light = light_map_->GetLightLT(world_pos);
   data.up_left = VertexData{
-      static_cast<GLfloat>(block_pos.x()),
-      static_cast<GLfloat>(block_pos.y()),
+      static_cast<GLfloat>(mesh_pos.x()),
+      static_cast<GLfloat>(mesh_pos.y()),
       static_cast<GLfloat>(tex_coords.x()),
       static_cast<GLfloat>(tex_coords.y()),
+      std::max(light.GetRed(), light.GetSun()) / (1.0F * Light::kMaxLight),
+      std::max(light.GetGreen(), light.GetSun()) / (1.0F * Light::kMaxLight),
+      std::max(light.GetBlue(), light.GetSun()) / (1.0F * Light::kMaxLight),
   };
   tex_coords = TextureAtlas::GetBlockTCRT(block);
+  light = light_map_->GetLightRT(world_pos);
   data.up_right = VertexData{
-      static_cast<GLfloat>(block_pos.x() + 1),
-      static_cast<GLfloat>(block_pos.y()),
+      static_cast<GLfloat>(mesh_pos.x() + 1),
+      static_cast<GLfloat>(mesh_pos.y()),
       static_cast<GLfloat>(tex_coords.x()),
       static_cast<GLfloat>(tex_coords.y()),
+      std::max(light.GetRed(), light.GetSun()) / (1.0F * Light::kMaxLight),
+      std::max(light.GetGreen(), light.GetSun()) / (1.0F * Light::kMaxLight),
+      std::max(light.GetBlue(), light.GetSun()) / (1.0F * Light::kMaxLight),
   };
   tex_coords = TextureAtlas::GetBlockTCLB(block);
+  light = light_map_->GetLightLB(world_pos);
   data.down_left = VertexData{
-      static_cast<GLfloat>(block_pos.x()),
-      static_cast<GLfloat>(block_pos.y() + 1),
+      static_cast<GLfloat>(mesh_pos.x()),
+      static_cast<GLfloat>(mesh_pos.y() + 1),
       static_cast<GLfloat>(tex_coords.x()),
       static_cast<GLfloat>(tex_coords.y()),
+      std::max(light.GetRed(), light.GetSun()) / (1.0F * Light::kMaxLight),
+      std::max(light.GetGreen(), light.GetSun()) / (1.0F * Light::kMaxLight),
+      std::max(light.GetBlue(), light.GetSun()) / (1.0F * Light::kMaxLight),
   };
   tex_coords = TextureAtlas::GetBlockTCRB(block);
+  light = light_map_->GetLightRB(world_pos);
   data.down_right = VertexData{
-      static_cast<GLfloat>(block_pos.x() + 1),
-      static_cast<GLfloat>(block_pos.y() + 1),
+      static_cast<GLfloat>(mesh_pos.x() + 1),
+      static_cast<GLfloat>(mesh_pos.y() + 1),
       static_cast<GLfloat>(tex_coords.x()),
       static_cast<GLfloat>(tex_coords.y()),
+      std::max(light.GetRed(), light.GetSun()) / (1.0F * Light::kMaxLight),
+      std::max(light.GetGreen(), light.GetSun()) / (1.0F * Light::kMaxLight),
+      std::max(light.GetBlue(), light.GetSun()) / (1.0F * Light::kMaxLight),
   };
   return data;
 }

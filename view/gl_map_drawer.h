@@ -12,11 +12,13 @@
 #include "utils.h"
 #include "view/abstract_map_drawer.h"
 #include "view/gl_func.h"
+#include "view/light_map.h"
 #include "view/texture_atlas.h"
 
 class GLMapDrawer : public AbstractMapDrawer {
  public:
-  explicit GLMapDrawer(std::shared_ptr<AbstractMap> map);
+  explicit GLMapDrawer(std::shared_ptr<AbstractMap> map,
+                       std::shared_ptr<LightMap> light_map);
 
   void Init() override;
 
@@ -40,6 +42,9 @@ class GLMapDrawer : public AbstractMapDrawer {
     GLfloat pos_y;
     GLfloat tex_u;
     GLfloat tex_v;
+    GLfloat light_r;
+    GLfloat light_g;
+    GLfloat light_b;
   };
 
   struct BlockData {
@@ -56,7 +61,7 @@ class GLMapDrawer : public AbstractMapDrawer {
 
   QOpenGLBuffer* GetMesh(QPoint buffer_pos);
   void GenerateMesh(QOpenGLBuffer* buffer, QPoint buffer_pos);
-  static BlockData GetBlockData(Block block, QPoint block_pos);
+  BlockData GetBlockData(QPoint world_pos, QPoint mesh_pos);
 
   static void InitGLBuffer(QOpenGLBuffer* buffer, void* data, size_t size);
 
@@ -67,6 +72,7 @@ class GLMapDrawer : public AbstractMapDrawer {
   QOpenGLShaderProgram shader_;
   TextureAtlas atlas_;
   std::shared_ptr<AbstractMap> map_;
+  std::shared_ptr<LightMap> light_map_;
 };
 
 #endif  // VIEW_GL_MAP_DRAWER_H_
