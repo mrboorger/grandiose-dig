@@ -450,44 +450,52 @@ void MovingObject::DecEffects(double time) {
   CheckSingularEffects();
 }
 
-void MovingObject::ProcessEffect(Effect effect, double k) {
-  Effect::Type type = effect.GetType();
-  switch (type) {
+namespace {
+
+static double GetMultiplyCoef(double coef, EffectProcessType type) {
+  return type == EffectProcessType::kForward ? coef : 1.0 / coef;
+}
+
+}  // namespace
+
+void MovingObject::ProcessEffect(Effect effect, EffectProcessType type) {
+  Effect::Type effect_type = effect.GetType();
+  switch (effect_type) {
     case Effect::Type::kSpeed:
-      walk_acceleration_ *=
-          std::pow(constants::kSpeedEffectMultiplier * effect.GetStrength(), k);
-      walk_max_speed_ *=
-          std::pow(constants::kSpeedEffectMultiplier * effect.GetStrength(), k);
-      walk_air_acceleration_ *=
-          std::pow(constants::kSpeedEffectMultiplier * effect.GetStrength(), k);
-      walk_max_air_acceleration_ *=
-          std::pow(constants::kSpeedEffectMultiplier * effect.GetStrength(), k);
+      walk_acceleration_ *= GetMultiplyCoef(
+          constants::kSpeedEffectMultiplier * effect.GetStrength(), type);
+      walk_max_speed_ *= GetMultiplyCoef(
+          constants::kSpeedEffectMultiplier * effect.GetStrength(), type);
+      walk_air_acceleration_ *= GetMultiplyCoef(
+          constants::kSpeedEffectMultiplier * effect.GetStrength(), type);
+      walk_max_air_acceleration_ *= GetMultiplyCoef(
+          constants::kSpeedEffectMultiplier * effect.GetStrength(), type);
       break;
     case Effect::Type::kSlowness:
-      walk_acceleration_ *=
-          std::pow(constants::kSpeedEffectMultiplier * effect.GetStrength(), k);
-      walk_max_speed_ *=
-          std::pow(constants::kSpeedEffectMultiplier * effect.GetStrength(), k);
-      walk_air_acceleration_ *=
-          std::pow(constants::kSpeedEffectMultiplier * effect.GetStrength(), k);
-      walk_max_air_acceleration_ *=
-          std::pow(constants::kSpeedEffectMultiplier * effect.GetStrength(), k);
+      walk_acceleration_ *= GetMultiplyCoef(
+          constants::kSpeedEffectMultiplier * effect.GetStrength(), type);
+      walk_max_speed_ *= GetMultiplyCoef(
+          constants::kSpeedEffectMultiplier * effect.GetStrength(), type);
+      walk_air_acceleration_ *= GetMultiplyCoef(
+          constants::kSpeedEffectMultiplier * effect.GetStrength(), type);
+      walk_max_air_acceleration_ *= GetMultiplyCoef(
+          constants::kSpeedEffectMultiplier * effect.GetStrength(), type);
       break;
     case Effect::Type::kStrength:
-      damage_ *= std::pow(
-          constants::kStrengthEffectMultiplier * effect.GetStrength(), k);
+      damage_ *= GetMultiplyCoef(
+          constants::kStrengthEffectMultiplier * effect.GetStrength(), type);
       break;
     case Effect::Type::kWeakness:
-      damage_ *= std::pow(
-          constants::kWeaknessEffectMultiplier * effect.GetStrength(), k);
+      damage_ *= GetMultiplyCoef(
+          constants::kWeaknessEffectMultiplier * effect.GetStrength(), type);
       break;
     case Effect::Type::kLightness:
-      gravity_speed_ *= std::pow(
-          constants::kLightnessEffectMultiplier * effect.GetStrength(), k);
+      gravity_speed_ *= GetMultiplyCoef(
+          constants::kLightnessEffectMultiplier * effect.GetStrength(), type);
       break;
     case Effect::Type::kHeaviness:
-      gravity_speed_ *= std::pow(
-          constants::kHeavinessEffectMultiplier * effect.GetStrength(), k);
+      gravity_speed_ *= GetMultiplyCoef(
+          constants::kHeavinessEffectMultiplier * effect.GetStrength(), type);
       break;
     default:
       break;

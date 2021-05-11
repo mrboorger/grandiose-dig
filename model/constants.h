@@ -41,8 +41,9 @@ constexpr double kPlayerAngleTick =
 constexpr double kPlayerAttackRadius = 5;
 constexpr int kPlayerWalkAnimation = 50;  // in ms
 constexpr int kPlayerWalkPictures = 4;
-constexpr int kPlayerAttackAnimation = 50;  // in ms
-constexpr int kPlayerAttackPictures = 4;    // number of pictures in animation
+constexpr int kPlayerAttackPictures = 4;  // number of pictures in animation
+constexpr int kPlayerAttackAnimation =
+    kPlayerAttackTime / kPlayerAttackPictures;  // in ms
 
 constexpr double kSpeedEffectMultiplier = 1.2;
 constexpr double kSlownessEffectMultiplier = 0.8;
@@ -52,6 +53,8 @@ constexpr double kPoisonEffectMultiplier = 5;
 constexpr double kRegenerationEffectMultiplier = 5;
 constexpr double kLightnessEffectMultiplier = 0.8;
 constexpr double kHeavinessEffectMultiplier = 1.0 / 0.8;
+
+constexpr int kMaxAnimationPictures = 4;
 
 constexpr MobParameters kZombieParameters = {
     /* walk_acceleration */ kPlayerWalkAcceleration / 2.5,

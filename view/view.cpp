@@ -10,7 +10,7 @@
 #include "model/constants.h"
 #include "utils.h"
 #include "view/block_drawer.h"
-#include "view/mob_drawer.h"
+#include "view/moving_object_drawer.h"
 
 View* View::GetInstance() {
   static View view;
@@ -31,50 +31,15 @@ void View::SetInventoryDrawer(InventoryDrawer* drawer) {
   inventory_drawer_.reset(drawer);
 }
 
-QString View::GetPlayerImage() {
-  QString player_picture = ":/resources/textures/player";
-  if (Model::GetInstance()->GetPlayer()->GetState() !=
-      MovingObject::State::kWalk) {
-    return player_picture + "0.png";
-  }
-  int state_time =
-      std::floor(Model::GetInstance()->GetPlayer()->GetStateTime());
-  int picture_number = (state_time / constants::kPlayerWalkAnimation) %
-                       constants::kPlayerWalkPictures;
-  return player_picture + QString::number(picture_number) + ".png";
-}
-
-QString View::GetPlayerAttackImage() {
-  QString player_picture = ":/resources/textures/player_attack";
-  int state_time = std::floor(
-      constants::kPlayerAttackTime -
-      Model::GetInstance()->GetPlayer()->GetAttackTick() - constants::kEps);
-  int picture_number =
-      (state_time /
-       static_cast<int>((std::floor(constants::kPlayerAttackTime)) /
-                        (constants::kPlayerAttackPictures - 1))) %
-          (constants::kPlayerAttackAnimation - 1) +
-      1;
-  return player_picture + QString::number(picture_number) + ".png";
-}
-
 void View::DrawPlayer(QPainter* painter) {
   auto player = Model::GetInstance()->GetPlayer();
-  QImage player_image(GetPlayerImage());
-  if (Model::GetInstance()->GetPlayer()->GetDirection() ==
-      utils::Direction::kLeft) {
-    player_image = player_image.mirrored(true, false);
-  }
+  QImage player_image(MovingObjectDrawer::GetPlayerImage());
   QPointF point =
       (player->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
       rect().center();
 
   if (Model::GetInstance()->GetPlayer()->IsAttackFinished() == false) {
-    QImage player_attack_image(GetPlayerAttackImage());
-    if (Model::GetInstance()->GetPlayer()->GetDirection() ==
-        utils::Direction::kLeft) {
-      player_attack_image = player_attack_image.mirrored(true, false);
-    }
+    QImage player_attack_image(MovingObjectDrawer::GetPlayerAttackImage());
     player_image = player_image.copy(QRect(
         QPoint(0, player_attack_image.size().height()), player_image.size()));
     painter->drawImage(point + QPoint(0, player_attack_image.size().height()),
@@ -107,7 +72,7 @@ void View::paintEvent(QPaintEvent* event) {
     QPointF mob_point =
         (mob->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
         rect().center();
-    MobDrawer::DrawMob(&painter, mob_point, mob);
+    MovingObjectDrawer::DrawMob(&painter, mob_point, mob);
   }
 }
 

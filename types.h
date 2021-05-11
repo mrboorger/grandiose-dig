@@ -20,4 +20,6 @@ struct MobParameters {
   int attack_pictures_;
 };
 
+enum class EffectProcessType { kForward, kInverse };
+
 #endif  // TYPES_H

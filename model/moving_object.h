@@ -126,10 +126,14 @@ class MovingObject {
 
   void DecEffects(double time);
 
-  void ProcessEffect(Effect effect, double k);
+  void ProcessEffect(Effect effect, EffectProcessType k);
   void ApplySingularEffect(Effect effect);
-  void ApplyEffect(Effect effect) { ProcessEffect(effect, 1); }
-  void UnapplyEffect(Effect effect) { ProcessEffect(effect, -1); }
+  void ApplyEffect(Effect effect) {
+    ProcessEffect(effect, EffectProcessType::kForward);
+  }
+  void UnapplyEffect(Effect effect) {
+    ProcessEffect(effect, EffectProcessType::kInverse);
+  }
   void CheckSingularEffects();
 
   std::vector<Effect> effects_;

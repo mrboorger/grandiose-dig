@@ -47,9 +47,6 @@ class View : public QWidget {
 
   void DrawPlayer(QPainter* painter);
 
-  QString GetPlayerImage();
-  QString GetPlayerAttackImage();
-
   void keyPressEvent(QKeyEvent* event) override;
   void keyReleaseEvent(QKeyEvent* event) override;
   void mousePressEvent(QMouseEvent* event) override;
