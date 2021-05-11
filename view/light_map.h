@@ -28,13 +28,12 @@ class LightMap {
   }
 
  private:
-  static constexpr int kUpdateDeep = 3;
+  static constexpr int kUpdateDeep = 1;
   void SetPointUpdated(QPoint pos, int iteration = kUpdateDeep);
 
-  Light GetLuminosity(QPoint pos);
+  Light GetLuminosity(QPoint pos) const;
 
   std::map<QPoint, Light, utils::QPointLexicographicalCompare> data_;
-  std::queue<QPoint> set_queue_;
   std::queue<QPoint> remove_queue_;
   std::set<QPoint, utils::QPointLexicographicalCompare> updated_;
   std::shared_ptr<AbstractMap> map_;

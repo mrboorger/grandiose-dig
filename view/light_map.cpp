@@ -1,6 +1,5 @@
 #include "view/light_map.h"
 
-#include <QDebug>
 #include "utils.h"
 
 void LightMap::UpdateLight(QPoint pos) {
@@ -55,6 +54,14 @@ void LightMap::CalculateRegion(const QRect& region) {
       ++i;
     }
   }
+  std::queue<QPoint> update_queue;
+  std::set<QPoint, utils::QPointLexicographicalCompare> in_update_queue;
+  auto insert_in_update_queue = [&update_queue, &in_update_queue](QPoint pos) {
+    if (!in_update_queue.count(pos)) {
+      in_update_queue.insert(pos);
+      update_queue.push(pos);
+    }
+  };
   for (int y = region.top(); y <= region.bottom(); ++y) {
     for (int x = region.left(); x <= region.right(); ++x) {
       QPoint pos(x, y);
@@ -63,12 +70,17 @@ void LightMap::CalculateRegion(const QRect& region) {
         if (!light.IsDark()) {
           SetPointUpdated(pos);
           data_[pos] = light;
-          set_queue_.push(pos);
+          insert_in_update_queue(pos);
+        } else {
+          for (auto i : utils::PointNeighbours(pos)) {
+            if (!GetLight(i).IsDark()) {
+              insert_in_update_queue(i);
+            }
+          }
         }
       }
     }
   }
-  qDebug() << "Light map size:" << data_.size();
   while (!remove_queue_.empty()) {
     QPoint pos = remove_queue_.front();
     remove_queue_.pop();
@@ -83,33 +95,37 @@ void LightMap::CalculateRegion(const QRect& region) {
       if (data_[neighbour].IsDepended(light)) {
         remove_queue_.push(neighbour);
       } else if (!data_[neighbour].IsDark()) {
-        set_queue_.push(neighbour);
+        insert_in_update_queue(neighbour);
       }
     }
     data_[pos] = GetLuminosity(pos);
     if (!data_[pos].IsDark()) {
-      set_queue_.push(pos);
+      insert_in_update_queue(pos);
     } else {
       data_.erase(pos);
     }
     SetPointUpdated(pos);
   }
-  while (!set_queue_.empty()) {
-    QPoint pos = set_queue_.front();
-    set_queue_.pop();
+  while (!update_queue.empty()) {
+    QPoint pos = update_queue.front();
+    update_queue.pop();
+    in_update_queue.erase(pos);
     if (!region.contains(pos)) {
       continue;
     }
-    const Light& light = data_[pos];
-    bool is_opaque = map_->GetBlock(pos).IsOpaque();
+    Light light =
+        map_->GetBlock(pos).IsOpaque() ? GetLuminosity(pos) : data_[pos];
+    if (light.IsDark()) {
+      continue;
+    }
     for (auto neighbour : utils::PointNeighbours(pos)) {
       if (!region.contains(neighbour)) {
         continue;
       }
-      if (!is_opaque && GetLight(neighbour).CanBeUpdated(light)) {
+      if (GetLight(neighbour).CanBeUpdated(light)) {
         data_[neighbour].Combine(light);
         SetPointUpdated(neighbour);
-        set_queue_.push(neighbour);
+        insert_in_update_queue(pos);
       }
     }
   }
@@ -125,7 +141,7 @@ void LightMap::SetPointUpdated(QPoint pos, int iteration) {
   }
 }
 
-Light LightMap::GetLuminosity(QPoint pos) {
+Light LightMap::GetLuminosity(QPoint pos) const {
   Block block = map_->GetBlock(pos);
   Light light = block.GetLuminosity();
   if (pos.y() < map_->GroundLevel() && !block.IsOpaque()) {

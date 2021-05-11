@@ -1,7 +1,6 @@
 #include "view/view.h"
 
 #include <QColor>
-#include <QDebug>
 #include <QPainter>
 #include <chrono>
 #include <cmath>
@@ -44,7 +43,6 @@ void View::initializeGL() {
   if (drawer_) {
     drawer_->Init();
   }
-  qDebug() << "GL init success";
 }
 
 void View::paintGL() {
@@ -66,7 +64,6 @@ void View::paintGL() {
     for (auto pos : *to_update) {
       drawer_->UpdateBlock(pos);
     }
-    qDebug() << "Update" << to_update->size();
     to_update->clear();
   }
 

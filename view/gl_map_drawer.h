@@ -35,7 +35,8 @@ class GLMapDrawer : public AbstractMapDrawer {
   static constexpr int32_t kMeshWidth = 32;
   static constexpr int32_t kMeshHeight = 32;
   static constexpr int32_t kMeshSize = kMeshWidth * kMeshHeight;
-  static constexpr int32_t kElementsCount = 2 * 3 * kMeshSize;
+  static constexpr int32_t kElementsPerBlock = 4 * 3;
+  static constexpr int32_t kElementsCount = kElementsPerBlock * kMeshSize;
 
   struct VertexData {
     GLfloat pos_x;
@@ -50,17 +51,23 @@ class GLMapDrawer : public AbstractMapDrawer {
   struct BlockData {
     VertexData up_left;
     VertexData up_right;
-    VertexData down_left;
     VertexData down_right;
+    VertexData down_left;
+    VertexData center;
   };
 
+  static constexpr int32_t kVerticesPerBlock =
+      sizeof(BlockData) / sizeof(VertexData);
+
   static QPoint RoundToMeshPos(QPoint p);
+  static GLfloat Average(GLfloat a, GLfloat b, GLfloat c, GLfloat d);
 
   static void GenerateIndexBuffer(QOpenGLBuffer* index_buffer);
   static void LoadShader(QOpenGLShaderProgram* shader);
 
   QOpenGLBuffer* GetMesh(QPoint buffer_pos);
   void GenerateMesh(QOpenGLBuffer* buffer, QPoint buffer_pos);
+
   BlockData GetBlockData(QPoint world_pos, QPoint mesh_pos);
 
   static void InitGLBuffer(QOpenGLBuffer* buffer, void* data, size_t size);

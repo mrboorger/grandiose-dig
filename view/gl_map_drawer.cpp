@@ -1,6 +1,5 @@
 #include "view/gl_map_drawer.h"
 
-#include <QDebug>
 #include <QMatrix4x4>
 #include <QOpenGLFunctions>
 #include <algorithm>
@@ -104,22 +103,33 @@ QPoint GLMapDrawer::RoundToMeshPos(QPoint p) {
                 p.y() - utils::ArithmeticalMod(p.y(), kMeshHeight));
 }
 
+GLfloat GLMapDrawer::Average(GLfloat a, GLfloat b, GLfloat c, GLfloat d) {
+  return (a + b + c + d) / 4.0F;
+}
+
 QRect GLMapDrawer::GetDrawRegion(QPoint center) const {
-  return QRect(center.x() - kFieldOfView, center.y() - kFieldOfView,
-               center.x() + kFieldOfView, center.y() + kFieldOfView);
+  QRect result(center.x() - kFieldOfView, center.y() - kFieldOfView,
+               2 * kFieldOfView + 1, 2 * kFieldOfView + 1);
+  return result;
 }
 
 void GLMapDrawer::GenerateIndexBuffer(QOpenGLBuffer* index_buffer) {
-  std::array<GLuint, kElementsCount> data;
+  std::array<GLuint, kElementsCount> data{};
   for (int y = 0; y < kMeshHeight; ++y) {
     for (int x = 0; x < kMeshWidth; ++x) {
       int i = y * kMeshWidth + x;
-      data[6 * i + 0] = 4 * i + 0;
-      data[6 * i + 1] = 4 * i + 1;
-      data[6 * i + 2] = 4 * i + 2;
-      data[6 * i + 3] = 4 * i + 1;
-      data[6 * i + 4] = 4 * i + 2;
-      data[6 * i + 5] = 4 * i + 3;
+      data[kElementsPerBlock * i + 0] = kVerticesPerBlock * i + 0;
+      data[kElementsPerBlock * i + 1] = kVerticesPerBlock * i + 1;
+      data[kElementsPerBlock * i + 2] = kVerticesPerBlock * i + 4;
+      data[kElementsPerBlock * i + 3] = kVerticesPerBlock * i + 1;
+      data[kElementsPerBlock * i + 4] = kVerticesPerBlock * i + 2;
+      data[kElementsPerBlock * i + 5] = kVerticesPerBlock * i + 4;
+      data[kElementsPerBlock * i + 6] = kVerticesPerBlock * i + 2;
+      data[kElementsPerBlock * i + 7] = kVerticesPerBlock * i + 3;
+      data[kElementsPerBlock * i + 8] = kVerticesPerBlock * i + 4;
+      data[kElementsPerBlock * i + 9] = kVerticesPerBlock * i + 3;
+      data[kElementsPerBlock * i + 10] = kVerticesPerBlock * i + 0;
+      data[kElementsPerBlock * i + 11] = kVerticesPerBlock * i + 4;
     }
   }
   InitGLBuffer(index_buffer, data.data(), sizeof(data));
@@ -224,5 +234,20 @@ GLMapDrawer::BlockData GLMapDrawer::GetBlockData(QPoint world_pos,
       std::max(light.GetGreen(), light.GetSun()) / (1.0F * Light::kMaxLight),
       std::max(light.GetBlue(), light.GetSun()) / (1.0F * Light::kMaxLight),
   };
+  data.center =
+      VertexData{Average(data.up_left.pos_x, data.down_left.pos_x,
+                         data.up_right.pos_x, data.down_right.pos_x),
+                 Average(data.up_left.pos_y, data.down_left.pos_y,
+                         data.up_right.pos_y, data.down_right.pos_y),
+                 Average(data.up_left.tex_u, data.down_left.tex_u,
+                         data.up_right.tex_u, data.down_right.tex_u),
+                 Average(data.up_left.tex_v, data.down_left.tex_v,
+                         data.up_right.tex_v, data.down_right.tex_v),
+                 Average(data.up_left.light_r, data.down_left.light_r,
+                         data.up_right.light_r, data.down_right.light_r),
+                 Average(data.up_left.light_g, data.down_left.light_g,
+                         data.up_right.light_g, data.down_right.light_g),
+                 Average(data.up_left.light_b, data.down_left.light_b,
+                         data.up_right.light_b, data.down_right.light_b)};
   return data;
 }
