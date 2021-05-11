@@ -371,3 +371,10 @@ void MovingObject::DealDamage(const Damage& damage) {
 }
 
 bool MovingObject::IsDead() const { return health_ <= 0; }
+
+bool MovingObject::IsInBlock(QPoint block_pos) const {
+  QRectF object(pos_.x(), pos_.y(), size_.x(), size_.y());
+  // 1 = block size in blocks
+  QRectF block(block_pos.x(), block_pos.y(), 1, 1);
+  return object.intersects(block);
+}

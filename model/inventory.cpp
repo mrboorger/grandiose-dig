@@ -35,3 +35,16 @@ void Inventory::AddItem(InventoryItem item) {
   }
   // We cannot add the item, so it disappears
 }
+
+void Inventory::RemoveOneSelectedItem() {
+  if (!items_[selected_item_].IsEmpty()) {
+    items_[selected_item_].ChangeCount(items_[selected_item_].GetCount() - 1);
+    if (items_[selected_item_].GetCount() == 0) {
+      items_[selected_item_] = InventoryItem(InventoryItem::Type::kEmptyItem);
+    }
+  }
+}
+
+const InventoryItem& Inventory::GetSelectedItem() const {
+  return items_[selected_item_];
+}

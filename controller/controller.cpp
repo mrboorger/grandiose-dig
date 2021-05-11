@@ -45,8 +45,34 @@ void Controller::SetMob() {
 
 void Controller::BreakBlock() {
   QPoint block_coords = View::GetInstance()->GetBlockCoordUnderCursor();
-  Model::GetInstance()->GetMap()->HitBlock(block_coords, 1);
+  if (Model::GetInstance()->GetPlayer()->IsBlockReachableForTool(
+          block_coords)) {
+    Model::GetInstance()->GetMap()->HitBlock(block_coords, 1);
+    View::GetInstance()->UpdateBlock(block_coords);
+  }
+}
+
+void Controller::PlaceBlock(QPoint block_coords, Block block) {
+  Model::GetInstance()->GetMap()->SetBlock(block_coords, block);
   View::GetInstance()->UpdateBlock(block_coords);
+}
+
+void Controller::UseItem() {
+  QPoint block_coords = View::GetInstance()->GetBlockCoordUnderCursor();
+  const InventoryItem& item =
+      Model::GetInstance()->GetPlayer()->GetInventory()->GetSelectedItem();
+  if (item.IsBlock()) {
+    if (Model::GetInstance()->GetPlayer()->IsBlockReachableForTool(
+            block_coords) &&
+        Model::GetInstance()->CanIPlaceBlock(block_coords)) {
+      Model::GetInstance()->GetMap()->SetBlock(
+          block_coords, InventoryItem::GetBlockFromItem(item));
+      View::GetInstance()->UpdateBlock(block_coords);
+      Model::GetInstance()->GetPlayer()->UseItem();
+    }
+  } else {
+    // TODO(mrboorger): UsePotion?
+  }
 }
 
 void Controller::StartAttack() {
@@ -166,10 +192,14 @@ void Controller::TickEvent() {
           .count();
   prev_time_ = cur;
   Model::GetInstance()->MoveObjects(pressed_keys_, time);
-  if (is_pressed_right_mouse_button) {
+  if (is_pressed_left_mouse_button) {
     // TODO(Wind-Eagle): make BreakBlock() dependible on time
     BreakBlock();
     StartAttack();
+  }
+  if (is_pressed_right_mouse_button) {
+    // TODO(mrboorger): make PlaceBlock() dependible on time
+    UseItem();
   }
   PlayerAttack(time);
   View::GetInstance()->repaint();
@@ -224,12 +254,16 @@ void Controller::PickItemToPlayer(InventoryItem item) {
 
 void Controller::ButtonPress(Qt::MouseButton button) {
   if (button == Qt::MouseButton::LeftButton) {
+    is_pressed_left_mouse_button = true;
+  } else if (button == Qt::MouseButton::RightButton) {
     is_pressed_right_mouse_button = true;
   }
 }
 
 void Controller::ButtonRelease(Qt::MouseButton button) {
   if (button == Qt::MouseButton::LeftButton) {
+    is_pressed_left_mouse_button = false;
+  } else if (button == Qt::MouseButton::RightButton) {
     is_pressed_right_mouse_button = false;
   }
 }

@@ -15,7 +15,10 @@ class Inventory {
   const InventoryItem& operator[](int ind) const { return items_[ind]; }
   void AddItem(InventoryItem item);
 
-  int GetSelectedItem() const { return selected_item_; };
+  void RemoveOneSelectedItem();
+
+  int GetSelectedItemNumber() const { return selected_item_; };
+  const InventoryItem& GetSelectedItem() const;
 
   void ChangeSelectedItem(int selected_item) { selected_item_ = selected_item; }
 

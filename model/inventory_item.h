@@ -7,6 +7,7 @@
 
 class InventoryItem {
  public:
+  // Must be arranged in groups
   enum class Type {
     kEmptyItem,
     kBlockDirt,
@@ -26,6 +27,7 @@ class InventoryItem {
 
   Type GetType() const { return type_; }
   int32_t GetId() const { return static_cast<int32_t>(type_); }
+  int32_t GetIdOfBlock() const { return static_cast<int32_t>(type_); }
   int GetCount() const { return count_; }
 
   void ChangeCount(int new_count) { count_ = new_count; }
@@ -33,6 +35,9 @@ class InventoryItem {
   int ItemsLeft() const;
 
   static InventoryItem GetDropItem(Block block);
+  static Block GetBlockFromItem(InventoryItem item);
+
+  bool IsBlock() const;
 
  private:
   Type type_;

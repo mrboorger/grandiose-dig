@@ -85,6 +85,7 @@ void InventoryDrawer::DrawSelectionBox(QPainter* painter) {
     selection_box.load(":/resources/textures/" + selection_box_name);
   }
   assert(!selection_box.isNull());
-  painter->drawImage(inventory_->GetSelectedItem() * (kCellSize + kIndentSize),
-                     0, selection_box);
+  painter->drawImage(
+      inventory_->GetSelectedItemNumber() * (kCellSize + kIndentSize), 0,
+      selection_box);
 }

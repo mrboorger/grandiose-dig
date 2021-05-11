@@ -28,7 +28,7 @@ class Model : public QObject {
 
   void SetMap(std::shared_ptr<AbstractMap> map) { map_ = std::move(map); }
 
-  std::shared_ptr<Player> GetPlayer() const { return player_; }
+  std::shared_ptr<Player> GetPlayer() { return player_; }
 
   void SetPlayer(const std::shared_ptr<Player>& player) { player_ = player; }
 
@@ -41,12 +41,16 @@ class Model : public QObject {
 
   void PickItemToPlayer(InventoryItem item) { player_->PickItem(item); }
 
+  bool CanIPlaceBlock(QPoint block_coords);
+
  signals:
   void DamageDealt(MovingObject::Type type);
   void BecameDead(MovingObject::Type type);
   void MobSound(MovingObject::Type type);
 
  private:
+  bool IsAnyMovingObjectInBlock(QPoint block_coords);
+
   Model() = default;
 
   std::set<std::shared_ptr<Mob>> mobs_;

@@ -75,6 +75,8 @@ class MovingObject {
 
   bool IsDead() const;
 
+  bool IsInBlock(QPoint block_pos) const;
+
  protected:
   MovingObject(QPointF pos, QPointF size);
   void UpdateState(const std::unordered_set<ControllerTypes::Key>& pressed_keys,
@@ -98,8 +100,8 @@ class MovingObject {
   bool FindCollisionRight(QPointF old_position, double* right_wall_x,
                           const std::shared_ptr<AbstractMap>& map) const;
   MoveVector move_vector_ = MoveVector(0, 0, 0, 0);
-  QPointF pos_;
-  QPointF size_;
+  QPointF pos_;   // in bocks
+  QPointF size_;  // in bocks
   State state_ = MovingObject::State::kStay;
 
   double walk_acceleration_ = constants::kPlayerWalkAcceleration;

@@ -19,6 +19,7 @@ class Block {
 
   static bool IsVisible(Type type) { return type != Type::kAir; }
   bool IsVisible() const { return IsVisible(type_); }
+  bool IsAir() const { return type_ == Type::kAir; };
 
   Type GetType() const { return type_; }
 

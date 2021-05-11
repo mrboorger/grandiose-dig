@@ -16,6 +16,11 @@ class Player : public MovingObject {
   std::shared_ptr<Inventory> GetInventory() { return inventory_; }
 
   void PickItem(InventoryItem item) { inventory_->AddItem(item); }
+
+  void UseItem();
+
+  bool IsBlockReachableForTool(QPoint block_coords);
+
   void SetAttackTick(int attack_tick) { attack_tick_ = attack_tick; }
   void SetAttackCooldownInterval(int attack_interval) {
     attack_cooldown_interval_ = attack_interval;
@@ -50,6 +55,9 @@ class Player : public MovingObject {
   int attack_tick_ = 0;
   int attack_cooldown_interval_ = 0;
   utils::Direction attack_direction_ = utils::Direction::kLeft;
+
+  // TODO(mrboorger): It is temporary
+  int ToolRadius = 8;  // in blocks
 };
 
 #endif  // MODEL_PLAYER_H_

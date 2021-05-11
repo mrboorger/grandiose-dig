@@ -1,5 +1,6 @@
 #include "model/player.h"
 
+#include "controller/controller.h"
 #include "model/constants.h"
 
 Player::Player(QPointF pos)
@@ -14,4 +15,11 @@ Player::Player(QPointF pos)
   SetHealth(constants::kPlayerHealth);
   SetDamage(constants::kPlayerDamage);
   SetType(MovingObject::Type::kPlayer);
+}
+
+void Player::UseItem() { inventory_->RemoveOneSelectedItem(); }
+
+bool Player::IsBlockReachableForTool(QPoint block_coords) {
+  return std::hypot((GetPosition().x() - block_coords.x()),
+                    (GetPosition().y() - block_coords.y())) <= ToolRadius;
 }
