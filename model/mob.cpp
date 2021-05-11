@@ -11,6 +11,7 @@ Mob::Mob(QPointF pos, Type type)
     : MovingObject(pos, kMobParameters[static_cast<int>(type)].size_),
       mob_state_(),
       type_(type) {
+  SetExternalId(static_cast<int>(type_));
   mob_state_.SetPos(GetPosition());
   mob_state_.SetSize(GetSize());
   mob_state_.SetJump(kMobParameters[static_cast<int>(type)].jump_in_blocks_);

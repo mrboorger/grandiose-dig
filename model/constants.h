@@ -130,16 +130,16 @@ constexpr double kBasicStrategyWalkPrecision = 0.1;  // in blocks
 constexpr double kBasicStrategyRandomWalkChance = 0.01;
 constexpr double kBasicStrategyRandomWalkDistance = 10;  // in blocks
 
-constexpr double kBasicSummonerStrategyVisionRadius = 24.0;  // in blocks
-constexpr double kBasicSummonerStrategyWalkTime = 5000;
-constexpr double kBasicSummonerStrategyAttackTime = 1250;
-constexpr double kBasicSummonerStrategySummonTime = 1000;  // before check
-constexpr double kBasicSummonerStrategySummonDistance = 7.5;
-constexpr double kBasicSummonerStrategySummonChance = 0.2;
-constexpr int kBasicSummonerStrategySummonAttempts = 200;    // in blocks
-constexpr double kBasicSummonerStrategyWalkPrecision = 0.1;  // in blocks
-constexpr double kBasicSummonerStrategyRandomWalkChance = 0.015;
-constexpr double kBasicSummonerStrategyRandomWalkDistance = 15;  // in blocks
+constexpr double kZombieSummonerStrategyVisionRadius = 24.0;  // in blocks
+constexpr double kZombieSummonerStrategyWalkTime = 5000;
+constexpr double kZombieSummonerStrategyAttackTime = 1250;
+constexpr double kZombieSummonerStrategySummonTime = 1000;  // before check
+constexpr double kZombieSummonerStrategySummonDistance = 7.5;
+constexpr double kZombieSummonerStrategySummonChance = 0.2;
+constexpr int kZombieSummonerStrategySummonAttempts = 200;    // in blocks
+constexpr double kZombieSummonerStrategyWalkPrecision = 0.1;  // in blocks
+constexpr double kZombieSummonerStrategyRandomWalkChance = 0.015;
+constexpr double kZombieSummonerStrategyRandomWalkDistance = 15;  // in blocks
 
 constexpr double kEffectInterval = 1000;          // in ms
 constexpr double kMobSoundChance = 1.0 / 1500.0;  // once in 1500 ticks

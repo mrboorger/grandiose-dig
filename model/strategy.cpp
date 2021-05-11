@@ -272,12 +272,12 @@ std::shared_ptr<MovingObject> BasicStrategy::EnemySpotted() {
 }
 
 ZombieSummonerStrategy::ZombieSummonerStrategy() : BasicStrategy() {
-  vision_radius_ = constants::kBasicSummonerStrategyVisionRadius;
-  walk_time_count_ = constants::kBasicSummonerStrategyWalkTime;
-  attack_time_count_ = constants::kBasicSummonerStrategyAttackTime;
-  walk_precision_ = constants::kBasicSummonerStrategyWalkPrecision;
-  random_walk_chance_ = constants::kBasicSummonerStrategyRandomWalkChance;
-  random_walk_distance_ = constants::kBasicSummonerStrategyRandomWalkDistance;
+  vision_radius_ = constants::kZombieSummonerStrategyVisionRadius;
+  walk_time_count_ = constants::kZombieSummonerStrategyWalkTime;
+  attack_time_count_ = constants::kZombieSummonerStrategyAttackTime;
+  walk_precision_ = constants::kZombieSummonerStrategyWalkPrecision;
+  random_walk_chance_ = constants::kZombieSummonerStrategyRandomWalkChance;
+  random_walk_distance_ = constants::kZombieSummonerStrategyRandomWalkDistance;
 }
 
 void ZombieSummonerStrategy::DecreaseIntervals(double time) {
@@ -286,17 +286,18 @@ void ZombieSummonerStrategy::DecreaseIntervals(double time) {
 }
 
 void ZombieSummonerStrategy::SummonZombie() {
-  for (int op = constants::kBasicSummonerStrategySummonAttempts; op > 0; op--) {
+  for (int op = constants::kZombieSummonerStrategySummonAttempts; op > 0;
+       op--) {
     std::uniform_real_distribution<double> distrib_x(
         GetMobState().GetPos().x() -
-            constants::kBasicSummonerStrategySummonDistance,
+            constants::kZombieSummonerStrategySummonDistance,
         GetMobState().GetPos().x() +
-            constants::kBasicSummonerStrategySummonDistance);
+            constants::kZombieSummonerStrategySummonDistance);
     std::uniform_real_distribution<double> distrib_y(
         GetMobState().GetPos().y() -
-            constants::kBasicSummonerStrategySummonDistance,
+            constants::kZombieSummonerStrategySummonDistance,
         GetMobState().GetPos().y() +
-            constants::kBasicSummonerStrategySummonDistance);
+            constants::kZombieSummonerStrategySummonDistance);
     double pos_x = distrib_x(utils::random);
     double pos_y = distrib_y(utils::random);
     if (Model::GetInstance()->CanSpawnMobAt(QPointF(pos_x, pos_y),
@@ -310,10 +311,10 @@ void ZombieSummonerStrategy::SummonZombie() {
 
 void ZombieSummonerStrategy::DoWalkActions() {
   if (GetMobState().GetDamageTime() > constants::kEps && summon_interval == 0) {
-    summon_interval = constants::kBasicSummonerStrategySummonTime;
+    summon_interval = constants::kZombieSummonerStrategySummonTime;
     static std::uniform_real_distribution<double> distrib(0.0, 1.0);
     if (distrib(utils::random) <
-        constants::kBasicSummonerStrategySummonChance) {
+        constants::kZombieSummonerStrategySummonChance) {
       SummonZombie();
     }
   }

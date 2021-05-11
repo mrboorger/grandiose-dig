@@ -29,5 +29,20 @@
         <file>resources/textures/quiox1.png</file>
         <file>resources/textures/magic_quiox1.png</file>
         <file>resources/textures/magic_quiox0.png</file>
+        <file>resources/sounds/magic_quiox_death.mp3</file>
+        <file>resources/sounds/magic_quiox2.mp3</file>
+        <file>resources/sounds/magic_quiox1.mp3</file>
+        <file>resources/sounds/magic_quiox_damage2.mp3</file>
+        <file>resources/sounds/magic_quiox_damage1.mp3</file>
+        <file>resources/sounds/quiox2.mp3</file>
+        <file>resources/sounds/quiox1.mp3</file>
+        <file>resources/sounds/quiox_damage2.mp3</file>
+        <file>resources/sounds/quiox_damage1.mp3</file>
+        <file>resources/sounds/zombie_lord_death.mp3</file>
+        <file>resources/sounds/zombie_lord_damage2.mp3</file>
+        <file>resources/sounds/zombie_lord_damage1.mp3</file>
+        <file>resources/sounds/zombie_lord2.mp3</file>
+        <file>resources/sounds/zombie_lord1.mp3</file>
+        <file>resources/sounds/quiox_death.mp3</file>
     </qresource>
 </RCC>

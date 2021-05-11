@@ -32,7 +32,7 @@ void Model::MoveObjects(
     mob->MoveMob(time);
     if (!mob->RecentlyDamaged() &&
         distrib(utils::random) < constants::kMobSoundChance) {
-      emit MobSound(mob->GetType());
+      emit MobSound(mob->GetExternalId());
     }
   }
 }

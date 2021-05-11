@@ -55,6 +55,8 @@ class MovingObject {
     walk_max_speed_ = parameters.walk_max_speed_;
   }
 
+  void SetExternalId(int external_id) { external_id_ = external_id; }
+
   double GetWalkAcceleration() const { return walk_acceleration_; }
   double GetWalkMaxSpeed() const { return walk_max_speed_; }
   double GetWalkAirAcceleration() const { return walk_air_acceleration_; }
@@ -71,6 +73,8 @@ class MovingObject {
   QPointF GetDamageAcceleration() const { return damage_acceleration_; }
   int GetHealth() const { return health_; }
   int GetDamage() const { return damage_; }
+
+  int GetExternalId() const { return external_id_; }
 
   virtual void Move(
       const std::unordered_set<ControllerTypes::Key>& pressed_keys,
@@ -157,6 +161,8 @@ class MovingObject {
 
   int health_ = constants::kPlayerHealth;
   int damage_ = constants::kPlayerDamage;
+
+  int external_id_ = -1;
 
   double state_time_ = 0;
   double damage_time_ = 0;

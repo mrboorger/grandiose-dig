@@ -40,7 +40,7 @@ void Controller::SetPlayer() {
 void Controller::SetMob() {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->AddMob(
-      std::make_shared<Mob>(QPointF(162.0, 104.0), Mob::Type::kZombieLord));
+      std::make_shared<Mob>(QPointF(162.0, 104.0), Mob::Type::kQuiox));
 }
 
 void Controller::BreakBlock() {

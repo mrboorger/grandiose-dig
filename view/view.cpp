@@ -76,36 +76,41 @@ void View::paintEvent(QPaintEvent* event) {
   }
 }
 
-void View::DamageDealt(MovingObject::Type type) {
+void View::DamageDealt(int id) {
   static std::uniform_int_distribution<int> distrib(0, 1);
-  switch (type) {
-    case MovingObject::Type::kPlayer:
-      sound_manager_->PlaySound(SoundManager::Sound::kPlayerDamage);
-      break;
-    case MovingObject::Type::kMob:
-      if (distrib(utils::random) == 0) {
-        sound_manager_->PlaySound(SoundManager::Sound::kZombieDamage1);
-      } else {
-        sound_manager_->PlaySound(SoundManager::Sound::kZombieDamage2);
-      }
+  switch (id) {
+    case -1:
+      sound_manager_->PlaySound(
+          SoundManager::SoundIndex(SoundManager::Sound::kPlayerDamage));
       break;
     default:
+      assert(id < Mob::kTypesCount);
+      if (distrib(utils::random) == 0) {
+        sound_manager_->PlaySound(SoundManager::SoundIndex(
+            SoundManager::Sound::kMob, id, SoundManager::MobSound::kDamage1));
+      } else {
+        sound_manager_->PlaySound(SoundManager::SoundIndex(
+            SoundManager::Sound::kMob, id, SoundManager::MobSound::kDamage2));
+      }
       break;
   }
 }
 
-void View::BecameDead(MovingObject::Type type) {
-  Q_UNUSED(type);
-  sound_manager_->PlaySound(SoundManager::Sound::kZombieDeath);
+void View::BecameDead(int id) {
+  assert(id < Mob::kTypesCount);
+  sound_manager_->PlaySound(SoundManager::SoundIndex(
+      SoundManager::Sound::kMob, id, SoundManager::MobSound::kDeath));
 }
 
-void View::MobSound(MovingObject::Type type) {
-  Q_UNUSED(type);
+void View::MobSound(int id) {
+  assert(id < Mob::kTypesCount);
   static std::uniform_int_distribution<int> distrib(0, 1);
   if (distrib(utils::random) == 0) {
-    sound_manager_->PlaySound(SoundManager::Sound::kZombie1);
+    sound_manager_->PlaySound(SoundManager::SoundIndex(
+        SoundManager::Sound::kMob, id, SoundManager::MobSound::kIdle1));
   } else {
-    sound_manager_->PlaySound(SoundManager::Sound::kZombie2);
+    sound_manager_->PlaySound(SoundManager::SoundIndex(
+        SoundManager::Sound::kMob, id, SoundManager::MobSound::kIdle2));
   }
 }
 
