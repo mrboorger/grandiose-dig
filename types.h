@@ -1,5 +1,5 @@
-#ifndef TYPES_H
-#define TYPES_H
+#ifndef TYPES_H_
+#define TYPES_H_
 
 #include <QPoint>
 
@@ -22,4 +22,4 @@ struct MobParameters {
 
 enum class EffectProcessType { kForward, kInverse };
 
-#endif  // TYPES_H
+#endif  // TYPES_H_
