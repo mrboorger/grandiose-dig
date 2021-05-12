@@ -59,24 +59,26 @@ void GLMapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
     for (int32_t y = start.y(); y <= finish.y(); y += kMeshHeight) {
       QPointF point = (QPointF(x, y) - pos);
       shader_.setUniformValue("buffer_pos", point);
+      shader_.setUniformValue("global_sun", 1.0F);
       auto* mesh = GetMesh(QPoint(x, y));
 
       mesh->bind();
 
-      gl->glEnableVertexAttribArray(0);
-      gl->glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData),
-                                reinterpret_cast<void*>(0 * sizeof(GLfloat)));
-      gl->glEnableVertexAttribArray(1);
-      gl->glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData),
-                                reinterpret_cast<void*>(2 * sizeof(GLfloat)));
-      gl->glEnableVertexAttribArray(2);
-      gl->glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData),
-                                reinterpret_cast<void*>(4 * sizeof(GLfloat)));
+      for (int i = 0, shift = 0; i < kAttribsCount; ++i) {
+        gl->glEnableVertexAttribArray(i);
+        gl->glVertexAttribPointer(
+            i, kAttribSizes[i], GL_FLOAT, GL_FALSE, sizeof(VertexData),
+            reinterpret_cast<void*>(shift * sizeof(GLfloat)));
+        shift += kAttribSizes[i];
+      }
 
       gl->glDrawElements(GL_TRIANGLES, kElementsCount, GL_UNSIGNED_INT,
                          nullptr);
       mesh->release();
     }
+  }
+  for (int i = 0; i < kAttribsCount; ++i) {
+    gl->glDisableVertexAttribArray(i);
   }
   index_buffer_.release();
   shader_.release();
@@ -96,6 +98,18 @@ void GLMapDrawer::UpdateBlock(QPoint position) {
   casted.write((position.y() * kMeshWidth + position.x()) * sizeof(BlockData),
                &data, sizeof(BlockData));
   casted.release();
+}
+
+GLMapDrawer::VertexData GLMapDrawer::GenData(QPoint pos, QPointF tex_coords,
+                                             Light light) {
+  return VertexData{static_cast<GLfloat>(pos.x()),
+                    static_cast<GLfloat>(pos.y()),
+                    static_cast<GLfloat>(tex_coords.x()),
+                    static_cast<GLfloat>(tex_coords.y()),
+                    static_cast<GLfloat>(light.GetRed()) / Light::kMaxLight,
+                    static_cast<GLfloat>(light.GetGreen()) / Light::kMaxLight,
+                    static_cast<GLfloat>(light.GetBlue()) / Light::kMaxLight,
+                    static_cast<GLfloat>(light.GetSun()) / Light::kMaxLight};
 }
 
 QPoint GLMapDrawer::RoundToMeshPos(QPoint p) {
@@ -182,58 +196,22 @@ void GLMapDrawer::GenerateMesh(QOpenGLBuffer* buffer, QPoint buffer_pos) {
 
 GLMapDrawer::BlockData GLMapDrawer::GetBlockData(QPoint world_pos,
                                                  QPoint mesh_pos) {
-  // TODO(degmuk): This is temporary code.
-  BlockData data{};
   Block block = map_->GetBlock(world_pos);
   if (!block.IsVisible()) {
-    data.up_left = data.up_right = data.down_left = data.down_right =
-        VertexData{-100.0F, -100.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F};
-    return data;
+    return kNoDrawBlockData;
   }
-  QPointF tex_coords = TextureAtlas::GetBlockTCLT(block);
-  Light light = light_map_->GetLightLT(world_pos);
-  data.up_left = VertexData{
-      static_cast<GLfloat>(mesh_pos.x()),
-      static_cast<GLfloat>(mesh_pos.y()),
-      static_cast<GLfloat>(tex_coords.x()),
-      static_cast<GLfloat>(tex_coords.y()),
-      std::max(light.GetRed(), light.GetSun()) / (1.0F * Light::kMaxLight),
-      std::max(light.GetGreen(), light.GetSun()) / (1.0F * Light::kMaxLight),
-      std::max(light.GetBlue(), light.GetSun()) / (1.0F * Light::kMaxLight),
-  };
-  tex_coords = TextureAtlas::GetBlockTCRT(block);
-  light = light_map_->GetLightRT(world_pos);
-  data.up_right = VertexData{
-      static_cast<GLfloat>(mesh_pos.x() + 1),
-      static_cast<GLfloat>(mesh_pos.y()),
-      static_cast<GLfloat>(tex_coords.x()),
-      static_cast<GLfloat>(tex_coords.y()),
-      std::max(light.GetRed(), light.GetSun()) / (1.0F * Light::kMaxLight),
-      std::max(light.GetGreen(), light.GetSun()) / (1.0F * Light::kMaxLight),
-      std::max(light.GetBlue(), light.GetSun()) / (1.0F * Light::kMaxLight),
-  };
-  tex_coords = TextureAtlas::GetBlockTCLB(block);
-  light = light_map_->GetLightLB(world_pos);
-  data.down_left = VertexData{
-      static_cast<GLfloat>(mesh_pos.x()),
-      static_cast<GLfloat>(mesh_pos.y() + 1),
-      static_cast<GLfloat>(tex_coords.x()),
-      static_cast<GLfloat>(tex_coords.y()),
-      std::max(light.GetRed(), light.GetSun()) / (1.0F * Light::kMaxLight),
-      std::max(light.GetGreen(), light.GetSun()) / (1.0F * Light::kMaxLight),
-      std::max(light.GetBlue(), light.GetSun()) / (1.0F * Light::kMaxLight),
-  };
-  tex_coords = TextureAtlas::GetBlockTCRB(block);
-  light = light_map_->GetLightRB(world_pos);
-  data.down_right = VertexData{
-      static_cast<GLfloat>(mesh_pos.x() + 1),
-      static_cast<GLfloat>(mesh_pos.y() + 1),
-      static_cast<GLfloat>(tex_coords.x()),
-      static_cast<GLfloat>(tex_coords.y()),
-      std::max(light.GetRed(), light.GetSun()) / (1.0F * Light::kMaxLight),
-      std::max(light.GetGreen(), light.GetSun()) / (1.0F * Light::kMaxLight),
-      std::max(light.GetBlue(), light.GetSun()) / (1.0F * Light::kMaxLight),
-  };
+  BlockData data{};
+  data.up_left = GenData(mesh_pos, TextureAtlas::GetBlockTCLT(block),
+                         light_map_->GetLightLT(world_pos));
+  data.up_right = GenData(QPoint(mesh_pos.x() + 1, mesh_pos.y()),
+                          TextureAtlas::GetBlockTCRT(block),
+                          light_map_->GetLightRT(world_pos));
+  data.down_left = GenData(QPoint(mesh_pos.x(), mesh_pos.y() + 1),
+                          TextureAtlas::GetBlockTCLB(block),
+                          light_map_->GetLightLB(world_pos));
+  data.down_right = GenData(QPoint(mesh_pos.x() + 1, mesh_pos.y() + 1),
+                          TextureAtlas::GetBlockTCRB(block),
+                          light_map_->GetLightRB(world_pos));
   data.center =
       VertexData{Average(data.up_left.pos_x, data.down_left.pos_x,
                          data.up_right.pos_x, data.down_right.pos_x),
@@ -248,6 +226,8 @@ GLMapDrawer::BlockData GLMapDrawer::GetBlockData(QPoint world_pos,
                  Average(data.up_left.light_g, data.down_left.light_g,
                          data.up_right.light_g, data.down_right.light_g),
                  Average(data.up_left.light_b, data.down_left.light_b,
-                         data.up_right.light_b, data.down_right.light_b)};
+                         data.up_right.light_b, data.down_right.light_b),
+                 Average(data.up_left.light_sun, data.down_left.light_sun,
+                         data.up_right.light_sun, data.down_right.light_sun)};
   return data;
 }

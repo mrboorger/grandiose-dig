@@ -2,15 +2,6 @@
 
 #include <algorithm>
 
-Light Light::GetNearLight() const {
-  Light result;
-  for (int i = 0; i < kNChannels; ++i) {
-    result.data_[i] =
-        std::max(data_[i] - kDecreaseFactor, static_cast<int>(kDecreaseFactor));
-  }
-  return result;
-}
-
 bool Light::CanBeUpdated(const Light& light) const {
   for (int i = 0; i < kNChannels; ++i) {
     if (light.data_[i] - kDecreaseFactor > data_[i]) {

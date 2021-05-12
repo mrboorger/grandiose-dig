@@ -33,8 +33,6 @@ class Light {
   void SetBlue(int8_t value) { data_[kBlueIndex] = value; }
   void SetSun(int8_t value) { data_[kSunIndex] = value; }
 
-  Light GetNearLight() const;
-
   bool CanBeUpdated(const Light& light) const;
   bool IsDepended(const Light& light) const;
   bool IsDark() const;

@@ -58,9 +58,7 @@ void View::paintGL() {
 
   light_map_->CalculateRegion(
       drawer_->GetDrawRegion(QPoint(camera_pos.x(), camera_pos.y())));
-  for (auto* to_update = light_map_->UpdateList();
-       !to_update->empty();) {
-    // TODO(degmuk): temporary code; need to use this for light update in mesh
+  for (auto* to_update = light_map_->UpdateList(); !to_update->empty();) {
     for (auto pos : *to_update) {
       drawer_->UpdateBlock(pos);
     }
@@ -68,6 +66,7 @@ void View::paintGL() {
   }
 
   drawer_->DrawMapWithCenter(&painter, camera_pos, rect());
+
   inventory_drawer_->DrawInventory(&painter);
 
   // TODO(Wind-Eagle): temporary code; need to make PlayerDrawer

@@ -46,6 +46,7 @@ class GLMapDrawer : public AbstractMapDrawer {
     GLfloat light_r;
     GLfloat light_g;
     GLfloat light_b;
+    GLfloat light_sun;
   };
 
   struct BlockData {
@@ -56,8 +57,18 @@ class GLMapDrawer : public AbstractMapDrawer {
     VertexData center;
   };
 
+  static constexpr int kAttribsCount = 4;
+  static constexpr std::array<int, kAttribsCount> kAttribSizes{2, 2, 3, 1};
+
+  static constexpr VertexData kNoDrawVertex = VertexData{};
+  static constexpr BlockData kNoDrawBlockData = BlockData{
+      kNoDrawVertex, kNoDrawVertex, kNoDrawVertex, kNoDrawVertex, kNoDrawVertex,
+  };
+
   static constexpr int32_t kVerticesPerBlock =
       sizeof(BlockData) / sizeof(VertexData);
+
+  static VertexData GenData(QPoint pos, QPointF tex_coords, Light light);
 
   static QPoint RoundToMeshPos(QPoint p);
   static GLfloat Average(GLfloat a, GLfloat b, GLfloat c, GLfloat d);
