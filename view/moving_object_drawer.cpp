@@ -37,21 +37,24 @@ std::array<std::array<QImage, constants::kMaxAnimationPictures>,
 
 }  // namespace
 
-const QImage& MovingObjectDrawer::GetMovingObjectImage(
-    int id, std::shared_ptr<MovingObject> object, QString name, bool reversed) {
-  QString mob_picture = ":/resources/textures/" + name;
-  int picture_number = 0;
+int MovingObjectDrawer::GetPictureNumber(int id,
+                                         std::shared_ptr<MovingObject> object,
+                                         int state_time) {
   if (object->GetState() == MovingObject::State::kWalk ||
       id == Mob::kTypesCount + 1) {
-    int animation = kAnimation[id];
-    int pictures = kPictures[id];
-    int state_time = std::floor(object->GetStateTime());
-    if (id == Mob::kTypesCount + 1) {
-      state_time = constants::kPlayerAttackTime -
-                   Model::GetInstance()->GetPlayer()->GetAttackTick();
-    }
-    picture_number = (state_time / animation) % pictures;
+    return (state_time / kAnimation[id]) % kPictures[id];
   }
+  return 0;
+}
+
+const QImage& MovingObjectDrawer::GetMovingObjectImage(
+    int id, std::shared_ptr<MovingObject> object) {
+  QString picture = ":/resources/textures/" + kNames[static_cast<int>(id)];
+  int state_time = (id != Mob::kTypesCount + 1)
+                       ? std::floor(object->GetStateTime())
+                       : constants::kPlayerAttackTime -
+                             Model::GetInstance()->GetPlayer()->GetAttackTick();
+  int picture_number = GetPictureNumber(id, object, state_time);
   if (images[id][picture_number].isNull()) {
     images[id][picture_number] =
         QImage(":/resources/textures/" + kNames[id] +
@@ -59,7 +62,7 @@ const QImage& MovingObjectDrawer::GetMovingObjectImage(
     images_reversed[id][picture_number] =
         images[id][picture_number].mirrored(true, false);
   }
-  if (reversed) {
+  if (object->GetDirection() == utils::Direction::kLeft) {
     return images_reversed[id][picture_number];
   } else {
     return images[id][picture_number];
@@ -68,31 +71,24 @@ const QImage& MovingObjectDrawer::GetMovingObjectImage(
 
 void MovingObjectDrawer::DrawMob(QPainter* painter, QPointF point,
                                  std::shared_ptr<Mob> mob) {
-  painter->drawImage(
-      point, GetMovingObjectImage(
-                 mob->GetId(), mob, kNames[static_cast<int>(mob->GetId())],
-                 mob->GetDirection() == utils::Direction::kLeft));
+  painter->drawImage(point,
+                     GetMovingObjectImage(GetIdForMob(mob->GetMobType()), mob));
 }
 
 void MovingObjectDrawer::DrawPlayer(QPainter* painter, QPointF point) {
-  painter->drawImage(point, GetPlayerImage());
-}
-
-void MovingObjectDrawer::DrawPlayerAttack(QPainter* painter, QPointF point) {
-  painter->drawImage(point, GetPlayerAttackImage());
-}
-
-const QImage& MovingObjectDrawer::GetPlayerImage() {
-  return GetMovingObjectImage(
-      Mob::kTypesCount, Model::GetInstance()->GetPlayer(),
-      kNames[static_cast<int>(Mob::kTypesCount)],
-      Model::GetInstance()->GetPlayer()->GetDirection() ==
-          utils::Direction::kLeft);
-}
-const QImage& MovingObjectDrawer::GetPlayerAttackImage() {
-  return GetMovingObjectImage(
-      Mob::kTypesCount + 1, Model::GetInstance()->GetPlayer(),
-      kNames[static_cast<int>(Mob::kTypesCount + 1)],
-      Model::GetInstance()->GetPlayer()->GetDirection() ==
-          utils::Direction::kLeft);
+  if (Model::GetInstance()->GetPlayer()->IsAttackFinished() == false) {
+    QImage player_attack_image = GetMovingObjectImage(
+        GetIdForPlayerAttack(), Model::GetInstance()->GetPlayer());
+    QImage player_image = GetMovingObjectImage(
+        GetIdForPlayer(), Model::GetInstance()->GetPlayer());
+    player_image = player_image.copy(QRect(
+        QPoint(0, player_attack_image.size().height()), player_image.size()));
+    painter->drawImage(point, player_attack_image);
+    painter->drawImage(point + QPoint(0, player_attack_image.size().height()),
+                       player_image);
+  } else {
+    painter->drawImage(point,
+                       GetMovingObjectImage(GetIdForPlayer(),
+                                            Model::GetInstance()->GetPlayer()));
+  }
 }

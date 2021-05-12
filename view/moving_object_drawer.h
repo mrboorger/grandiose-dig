@@ -15,13 +15,14 @@ class MovingObjectDrawer {
   static void DrawPlayer(QPainter* painter, QPointF point);
   static void DrawPlayerAttack(QPainter* painter, QPointF point);
 
-  static const QImage& GetPlayerImage();
-  static const QImage& GetPlayerAttackImage();
-
  private:
+  static int GetIdForMob(Mob::Type type) { return static_cast<int>(type); }
+  static int GetIdForPlayer() { return Mob::kTypesCount; }
+  static int GetIdForPlayerAttack() { return Mob::kTypesCount + 1; }
   static const QImage& GetMovingObjectImage(
-      int id, std::shared_ptr<MovingObject> object, QString name,
-      bool reversed);
+      int id, std::shared_ptr<MovingObject> object);
+  static int GetPictureNumber(int id, std::shared_ptr<MovingObject> object,
+                              int state_time);
 };
 
 #endif  // VIEW_MOVING_OBJECT_DRAWER_H_

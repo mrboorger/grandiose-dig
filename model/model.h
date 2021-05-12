@@ -44,9 +44,9 @@ class Model : public QObject {
   bool CanSpawnMobAt(QPointF pos, QPointF size) const;
 
  signals:
-  void DamageDealt(int id);
-  void BecameDead(int id);
-  void MobSound(int id);
+  void DamageDealt(MovingObject* object);
+  void BecameDead(MovingObject* object);
+  void MobSound(MovingObject* object);
 
  private:
   Model() = default;

@@ -33,21 +33,11 @@ void View::SetInventoryDrawer(InventoryDrawer* drawer) {
 
 void View::DrawPlayer(QPainter* painter) {
   auto player = Model::GetInstance()->GetPlayer();
-  QImage player_image(MovingObjectDrawer::GetPlayerImage());
   QPointF point =
       (player->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
       rect().center();
 
-  if (Model::GetInstance()->GetPlayer()->IsAttackFinished() == false) {
-    QImage player_attack_image(MovingObjectDrawer::GetPlayerAttackImage());
-    player_image = player_image.copy(QRect(
-        QPoint(0, player_attack_image.size().height()), player_image.size()));
-    painter->drawImage(point + QPoint(0, player_attack_image.size().height()),
-                       player_image);
-    painter->drawImage(point, player_attack_image);
-  } else {
-    painter->drawImage(point, player_image);
-  }
+  MovingObjectDrawer::DrawPlayer(painter, point);
   // TODO(Wind-Eagle): make animation for block breaking: will be done when
   // blocks will not break immediately
 }
@@ -76,7 +66,9 @@ void View::paintEvent(QPaintEvent* event) {
   }
 }
 
-void View::DamageDealt(int id) {
+void View::DamageDealt(MovingObject* object) {
+  auto it = dynamic_cast<Mob*>(object);
+  int id = (it == nullptr) ? -1 : it->GetId();
   static std::uniform_int_distribution<int> distrib(0, 1);
   switch (id) {
     case -1:
@@ -96,14 +88,14 @@ void View::DamageDealt(int id) {
   }
 }
 
-void View::BecameDead(int id) {
-  assert(id < Mob::kTypesCount);
+void View::BecameDead(MovingObject* object) {
+  int id = dynamic_cast<Mob*>(object)->GetId();
   sound_manager_->PlaySound(SoundManager::SoundIndex(
       SoundManager::Sound::kMob, id, SoundManager::MobSound::kDeath));
 }
 
-void View::MobSound(int id) {
-  assert(id < Mob::kTypesCount);
+void View::MobSound(MovingObject* object) {
+  int id = dynamic_cast<Mob*>(object)->GetId();
   static std::uniform_int_distribution<int> distrib(0, 1);
   if (distrib(utils::random) == 0) {
     sound_manager_->PlaySound(SoundManager::SoundIndex(

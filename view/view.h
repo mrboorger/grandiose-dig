@@ -35,9 +35,9 @@ class View : public QWidget {
   void UpdateBlock(QPoint pos) { drawer_->UpdateBlock(pos); }
 
  private slots:
-  void DamageDealt(int id);
-  void BecameDead(int id);
-  void MobSound(int id);
+  void DamageDealt(MovingObject* object);
+  void BecameDead(MovingObject* object);
+  void MobSound(MovingObject* object);
 
  private:
   constexpr static int kRenderDistance = 70;

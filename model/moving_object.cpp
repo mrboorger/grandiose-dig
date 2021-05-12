@@ -354,9 +354,9 @@ void MovingObject::DealDamage(const Damage& damage) {
   damage_time_ = constants::kDamageCooldown;
   health_ -= damage.GetAmount();
   if (IsDead()) {
-    emit Model::GetInstance()->BecameDead(external_id_);
+    emit Model::GetInstance()->BecameDead(this);
   } else {
-    emit Model::GetInstance()->DamageDealt(external_id_);
+    emit Model::GetInstance()->DamageDealt(this);
   }
   if (damage.GetType() == Damage::Type::kMob ||
       damage.GetType() == Damage::Type::kPlayer) {
