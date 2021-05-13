@@ -7,7 +7,7 @@
 #include <memory>
 
 #include "model/abstract_map.h"
-#include "model/clearable_cache.h"
+#include "model/buffered_map.h"
 #include "model/constants.h"
 #include "utils.h"
 #include "view/abstract_map_drawer.h"

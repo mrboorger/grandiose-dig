@@ -30,9 +30,14 @@ class BufferedMap {
  public:
   using Buffer = BufferType;
 
-  BufferedMap(int clear_time_msec = constants::kDefaultClearTimeMSec,
-              F gen_buffer = F())
-      : data_(clear_time_msec), gen_buffer_(std::move(gen_buffer)) {}
+  static constexpr int32_t kBufferWidth = width;
+  static constexpr int32_t kBufferHeight = height;
+
+  static std::pair<QPoint, QPoint> RoundToBufferPos(QPoint p) {
+    QPoint local_pos = QPoint(utils::ArithmeticalMod(p.x(), width),
+                              utils::ArithmeticalMod(p.y(), height));
+    return std::pair(p - local_pos, local_pos);
+  }
 
   static int32_t BufferIndex(QPoint local_pos) {
     assert(0 <= local_pos.x() && local_pos.x() < width && 0 <= local_pos.y() &&
@@ -40,13 +45,19 @@ class BufferedMap {
     return local_pos.y() * width + local_pos.x();
   }
 
-  std::optional<const T&> GetValueOpt(QPoint pos) const {
+  BufferedMap(int clear_time_msec = constants::kDefaultClearTimeMSec,
+              F gen_buffer = F())
+      : data_(clear_time_msec), gen_buffer_(std::move(gen_buffer)) {}
+
+  std::optional<std::reference_wrapper<const T>> GetValueOpt(QPoint pos) {
     auto [buffer_pos, local_pos] = RoundToBufferPos(pos);
     auto found = data_.Get(buffer_pos);
     if (!found) {
       return std::nullopt;
     }
-    return found.value()[BufferIndex(local_pos)];
+    const Buffer& buffer = found.value();
+    const T& value = buffer[BufferIndex(local_pos)];
+    return value;
   }
 
   std::optional<T*> GetMutableValueOpt(QPoint pos) {
@@ -80,19 +91,13 @@ class BufferedMap {
     QPoint begin = RoundToBufferPos(rect.topLeft()).first;
     QPoint end = RoundToBufferPos(rect.bottomRight()).first;
     for (int32_t y = begin.y(); y <= end.y(); y += height) {
-      for (int32_t x = begin.x(); x <= end.y(); x += width) {
+      for (int32_t x = begin.x(); x <= end.x(); x += width) {
         GetOrInsertBuffer(QPoint(x, y));
       }
     }
   }
 
  private:
-  static std::pair<QPoint, QPoint> RoundToBufferPos(QPoint p) {
-    QPoint local_pos = QPoint(utils::ArithmeticalMod(p.x(), width),
-                              utils::ArithmeticalMod(p.y(), height));
-    return std::pair(p - local_pos, local_pos);
-  }
-
   Buffer& GetOrInsertBuffer(QPoint buffer_pos) {
     assert(RoundToBufferPos(buffer_pos).second == QPoint(0, 0));
     auto found = data_.Get(buffer_pos);

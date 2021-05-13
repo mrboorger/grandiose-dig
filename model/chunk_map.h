@@ -27,7 +27,8 @@ class ChunkMap : public AbstractMap {
  private:
   class GenChunk {
    public:
-    GenChunk(AbstractRegionGenerator* generator) : generator_(generator) {}
+    explicit GenChunk(AbstractRegionGenerator* generator)
+        : generator_(generator) {}
     Chunk operator()(QPoint pos) { return generator_->Generate(pos); }
 
    private:

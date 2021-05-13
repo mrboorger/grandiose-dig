@@ -6,15 +6,15 @@ void LightMap::UpdateLight(QPoint pos) {
   remove_queue_.push(pos);
 }
 
-Light LightMap::GetLight(QPoint pos) const {
-  auto res = data_.find(pos);
-  if (res == data_.end()) {
+Light LightMap::GetLight(QPoint pos) {
+  auto res = data_.GetValueOpt(pos);
+  if (!res) {
     return Light();
   }
-  return res->second;
+  return res.value();
 }
 
-Light LightMap::GetLightLT(QPoint pos) const {
+Light LightMap::GetLightLT(QPoint pos) {
   auto res = GetLight(pos);
   res.GetMax(GetLight(QPoint(pos.x(), pos.y() - 1)));
   res.GetMax(GetLight(QPoint(pos.x() - 1, pos.y())));
@@ -22,7 +22,7 @@ Light LightMap::GetLightLT(QPoint pos) const {
   return res;
 }
 
-Light LightMap::GetLightLB(QPoint pos) const {
+Light LightMap::GetLightLB(QPoint pos) {
   auto res = GetLight(pos);
   res.GetMax(GetLight(QPoint(pos.x(), pos.y() + 1)));
   res.GetMax(GetLight(QPoint(pos.x() - 1, pos.y())));
@@ -30,7 +30,7 @@ Light LightMap::GetLightLB(QPoint pos) const {
   return res;
 }
 
-Light LightMap::GetLightRT(QPoint pos) const {
+Light LightMap::GetLightRT(QPoint pos) {
   auto res = GetLight(pos);
   res.GetMax(GetLight(QPoint(pos.x(), pos.y() - 1)));
   res.GetMax(GetLight(QPoint(pos.x() + 1, pos.y())));
@@ -38,7 +38,7 @@ Light LightMap::GetLightRT(QPoint pos) const {
   return res;
 }
 
-Light LightMap::GetLightRB(QPoint pos) const {
+Light LightMap::GetLightRB(QPoint pos) {
   auto res = GetLight(pos);
   res.GetMax(GetLight(QPoint(pos.x(), pos.y() + 1)));
   res.GetMax(GetLight(QPoint(pos.x() + 1, pos.y())));
@@ -47,89 +47,60 @@ Light LightMap::GetLightRB(QPoint pos) const {
 }
 
 void LightMap::CalculateRegion(const QRect& region) {
-  for (auto i = data_.begin(); i != data_.end();) {
-    if (!region.contains(i->first) || i->second.IsDark()) {
-      i = data_.erase(i);
-    } else {
-      ++i;
-    }
-  }
   std::queue<QPoint> update_queue;
-  std::set<QPoint, utils::QPointLexicographicalCompare> in_update_queue;
-  auto insert_in_update_queue = [&update_queue, &in_update_queue](QPoint pos) {
-    if (!in_update_queue.count(pos)) {
-      in_update_queue.insert(pos);
-      update_queue.push(pos);
-    }
-  };
-  for (int y = region.top(); y <= region.bottom(); ++y) {
-    for (int x = region.left(); x <= region.right(); ++x) {
-      QPoint pos(x, y);
-      if (!data_.count(pos)) {
-        Light light = GetLuminosity(pos);
-        if (!light.IsDark()) {
-          SetPointUpdated(pos);
-          data_[pos] = light;
-          insert_in_update_queue(pos);
-        } else {
-          for (auto i : utils::PointNeighbours(pos)) {
-            if (!GetLight(i).IsDark()) {
-              insert_in_update_queue(i);
-            }
-          }
-        }
-      }
-    }
-  }
+  data_.MarkUsedOrInsert(region);
   while (!remove_queue_.empty()) {
     QPoint pos = remove_queue_.front();
     remove_queue_.pop();
-    if (!region.contains(pos)) {
-      continue;
-    }
-    const Light& light = data_[pos];
+    const Light& light = data_.GetValue(pos);
     for (auto neighbour : utils::PointNeighbours(pos)) {
-      if (!region.contains(neighbour)) {
+      if (!data_.GetValueOpt(neighbour)) {
         continue;
       }
-      if (data_[neighbour].IsDepended(light)) {
+      if (data_.GetValue(neighbour).IsDepended(light)) {
         remove_queue_.push(neighbour);
-      } else if (!data_[neighbour].IsDark()) {
-        insert_in_update_queue(neighbour);
+      } else if (!data_.GetValue(neighbour).IsDark()) {
+        update_queue.push(neighbour);
       }
     }
     Light luminosity = GetLuminosity(pos);
     if (!luminosity.IsDark()) {
-      data_[pos] = luminosity;
-      insert_in_update_queue(pos);
-    } else {
-      data_.erase(pos);
+      data_.SetValue(pos, luminosity);
+      update_queue.push(pos);
     }
     SetPointUpdated(pos);
   }
   while (!update_queue.empty()) {
     QPoint pos = update_queue.front();
     update_queue.pop();
-    in_update_queue.erase(pos);
-    if (!region.contains(pos)) {
+    if (!data_.GetValueOpt(pos)) {
       continue;
     }
-    Light light =
-        map_->GetBlock(pos).IsOpaque() ? GetLuminosity(pos) : data_[pos];
+    Light light = map_->GetBlock(pos).IsOpaque() ? GetLuminosity(pos)
+                                                 : data_.GetValue(pos);
     if (light.IsDark()) {
       continue;
     }
     for (auto neighbour : utils::PointNeighbours(pos)) {
-      if (!region.contains(neighbour)) {
+      if (!data_.GetValueOpt(neighbour)) {
         continue;
       }
       if (GetLight(neighbour).CanBeUpdated(light)) {
-        data_[neighbour].Combine(light);
+        data_.GetMutableValue(neighbour)->Combine(light);
         SetPointUpdated(neighbour);
-        insert_in_update_queue(pos);
       }
     }
   }
+}
+
+LightMap::Buffer LightMap::BufferConstructor::operator()(
+    QPoint pos) {
+  for (int32_t y = pos.y(); y < pos.y() + LightMap::kBufferHeight; ++y) {
+    for (int32_t x = pos.x(); x < pos.x() + LightMap::kBufferWidth; ++x) {
+      update_queue_->push(QPoint(x, y));
+    }
+  }
+  return Buffer{};
 }
 
 void LightMap::SetPointUpdated(QPoint pos, int iteration) {
