@@ -37,19 +37,18 @@ std::array<std::array<QImage, constants::kMaxAnimationPictures>,
 
 }  // namespace
 
-int MovingObjectDrawer::GetPictureNumber(int id,
-                                         std::shared_ptr<MovingObject> object,
-                                         int state_time) {
+int MovingObjectDrawer::GetPictureNumber(
+    int id, const std::shared_ptr<MovingObject>& object, int state_time) {
   if (object->GetState() == MovingObject::State::kWalk ||
-      id == Mob::kTypesCount + 1) {
+      id == GetIdForPlayerAttack()) {
     return (state_time / kAnimation[id]) % kPictures[id];
   }
   return 0;
 }
 
 const QImage& MovingObjectDrawer::GetMovingObjectImage(
-    int id, std::shared_ptr<MovingObject> object) {
-  QString picture = ":/resources/textures/" + kNames[static_cast<int>(id)];
+    int id, const std::shared_ptr<MovingObject>& object) {
+  const QString& picture = ":/resources/textures/" + kNames[id];
   int state_time = (id != Mob::kTypesCount + 1)
                        ? std::floor(object->GetStateTime())
                        : constants::kPlayerAttackTime -
@@ -57,8 +56,7 @@ const QImage& MovingObjectDrawer::GetMovingObjectImage(
   int picture_number = GetPictureNumber(id, object, state_time);
   if (images[id][picture_number].isNull()) {
     images[id][picture_number] =
-        QImage(":/resources/textures/" + kNames[id] +
-               QString::number(picture_number) + ".png");
+        QImage(picture + QString::number(picture_number) + ".png");
     images_reversed[id][picture_number] =
         images[id][picture_number].mirrored(true, false);
   }
@@ -76,16 +74,16 @@ void MovingObjectDrawer::DrawMob(QPainter* painter, QPointF point,
 }
 
 void MovingObjectDrawer::DrawPlayer(QPainter* painter, QPointF point) {
-  if (Model::GetInstance()->GetPlayer()->IsAttackFinished() == false) {
-    QImage player_attack_image = GetMovingObjectImage(
+  if (!Model::GetInstance()->GetPlayer()->IsAttackFinished()) {
+    const QImage& player_attack_image = GetMovingObjectImage(
         GetIdForPlayerAttack(), Model::GetInstance()->GetPlayer());
-    QImage player_image = GetMovingObjectImage(
+    const QImage& player_image = GetMovingObjectImage(
         GetIdForPlayer(), Model::GetInstance()->GetPlayer());
-    player_image = player_image.copy(QRect(
+    const QImage& player_image_cropped = player_image.copy(QRect(
         QPoint(0, player_attack_image.size().height()), player_image.size()));
     painter->drawImage(point, player_attack_image);
     painter->drawImage(point + QPoint(0, player_attack_image.size().height()),
-                       player_image);
+                       player_image_cropped);
   } else {
     painter->drawImage(point,
                        GetMovingObjectImage(GetIdForPlayer(),

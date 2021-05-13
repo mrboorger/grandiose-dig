@@ -67,35 +67,39 @@ void View::paintEvent(QPaintEvent* event) {
 }
 
 void View::DamageDealt(MovingObject* object) {
-  auto it = dynamic_cast<Mob*>(object);
-  int id = (it == nullptr) ? -1 : it->GetId();
   static std::uniform_int_distribution<int> distrib(0, 1);
-  switch (id) {
-    case -1:
+  switch (object->GetType()) {
+    case MovingObject::Type::kPlayer: {
       sound_manager_->PlaySound(
           SoundManager::SoundIndex(SoundManager::Sound::kPlayerDamage));
       break;
-    default:
-      assert(id < Mob::kTypesCount);
+    }
+    case MovingObject::Type::kMob: {
+      int id = static_cast<Mob*>(object)->GetId();
       if (distrib(utils::random) == 0) {
         sound_manager_->PlaySound(SoundManager::SoundIndex(
             SoundManager::Sound::kMob, id, SoundManager::MobSound::kDamage1));
       } else {
         sound_manager_->PlaySound(SoundManager::SoundIndex(
             SoundManager::Sound::kMob, id, SoundManager::MobSound::kDamage2));
+        break;
       }
       break;
+    }
+    default: {
+      assert(false);
+    }
   }
 }
 
 void View::BecameDead(MovingObject* object) {
-  int id = dynamic_cast<Mob*>(object)->GetId();
+  int id = static_cast<Mob*>(object)->GetId();
   sound_manager_->PlaySound(SoundManager::SoundIndex(
       SoundManager::Sound::kMob, id, SoundManager::MobSound::kDeath));
 }
 
 void View::MobSound(MovingObject* object) {
-  int id = dynamic_cast<Mob*>(object)->GetId();
+  int id = static_cast<Mob*>(object)->GetId();
   static std::uniform_int_distribution<int> distrib(0, 1);
   if (distrib(utils::random) == 0) {
     sound_manager_->PlaySound(SoundManager::SoundIndex(

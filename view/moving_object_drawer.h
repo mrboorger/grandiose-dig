@@ -20,8 +20,9 @@ class MovingObjectDrawer {
   static int GetIdForPlayer() { return Mob::kTypesCount; }
   static int GetIdForPlayerAttack() { return Mob::kTypesCount + 1; }
   static const QImage& GetMovingObjectImage(
-      int id, std::shared_ptr<MovingObject> object);
-  static int GetPictureNumber(int id, std::shared_ptr<MovingObject> object,
+      int id, const std::shared_ptr<MovingObject>& object);
+  static int GetPictureNumber(int id,
+                              const std::shared_ptr<MovingObject>& object,
                               int state_time);
 };
 

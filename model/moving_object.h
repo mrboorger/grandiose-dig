@@ -25,7 +25,7 @@ class MovingObject {
   MovingObject& operator=(MovingObject&&) = default;
 
   void SetType(Type type) { type_ = type; }
-  Type GetType() { return type_; }
+  Type GetType() const { return type_; }
 
   void SetWalkAcceleration(double speed) { walk_acceleration_ = speed; }
   void SetWalkMaxSpeed(double speed) { walk_max_speed_ = speed; }

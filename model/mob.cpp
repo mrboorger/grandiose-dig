@@ -11,25 +11,22 @@ Mob::Mob(QPointF pos, Type type)
     : MovingObject(pos, kMobParameters[static_cast<int>(type)].size_),
       mob_state_(),
       type_(type) {
+  SetType(MovingObject::Type::kMob);
   mob_state_.SetPos(GetPosition());
   mob_state_.SetSize(GetSize());
   mob_state_.SetJump(kMobParameters[static_cast<int>(type)].jump_in_blocks_);
   SetParamaters(kMobParameters[static_cast<int>(type)]);
   switch (type) {
     case Type::kZombie:
-      SetType(MovingObject::Type::kMob);
       SetStrategy(std::make_shared<BasicStrategy>());
       break;
     case Type::kZombieLord:
-      SetType(MovingObject::Type::kMob);
       SetStrategy(std::make_shared<ZombieSummonerStrategy>());
       break;
     case Type::kQuiox:
-      SetType(MovingObject::Type::kMob);
       SetStrategy(std::make_shared<BasicStrategy>());
       break;
     case Type::kMagicQuiox:
-      SetType(MovingObject::Type::kMob);
       SetStrategy(std::make_shared<MagicStrategy>());
       break;
     default:
