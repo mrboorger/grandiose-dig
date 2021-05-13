@@ -98,8 +98,9 @@ void LightMap::CalculateRegion(const QRect& region) {
         insert_in_update_queue(neighbour);
       }
     }
-    data_[pos] = GetLuminosity(pos);
-    if (!data_[pos].IsDark()) {
+    Light luminosity = GetLuminosity(pos);
+    if (!luminosity.IsDark()) {
+      data_[pos] = luminosity;
       insert_in_update_queue(pos);
     } else {
       data_.erase(pos);

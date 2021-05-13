@@ -30,14 +30,6 @@ class GLMapDrawer : public AbstractMapDrawer {
   QRect GetDrawRegion(QPoint center) const override;
 
  private:
-  // In blocks
-  static constexpr int32_t kFieldOfView = 64;
-  static constexpr int32_t kMeshWidth = 32;
-  static constexpr int32_t kMeshHeight = 32;
-  static constexpr int32_t kMeshSize = kMeshWidth * kMeshHeight;
-  static constexpr int32_t kElementsPerBlock = 4 * 3;
-  static constexpr int32_t kElementsCount = kElementsPerBlock * kMeshSize;
-
   struct VertexData {
     GLfloat pos_x;
     GLfloat pos_y;
@@ -57,14 +49,19 @@ class GLMapDrawer : public AbstractMapDrawer {
     VertexData center;
   };
 
+  // In blocks
+  static constexpr int32_t kFieldOfView = 64;
+  static constexpr int32_t kMeshWidth = 32;
+  static constexpr int32_t kMeshHeight = 32;
+  static constexpr int32_t kMeshSize = kMeshWidth * kMeshHeight;
+  static constexpr int32_t kElementsPerBlock = 4 * 3;
+  static constexpr int32_t kElementsCount = kElementsPerBlock * kMeshSize;
   static constexpr int kAttribsCount = 4;
   static constexpr std::array<int, kAttribsCount> kAttribSizes{2, 2, 3, 1};
-
   static constexpr VertexData kNoDrawVertex = VertexData{};
   static constexpr BlockData kNoDrawBlockData = BlockData{
       kNoDrawVertex, kNoDrawVertex, kNoDrawVertex, kNoDrawVertex, kNoDrawVertex,
   };
-
   static constexpr int32_t kVerticesPerBlock =
       sizeof(BlockData) / sizeof(VertexData);
 

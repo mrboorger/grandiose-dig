@@ -15,7 +15,7 @@ class PerlinChunkMapGenerator : public AbstractMapGenerator {
  private:
   class PerlinRegionGenerator : public AbstractRegionGenerator {
    public:
-    static constexpr int32_t kUpperChunk = 1;
+    static constexpr int32_t kUpperChunk = Chunk::kHeight;
 
     explicit PerlinRegionGenerator(uint32_t seed);
 

@@ -31,7 +31,7 @@ Chunk PerlinChunkMapGenerator::PerlinRegionGenerator::BasicGeneration(
     std::array<int32_t, Chunk::kWidth> height_map;
     for (int i = 0; i < Chunk::kWidth; ++i) {
       height_map[i] = utils::MapRange(
-          noise1d_(chunk_pos.x() * Chunk::kWidth + i), PerlinNoise1D::kMin,
+          noise1d_(chunk_pos.x() + i), PerlinNoise1D::kMin,
           PerlinNoise1D::kMax, 0, Chunk::kHeight - 1);
     }
     for (int32_t y = 0; y < Chunk::kHeight; ++y) {
@@ -49,14 +49,13 @@ Chunk PerlinChunkMapGenerator::PerlinRegionGenerator::BasicGeneration(
 
 void PerlinChunkMapGenerator::PerlinRegionGenerator::GenerateCaves(
     Chunk* chunk, QPoint chunk_pos) {
-  if (chunk_pos.y() < 1) {
+  if (chunk_pos.y() < kUpperChunk) {
     return;
   }
   for (int y = 0; y < Chunk::kHeight; ++y) {
     for (int x = 0; x < Chunk::kWidth; ++x) {
-      if (noise2d_(kCavesScale * (chunk_pos.x() * Chunk::kWidth + x),
-                   kCavesScale * (chunk_pos.y() * Chunk::kHeight + y)) >
-          kCavesRate) {
+      if (noise2d_(kCavesScale * (chunk_pos.x() + x),
+                   kCavesScale * (chunk_pos.y() + y)) > kCavesRate) {
         chunk->SetBlock(QPoint(x, y), Block(Block::Type::kAir));
       }
     }
