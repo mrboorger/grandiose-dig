@@ -2,18 +2,9 @@
 
 #include <algorithm>
 
-bool Light::CanBeUpdated(const Light& light) const {
-  for (int i = 0; i < kNChannels; ++i) {
-    if (light.data_[i] - kDecreaseFactor > data_[i]) {
-      return true;
-    }
-  }
-  return false;
-}
-
 bool Light::IsDepended(const Light& light) const {
   for (int i = 0; i < kNChannels; ++i) {
-    if (light.data_[i] - kDecreaseFactor == data_[i]) {
+    if (1 * light.data_[i] - kDecreaseFactor == data_[i]) {
       return true;
     }
   }
@@ -29,10 +20,15 @@ bool Light::IsDark() const {
   return true;
 }
 
-void Light::Combine(const Light& light) {
+bool Light::Combine(const Light& light) {
+  bool result = false;
   for (int i = 0; i < kNChannels; ++i) {
-    data_[i] = std::max(1 * data_[i], light.data_[i] - kDecreaseFactor);
+    if (1 * light.data_[i] - kDecreaseFactor > data_[i]) {
+      result = true;
+      data_[i] = 1 * light.data_[i] - kDecreaseFactor;
+    }
   }
+  return result;
 }
 
 void Light::GetMax(const Light& light) {

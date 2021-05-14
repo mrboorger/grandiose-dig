@@ -85,8 +85,7 @@ void LightMap::CalculateRegion(const QRect& region) {
       if (!data_.GetValueOpt(neighbour)) {
         continue;
       }
-      if (GetLight(neighbour).CanBeUpdated(light)) {
-        data_.GetMutableValue(neighbour)->Combine(light);
+      if (data_.GetMutableValue(neighbour)->Combine(light)) {
         SetPointUpdated(neighbour);
       }
     }
