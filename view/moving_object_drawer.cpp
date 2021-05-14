@@ -48,7 +48,7 @@ int MovingObjectDrawer::GetPictureNumber(
 
 const QImage& MovingObjectDrawer::GetMovingObjectImage(
     int id, const std::shared_ptr<MovingObject>& object) {
-  const QString& picture = ":/resources/textures/" + kNames[id];
+  QString picture = ":/resources/textures/" + kNames[id];
   int state_time = (id != Mob::kTypesCount + 1)
                        ? std::floor(object->GetStateTime())
                        : constants::kPlayerAttackTime -
@@ -79,7 +79,7 @@ void MovingObjectDrawer::DrawPlayer(QPainter* painter, QPointF point) {
         GetIdForPlayerAttack(), Model::GetInstance()->GetPlayer());
     const QImage& player_image = GetMovingObjectImage(
         GetIdForPlayer(), Model::GetInstance()->GetPlayer());
-    const QImage& player_image_cropped = player_image.copy(QRect(
+    QImage player_image_cropped = player_image.copy(QRect(
         QPoint(0, player_attack_image.size().height()), player_image.size()));
     painter->drawImage(point, player_attack_image);
     painter->drawImage(point + QPoint(0, player_attack_image.size().height()),

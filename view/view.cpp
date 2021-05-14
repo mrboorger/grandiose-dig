@@ -82,7 +82,6 @@ void View::DamageDealt(MovingObject* object) {
       } else {
         sound_manager_->PlaySound(SoundManager::SoundIndex(
             SoundManager::Sound::kMob, id, SoundManager::MobSound::kDamage2));
-        break;
       }
       break;
     }
