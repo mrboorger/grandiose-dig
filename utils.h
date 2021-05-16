@@ -36,6 +36,8 @@ QPointF DivideSegment(QPointF first, QPointF second, double percentage);
 
 double GetRandomDouble(double left_bound = 0, double right_bound = 1);
 
+std::array<QPoint, 4> PointNeighbours(QPoint point);
+
 }  // namespace utils
 
 #endif  // UTILS_H_

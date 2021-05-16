@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "model/abstract_map.h"
-#include "model/clearable_cache.h"
+#include "model/buffered_clearable_cache.h"
 #include "model/constants.h"
 #include "utils.h"
 #include "view/abstract_map_drawer.h"
@@ -21,6 +21,8 @@ class BufferedMapDrawer : public AbstractMapDrawer {
                          const QRect& screen_coords) override;
 
   void UpdateBlock(QPoint pos) override;
+
+  QRect GetDrawRegion(QPoint center) const override;
 
  private:
   // In blocks

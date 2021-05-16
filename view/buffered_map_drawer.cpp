@@ -40,6 +40,11 @@ void BufferedMapDrawer::UpdateBlock(QPoint pos) {
               map_->GetBlock(pos), true);
 }
 
+QRect BufferedMapDrawer::GetDrawRegion(QPoint center) const {
+  return QRect(center.x() - kFieldOfView, center.y() - kFieldOfView,
+               center.x() + kFieldOfView, center.y() + kFieldOfView);
+}
+
 QPoint BufferedMapDrawer::RoundToBufferPos(QPoint p) {
   return QPoint(p.x() - utils::ArithmeticalMod(p.x(), kBufferWidth),
                 p.y() - utils::ArithmeticalMod(p.y(), kBufferHeight));

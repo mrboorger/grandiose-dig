@@ -43,4 +43,9 @@ double GetRandomDouble(double left_bound, double right_bound) {
   return distrib(random);
 }
 
+std::array<QPoint, 4> PointNeighbours(QPoint point) {
+  return {QPoint(point.x(), point.y() - 1), QPoint(point.x(), point.y() + 1),
+          QPoint(point.x() - 1, point.y()), QPoint(point.x() + 1, point.y())};
+}
+
 }  // namespace utils

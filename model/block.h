@@ -3,22 +3,28 @@
 
 #include <cstdint>
 
+#include "view/light.h"
+
 class Block {
  public:
   enum class Type {
-    kAir,
+    kFirst,
+    kAir = kFirst,
     kDirt,
     kGrass,
     kStone,
+    kTorch,
     kTypesCount,
   };
 
+  static constexpr int kFirstType = static_cast<int>(Type::kFirst);
   static constexpr int kTypesCount = static_cast<int>(Type::kTypesCount);
 
   explicit Block(Type type) : type_(type) {}
 
-  static bool IsVisible(Type type) { return type != Type::kAir; }
-  bool IsVisible() const { return IsVisible(type_); }
+  bool IsVisible() const { return GetCharactistics(GetId()).is_visible; }
+  Light GetLuminosity() const { return GetCharactistics(GetId()).luminosity; }
+  bool IsOpaque() const { return GetCharactistics(GetId()).is_opaque; }
 
   Type GetType() const { return type_; }
 
@@ -28,6 +34,17 @@ class Block {
   bool DecreaseDurability(int delta);
 
  private:
+  struct Characteristics {
+    Light luminosity;
+    int default_durability;
+    bool is_visible;
+    bool is_opaque;
+  };
+  static constexpr Characteristics kDefaultBlockCharactestics{Light(0, 0, 0, 0),
+                                                              5, true, true};
+
+  static const Characteristics& GetCharactistics(int32_t id);
+
   Type type_;
   // TODO(mrboorger): Make different durability_ of the blocks
   int durability_ = 5;

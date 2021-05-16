@@ -2,6 +2,7 @@
 
 #include <QColor>
 #include <QPainter>
+#include <chrono>
 #include <cmath>
 #include <ctime>
 #include <random>
@@ -10,6 +11,7 @@
 #include "model/constants.h"
 #include "utils.h"
 #include "view/block_drawer.h"
+#include "view/gl_func.h"
 #include "view/moving_object_drawer.h"
 
 View* View::GetInstance() {
@@ -18,7 +20,7 @@ View* View::GetInstance() {
 }
 
 View::View()
-    : QWidget(nullptr),
+    : QOpenGLWidget(nullptr),
       camera_(QPointF(150, 150)),
       sound_manager_(new SoundManager()),
       drawer_(nullptr) {
@@ -42,16 +44,38 @@ void View::DrawPlayer(QPainter* painter) {
   // blocks will not break immediately
 }
 
-void View::paintEvent(QPaintEvent* event) {
-  Q_UNUSED(event);
-  QPainter painter(this);
+void View::initializeGL() {
+  assert(context());
+  makeCurrent();
+  auto* gl = GLFunctions::GetInstance();
+  gl->initializeOpenGLFunctions();
+  gl->glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-  // TODO(degmuk): temporary code; replace with background drawer
-  painter.setBrush(Qt::white);
-  painter.drawRect(rect());
+  if (drawer_) {
+    drawer_->Init();
+  }
+}
+
+void View::paintGL() {
+  auto* gl = GLFunctions::GetInstance();
+  QPainter painter(this);
+  painter.beginNativePainting();
+
+  gl->glClear(GL_COLOR_BUFFER_BIT);
 
   camera_.SetPoint(Model::GetInstance()->GetPlayer()->GetPosition());
-  drawer_->DrawMapWithCenter(&painter, camera_.GetPoint(), rect());
+  QPointF camera_pos = camera_.GetPoint();
+
+  light_map_->CalculateRegion(
+      drawer_->GetDrawRegion(QPoint(camera_pos.x(), camera_pos.y())));
+  for (auto* to_update = light_map_->UpdateList(); !to_update->empty();) {
+    for (auto pos : *to_update) {
+      drawer_->UpdateBlock(pos);
+    }
+    to_update->clear();
+  }
+
+  drawer_->DrawMapWithCenter(&painter, camera_pos, rect());
 
   inventory_drawer_->DrawInventory(&painter);
 
@@ -64,6 +88,7 @@ void View::paintEvent(QPaintEvent* event) {
         rect().center();
     MovingObjectDrawer::DrawMob(&painter, mob_point, mob);
   }
+  painter.endNativePainting();
 }
 
 void View::DamageDealt(MovingObject* object) {

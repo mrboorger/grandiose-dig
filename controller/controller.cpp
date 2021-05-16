@@ -9,9 +9,12 @@
 #include "model/abstract_map_generator.h"
 #include "model/chunk_map.h"
 #include "model/constants.h"
+#include "model/model.h"
 #include "view/abstract_map_drawer.h"
 #include "view/buffered_map_drawer.h"
 #include "view/map_drawer.h"
+#include "view/gl_map_drawer.h"
+#include "view/view.h"
 
 Controller* Controller::GetInstance() {
   static Controller controller;
@@ -21,7 +24,9 @@ Controller* Controller::GetInstance() {
 void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
   auto map = std::shared_ptr<AbstractMap>(generator->GenerateMap());
   Model::GetInstance()->SetMap(map);
-  View::GetInstance()->SetDrawer(new BufferedMapDrawer(map));
+  View::GetInstance()->SetLightMap(new LightMap(map));
+  View::GetInstance()->SetDrawer(
+      new GLMapDrawer(map, View::GetInstance()->GetLightMap()));
 }
 
 Controller::Controller() : tick_timer_() {
@@ -32,7 +37,7 @@ Controller::Controller() : tick_timer_() {
 void Controller::SetPlayer() {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->SetPlayer(
-      std::make_shared<Player>(QPointF(147.0, 109.0)));
+      std::make_shared<Player>(QPointF(125.0, 115.0)));
   View::GetInstance()->SetInventoryDrawer(
       new InventoryDrawer(Model::GetInstance()->GetPlayer()->GetInventory()));
 }
@@ -50,7 +55,9 @@ void Controller::BreakBlock() {
        Model::GetInstance()->GetPlayer()->GetPosition().x())
           ? utils::Direction::kLeft
           : utils::Direction::kRight);
-  Model::GetInstance()->GetMap()->HitBlock(block_coords, 1);
+  if (Model::GetInstance()->GetMap()->HitBlock(block_coords, 1)) {
+    View::GetInstance()->GetLightMap()->UpdateLight(block_coords);
+  }
   View::GetInstance()->UpdateBlock(block_coords);
 }
 
