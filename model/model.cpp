@@ -32,7 +32,29 @@ void Model::MoveObjects(
     mob->MoveMob(time);
     if (!mob->RecentlyDamaged() &&
         distrib(utils::random) < constants::kMobSoundChance) {
-      emit MobSound(mob->GetType());
+      emit MobSound(mob.get());
     }
   }
+}
+
+bool Model::CanSpawnMobAt(QPointF pos, QPointF size) const {
+  for (int j = std::floor(pos.x());
+       j < std::floor(pos.x() + size.x() - constants::kEps); j++) {
+    for (int i = std::floor(pos.y());
+         i < std::floor(pos.y() + size.y() - constants::kEps); i++) {
+      if (Model::GetInstance()->GetMap()->GetBlock(QPoint(j, i)).GetType() !=
+          Block::Type::kAir) {
+        return false;
+      }
+    }
+    // mob cannot be spawned in the air
+    if (Model::GetInstance()
+            ->GetMap()
+            ->GetBlock(
+                QPoint(j, std::floor(pos.y() + size.y() + 1 - constants::kEps)))
+            .GetType() == Block::Type::kAir) {
+      return false;
+    }
+  }
+  return true;
 }

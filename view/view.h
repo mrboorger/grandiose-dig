@@ -35,15 +35,17 @@ class View : public QWidget {
   void UpdateBlock(QPoint pos) { drawer_->UpdateBlock(pos); }
 
  private slots:
-  void DamageDealt(MovingObject::Type type);
-  void BecameDead(MovingObject::Type type);
-  void MobSound(MovingObject::Type type);
+  void DamageDealt(MovingObject* object);
+  void BecameDead(MovingObject* object);
+  void MobSound(MovingObject* object);
 
  private:
   constexpr static int kRenderDistance = 70;
   View();
 
   void paintEvent(QPaintEvent* event) override;
+
+  void DrawPlayer(QPainter* painter);
 
   void keyPressEvent(QKeyEvent* event) override;
   void keyReleaseEvent(QKeyEvent* event) override;
