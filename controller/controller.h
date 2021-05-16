@@ -45,7 +45,7 @@ class Controller {
 
   void TickEvent();
 
-  void BreakBlock();
+  void BreakBlock(double time);
   void UseItem();
 
   void StartAttack();

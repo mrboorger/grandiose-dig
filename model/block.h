@@ -29,9 +29,11 @@ class Block {
   bool DecreaseDurability(int delta);
 
  private:
+  static constexpr double kDurEps = 1e-6;
+
   Type type_;
   // TODO(mrboorger): Make different durability_ of the blocks
-  int durability_ = 5;
+  double durability_ = 500.0;
 };
 
 #endif  // MODEL_BLOCK_H_

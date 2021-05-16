@@ -43,11 +43,12 @@ void Controller::SetMob() {
       std::make_shared<Mob>(QPointF(157.0, 106.0), constants::kPlayerSize));
 }
 
-void Controller::BreakBlock() {
+void Controller::BreakBlock(double time) {
   QPoint block_coords = View::GetInstance()->GetBlockCoordUnderCursor();
   if (Model::GetInstance()->GetPlayer()->IsBlockReachableForTool(
           block_coords)) {
-    Model::GetInstance()->GetMap()->HitBlock(block_coords, 1);
+    // TODO(mrboorger): ToolPower * time
+    Model::GetInstance()->GetMap()->HitBlock(block_coords, 1.0 * time);
     View::GetInstance()->UpdateBlock(block_coords);
   }
 }
@@ -58,6 +59,8 @@ void Controller::PlaceBlock(QPoint block_coords, Block block) {
 }
 
 void Controller::UseItem() {
+  if (Model::GetInstance()->GetPlayer()) {
+  }
   QPoint block_coords = View::GetInstance()->GetBlockCoordUnderCursor();
   const InventoryItem& item =
       Model::GetInstance()->GetPlayer()->GetInventory()->GetSelectedItem();
@@ -163,6 +166,7 @@ bool Controller::CanAttackMob(std::shared_ptr<MovingObject> mob,
 }
 
 void Controller::PlayerAttack(double time) {
+  // TODO(mrboorger): cooldown between using items
   Model::GetInstance()->GetPlayer()->DecAttackCooldownInterval(time);
   if (Model::GetInstance()->GetPlayer()->IsAttackFinished()) {
     return;
@@ -194,7 +198,7 @@ void Controller::TickEvent() {
   Model::GetInstance()->MoveObjects(pressed_keys_, time);
   if (is_pressed_left_mouse_button) {
     // TODO(Wind-Eagle): make BreakBlock() dependible on time
-    BreakBlock();
+    BreakBlock(time);
     StartAttack();
   }
   if (is_pressed_right_mouse_button) {
