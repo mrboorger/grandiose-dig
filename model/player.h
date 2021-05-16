@@ -20,8 +20,8 @@ class Player : public MovingObject {
   void SetAttackCooldownInterval(int attack_interval) {
     attack_cooldown_interval_ = attack_interval;
   }
-  int GetAttackTick() const { return attack_tick_; }
-  int GetAttackCooldownInterval() const { return attack_cooldown_interval_; }
+  double GetAttackTick() const { return attack_tick_; }
+  double GetAttackCooldownInterval() const { return attack_cooldown_interval_; }
 
   void SetAttackDirection(utils::Direction attack_direction) {
     attack_direction_ = attack_direction;
@@ -33,18 +33,22 @@ class Player : public MovingObject {
     return attack_direction_ == utils::Direction::kLeft;
   }
 
-  void DecAttackTick() { attack_tick_ = std::max(attack_tick_ - 1, 0); }
-  void DecAttackCooldownInterval() {
-    attack_cooldown_interval_ = std::max(attack_cooldown_interval_ - 1, 0);
+  void DecAttackTick(double time) {
+    attack_tick_ = std::max(attack_tick_ - time, 0.0);
+  }
+  void DecAttackCooldownInterval(double time) {
+    attack_cooldown_interval_ = std::max(attack_cooldown_interval_ - time, 0.0);
   }
 
-  bool IsAttackFinished() const { return attack_tick_ == 0; }
-  bool CanStartAttack() const { return attack_cooldown_interval_ == 0; }
+  bool IsAttackFinished() const { return attack_tick_ <= constants::kEps; }
+  bool CanStartAttack() const {
+    return attack_cooldown_interval_ <= constants::kEps;
+  }
 
  private:
   std::shared_ptr<Inventory> inventory_;
-  int attack_tick_ = 0;
-  int attack_cooldown_interval_ = 0;
+  double attack_tick_ = 0;
+  double attack_cooldown_interval_ = 0;
   utils::Direction attack_direction_ = utils::Direction::kLeft;
 };
 

@@ -12,7 +12,7 @@ Model* Model::GetInstance() {
 }
 
 void Model::MoveObjects(
-    const std::unordered_set<ControllerTypes::Key>& pressed_keys) {
+    const std::unordered_set<ControllerTypes::Key>& pressed_keys, double time) {
   // TODO(Wind-Eagle): this is temporary code.
   if (player_->IsDead()) {
     exit(0);
@@ -25,14 +25,36 @@ void Model::MoveObjects(
     }
   }
 
-  player_->Move(pressed_keys);
+  player_->Move(pressed_keys, time);
 
   static std::uniform_real_distribution<double> distrib(0.0, 1.0);
   for (auto mob : mobs_) {
-    mob->MoveMob();
+    mob->MoveMob(time);
     if (!mob->RecentlyDamaged() &&
         distrib(utils::random) < constants::kMobSoundChance) {
-      emit MobSound(mob->GetType());
+      emit MobSound(mob.get());
     }
   }
+}
+
+bool Model::CanSpawnMobAt(QPointF pos, QPointF size) const {
+  for (int j = std::floor(pos.x());
+       j < std::floor(pos.x() + size.x() - constants::kEps); j++) {
+    for (int i = std::floor(pos.y());
+         i < std::floor(pos.y() + size.y() - constants::kEps); i++) {
+      if (Model::GetInstance()->GetMap()->GetBlock(QPoint(j, i)).GetType() !=
+          Block::Type::kAir) {
+        return false;
+      }
+    }
+    // mob cannot be spawned in the air
+    if (Model::GetInstance()
+            ->GetMap()
+            ->GetBlock(
+                QPoint(j, std::floor(pos.y() + size.y() + 1 - constants::kEps)))
+            .GetType() == Block::Type::kAir) {
+      return false;
+    }
+  }
+  return true;
 }

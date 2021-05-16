@@ -3,12 +3,15 @@
 
 #include <memory>
 #include <unordered_set>
+#include <vector>
 
 #include "controller/controller_types.h"
 #include "model/abstract_map.h"
 #include "model/constants.h"
 #include "model/damage.h"
+#include "model/effects.h"
 #include "model/move_vector.h"
+#include "utils.h"
 
 class MovingObject {
  public:
@@ -22,7 +25,7 @@ class MovingObject {
   MovingObject& operator=(MovingObject&&) = default;
 
   void SetType(Type type) { type_ = type; }
-  Type GetType() { return type_; }
+  Type GetType() const { return type_; }
 
   void SetWalkAcceleration(double speed) { walk_acceleration_ = speed; }
   void SetWalkMaxSpeed(double speed) { walk_max_speed_ = speed; }
@@ -38,6 +41,18 @@ class MovingObject {
   void SetDamage(int damage) { damage_ = damage; }
   void SetDamageAcceleration(QPointF damage_acceleration) {
     damage_acceleration_ = damage_acceleration;
+  }
+
+  void SetParamaters(const MobParameters& parameters) {
+    damage_ = parameters.damage_;
+    damage_acceleration_ = parameters.damage_acceleration_;
+    health_ = parameters.health_;
+    jump_speed_ = parameters.jump_speed_;
+    size_ = parameters.size_;
+    walk_acceleration_ = parameters.walk_acceleration_;
+    walk_air_acceleration_ = parameters.walk_air_acceleration_;
+    walk_max_air_acceleration_ = parameters.walk_max_air_acceleration_;
+    walk_max_speed_ = parameters.walk_max_speed_;
   }
 
   double GetWalkAcceleration() const { return walk_acceleration_; }
@@ -58,7 +73,8 @@ class MovingObject {
   int GetDamage() const { return damage_; }
 
   virtual void Move(
-      const std::unordered_set<ControllerTypes::Key>& pressed_keys);
+      const std::unordered_set<ControllerTypes::Key>& pressed_keys,
+      double time);
 
   static bool IsObjectCollision(QPointF lhs_pos, QPointF lhs_size,
                                 QPointF rhs_pos, QPointF rhs_size);
@@ -69,21 +85,35 @@ class MovingObject {
   bool IsPushesRight() const { return pushes_right_; }
 
   void CheckFallDamage();
-  bool RecentlyDamaged() const { return damage_ticks_ != 0; }
+  bool RecentlyDamaged() const { return damage_time_ > constants::kEps; }
+  double GetDamageTime() const { return damage_time_; }
   void DealDamage(const Damage& damage);
 
   bool IsDead() const;
 
+  void SetDirection(utils::Direction direction) { direction_ = direction; }
+  utils::Direction GetDirection() const { return direction_; }
+
+  State GetState() const { return state_; }
+
+  double GetStateTime() const { return state_time_; }
+
+  void AddEffect(Effect effect);
+  void DeleteEffect(Effect::Type type);
+
  protected:
   MovingObject(QPointF pos, QPointF size);
-  void UpdateState(
-      const std::unordered_set<ControllerTypes::Key>& pressed_keys);
+  void UpdateState(const std::unordered_set<ControllerTypes::Key>& pressed_keys,
+                   double time);
 
  private:
-  void UpdateStay(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
-  void UpdateWalk(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
-  void UpdateJump(const std::unordered_set<ControllerTypes::Key>& pressed_keys);
-  void MakeMovement(QPointF old_position);
+  void UpdateStay(const std::unordered_set<ControllerTypes::Key>& pressed_keys,
+                  double time);
+  void UpdateWalk(const std::unordered_set<ControllerTypes::Key>& pressed_keys,
+                  double time);
+  void UpdateJump(const std::unordered_set<ControllerTypes::Key>& pressed_keys,
+                  double time);
+  void MakeMovement(QPointF old_position, double time);
   void CheckCollisions(QPointF old_position);
   bool FindCollisionGround(QPointF old_position, double* ground_y,
                            const std::shared_ptr<AbstractMap>& map) const;
@@ -93,6 +123,21 @@ class MovingObject {
                          const std::shared_ptr<AbstractMap>& map) const;
   bool FindCollisionRight(QPointF old_position, double* right_wall_x,
                           const std::shared_ptr<AbstractMap>& map) const;
+
+  void DecEffects(double time);
+
+  void ProcessEffect(Effect effect, EffectProcessType k);
+  void ApplySingularEffect(Effect effect);
+  void ApplyEffect(Effect effect) {
+    ProcessEffect(effect, EffectProcessType::kForward);
+  }
+  void UnapplyEffect(Effect effect) {
+    ProcessEffect(effect, EffectProcessType::kInverse);
+  }
+  void CheckSingularEffects();
+
+  std::vector<Effect> effects_;
+
   MoveVector move_vector_ = MoveVector(0, 0, 0, 0);
   QPointF pos_;
   QPointF size_;
@@ -113,13 +158,15 @@ class MovingObject {
   int health_ = constants::kPlayerHealth;
   int damage_ = constants::kPlayerDamage;
 
-  int state_ticks_ = 0;
-  int damage_ticks_ = 0;
+  double state_time_ = 0;
+  double damage_time_ = 0;
 
   bool pushes_ground_ = false;
   bool pushes_ceil_ = false;
   bool pushes_left_ = false;
   bool pushes_right_ = false;
+
+  utils::Direction direction_ = utils::Direction::kRight;
 };
 
 #endif  // MODEL_MOVING_OBJECT_H_

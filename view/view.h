@@ -39,15 +39,17 @@ class View : public QOpenGLWidget {
   std::shared_ptr<LightMap> GetLightMap() { return light_map_; }
 
  private slots:
-  void DamageDealt(MovingObject::Type type);
-  void BecameDead(MovingObject::Type type);
-  void MobSound(MovingObject::Type type);
+  void DamageDealt(MovingObject* object);
+  void BecameDead(MovingObject* object);
+  void MobSound(MovingObject* object);
 
  private:
   View();
 
   void initializeGL() override;
   void paintGL() override;
+
+  void DrawPlayer(QPainter* painter);
 
   void keyPressEvent(QKeyEvent* event) override;
   void keyReleaseEvent(QKeyEvent* event) override;

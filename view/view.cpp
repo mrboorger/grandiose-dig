@@ -12,7 +12,7 @@
 #include "utils.h"
 #include "view/block_drawer.h"
 #include "view/gl_func.h"
-#include "view/mob_drawer.h"
+#include "view/moving_object_drawer.h"
 
 View* View::GetInstance() {
   static View view;
@@ -33,6 +33,17 @@ void View::SetInventoryDrawer(InventoryDrawer* drawer) {
   inventory_drawer_.reset(drawer);
 }
 
+void View::DrawPlayer(QPainter* painter) {
+  auto player = Model::GetInstance()->GetPlayer();
+  QPointF point =
+      (player->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
+      rect().center();
+
+  MovingObjectDrawer::DrawPlayer(painter, point);
+  // TODO(Wind-Eagle): make animation for block breaking: will be done when
+  // blocks will not break immediately
+}
+
 void View::initializeGL() {
   assert(context());
   makeCurrent();
@@ -47,7 +58,6 @@ void View::initializeGL() {
 
 void View::paintGL() {
   auto* gl = GLFunctions::GetInstance();
-
   QPainter painter(this);
   painter.beginNativePainting();
 
@@ -70,52 +80,57 @@ void View::paintGL() {
   inventory_drawer_->DrawInventory(&painter);
 
   // TODO(Wind-Eagle): temporary code; need to make PlayerDrawer
-  auto player = Model::GetInstance()->GetPlayer();
-  QImage player_image(":/resources/textures/player.png");
-  QPointF point =
-      (player->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
-      rect().center();
-  painter.drawImage(point, player_image);
+  DrawPlayer(&painter);
   auto mobs = Model::GetInstance()->GetMobs();
   for (auto mob : mobs) {
     QPointF mob_point =
         (mob->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
         rect().center();
-    MobDrawer::DrawMob(&painter, mob_point, mob);
+    MovingObjectDrawer::DrawMob(&painter, mob_point, mob);
   }
   painter.endNativePainting();
 }
 
-void View::DamageDealt(MovingObject::Type type) {
+void View::DamageDealt(MovingObject* object) {
   static std::uniform_int_distribution<int> distrib(0, 1);
-  switch (type) {
-    case MovingObject::Type::kPlayer:
-      sound_manager_->PlaySound(SoundManager::Sound::kPlayerDamage);
+  switch (object->GetType()) {
+    case MovingObject::Type::kPlayer: {
+      sound_manager_->PlaySound(
+          SoundManager::SoundIndex(SoundManager::Sound::kPlayerDamage));
       break;
-    case MovingObject::Type::kMob:
+    }
+    case MovingObject::Type::kMob: {
+      int id = static_cast<Mob*>(object)->GetId();
       if (distrib(utils::random) == 0) {
-        sound_manager_->PlaySound(SoundManager::Sound::kMobDamage1);
+        sound_manager_->PlaySound(SoundManager::SoundIndex(
+            SoundManager::Sound::kMob, id, SoundManager::MobSound::kDamage1));
       } else {
-        sound_manager_->PlaySound(SoundManager::Sound::kMobDamage2);
+        sound_manager_->PlaySound(SoundManager::SoundIndex(
+            SoundManager::Sound::kMob, id, SoundManager::MobSound::kDamage2));
       }
       break;
-    default:
-      break;
+    }
+    default: {
+      assert(false);
+    }
   }
 }
 
-void View::BecameDead(MovingObject::Type type) {
-  Q_UNUSED(type);
-  sound_manager_->PlaySound(SoundManager::Sound::kMobDeath);
+void View::BecameDead(MovingObject* object) {
+  int id = static_cast<Mob*>(object)->GetId();
+  sound_manager_->PlaySound(SoundManager::SoundIndex(
+      SoundManager::Sound::kMob, id, SoundManager::MobSound::kDeath));
 }
 
-void View::MobSound(MovingObject::Type type) {
-  Q_UNUSED(type);
+void View::MobSound(MovingObject* object) {
+  int id = static_cast<Mob*>(object)->GetId();
   static std::uniform_int_distribution<int> distrib(0, 1);
   if (distrib(utils::random) == 0) {
-    sound_manager_->PlaySound(SoundManager::Sound::kMob1);
+    sound_manager_->PlaySound(SoundManager::SoundIndex(
+        SoundManager::Sound::kMob, id, SoundManager::MobSound::kIdle1));
   } else {
-    sound_manager_->PlaySound(SoundManager::Sound::kMob2);
+    sound_manager_->PlaySound(SoundManager::SoundIndex(
+        SoundManager::Sound::kMob, id, SoundManager::MobSound::kIdle2));
   }
 }
 

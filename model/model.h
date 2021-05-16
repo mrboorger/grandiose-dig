@@ -36,15 +36,17 @@ class Model : public QObject {
   void DeleteMob(const std::shared_ptr<Mob>& mob) { mobs_.erase(mob); }
   const std::set<std::shared_ptr<Mob>>& GetMobs() const { return mobs_; }
 
-  void MoveObjects(
-      const std::unordered_set<ControllerTypes::Key>& pressed_keys);
+  void MoveObjects(const std::unordered_set<ControllerTypes::Key>& pressed_keys,
+                   double time);
 
   void PickItemToPlayer(InventoryItem item) { player_->PickItem(item); }
 
+  bool CanSpawnMobAt(QPointF pos, QPointF size) const;
+
  signals:
-  void DamageDealt(MovingObject::Type type);
-  void BecameDead(MovingObject::Type type);
-  void MobSound(MovingObject::Type type);
+  void DamageDealt(MovingObject* object);
+  void BecameDead(MovingObject* object);
+  void MobSound(MovingObject* object);
 
  private:
   Model() = default;
