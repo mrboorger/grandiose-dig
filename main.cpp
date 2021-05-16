@@ -1,4 +1,3 @@
-#include <qnamespace.h>
 #include <QApplication>
 
 #include "controller/controller.h"

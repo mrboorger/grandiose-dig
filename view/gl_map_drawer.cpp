@@ -201,33 +201,33 @@ GLMapDrawer::BlockData GLMapDrawer::GetBlockData(QPoint world_pos,
     return kNoDrawBlockData;
   }
   BlockData data{};
-  data.up_left = GenData(mesh_pos, TextureAtlas::GetBlockTCLT(block),
+  data.left_top = GenData(mesh_pos, TextureAtlas::GetBlockTCLT(block),
                          light_map_->GetLightLT(world_pos));
-  data.up_right = GenData(QPoint(mesh_pos.x() + 1, mesh_pos.y()),
+  data.right_top = GenData(QPoint(mesh_pos.x() + 1, mesh_pos.y()),
                           TextureAtlas::GetBlockTCRT(block),
                           light_map_->GetLightRT(world_pos));
-  data.down_left = GenData(QPoint(mesh_pos.x(), mesh_pos.y() + 1),
+  data.left_bottom = GenData(QPoint(mesh_pos.x(), mesh_pos.y() + 1),
                           TextureAtlas::GetBlockTCLB(block),
                           light_map_->GetLightLB(world_pos));
-  data.down_right = GenData(QPoint(mesh_pos.x() + 1, mesh_pos.y() + 1),
+  data.right_bottom = GenData(QPoint(mesh_pos.x() + 1, mesh_pos.y() + 1),
                           TextureAtlas::GetBlockTCRB(block),
                           light_map_->GetLightRB(world_pos));
   data.center =
-      VertexData{Average(data.up_left.pos_x, data.down_left.pos_x,
-                         data.up_right.pos_x, data.down_right.pos_x),
-                 Average(data.up_left.pos_y, data.down_left.pos_y,
-                         data.up_right.pos_y, data.down_right.pos_y),
-                 Average(data.up_left.tex_u, data.down_left.tex_u,
-                         data.up_right.tex_u, data.down_right.tex_u),
-                 Average(data.up_left.tex_v, data.down_left.tex_v,
-                         data.up_right.tex_v, data.down_right.tex_v),
-                 Average(data.up_left.light_r, data.down_left.light_r,
-                         data.up_right.light_r, data.down_right.light_r),
-                 Average(data.up_left.light_g, data.down_left.light_g,
-                         data.up_right.light_g, data.down_right.light_g),
-                 Average(data.up_left.light_b, data.down_left.light_b,
-                         data.up_right.light_b, data.down_right.light_b),
-                 Average(data.up_left.light_sun, data.down_left.light_sun,
-                         data.up_right.light_sun, data.down_right.light_sun)};
+      VertexData{Average(data.left_top.pos_x, data.left_bottom.pos_x,
+                         data.right_top.pos_x, data.right_bottom.pos_x),
+                 Average(data.left_top.pos_y, data.left_bottom.pos_y,
+                         data.right_top.pos_y, data.right_bottom.pos_y),
+                 Average(data.left_top.tex_u, data.left_bottom.tex_u,
+                         data.right_top.tex_u, data.right_bottom.tex_u),
+                 Average(data.left_top.tex_v, data.left_bottom.tex_v,
+                         data.right_top.tex_v, data.right_bottom.tex_v),
+                 Average(data.left_top.light_r, data.left_bottom.light_r,
+                         data.right_top.light_r, data.right_bottom.light_r),
+                 Average(data.left_top.light_g, data.left_bottom.light_g,
+                         data.right_top.light_g, data.right_bottom.light_g),
+                 Average(data.left_top.light_b, data.left_bottom.light_b,
+                         data.right_top.light_b, data.right_bottom.light_b),
+                 Average(data.left_top.light_sun, data.left_bottom.light_sun,
+                         data.right_top.light_sun, data.right_bottom.light_sun)};
   return data;
 }

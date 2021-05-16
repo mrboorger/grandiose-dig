@@ -7,7 +7,7 @@
 #include <memory>
 
 #include "model/abstract_map.h"
-#include "model/buffered_map.h"
+#include "model/clearable_cache.h"
 #include "model/constants.h"
 #include "utils.h"
 #include "view/abstract_map_drawer.h"
@@ -42,10 +42,10 @@ class GLMapDrawer : public AbstractMapDrawer {
   };
 
   struct BlockData {
-    VertexData up_left;
-    VertexData up_right;
-    VertexData down_right;
-    VertexData down_left;
+    VertexData left_top;
+    VertexData right_top;
+    VertexData right_bottom;
+    VertexData left_bottom;
     VertexData center;
   };
 

@@ -1,5 +1,5 @@
-#ifndef MODEL_BUFFERED_MAP_H_
-#define MODEL_BUFFERED_MAP_H_
+#ifndef MODEL_BUFFERED_CLEARABLE_CACHE_H_
+#define MODEL_BUFFERED_CLEARABLE_CACHE_H_
 
 #include <QPoint>
 #include <functional>
@@ -26,7 +26,7 @@ class GenEmptyBuffer {
 template<typename T, int32_t width, int32_t height,
          typename BufferType = std::array<T, width * height>,
          typename F = GenEmptyBuffer<BufferType>>
-class BufferedMap {
+class BufferedClearableCache {
  public:
   using Buffer = BufferType;
 
@@ -45,7 +45,7 @@ class BufferedMap {
     return local_pos.y() * width + local_pos.x();
   }
 
-  BufferedMap(int clear_time_msec = constants::kDefaultClearTimeMSec,
+  BufferedClearableCache(int clear_time_msec = constants::kDefaultClearTimeMSec,
               F gen_buffer = F())
       : data_(clear_time_msec), gen_buffer_(std::move(gen_buffer)) {}
 
@@ -113,5 +113,4 @@ class BufferedMap {
 
 }  // namespace containers
 
-#endif  // MODEL_BUFFERED_MAP_H_
-
+#endif  // MODEL_BUFFERED_CLEARABLE_CACHE_H_

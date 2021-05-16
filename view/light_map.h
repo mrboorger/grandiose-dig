@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "model/abstract_map.h"
-#include "model/buffered_map.h"
+#include "model/buffered_clearable_cache.h"
 #include "model/constants.h"
 #include "utils.h"
 
@@ -43,7 +43,7 @@ class LightMap {
    private:
     std::queue<QPoint>* update_queue_;
   };
-  using Container = containers::BufferedMap<Light, kBufferWidth, kBufferHeight,
+  using Container = containers::BufferedClearableCache<Light, kBufferWidth, kBufferHeight,
                                             Buffer, BufferConstructor>;
   static constexpr int kUpdateDeep = 1;
 
