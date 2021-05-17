@@ -26,7 +26,7 @@ if (NOT CMAKE_PREFIX_PATH)
 endif ()
 
 set(QT_VERSION 5)
-set(REQUIRED_LIBS Core Widgets Multimedia)
+set(REQUIRED_LIBS Widgets Multimedia)
 set(REQUIRED_LIBS_QUALIFIED Qt5::Core Qt5::Widgets Qt5::Multimedia)
 find_package(Qt${QT_VERSION} COMPONENTS ${REQUIRED_LIBS} REQUIRED)
 
@@ -53,6 +53,7 @@ set(SOURCES
         view/buffered_map_drawer.cpp
         view/camera.cpp
         view/main_menu.cpp
+        view/menu_button.cpp
         view/mob_drawer.cpp
         view/pause_menu.cpp
         view/settings_menu.cpp

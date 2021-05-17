@@ -3,6 +3,7 @@
 
 #include <QKeyEvent>
 #include <QTimer>
+#include <QSettings>
 #include <unordered_set>
 
 #include "controller/controller_types.h"
@@ -38,6 +39,7 @@ class Controller {
 
   void TickEvent();
   QTimer tick_timer_;
+  QSettings settings_;
   std::unordered_set<ControllerTypes::Key> pressed_keys_;
 };
 

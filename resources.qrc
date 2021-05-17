@@ -1,11 +1,13 @@
 <RCC>
     <qresource prefix="/">
+        <file>resources/images/main_menu_background.png</file>
         <file>resources/textures/grass.png</file>
         <file>resources/textures/player.png</file>
         <file>resources/textures/mob.png</file>
-        <file>resources/translations/en_US.ts</file>
-        <file>resources/translations/en_US.qm</file>
-        <file>resources/translations/ru_RU.ts</file>
-        <file>resources/translations/ru_RU.qm</file>
+        <file>resources/translations/translation_en_US.ts</file>
+        <file>resources/translations/translation_en_US.qm</file>
+        <file>resources/translations/translation_ru_RU.ts</file>
+        <file>resources/translations/translation_ru_RU.qm</file>
+        <file>resources/fonts/ComicSansMS3.ttf</file>
     </qresource>
 </RCC>

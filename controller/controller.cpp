@@ -62,20 +62,20 @@ void Controller::TickEvent() {
 }
 
 ControllerTypes::Key Controller::TranslateKeyCode(int key_code) {
-  switch (key_code) {
-    case Qt::Key::Key_Left:
-      return ControllerTypes::Key::kLeft;
-    case Qt::Key::Key_Right:
-      return ControllerTypes::Key::kRight;
-    case Qt::Key::Key_Space:
-      return ControllerTypes::Key::kJump;
-    case Qt::Key::Key_Escape:
-    case Qt::Key::Key_Exit:
-    case Qt::Key::Key_Menu:
-      return ControllerTypes::Key::kExit;
-    default:
-      return ControllerTypes::Key::kUnused;
+  if (key_code == GetInstance()->settings_.value("kLeft").toInt()) {
+    return ControllerTypes::Key::kLeft;
   }
+  if (key_code == GetInstance()->settings_.value("kRight").toInt()) {
+    return ControllerTypes::Key::kRight;
+  }
+  if (key_code == GetInstance()->settings_.value("kJump").toInt()) {
+    return ControllerTypes::Key::kJump;
+  }
+  if (key_code == Qt::Key::Key_Escape || key_code == Qt::Key::Key_Exit ||
+      key_code == Qt::Key::Key_Menu) {
+    return ControllerTypes::Key::kExit;
+  }
+  return ControllerTypes::Key::kUnused;
 }
 
 void Controller::KeyPress(int key) {

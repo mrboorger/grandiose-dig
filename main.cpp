@@ -1,4 +1,6 @@
 #include <QApplication>
+#include <QDebug>
+#include <QFontDatabase>
 #include <QLibraryInfo>
 #include <QSettings>
 #include <QTranslator>
@@ -14,10 +16,10 @@ int main(int argc, char* argv[]) {
   QCoreApplication::setApplicationName("Grandiose dig");
 
   QSettings settings;
-  settings.setValue("language", "en_US");
+  settings.setValue("language", "ru_RU");
   QString language = settings.value("language", "en_US").toString();
   QTranslator translator;
-  if (translator.load(":resources/translations/" + language)) {
+  if (translator.load(":resources/translations/translation_" + language)) {
     QApplication::installTranslator(&translator);
   }
 
@@ -36,6 +38,6 @@ int main(int argc, char* argv[]) {
   controller->SetPlayer();
   controller->SetMob();
   // }
-  view->show();
+  view->showFullScreen();
   return QApplication::exec();
 }
