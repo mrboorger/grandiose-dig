@@ -23,7 +23,7 @@ const QString
         "background-color: grey;"
         "}"
         "QPushButton:hover {"
-        "font-size: 70px;"
+        "font-size: 60px;"
         "color: yellow;"
         "background-color: grey;"
         "border: none;"

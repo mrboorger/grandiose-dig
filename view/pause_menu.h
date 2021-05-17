@@ -1,7 +1,9 @@
 #ifndef VIEW_PAUSE_MENU_H_
 #define VIEW_PAUSE_MENU_H_
 
+#include <QHBoxLayout>
 #include <QPushButton>
+#include <QVBoxLayout>
 
 #include "view/abstract_menu.h"
 
@@ -16,14 +18,15 @@ class PauseMenu final : public AbstractMenu {
 
   void ReTranslateButtons() final;
 
- protected:
-  void PlaceButtons() final;
-
  private:
   void paintEvent(QPaintEvent* event) final;
 
   QScopedPointer<QPushButton> resume_button_;
+  QScopedPointer<QPushButton> settings_button_;
   QScopedPointer<QPushButton> back_to_menu_button_;
+
+  QVBoxLayout* buttons_layout_;
+  QScopedPointer<QHBoxLayout> horizontal_layout_;
 };
 
 #endif  // VIEW_PAUSE_MENU_H_
