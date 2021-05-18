@@ -17,7 +17,9 @@ class TextureAtlas : public QOpenGLTexture {
 
   void Init();
 
-  // Get gexture coordinates of Left/Right Top/Bottom block corner
+  // Get texture coordinate (TC) of Left/Right Top/Bottom block corner
+  // I. e. GetBlockTCLT == Get the texture coordinate of the left top block
+  // corner
   static QPointF GetBlockTCLT(Block block);
   static QPointF GetBlockTCLB(Block block);
   static QPointF GetBlockTCRT(Block block);

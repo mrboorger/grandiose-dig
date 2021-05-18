@@ -3,7 +3,7 @@
 #include "utils.h"
 
 void LightMap::UpdateLight(QPoint pos) {
-  remove_queue_.push(pos);
+  invalidate_queue_.push(pos);
 }
 
 Light LightMap::GetLight(QPoint pos) {
@@ -50,10 +50,10 @@ void LightMap::CalculateRegion(const QRect& region) {
   std::queue<QPoint> update_queue;
   std::set<QPoint, utils::QPointLexicographicalCompare> removed;
   data_.MarkUsedOrInsert(region);
-  while (!remove_queue_.empty()) {
-    QPoint pos = remove_queue_.front();
+  while (!invalidate_queue_.empty()) {
+    QPoint pos = invalidate_queue_.front();
     removed.insert(pos);
-    remove_queue_.pop();
+    invalidate_queue_.pop();
     const Light& light = data_.GetValue(pos);
     for (auto neighbour : utils::NeighbourPoints(pos)) {
       if (!data_.TryGetValue(neighbour)) {
@@ -61,7 +61,7 @@ void LightMap::CalculateRegion(const QRect& region) {
       }
       if (data_.GetValue(neighbour).IsDepenantOn(light)) {
         if (removed.count(neighbour) == 0) {
-          remove_queue_.push(neighbour);
+          invalidate_queue_.push(neighbour);
           removed.insert(neighbour);
         }
       } else if (!data_.GetValue(neighbour).IsDark()) {

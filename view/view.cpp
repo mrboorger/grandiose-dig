@@ -32,6 +32,10 @@ View::View()
   connect(Model::GetInstance(), &Model::MobSound, this, &View::MobSound);
 }
 
+View::~View() {
+  instance_ = nullptr;
+}
+
 void View::SetInventoryDrawer(InventoryDrawer* drawer) {
   inventory_drawer_.reset(drawer);
 }
@@ -161,11 +165,11 @@ QPoint View::GetBlockCoordUnderCursor() const {
 
 void View::UpdateLight(QPoint camera_pos) {
   light_map_->CalculateRegion(drawer_->GetDrawRegion(camera_pos));
-  auto* to_update = light_map_->GetUpdateList();
-  for (auto pos : *to_update) {
+  const auto& to_update = light_map_->TakeUpdateList();
+  for (auto pos : to_update) {
     drawer_->UpdateBlock(pos);
   }
-  to_update->clear();
+  light_map_->ClearUpdateList();
 }
 
 QPointF View::GetTopLeftWindowCoord() const {

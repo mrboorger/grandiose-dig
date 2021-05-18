@@ -23,7 +23,7 @@ class View : public QOpenGLWidget {
   View(const View&) = delete;
   View(View&&) = delete;
 
-  ~View() = default;
+  ~View();
 
   View& operator=(const View&) = delete;
   View& operator=(View&&) = delete;

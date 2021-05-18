@@ -58,6 +58,8 @@ class GLMapDrawer : public AbstractMapDrawer {
   static constexpr int32_t kElementsCount = kElementsPerBlock * kMeshSize;
   static constexpr int kAttribsCount = 4;
   static constexpr std::array<int, kAttribsCount> kAttribSizes{2, 2, 3, 1};
+  static constexpr std::array<const char*, kAttribsCount> kAttribNames{
+      "in_pos", "in_tex_coords", "in_light", "in_sun"};
   static constexpr VertexData kNoDrawVertex = VertexData{};
   static constexpr BlockData kNoDrawBlockData = BlockData{
       kNoDrawVertex, kNoDrawVertex, kNoDrawVertex, kNoDrawVertex, kNoDrawVertex,

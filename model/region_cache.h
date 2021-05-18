@@ -1,5 +1,5 @@
-#ifndef MODEL_BUFFERED_CLEARABLE_CACHE_H_
-#define MODEL_BUFFERED_CLEARABLE_CACHE_H_
+#ifndef MODEL_REGION_CACHE_H_
+#define MODEL_REGION_CACHE_H_
 
 #include <QPoint>
 #include <functional>
@@ -26,14 +26,14 @@ class GenEmptyBuffer {
 template<typename T, int32_t width, int32_t height,
          typename BufferType = std::array<T, width * height>,
          typename F = GenEmptyBuffer<BufferType>>
-class BufferedClearableCache {
+class RegionCache {
  public:
   using Buffer = BufferType;
 
   static constexpr int32_t kBufferWidth = width;
   static constexpr int32_t kBufferHeight = height;
 
-  explicit BufferedClearableCache(
+  explicit RegionCache(
       int clear_time_msec = constants::kDefaultClearTimeMSec,
       F gen_buffer = F())
       : data_(clear_time_msec), gen_buffer_(std::move(gen_buffer)) {}
@@ -114,4 +114,4 @@ class BufferedClearableCache {
 
 }  // namespace containers
 
-#endif  // MODEL_BUFFERED_CLEARABLE_CACHE_H_
+#endif  // MODEL_REGION_CACHE_H_

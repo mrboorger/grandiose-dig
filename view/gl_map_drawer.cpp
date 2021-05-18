@@ -77,7 +77,9 @@ void GLMapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
       mesh->release();
     }
   }
-  // To keep Qt invariants.
+  // We don't need to invoke glDisableVertexAttribArray in each loop iteration,
+  // like glEnableVertexAttribArray. This function is just used to keep Qt
+  // invariant, so need to be called only once in the end.
   for (int i = 0; i < kAttribsCount; ++i) {
     gl->glDisableVertexAttribArray(i);
   }
@@ -150,6 +152,9 @@ void GLMapDrawer::GenerateIndexBuffer(QOpenGLBuffer* index_buffer) {
   for (int y = 0; y < kMeshHeight; ++y) {
     for (int x = 0; x < kMeshWidth; ++x) {
       int i = y * kMeshWidth + x;
+      // Generates order of drawing queue.
+      // To draw a block it draws 4 triangles with common vertex
+      // in the center of block.
       data[kElementsPerBlock * i + 0] = kVerticesPerBlock * i + 0;
       data[kElementsPerBlock * i + 1] = kVerticesPerBlock * i + 1;
       data[kElementsPerBlock * i + 2] = kVerticesPerBlock * i + 4;
@@ -173,7 +178,11 @@ void GLMapDrawer::LoadShader(QOpenGLShaderProgram* shader) {
                                   ":/resources/shaders/vertex.glsl");
   shader->addShaderFromSourceFile(QOpenGLShader::Fragment,
                                   ":/resources/shaders/fragment.glsl");
-  assert(shader->link());
+  bool link_result = shader->link();
+  assert(link_result);
+  for (int i = 0; i < kAttribsCount; ++i) {
+    shader->bindAttributeLocation(kAttribNames[i], i);
+  }
 }
 
 QOpenGLBuffer* GLMapDrawer::GetMesh(QPoint buffer_pos) {

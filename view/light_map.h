@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "model/abstract_map.h"
-#include "model/buffered_clearable_cache.h"
+#include "model/region_cache.h"
 #include "model/constants.h"
 #include "utils.h"
 
@@ -27,9 +27,12 @@ class LightMap {
   Light GetLightRB(QPoint pos);
   void CalculateRegion(const QRect& region);
 
-  std::set<QPoint, utils::QPointLexicographicalCompare>* GetUpdateList() {
-    return &updated_;
+  const std::set<QPoint, utils::QPointLexicographicalCompare>& TakeUpdateList()
+      const {
+    return updated_;
   }
+
+  void ClearUpdateList() { updated_.clear(); }
 
  private:
   static constexpr int kBufferWidth = 64;
@@ -46,7 +49,7 @@ class LightMap {
     std::queue<QPoint>* update_queue_;
   };
   using Container =
-      containers::BufferedClearableCache<Light, kBufferWidth, kBufferHeight,
+      containers::RegionCache<Light, kBufferWidth, kBufferHeight,
                                          Buffer, BufferConstructor>;
   static constexpr int kUpdateDepth = 2;
 
@@ -55,8 +58,8 @@ class LightMap {
   Light GetLuminosity(QPoint pos) const;
 
   Container data_ = Container(constants::kDefaultClearTimeMSec,
-                              BufferConstructor(&remove_queue_));
-  std::queue<QPoint> remove_queue_;
+                              BufferConstructor(&invalidate_queue_));
+  std::queue<QPoint> invalidate_queue_;
   std::set<QPoint, utils::QPointLexicographicalCompare> updated_;
   std::shared_ptr<AbstractMap> map_;
 };

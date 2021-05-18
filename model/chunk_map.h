@@ -10,7 +10,7 @@
 
 #include "model/abstract_map.h"
 #include "model/abstract_region_generator.h"
-#include "model/buffered_clearable_cache.h"
+#include "model/region_cache.h"
 #include "model/chunk.h"
 #include "utils.h"
 
@@ -35,7 +35,7 @@ class ChunkMap : public AbstractMap {
     AbstractRegionGenerator* generator_;
   };
   using NodesContainer =
-      containers::BufferedClearableCache<Block, Chunk::kWidth, Chunk::kHeight,
+      containers::RegionCache<Block, Chunk::kWidth, Chunk::kHeight,
                                          Chunk, GenChunk>;
 
   Block* GetBlockMutable(QPoint pos) override;
