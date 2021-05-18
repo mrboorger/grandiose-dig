@@ -59,7 +59,8 @@ void Controller::PlaceBlock(QPoint block_coords, Block block) {
 }
 
 void Controller::UseItem() {
-  if (Model::GetInstance()->GetPlayer()) {
+  if (!Model::GetInstance()->GetPlayer()->CanUseItem()) {
+    return;
   }
   QPoint block_coords = View::GetInstance()->GetBlockCoordUnderCursor();
   const InventoryItem& item =
@@ -76,6 +77,7 @@ void Controller::UseItem() {
   } else {
     // TODO(mrboorger): UsePotion?
   }
+  Model::GetInstance()->GetPlayer()->SetUseItemCooldownInterval();
 }
 
 void Controller::StartAttack() {
@@ -166,7 +168,6 @@ bool Controller::CanAttackMob(std::shared_ptr<MovingObject> mob,
 }
 
 void Controller::PlayerAttack(double time) {
-  // TODO(mrboorger): cooldown between using items
   Model::GetInstance()->GetPlayer()->DecAttackCooldownInterval(time);
   if (Model::GetInstance()->GetPlayer()->IsAttackFinished()) {
     return;
@@ -195,7 +196,9 @@ void Controller::TickEvent() {
       std::chrono::duration_cast<std::chrono::milliseconds>(cur - prev_time_)
           .count();
   prev_time_ = cur;
+  Model::GetInstance()->GetPlayer()->DecItemUsingCooldownInterval(time);
   Model::GetInstance()->MoveObjects(pressed_keys_, time);
+
   if (is_pressed_left_mouse_button) {
     // TODO(Wind-Eagle): make BreakBlock() dependible on time
     BreakBlock(time);
