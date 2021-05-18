@@ -19,6 +19,7 @@ class View : public QOpenGLWidget {
  public:
   static View* GetInstance();
 
+  View();
   View(const View&) = delete;
   View(View&&) = delete;
 
@@ -44,7 +45,7 @@ class View : public QOpenGLWidget {
   void MobSound(MovingObject* object);
 
  private:
-  View();
+  static View* instance_;
 
   void initializeGL() override;
   void paintGL() override;

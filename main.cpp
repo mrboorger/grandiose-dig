@@ -6,7 +6,7 @@
 
 int main(int argc, char* argv[]) {
   QApplication application(argc, argv);
-  View* view(View::GetInstance());
+  View view;
 
   // TODO(Wind-Eagle): delete. {
   Controller* controller(Controller::GetInstance());
@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
   controller->SetPlayer();
   controller->SetMob();
   // }
-  view->show();
-  view->setWindowState(Qt::WindowMaximized);
+  view.show();
+  view.setWindowState(Qt::WindowMaximized);
   return QApplication::exec();
 }

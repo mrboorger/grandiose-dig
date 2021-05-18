@@ -14,9 +14,10 @@
 #include "view/gl_func.h"
 #include "view/moving_object_drawer.h"
 
+View* View::instance_ = nullptr;
+
 View* View::GetInstance() {
-  static View view;
-  return &view;
+  return instance_;
 }
 
 View::View()
@@ -24,6 +25,8 @@ View::View()
       camera_(QPointF(150, 150)),
       sound_manager_(new SoundManager()),
       drawer_(nullptr) {
+  assert(!instance_);
+  instance_ = this;
   connect(Model::GetInstance(), &Model::DamageDealt, this, &View::DamageDealt);
   connect(Model::GetInstance(), &Model::BecameDead, this, &View::BecameDead);
   connect(Model::GetInstance(), &Model::MobSound, this, &View::MobSound);
