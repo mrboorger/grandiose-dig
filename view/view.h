@@ -31,13 +31,11 @@ class View : public QOpenGLWidget {
   View& operator=(const View&) = delete;
   View& operator=(View&&) = delete;
 
-  GameState GetGameState() { return game_state_; };
-
   void SetDrawer(AbstractMapDrawer* drawer) { drawer_.reset(drawer); }
   void SetLightMap(LightMap* light_map) { light_map_.reset(light_map); }
   void SetInventoryDrawer(InventoryDrawer* drawer);
 
-  static void Quit() { GetInstance()->close(); }
+  GameState GetGameState() { return game_state_; }
 
   QPoint GetCursorPos() const;              // in pixels
   QPoint GetBlockCoordUnderCursor() const;  // in blocks

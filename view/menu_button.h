@@ -20,20 +20,16 @@ const QString
         "font-family: Comic Sans MS;"
         "font-size: 60px;"
         "color: black;"
-        "background-color: grey;"
+        "border-radius: 20px;"
+        "background-color: #a1a39d;"
         "}"
         "QPushButton:hover {"
         "font-size: 60px;"
-        "color: yellow;"
-        "background-color: grey;"
-        "border: none;"
+        "background-color: #838581;"
         "outline: none;"
         "}"
         "QPushButton:hover:pressed {"
-        "border: none;"
-        "color: yellow;"
-        "background-color: grey;"
-        "border: none;"
+        "background-color: #838581;"
         "outline: none;"
         "}",
         // -------------Expanding----------------
@@ -73,7 +69,7 @@ const QString
         "color: #f7e300;"
         "background-color: #7a3916;"
         "}"};
-}
+} // namespace menu_button_constants
 
 class MenuButton final : public QPushButton {
   Q_OBJECT

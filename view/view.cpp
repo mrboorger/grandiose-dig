@@ -229,7 +229,19 @@ void View::paintEvent(QPaintEvent* event) {
       paintGL();
       pause_menu_->update();
       break;
-    default:
+    case GameState::kSettings:
+      QPainter painter(this);
+      if (previous_game_state_ == GameState::kGame ||
+          previous_game_state_ == GameState::kPaused) {
+        paintGL();
+        QColor backgroundColor("#a1a39d");
+        backgroundColor.setAlpha(160);
+        // painter.fillRect(rect(), backgroundColor);
+      } else {
+        painter.drawImage(
+            0, 0, QImage(":/resources/images/main_menu_background.png"));
+      }
+      settings_menu_->update();
       break;
   }
 }

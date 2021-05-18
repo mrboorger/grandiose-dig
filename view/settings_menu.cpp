@@ -56,9 +56,6 @@ void SettingsMenu::ReTranslateButtons() {
 
 void SettingsMenu::paintEvent(QPaintEvent *event) {
   QWidget::paintEvent(event);
-  QPainter painter(this);
-  painter.drawImage(0, 0,
-                    QImage(":/resources/images/main_menu_background.png"));
-
+  save_and_close_button_->update();
   close_button_->update();
 }

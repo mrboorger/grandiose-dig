@@ -1,5 +1,5 @@
-#ifndef VIEW_BASE_MENU_H_
-#define VIEW_BASE_MENU_H_
+#ifndef VIEW_ABSTRACT_MENU_H_
+#define VIEW_ABSTRACT_MENU_H_
 
 #include <QWidget>
 
@@ -15,7 +15,7 @@ class AbstractMenu : public QWidget {
   Q_OBJECT
 
  public:
-  explicit AbstractMenu(QWidget* parent = nullptr) : QWidget(parent){};
+  explicit AbstractMenu(QWidget* parent = nullptr) : QWidget(parent){}
   AbstractMenu(const AbstractMenu&) = delete;
   AbstractMenu(AbstractMenu&&) = delete;
 
@@ -34,4 +34,4 @@ class AbstractMenu : public QWidget {
   void GameStateChanged(GameState);
 };
 
-#endif  // VIEW_BASE_MENU_H_
+#endif  // VIEW_ABSTRACT_MENU_H_

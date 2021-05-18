@@ -1,24 +1,28 @@
 #include "view/pause_menu.h"
-#include "view/menu_button.h"
 
 #include <QPainter>
 
+#include "view/menu_button.h"
+
 PauseMenu::PauseMenu(QWidget *parent) : AbstractMenu(parent) {
-  resume_button_.reset(new MenuButton(this, MenuButtonType::kTransparentExpanding));
+  resume_button_.reset(
+      new MenuButton(this, MenuButtonType::kTransparentExpanding));
   auto on_resume_button_click = [this]() {
     emit(GameStateChanged(GameState::kGame));
   };
   connect(resume_button_.data(), &QPushButton::clicked, this,
           on_resume_button_click);
 
-  settings_button_.reset(new MenuButton(this, MenuButtonType::kTransparentExpanding));
+  settings_button_.reset(
+      new MenuButton(this, MenuButtonType::kTransparentExpanding));
   auto on_settings_button_click = [this]() {
     emit(GameStateChanged(GameState::kSettings));
   };
   connect(settings_button_.data(), &QPushButton::clicked, this,
           on_settings_button_click);
 
-  back_to_menu_button_.reset(new MenuButton(this, MenuButtonType::kTransparentExpanding));
+  back_to_menu_button_.reset(
+      new MenuButton(this, MenuButtonType::kTransparentExpanding));
   auto on_back_to_menu_button_click = [this]() {
     emit(GameStateChanged(GameState::kMainMenu));
   };
@@ -56,8 +60,8 @@ void PauseMenu::paintEvent(QPaintEvent *event) {
   QWidget::paintEvent(event);
   QColor backgroundColor = palette().dark().color();
   backgroundColor.setAlpha(160);
-  QPainter customPainter(this);
-  customPainter.fillRect(rect(), backgroundColor);
+  QPainter painter(this);
+  painter.fillRect(rect(), backgroundColor);
   resume_button_->update();
   back_to_menu_button_->update();
 }

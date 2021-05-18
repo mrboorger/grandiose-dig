@@ -182,7 +182,7 @@ void Controller::TickEvent() {
         View::GetInstance()->ChangeGameState(GameState::kPaused);
         break;
       case GameState::kMainMenu:
-        View::Quit();
+        View::GetInstance()->close();
         break;
       case GameState::kPaused:
         View::GetInstance()->ChangeGameState(GameState::kMainMenu);

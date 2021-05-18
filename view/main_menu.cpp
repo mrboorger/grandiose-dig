@@ -30,7 +30,7 @@ MainMenu::MainMenu(QWidget* parent) : AbstractMenu(parent) {
 
   exit_button_.reset(
       new MenuButton(this, MenuButtonType::kTransparentExpanding));
-  auto on_exit_button_click = []() { View::Quit(); };
+  auto on_exit_button_click = []() { View::GetInstance()->close(); };
   connect(exit_button_.data(), &QPushButton::clicked, this,
           on_exit_button_click);
 
@@ -61,6 +61,7 @@ void MainMenu::ReTranslateButtons() {
 }
 
 void MainMenu::paintEvent(QPaintEvent* event) {
+  QWidget::paintEvent(event);
   QPainter painter(this);
   painter.drawImage(0, 0,
                     QImage(":/resources/images/main_menu_background.png"));
