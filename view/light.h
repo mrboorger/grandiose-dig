@@ -13,7 +13,7 @@ class Light {
   static constexpr int kSunIndex = 3;
   static constexpr uint8_t kMaxLight = 255;
   static constexpr uint8_t kMinLight = 0;
-  static constexpr int kDecreaseFactor = 10;
+  static constexpr uint8_t kDecreaseFactor = 5;
 
   Light() = default;
   constexpr Light(uint8_t red, uint8_t green, uint8_t blue, uint8_t sun)
@@ -33,15 +33,13 @@ class Light {
   void SetBlue(uint8_t value) { data_[kBlueIndex] = value; }
   void SetSun(uint8_t value) { data_[kSunIndex] = value; }
 
-  bool IsDepended(const Light& light) const;
+  bool IsDepenantOn(const Light& light) const;
   bool IsDark() const;
   bool Combine(const Light& light);
-  void GetMax(const Light& light);
+  void UpdateMax(const Light& light);
   void Reset();
 
  private:
-  static float sun_intensivity_;
-
   std::array<uint8_t, kNChannels> data_;
 };
 

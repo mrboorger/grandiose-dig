@@ -68,7 +68,8 @@ class GLMapDrawer : public AbstractMapDrawer {
   static VertexData GenData(QPoint pos, QPointF tex_coords, Light light);
 
   static QPoint RoundToMeshPos(QPoint p);
-  static GLfloat Average(GLfloat a, GLfloat b, GLfloat c, GLfloat d);
+  static VertexData Average(const VertexData& a, const VertexData& b,
+                            const VertexData& c, const VertexData& d);
 
   static void GenerateIndexBuffer(QOpenGLBuffer* index_buffer);
   static void LoadShader(QOpenGLShaderProgram* shader);

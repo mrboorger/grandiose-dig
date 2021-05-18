@@ -56,6 +56,8 @@ class View : public QOpenGLWidget {
   void mousePressEvent(QMouseEvent* event) override;
   void mouseReleaseEvent(QMouseEvent* event) override;
 
+  void UpdateLight(QPoint camera_pos);
+
   QPointF GetTopLeftWindowCoord() const;  // in blocks
 
   Camera camera_;

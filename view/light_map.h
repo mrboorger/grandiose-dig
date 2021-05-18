@@ -19,13 +19,15 @@ class LightMap {
 
   void UpdateLight(QPoint pos);
   Light GetLight(QPoint pos);
+  // Returns light at specific block corner
+  // (Left/Right, Top/Bottom)
   Light GetLightLT(QPoint pos);
   Light GetLightLB(QPoint pos);
   Light GetLightRT(QPoint pos);
   Light GetLightRB(QPoint pos);
   void CalculateRegion(const QRect& region);
 
-  std::set<QPoint, utils::QPointLexicographicalCompare>* UpdateList() {
+  std::set<QPoint, utils::QPointLexicographicalCompare>* GetUpdateList() {
     return &updated_;
   }
 
@@ -46,9 +48,9 @@ class LightMap {
   using Container =
       containers::BufferedClearableCache<Light, kBufferWidth, kBufferHeight,
                                          Buffer, BufferConstructor>;
-  static constexpr int kUpdateDeep = 1;
+  static constexpr int kUpdateDepth = 2;
 
-  void SetPointUpdated(QPoint pos, int iteration = kUpdateDeep);
+  void SetPointUpdated(QPoint pos, int iteration = kUpdateDepth);
 
   Light GetLuminosity(QPoint pos) const;
 

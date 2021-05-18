@@ -20,11 +20,14 @@ class Block {
   static constexpr int kFirstType = static_cast<int>(Type::kFirst);
   static constexpr int kTypesCount = static_cast<int>(Type::kTypesCount);
 
-  explicit Block(Type type) : type_(type) {}
+  explicit Block(Type type)
+      : type_(type), durability_(GetDefaultDurability()) {}
 
   bool IsVisible() const { return GetCharactistics(GetId()).is_visible; }
   Light GetLuminosity() const { return GetCharactistics(GetId()).luminosity; }
   bool IsOpaque() const { return GetCharactistics(GetId()).is_opaque; }
+  int GetDefaultDurability() const {
+    return GetCharactistics(GetId()).default_durability; }
 
   Type GetType() const { return type_; }
 
@@ -47,7 +50,7 @@ class Block {
 
   Type type_;
   // TODO(mrboorger): Make different durability_ of the blocks
-  int durability_ = 5;
+  int durability_;
 };
 
 #endif  // MODEL_BLOCK_H_

@@ -66,15 +66,7 @@ void View::paintGL() {
   camera_.SetPoint(Model::GetInstance()->GetPlayer()->GetPosition());
   QPointF camera_pos = camera_.GetPoint();
 
-  light_map_->CalculateRegion(
-      drawer_->GetDrawRegion(QPoint(camera_pos.x(), camera_pos.y())));
-  for (auto* to_update = light_map_->UpdateList(); !to_update->empty();) {
-    for (auto pos : *to_update) {
-      drawer_->UpdateBlock(pos);
-    }
-    to_update->clear();
-  }
-
+  UpdateLight(QPoint(camera_pos.x(), camera_pos.y()));
   drawer_->DrawMapWithCenter(&painter, camera_pos, rect());
 
   inventory_drawer_->DrawInventory(&painter);
@@ -162,6 +154,15 @@ QPointF View::GetCoordUnderCursor() const {
 QPoint View::GetBlockCoordUnderCursor() const {
   QPointF pos = GetCoordUnderCursor();
   return QPoint(std::floor(pos.x()), std::floor(pos.y()));
+}
+
+void View::UpdateLight(QPoint camera_pos) {
+  light_map_->CalculateRegion(drawer_->GetDrawRegion(camera_pos));
+  auto* to_update = light_map_->GetUpdateList();
+  for (auto pos : *to_update) {
+    drawer_->UpdateBlock(pos);
+  }
+  to_update->clear();
 }
 
 QPointF View::GetTopLeftWindowCoord() const {
