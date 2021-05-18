@@ -42,7 +42,9 @@ void View::paintEvent(QPaintEvent* event) {
   camera_.SetPoint(Model::GetInstance()->GetPlayer()->GetPosition());
   drawer_->DrawMapWithCenter(&painter, camera_.GetPoint(), rect());
 
-  inventory_drawer_->DrawInventory(&painter);
+  if (is_visible_inventory_) {
+    inventory_drawer_->DrawInventory(&painter);
+  }
 
   // TODO(Wind-Eagle): temporary code; need to make PlayerDrawer
   auto player = Model::GetInstance()->GetPlayer();
@@ -94,6 +96,9 @@ void View::MobSound(MovingObject::Type type) {
 }
 
 void View::keyPressEvent(QKeyEvent* event) {
+  if (event->key() == Qt::Key_Escape) {
+    is_visible_inventory_ = !is_visible_inventory_;
+  }
   Controller::GetInstance()->KeyPress(event->key());
 }
 

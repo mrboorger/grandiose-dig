@@ -56,6 +56,8 @@ class View : public QWidget {
   std::unique_ptr<SoundManager> sound_manager_;
   std::unique_ptr<AbstractMapDrawer> drawer_;
   std::unique_ptr<InventoryDrawer> inventory_drawer_;
+
+  bool is_visible_inventory_ = false;
 };
 
 #endif  // VIEW_VIEW_H_
