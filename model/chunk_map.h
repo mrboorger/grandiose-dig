@@ -10,40 +10,38 @@
 
 #include "model/abstract_map.h"
 #include "model/abstract_region_generator.h"
+#include "model/buffered_clearable_cache.h"
 #include "model/chunk.h"
-#include "model/clearable_map.h"
 #include "utils.h"
 
 class ChunkMap : public AbstractMap {
   friend class FlatChunkMapGenerator;
+  friend class PerlinChunkMapGenerator;
 
  public:
-  const Block& GetBlock(QPoint pos) override;
   void SetBlock(QPoint pos, Block block) override;
   void CacheRegion(const QRect& region) override;
 
-  const Chunk& GetChunk(QPoint chunk_pos);
-
-  static std::pair<QPoint, QPoint> GetChunkCoords(QPoint pos);
-  static QPoint GetChunkCoords(QPointF pos);
-  static QPointF GetWorldCoords(QPoint chunk_pos);
-
- private:
-  struct MapNode {
-    Chunk chunk;
-    bool is_used;
-  };
-
   explicit ChunkMap(AbstractRegionGenerator* generator);
 
-  Chunk* FindChunk(QPoint chunk_pos);
+ private:
+  class GenChunk {
+   public:
+    explicit GenChunk(AbstractRegionGenerator* generator)
+        : generator_(generator) {}
+    Chunk operator()(QPoint pos) { return generator_->Generate(pos); }
 
+   private:
+    AbstractRegionGenerator* generator_;
+  };
   using NodesContainer =
-      containers::ClearableMap<QPoint, MapNode,
-                               utils::QPointLexicographicalCompare>;
+      containers::BufferedClearableCache<Block, Chunk::kWidth, Chunk::kHeight,
+                                         Chunk, GenChunk>;
+
+  Block* GetBlockMutable(QPoint pos) override;
+
   NodesContainer nodes_;
   std::unique_ptr<AbstractRegionGenerator> generator_;
-  NodesContainer::iterator last_used_;
 };
 
 #endif  // MODEL_CHUNK_MAP_H_

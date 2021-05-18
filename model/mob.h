@@ -10,14 +10,15 @@
 
 class Mob : public MovingObject {
  public:
-  enum class Type { kMob, kTypesCount };
+  enum class Type { kZombie, kZombieLord, kQuiox, kMagicQuiox, kTypesCount };
   static constexpr int kTypesCount = static_cast<int>(Type::kTypesCount);
 
-  Mob(QPointF pos, QPointF size);
+  Mob(QPointF pos, Type type);
 
   int32_t GetId() const { return static_cast<int32_t>(type_); }
+  Type GetMobType() const { return type_; }
 
-  void MoveMob();
+  void MoveMob(double time);
 
   void SetStrategy(std::shared_ptr<AbstractStrategy> strategy) {
     strategy_ = std::move(strategy);

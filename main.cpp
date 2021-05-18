@@ -6,7 +6,7 @@
 #include <QTranslator>
 
 #include "controller/controller.h"
-#include "model/flat_chunk_map_generator.h"
+#include "model/perlin_chunk_map_generator.h"
 #include "view/view.h"
 
 int main(int argc, char* argv[]) {
@@ -33,11 +33,12 @@ int main(int argc, char* argv[]) {
   View* view(View::GetInstance());
   // TODO(Wind-Eagle): delete. {
   Controller* controller(Controller::GetInstance());
-  FlatChunkMapGenerator generator(42);
+  PerlinChunkMapGenerator generator(42);
   controller->SetGeneratedMap(&generator);
   controller->SetPlayer();
   controller->SetMob();
   // }
-  view->showFullScreen();
+  view->show();
+  view->setWindowState(Qt::WindowMaximized);
   return QApplication::exec();
 }

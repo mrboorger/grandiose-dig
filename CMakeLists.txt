@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(grandious_dig LANGUAGES CXX)
+project(grandiose_dig LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -37,14 +37,23 @@ set(RESOURCES resources.qrc)
 set(SOURCES
         controller/controller.cpp
         main.cpp
+        model/abstract_map.cpp
+        model/block.cpp
+        model/chunk.cpp
         model/chunk_map.cpp
+        model/effects.cpp
         model/flat_chunk_map_generator.cpp
         model/flat_map_generator.cpp
+        model/inventory_item.cpp
+        model/inventory.cpp
         model/map.cpp
         model/mob.cpp
         model/model.cpp
         model/move_vector.cpp
         model/moving_object.cpp
+        model/perlin_chunk_map_generator.cpp
+        model/perlin_noise1d.cpp
+        model/perlin_noise2d.cpp
         model/player.cpp
         model/strategy.cpp
         utils.cpp
@@ -52,13 +61,20 @@ set(SOURCES
         view/block_drawer.cpp
         view/buffered_map_drawer.cpp
         view/camera.cpp
+        view/gl_func.cpp
+        view/gl_map_drawer.cpp
+        view/inventory_drawer.cpp
+        view/light.cpp
+        view/light_map.cpp
         view/main_menu.cpp
         view/menu_button.cpp
-        view/mob_drawer.cpp
+        view/map_drawer.cpp
+        view/moving_object_drawer.cpp
         view/pause_menu.cpp
         view/settings_menu.cpp
-        view/view.cpp
-        )
+        view/sound_manager.cpp
+        view/texture_atlas.cpp
+        view/view.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${RESOURCES})
 target_link_libraries(${PROJECT_NAME} ${REQUIRED_LIBS_QUALIFIED})

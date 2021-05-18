@@ -2,8 +2,9 @@
 #define CONTROLLER_CONTROLLER_H_
 
 #include <QKeyEvent>
-#include <QTimer>
 #include <QSettings>
+#include <QTimer>
+#include <memory>
 #include <unordered_set>
 
 #include "controller/controller_types.h"
@@ -33,14 +34,33 @@ class Controller {
 
   void KeyPress(int key);
   void KeyRelease(int key);
+  void ButtonPress(Qt::MouseButton button);
+  void ButtonRelease(Qt::MouseButton button);
+
+  void PickItemToPlayer(InventoryItem item);
 
  private:
   Controller();
 
   void TickEvent();
+
+  void BreakBlock();
+  void StartAttack();
+  void PlayerAttack(double time);
+
+  bool IsVisible(QPointF player_center, QPointF mob_point) const;
+  bool CanAttackMobAtPoint(QPointF mob_point, QPointF player_center,
+                           double lower_angle, double upper_angle) const;
+  bool CanAttackMob(std::shared_ptr<MovingObject> mob, QPointF player_center,
+                    double lower_angle, double upper_angle) const;
+
   QTimer tick_timer_;
   QSettings settings_;
   std::unordered_set<ControllerTypes::Key> pressed_keys_;
+  bool is_pressed_right_mouse_button = false;
+
+  std::chrono::time_point<std::chrono::high_resolution_clock> prev_time_ =
+      std::chrono::high_resolution_clock::now();
 };
 
 #endif  // CONTROLLER_CONTROLLER_H_

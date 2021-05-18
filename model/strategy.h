@@ -8,42 +8,46 @@
 
 #include "model/abstract_strategy.h"
 #include "model/moving_object.h"
+#include "utils.h"
 
 class BasicStrategy : public AbstractStrategy {
  public:
   BasicStrategy();
-  void Update() override;
+  BasicStrategy(const BasicStrategy& strategy) = default;
+  BasicStrategy(BasicStrategy&& strategy) = default;
+
+  virtual ~BasicStrategy() = default;
+
+  BasicStrategy& operator=(const BasicStrategy& strategy) = default;
+  BasicStrategy& operator=(BasicStrategy&& strategy) = default;
+
+  void Update(double time) override;
   virtual void SelectNewState();
   virtual void UpdateConditions();
   virtual bool IsActionFinished();
   virtual void PerformAction();
-  virtual ~BasicStrategy() = default;
-
-  BasicStrategy(const BasicStrategy& strategy) = default;
-
-  BasicStrategy(BasicStrategy&& strategy) = default;
-
-  BasicStrategy& operator=(const BasicStrategy& strategy) = default;
-
-  BasicStrategy& operator=(BasicStrategy&& strategy) = default;
 
   const std::unordered_set<ControllerTypes::Key>& GetKeys() const override {
     return keys_;
   }
 
  protected:
-  void DecreaseIntervals();
-  std::shared_ptr<const MovingObject> EnemySpotted();
+  virtual void DecreaseIntervals(double times);
+  std::shared_ptr<MovingObject> EnemySpotted();
   QPointF ChooseRandomWalkPosition() const;
-  void DoStay();
-  void DoWalk();
-  void DoAttack();
+
+  virtual void DoStay();
+  virtual void DoWalk();
+  virtual void DoAttack();
+
+  virtual void DoWalkActions();
 
   void UpdateStay();
   void UpdateWalk();
   void UpdateAttack();
 
- private:
+  bool IsNearPit(QPointF src, utils::Direction side) const;
+
   enum class State { kStay, kWalk, kAttack, kStatesCount };
   enum class Condition { kSeeEnemy, kCanAttack, kConditionsCount };
 
@@ -64,15 +68,43 @@ class BasicStrategy : public AbstractStrategy {
   }
 
   void ClearConditions() { conditions_ = 0; }
+  virtual bool AlmostNearX(QPointF lhs, QPointF rhs);
 
   std::unordered_set<ControllerTypes::Key> keys_;
 
-  int attack_interval_ = 0;
-  int walk_interval_ = 0;
+  double vision_radius_;
+  double walk_time_count_;
+  double attack_time_count_;
+  double walk_precision_;
+  double random_walk_chance_;
+  double random_walk_distance_;
+
+  double attack_interval_ = 0;
+  double walk_interval_ = 0;
   QPointF walk_target_ = {0, 0};
-  std::shared_ptr<const MovingObject> attack_target_;
+  std::shared_ptr<MovingObject> attack_target_;
   uint32_t conditions_;
   State state_;
+};
+
+class ZombieSummonerStrategy : public BasicStrategy {
+ public:
+  ZombieSummonerStrategy();
+
+ protected:
+  void DecreaseIntervals(double times) override;
+  void DoWalkActions() override;
+  void SummonZombie();
+
+  double summon_interval = 0;
+};
+
+class MagicStrategy : public BasicStrategy {
+ public:
+  MagicStrategy();
+
+ protected:
+  void DoAttack() override;
 };
 
 #endif  // MODEL_STRATEGY_H_

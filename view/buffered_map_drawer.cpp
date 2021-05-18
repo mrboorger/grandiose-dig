@@ -4,13 +4,14 @@
 #include <memory>
 #include <utility>
 
+#include "model/constants.h"
 #include "view/block_drawer.h"
 
 BufferedMapDrawer::BufferedMapDrawer(std::shared_ptr<AbstractMap> map)
-    : map_(std::move(map)) {}
+    : buffers_(constants::kDefaultClearTimeMSec), map_(std::move(map)) {}
 
 void BufferedMapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
-                                       const QRect& screen_coords) {
+                                          const QRect& screen_coords) {
   QPoint start = RoundToBufferPos(QPoint(pos.x(), pos.y()) -
                                   QPoint(kFieldOfView, kFieldOfView));
   QPoint finish = RoundToBufferPos(QPoint(pos.x(), pos.y()) +
@@ -25,37 +26,58 @@ void BufferedMapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
   }
 }
 
+void BufferedMapDrawer::UpdateBlock(QPoint pos) {
+  auto buffer_pos = RoundToBufferPos(pos);
+  auto buffer = buffers_.Get(buffer_pos);
+  if (!buffer) {
+    return;
+  }
+  QPixmap& casted = buffer.value();
+  QPainter painter(&casted);
+  RenderBlock(&painter,
+              QPointF(pos.x() - buffer_pos.x(), pos.y() - buffer_pos.y()) *
+                  constants::kBlockSz,
+              map_->GetBlock(pos), true);
+}
+
+QRect BufferedMapDrawer::GetDrawRegion(QPoint center) const {
+  return QRect(center.x() - kFieldOfView, center.y() - kFieldOfView,
+               center.x() + kFieldOfView, center.y() + kFieldOfView);
+}
+
 QPoint BufferedMapDrawer::RoundToBufferPos(QPoint p) {
   return QPoint(p.x() - utils::ArithmeticalMod(p.x(), kBufferWidth),
                 p.y() - utils::ArithmeticalMod(p.y(), kBufferHeight));
 }
 
 const QPixmap& BufferedMapDrawer::GetBufferPixmap(QPoint buffer_pos) {
-  if (buffers_.count(buffer_pos) == 0) {
-    auto& node =
-        buffers_
-            .emplace(buffer_pos,
-                     Buffer{QPixmap(kPixmapXInPixels, kPixmapYInPixels), true})
-            .first->second;
-    RenderBuffer(&node.pixmap, buffer_pos);
-    return node.pixmap;
+  auto found = buffers_.Get(buffer_pos);
+  if (!found) {
+    auto& buffer = buffers_.Insert(
+        buffer_pos, QPixmap(kPixmapWidthInPixels, kPixmapHeightInPixels));
+    RenderBuffer(&buffer, buffer_pos);
+    return buffer;
   }
-  auto& node = buffers_.at(buffer_pos);
-  node.is_used = true;
-  return node.pixmap;
+  return found.value();
+}
+
+void BufferedMapDrawer::RenderBlock(QPainter* painter, QPointF block_drawer_pos,
+                                    Block block, bool need_reset) {
+  if (block.IsVisible()) {
+    BlockDrawer::DrawBlock(painter, block_drawer_pos, block);
+  } else if (need_reset) {
+    BlockDrawer::ClearBlock(painter, block_drawer_pos);
+  }
 }
 
 void BufferedMapDrawer::RenderBuffer(QPixmap* buffer, QPoint buffer_pos) {
-  buffer->fill();
+  buffer->fill(Qt::transparent);
   QPainter painter(buffer);
   for (int y = 0; y < kBufferHeight; ++y) {
     for (int x = 0; x < kBufferWidth; ++x) {
-      auto block =
-          map_->GetBlock(QPoint(buffer_pos.x() + x, buffer_pos.y() + y));
-      if (block.IsVisible()) {
-        BlockDrawer::DrawBlock(&painter, QPointF(x, y) * constants::kBlockSz,
-                               block);
-      }
+      RenderBlock(
+          &painter, QPointF(x, y) * constants::kBlockSz,
+          map_->GetBlock(QPoint(buffer_pos.x() + x, buffer_pos.y() + y)));
     }
   }
 }

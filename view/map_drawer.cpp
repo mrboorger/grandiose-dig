@@ -18,3 +18,8 @@ void MapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
     }
   }
 }
+
+QRect MapDrawer::GetDrawRegion(QPoint center) const {
+  return QRect(center.x() - kFieldOfView, center.y() - kFieldOfView,
+               center.x() + kFieldOfView, center.y() + kFieldOfView);
+}

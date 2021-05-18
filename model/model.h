@@ -10,7 +10,9 @@
 #include "model/mob.h"
 #include "model/player.h"
 
-class Model {
+class Model : public QObject {
+  Q_OBJECT
+
  public:
   static Model* GetInstance();
 
@@ -26,7 +28,7 @@ class Model {
 
   void SetMap(std::shared_ptr<AbstractMap> map) { map_ = std::move(map); }
 
-  std::shared_ptr<const Player> GetPlayer() const { return player_; }
+  std::shared_ptr<Player> GetPlayer() const { return player_; }
 
   void SetPlayer(const std::shared_ptr<Player>& player) { player_ = player; }
 
@@ -34,8 +36,17 @@ class Model {
   void DeleteMob(const std::shared_ptr<Mob>& mob) { mobs_.erase(mob); }
   const std::set<std::shared_ptr<Mob>>& GetMobs() const { return mobs_; }
 
-  void MoveObjects(
-      const std::unordered_set<ControllerTypes::Key>& pressed_keys);
+  void MoveObjects(const std::unordered_set<ControllerTypes::Key>& pressed_keys,
+                   double time);
+
+  void PickItemToPlayer(InventoryItem item) { player_->PickItem(item); }
+
+  bool CanSpawnMobAt(QPointF pos, QPointF size) const;
+
+ signals:
+  void DamageDealt(MovingObject* object);
+  void BecameDead(MovingObject* object);
+  void MobSound(MovingObject* object);
 
  private:
   Model() = default;

@@ -1,13 +1,56 @@
 <RCC>
     <qresource prefix="/">
         <file>resources/images/main_menu_background.png</file>
+        <file>resources/fonts/ComicSansMS3.ttf</file>
+        <file>resources/textures/dirt.png</file>
         <file>resources/textures/grass.png</file>
-        <file>resources/textures/player.png</file>
-        <file>resources/textures/mob.png</file>
+        <file>resources/textures/inventory_cell.png</file>
+        <file>resources/sounds/player_damage.mp3</file>
+        <file>resources/sounds/zombie_death.mp3</file>
+        <file>resources/sounds/zombie_damage2.mp3</file>
+        <file>resources/sounds/zombie_damage1.mp3</file>
+        <file>resources/sounds/zombie2.mp3</file>
+        <file>resources/sounds/zombie1.mp3</file>
+        <file>resources/shaders/vertex.glsl</file>
+        <file>resources/shaders/fragment.glsl</file>
+        <file>resources/textures/player1.png</file>
+        <file>resources/textures/player2.png</file>
+        <file>resources/textures/player0.png</file>
+        <file>resources/textures/player3.png</file>
+        <file>resources/textures/player_attack0.png</file>
+        <file>resources/textures/player_attack1.png</file>
+        <file>resources/textures/player_attack2.png</file>
+        <file>resources/textures/player_attack3.png</file>
+        <file>resources/textures/zombie_lord2.png</file>
+        <file>resources/textures/zombie_lord1.png</file>
+        <file>resources/textures/zombie_lord3.png</file>
+        <file>resources/textures/zombie_lord0.png</file>
+        <file>resources/textures/zombie3.png</file>
+        <file>resources/textures/zombie2.png</file>
+        <file>resources/textures/zombie1.png</file>
+        <file>resources/textures/zombie0.png</file>
+        <file>resources/textures/quiox0.png</file>
+        <file>resources/textures/quiox1.png</file>
+        <file>resources/textures/magic_quiox1.png</file>
+        <file>resources/textures/magic_quiox0.png</file>
         <file>resources/translations/translation_en_US.ts</file>
         <file>resources/translations/translation_en_US.qm</file>
         <file>resources/translations/translation_ru_RU.ts</file>
         <file>resources/translations/translation_ru_RU.qm</file>
-        <file>resources/fonts/ComicSansMS3.ttf</file>
+        <file>resources/sounds/magic_quiox_death.mp3</file>
+        <file>resources/sounds/magic_quiox2.mp3</file>
+        <file>resources/sounds/magic_quiox1.mp3</file>
+        <file>resources/sounds/magic_quiox_damage2.mp3</file>
+        <file>resources/sounds/magic_quiox_damage1.mp3</file>
+        <file>resources/sounds/quiox2.mp3</file>
+        <file>resources/sounds/quiox1.mp3</file>
+        <file>resources/sounds/quiox_damage2.mp3</file>
+        <file>resources/sounds/quiox_damage1.mp3</file>
+        <file>resources/sounds/zombie_lord_death.mp3</file>
+        <file>resources/sounds/zombie_lord_damage2.mp3</file>
+        <file>resources/sounds/zombie_lord_damage1.mp3</file>
+        <file>resources/sounds/zombie_lord2.mp3</file>
+        <file>resources/sounds/zombie_lord1.mp3</file>
+        <file>resources/sounds/quiox_death.mp3</file>
     </qresource>
 </RCC>

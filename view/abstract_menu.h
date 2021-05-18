@@ -32,9 +32,6 @@ class AbstractMenu : public QWidget {
 
  signals:
   void GameStateChanged(GameState);
-
- protected:
-  virtual void PlaceButtons() = 0;
 };
 
 #endif  // VIEW_BASE_MENU_H_

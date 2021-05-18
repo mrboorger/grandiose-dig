@@ -1,11 +1,18 @@
 #include "view/view.h"
 
+#include <QColor>
 #include <QPainter>
+#include <chrono>
+#include <cmath>
+#include <ctime>
+#include <random>
 
 #include "controller/controller.h"
 #include "model/constants.h"
+#include "utils.h"
 #include "view/block_drawer.h"
-#include "view/mob_drawer.h"
+#include "view/gl_func.h"
+#include "view/moving_object_drawer.h"
 
 View* View::GetInstance() {
   static View view;
@@ -13,11 +20,16 @@ View* View::GetInstance() {
 }
 
 View::View()
-    : QWidget(nullptr),
+    : QOpenGLWidget(nullptr),
       camera_(QPointF(150, 150)),
+      sound_manager_(new SoundManager()),
+      drawer_(nullptr),
       game_state_(GameState::kMainMenu),
-      previous_game_state_(GameState::kMainMenu),
-      drawer_(nullptr) {
+      previous_game_state_(GameState::kMainMenu) {
+  connect(Model::GetInstance(), &Model::DamageDealt, this, &View::DamageDealt);
+  connect(Model::GetInstance(), &Model::BecameDead, this, &View::BecameDead);
+  connect(Model::GetInstance(), &Model::MobSound, this, &View::MobSound);
+
   main_menu_.reset(new MainMenu(this));
   connect(main_menu_.data(), &AbstractMenu::GameStateChanged, this,
           &View::ChangeGameState);
@@ -75,24 +87,108 @@ void View::ChangeGameState(GameState new_state) {
   repaint();
 }
 
-void View::DrawGame() {
-  QPainter painter(this);
-  camera_.SetPoint(Model::GetInstance()->GetPlayer()->GetPosition());
-  drawer_->DrawMapWithCenter(&painter, camera_.GetPoint(), rect());
+void View::SetInventoryDrawer(InventoryDrawer* drawer) {
+  inventory_drawer_.reset(drawer);
+}
 
-  // TODO(Wind-Eagle): temporary code; need to make PlayerDrawer
+void View::DrawPlayer(QPainter* painter) {
   auto player = Model::GetInstance()->GetPlayer();
-  QImage player_image(":/resources/textures/player.png");
   QPointF point =
       (player->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
       rect().center();
-  painter.drawImage(point, player_image);
+
+  MovingObjectDrawer::DrawPlayer(painter, point);
+  // TODO(Wind-Eagle): make animation for block breaking: will be done when
+  // blocks will not break immediately
+}
+
+void View::initializeGL() {
+  assert(context());
+  makeCurrent();
+  auto* gl = GLFunctions::GetInstance();
+  gl->initializeOpenGLFunctions();
+  gl->glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+  if (drawer_) {
+    drawer_->Init();
+  }
+}
+
+void View::paintGL() {
+  auto* gl = GLFunctions::GetInstance();
+  QPainter painter(this);
+  painter.beginNativePainting();
+
+  gl->glClear(GL_COLOR_BUFFER_BIT);
+
+  camera_.SetPoint(Model::GetInstance()->GetPlayer()->GetPosition());
+  QPointF camera_pos = camera_.GetPoint();
+
+  light_map_->CalculateRegion(
+      drawer_->GetDrawRegion(QPoint(camera_pos.x(), camera_pos.y())));
+  for (auto* to_update = light_map_->UpdateList(); !to_update->empty();) {
+    for (auto pos : *to_update) {
+      drawer_->UpdateBlock(pos);
+    }
+    to_update->clear();
+  }
+
+  drawer_->DrawMapWithCenter(&painter, camera_pos, rect());
+
+  inventory_drawer_->DrawInventory(&painter);
+
+  // TODO(Wind-Eagle): temporary code; need to make PlayerDrawer
+  DrawPlayer(&painter);
   auto mobs = Model::GetInstance()->GetMobs();
   for (auto mob : mobs) {
     QPointF mob_point =
         (mob->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
         rect().center();
-    MobDrawer::DrawMob(&painter, mob_point, mob);
+    MovingObjectDrawer::DrawMob(&painter, mob_point, mob);
+  }
+  painter.endNativePainting();
+}
+
+void View::DamageDealt(MovingObject* object) {
+  static std::uniform_int_distribution<int> distrib(0, 1);
+  switch (object->GetType()) {
+    case MovingObject::Type::kPlayer: {
+      sound_manager_->PlaySound(
+          SoundManager::SoundIndex(SoundManager::Sound::kPlayerDamage));
+      break;
+    }
+    case MovingObject::Type::kMob: {
+      int id = static_cast<Mob*>(object)->GetId();
+      if (distrib(utils::random) == 0) {
+        sound_manager_->PlaySound(SoundManager::SoundIndex(
+            SoundManager::Sound::kMob, id, SoundManager::MobSound::kDamage1));
+      } else {
+        sound_manager_->PlaySound(SoundManager::SoundIndex(
+            SoundManager::Sound::kMob, id, SoundManager::MobSound::kDamage2));
+      }
+      break;
+    }
+    default: {
+      assert(false);
+    }
+  }
+}
+
+void View::BecameDead(MovingObject* object) {
+  int id = static_cast<Mob*>(object)->GetId();
+  sound_manager_->PlaySound(SoundManager::SoundIndex(
+      SoundManager::Sound::kMob, id, SoundManager::MobSound::kDeath));
+}
+
+void View::MobSound(MovingObject* object) {
+  int id = static_cast<Mob*>(object)->GetId();
+  static std::uniform_int_distribution<int> distrib(0, 1);
+  if (distrib(utils::random) == 0) {
+    sound_manager_->PlaySound(SoundManager::SoundIndex(
+        SoundManager::Sound::kMob, id, SoundManager::MobSound::kIdle1));
+  } else {
+    sound_manager_->PlaySound(SoundManager::SoundIndex(
+        SoundManager::Sound::kMob, id, SoundManager::MobSound::kIdle2));
   }
 }
 
@@ -114,26 +210,52 @@ void View::keyReleaseEvent(QKeyEvent* event) {
 }
 
 void View::resizeEvent(QResizeEvent* event) {
-  QWidget::resizeEvent(event);
+  QOpenGLWidget::resizeEvent(event);
   main_menu_->Resize(event->size());
   pause_menu_->Resize(event->size());
   settings_menu_->Resize(event->size());
 }
 
 void View::paintEvent(QPaintEvent* event) {
-  QWidget::paintEvent(event);
+  QOpenGLWidget::paintEvent(event);
   switch (game_state_) {
     case GameState::kMainMenu:
       main_menu_->update();
       break;
     case GameState::kGame:
-      DrawGame();
+      paintGL();
       break;
     case GameState::kPaused:
-      DrawGame();
+      paintGL();
       pause_menu_->update();
       break;
     default:
       break;
   }
+}
+
+void View::mousePressEvent(QMouseEvent* event) {
+  Controller::GetInstance()->ButtonPress(event->button());
+}
+
+void View::mouseReleaseEvent(QMouseEvent* event) {
+  Controller::GetInstance()->ButtonRelease(event->button());
+}
+
+QPoint View::GetCursorPos() const {
+  return QCursor::pos() - geometry().topLeft();
+}
+
+QPointF View::GetCoordUnderCursor() const {
+  return GetTopLeftWindowCoord() +
+         QPointF(GetCursorPos()) / constants::kBlockSz;
+}
+
+QPoint View::GetBlockCoordUnderCursor() const {
+  QPointF pos = GetCoordUnderCursor();
+  return QPoint(std::floor(pos.x()), std::floor(pos.y()));
+}
+
+QPointF View::GetTopLeftWindowCoord() const {
+  return camera_.GetPoint() - QPointF(rect().center()) / constants::kBlockSz;
 }
