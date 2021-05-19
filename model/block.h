@@ -13,6 +13,7 @@ class Block {
     kDirt,
     kGrass,
     kStone,
+    kTechnical,
     kTorch,
     kTypesCount,
   };
@@ -27,7 +28,8 @@ class Block {
   Light GetLuminosity() const { return GetCharactistics(GetId()).luminosity; }
   bool IsOpaque() const { return GetCharactistics(GetId()).is_opaque; }
   int GetDefaultDurability() const {
-    return GetCharactistics(GetId()).default_durability; }
+    return GetCharactistics(GetId()).default_durability;
+  }
 
   Type GetType() const { return type_; }
 

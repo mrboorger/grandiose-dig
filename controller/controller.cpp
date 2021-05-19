@@ -12,8 +12,8 @@
 #include "model/model.h"
 #include "view/abstract_map_drawer.h"
 #include "view/buffered_map_drawer.h"
-#include "view/map_drawer.h"
 #include "view/gl_map_drawer.h"
+#include "view/map_drawer.h"
 #include "view/view.h"
 
 Controller* Controller::GetInstance() {
@@ -26,7 +26,7 @@ void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
   Model::GetInstance()->SetMap(map);
   View::GetInstance()->SetLightMap(new LightMap(map));
   View::GetInstance()->SetDrawer(
-      new GLMapDrawer(map, View::GetInstance()->GetLightMap()));
+      new BufferedMapDrawer(map /*, View::GetInstance()->GetLightMap()*/));
 }
 
 Controller::Controller() : tick_timer_() {
@@ -37,7 +37,7 @@ Controller::Controller() : tick_timer_() {
 void Controller::SetPlayer() {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->SetPlayer(
-      std::make_shared<Player>(QPointF(125.0, 115.0)));
+      std::make_shared<Player>(QPointF(125.0, 60.0)));
   View::GetInstance()->SetInventoryDrawer(
       new InventoryDrawer(Model::GetInstance()->GetPlayer()->GetInventory()));
 }

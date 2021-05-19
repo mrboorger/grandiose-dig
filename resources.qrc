@@ -46,5 +46,7 @@
         <file>resources/sounds/zombie_lord2.mp3</file>
         <file>resources/sounds/zombie_lord1.mp3</file>
         <file>resources/sounds/quiox_death.mp3</file>
+        <file>resources/textures/stone.png</file>
+        <file>resources/textures/technical.png</file>
     </qresource>
 </RCC>

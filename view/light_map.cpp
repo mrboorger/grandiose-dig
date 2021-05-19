@@ -2,9 +2,7 @@
 
 #include "utils.h"
 
-void LightMap::UpdateLight(QPoint pos) {
-  invalidate_queue_.push(pos);
-}
+void LightMap::UpdateLight(QPoint pos) { invalidate_queue_.push(pos); }
 
 Light LightMap::GetLight(QPoint pos) {
   auto res = data_.TryGetValue(pos);
@@ -47,7 +45,7 @@ Light LightMap::GetLightRB(QPoint pos) {
 }
 
 void LightMap::CalculateRegion(const QRect& region) {
-  std::queue<QPoint> update_queue;
+  /*std::queue<QPoint> update_queue;
   std::set<QPoint, utils::QPointLexicographicalCompare> removed;
   data_.MarkUsedOrInsert(region);
   while (!invalidate_queue_.empty()) {
@@ -95,11 +93,10 @@ void LightMap::CalculateRegion(const QRect& region) {
         update_queue.push(neighbour);
       }
     }
-  }
+  }*/
 }
 
-LightMap::Buffer LightMap::BufferConstructor::operator()(
-    QPoint pos) {
+LightMap::Buffer LightMap::BufferConstructor::operator()(QPoint pos) {
   for (int32_t y = pos.y(); y < pos.y() + LightMap::kBufferHeight; ++y) {
     for (int32_t x = pos.x(); x < pos.x() + LightMap::kBufferWidth; ++x) {
       update_queue_->push(QPoint(x, y));

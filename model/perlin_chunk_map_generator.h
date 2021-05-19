@@ -3,9 +3,9 @@
 
 #include "model/abstract_map_generator.h"
 #include "model/abstract_region_generator.h"
+#include "model/chunk_map.h"
 #include "model/perlin_noise1d.h"
 #include "model/perlin_noise2d.h"
-#include "model/chunk_map.h"
 
 class PerlinChunkMapGenerator : public AbstractMapGenerator {
  public:
@@ -22,9 +22,14 @@ class PerlinChunkMapGenerator : public AbstractMapGenerator {
     Chunk Generate(QPoint chunk_pos) override;
 
    private:
-    static constexpr double kCavesRate = 0.2;
+    enum class Biome { kPlains, kHills, kTypesCount };
+    static constexpr int kBiomeTypesCount =
+        static_cast<int>(Biome::kTypesCount);
+    static constexpr double kCavesRate = 0.20;
     static constexpr double kCavesScale = 10;
-    Chunk BasicGeneration(QPoint chunk_pos);
+
+    Chunk LandscapeGeneration(QPoint chunk_pos, Biome biome);
+
     void GenerateCaves(Chunk* chunk, QPoint chunk_pos);
 
     PerlinNoise1D noise1d_;
