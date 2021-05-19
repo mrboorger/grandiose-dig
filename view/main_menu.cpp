@@ -65,8 +65,4 @@ void MainMenu::paintEvent(QPaintEvent* event) {
   QPainter painter(this);
   painter.drawImage(0, 0,
                     QImage(":/resources/images/main_menu_background.png"));
-  new_world_button_->update();
-  continue_button_->update();
-  settings_button_->update();
-  exit_button_->update();
 }

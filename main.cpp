@@ -15,21 +15,6 @@ int main(int argc, char* argv[]) {
   QCoreApplication::setOrganizationName("ШУБКА");
   QCoreApplication::setApplicationName("Grandiose dig");
 
-  QSettings settings;
-  settings.setValue("language", "ru_RU");
-  QString language = settings.value("language", "en_US").toString();
-  QTranslator translator;
-  if (translator.load(":resources/translations/translation_" + language)) {
-    QApplication::installTranslator(&translator);
-  }
-
-  QTranslator qt_base_translator;
-  if (qt_base_translator.load(
-          "qtbase_" + language,
-          QLibraryInfo::location(QLibraryInfo::TranslationsPath))) {
-    QApplication::installTranslator(&qt_base_translator);
-  }
-
   View* view(View::GetInstance());
   // TODO(Wind-Eagle): delete. {
   Controller* controller(Controller::GetInstance());
@@ -38,6 +23,9 @@ int main(int argc, char* argv[]) {
   controller->SetPlayer();
   controller->SetMob();
   // }
+  QTranslator new_translator;
+  new_translator.load(":resources/translations/translation_ru_RU");
+  // QApplication::installTranslator(&new_translator);
   view->show();
   view->setWindowState(Qt::WindowMaximized);
   return QApplication::exec();

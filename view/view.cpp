@@ -1,7 +1,5 @@
 #include "view/view.h"
 
-#include <QColor>
-#include <QPainter>
 #include <chrono>
 #include <cmath>
 #include <ctime>
@@ -197,8 +195,9 @@ void View::changeEvent(QEvent* event) {
     main_menu_->ReTranslateButtons();
     pause_menu_->ReTranslateButtons();
     settings_menu_->ReTranslateButtons();
+  } else {
+    QWidget::changeEvent(event);
   }
-  QWidget::changeEvent(event);
 }
 
 void View::keyPressEvent(QKeyEvent* event) {
@@ -230,18 +229,16 @@ void View::paintEvent(QPaintEvent* event) {
       pause_menu_->update();
       break;
     case GameState::kSettings:
-      QPainter painter(this);
       if (previous_game_state_ == GameState::kGame ||
           previous_game_state_ == GameState::kPaused) {
         paintGL();
-        QColor backgroundColor("#a1a39d");
-        backgroundColor.setAlpha(160);
-        // painter.fillRect(rect(), backgroundColor);
+        settings_menu_->setTransparentBackground(true);
       } else {
-        painter.drawImage(
-            0, 0, QImage(":/resources/images/main_menu_background.png"));
+        settings_menu_->setTransparentBackground(false);
       }
       settings_menu_->update();
+      break;
+    default:
       break;
   }
 }

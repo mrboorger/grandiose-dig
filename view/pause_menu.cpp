@@ -62,6 +62,4 @@ void PauseMenu::paintEvent(QPaintEvent *event) {
   backgroundColor.setAlpha(160);
   QPainter painter(this);
   painter.fillRect(rect(), backgroundColor);
-  resume_button_->update();
-  back_to_menu_button_->update();
 }

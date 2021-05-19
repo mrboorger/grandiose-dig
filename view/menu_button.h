@@ -69,7 +69,7 @@ const QString
         "color: #f7e300;"
         "background-color: #7a3916;"
         "}"};
-} // namespace menu_button_constants
+}  // namespace menu_button_constants
 
 class MenuButton final : public QPushButton {
   Q_OBJECT

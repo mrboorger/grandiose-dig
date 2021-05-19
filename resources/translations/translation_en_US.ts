@@ -27,17 +27,17 @@
 <context>
     <name>PauseMenu</name>
     <message>
-        <location filename="../../view/pause_menu.cpp" line="50"/>
+        <location filename="../../view/pause_menu.cpp" line="54"/>
         <source>Resume</source>
         <translation>Resume</translation>
     </message>
     <message>
-        <location filename="../../view/pause_menu.cpp" line="51"/>
+        <location filename="../../view/pause_menu.cpp" line="55"/>
         <source>Settings</source>
         <translation>Settings</translation>
     </message>
     <message>
-        <location filename="../../view/pause_menu.cpp" line="52"/>
+        <location filename="../../view/pause_menu.cpp" line="56"/>
         <source>Back to menu</source>
         <translation>Back to menu</translation>
     </message>
@@ -45,14 +45,34 @@
 <context>
     <name>SettingsMenu</name>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="53"/>
+        <location filename="../../view/settings_menu.cpp" line="119"/>
+        <source>General</source>
+        <translation>General</translation>
+    </message>
+    <message>
+        <location filename="../../view/settings_menu.cpp" line="120"/>
+        <source>Controls</source>
+        <translation>Controls</translation>
+    </message>
+    <message>
+        <location filename="../../view/settings_menu.cpp" line="121"/>
         <source>Exit</source>
         <translation>Exit</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="54"/>
+        <location filename="../../view/settings_menu.cpp" line="122"/>
         <source>Save and exit</source>
         <translation>Save and exit</translation>
+    </message>
+    <message>
+        <location filename="../../view/settings_menu.cpp" line="124"/>
+        <source>English</source>
+        <translation>English (shosen)</translation>
+    </message>
+    <message>
+        <location filename="../../view/settings_menu.cpp" line="125"/>
+        <source>Русский</source>
+        <translation>Русский</translation>
     </message>
 </context>
 </TS>

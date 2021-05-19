@@ -27,17 +27,17 @@
 <context>
     <name>PauseMenu</name>
     <message>
-        <location filename="../../view/pause_menu.cpp" line="50"/>
+        <location filename="../../view/pause_menu.cpp" line="54"/>
         <source>Resume</source>
         <translation>Продолжить</translation>
     </message>
     <message>
-        <location filename="../../view/pause_menu.cpp" line="51"/>
+        <location filename="../../view/pause_menu.cpp" line="55"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../../view/pause_menu.cpp" line="52"/>
+        <location filename="../../view/pause_menu.cpp" line="56"/>
         <source>Back to menu</source>
         <translation>В Главное Меню</translation>
     </message>
@@ -45,14 +45,34 @@
 <context>
     <name>SettingsMenu</name>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="53"/>
+        <location filename="../../view/settings_menu.cpp" line="119"/>
+        <source>General</source>
+        <translation>Общие</translation>
+    </message>
+    <message>
+        <location filename="../../view/settings_menu.cpp" line="120"/>
+        <source>Controls</source>
+        <translation>Управление</translation>
+    </message>
+    <message>
+        <location filename="../../view/settings_menu.cpp" line="121"/>
         <source>Exit</source>
         <translation>Выйти</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="54"/>
+        <location filename="../../view/settings_menu.cpp" line="122"/>
         <source>Save and exit</source>
         <translation>Сохранить и Выйти</translation>
+    </message>
+    <message>
+        <location filename="../../view/settings_menu.cpp" line="124"/>
+        <source>English</source>
+        <translation>English</translation>
+    </message>
+    <message>
+        <location filename="../../view/settings_menu.cpp" line="125"/>
+        <source>Русский</source>
+        <translation>Русский (выбран)</translation>
     </message>
 </context>
 </TS>

@@ -15,7 +15,7 @@ class AbstractMenu : public QWidget {
   Q_OBJECT
 
  public:
-  explicit AbstractMenu(QWidget* parent = nullptr) : QWidget(parent){}
+  explicit AbstractMenu(QWidget* parent = nullptr) : QWidget(parent) {}
   AbstractMenu(const AbstractMenu&) = delete;
   AbstractMenu(AbstractMenu&&) = delete;
 

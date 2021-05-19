@@ -61,8 +61,6 @@ class View : public QOpenGLWidget {
 
   void DrawPlayer(QPainter* painter);
 
-  void DrawGame();
-
   void changeEvent(QEvent* event) override;
   void keyPressEvent(QKeyEvent* event) override;
   void keyReleaseEvent(QKeyEvent* event) override;
