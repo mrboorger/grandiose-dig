@@ -13,6 +13,8 @@ class Block {
     kDirt,
     kGrass,
     kStone,
+    kCoalOre,
+    kIronOre,
     kTechnical,
     kTorch,
     kTypesCount,

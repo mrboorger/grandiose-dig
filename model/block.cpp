@@ -18,6 +18,8 @@ const Block::Characteristics& Block::GetCharactistics(int32_t id) {
     set(Type::kDirt, kDefaultBlockCharactestics);
     set(Type::kGrass, kDefaultBlockCharactestics);
     set(Type::kStone, kDefaultBlockCharactestics);
+    set(Type::kCoalOre, kDefaultBlockCharactestics);
+    set(Type::kIronOre, kDefaultBlockCharactestics);
     set(Type::kTechnical, kDefaultBlockCharactestics);
     set(Type::kTorch,
         Characteristics{Light(120, 120, 120, 0), 1, false, false});

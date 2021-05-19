@@ -22,18 +22,36 @@ class PerlinChunkMapGenerator : public AbstractMapGenerator {
     Chunk Generate(QPoint chunk_pos) override;
 
    private:
-    enum class Biome { kPlains, kHills, kTypesCount };
-    static constexpr int kBiomeTypesCount =
-        static_cast<int>(Biome::kTypesCount);
-    static constexpr double kCavesRate = 0.20;
-    static constexpr double kCavesScale = 10;
+    static constexpr double kCavesRate = 0.3;
+    static constexpr double kCavesScale = 8.5;
 
-    Chunk LandscapeGeneration(QPoint chunk_pos, Biome biome);
+    Chunk LandscapeGeneration(QPoint chunk_pos);
 
     void GenerateCaves(Chunk* chunk, QPoint chunk_pos);
+    void GenerateOres(Chunk* chunk, QPoint chunk_pos);
 
-    PerlinNoise1D noise1d_;
-    PerlinNoise2D noise2d_;
+    static double HeightNoise(double noise);
+    static double StoneNoise(double noise);
+
+    static constexpr double kHillsRapidness = 3.5;
+    static constexpr double kStoneRapidness = 2;
+    static constexpr double kStoneMaxHeight = 8;
+
+    static constexpr double kCoalMainRate = 0.1;  // vein precision
+    static constexpr double kCoalRate = 0.35;     // amount in one vein
+    static constexpr double kCoalScale = 10;
+
+    static constexpr double kIronMainRate = 0.17;
+    static constexpr double kIronRate = 0.4;
+    static constexpr double kIronScale = 10;
+
+    PerlinNoise1D noise_hills_;
+    PerlinNoise1D noise_stone_;
+    PerlinNoise2D noise_caves_;
+    PerlinNoise2D noise_coal_;
+    PerlinNoise2D noise_coal2_;
+    PerlinNoise2D noise_iron_;
+    PerlinNoise2D noise_iron2_;
   };
 
   uint32_t seed_;

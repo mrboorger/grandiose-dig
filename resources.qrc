@@ -48,5 +48,7 @@
         <file>resources/sounds/quiox_death.mp3</file>
         <file>resources/textures/stone.png</file>
         <file>resources/textures/technical.png</file>
+        <file>resources/textures/coal_ore.png</file>
+        <file>resources/textures/iron_ore.png</file>
     </qresource>
 </RCC>
