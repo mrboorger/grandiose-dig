@@ -12,6 +12,8 @@ class TextureAtlas : public QOpenGLTexture {
 
   static constexpr int kWidth = 512;
   static constexpr int kHeight = 512;
+  // Sometimes fragment shader picks color from neighbour texture because of
+  // wrong rounding. By adding this shift, it makes mistakes rarelier.
   static constexpr double kRoundShift = 2.5 / constants::kBlockSz;
   static_assert(kWidth * kHeight >= Block::kTypesCount);
 
