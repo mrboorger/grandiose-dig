@@ -2,6 +2,7 @@
 
 #include <QColor>
 #include <QPainter>
+#include <chrono>
 #include <cmath>
 #include <ctime>
 #include <random>
@@ -10,21 +11,29 @@
 #include "model/constants.h"
 #include "utils.h"
 #include "view/block_drawer.h"
+#include "view/gl_func.h"
 #include "view/moving_object_drawer.h"
 
+View* View::instance_ = nullptr;
+
 View* View::GetInstance() {
-  static View view;
-  return &view;
+  return instance_;
 }
 
 View::View()
-    : QWidget(nullptr),
+    : QOpenGLWidget(nullptr),
       camera_(QPointF(150, 150)),
       sound_manager_(new SoundManager()),
       drawer_(nullptr) {
+  assert(!instance_);
+  instance_ = this;
   connect(Model::GetInstance(), &Model::DamageDealt, this, &View::DamageDealt);
   connect(Model::GetInstance(), &Model::BecameDead, this, &View::BecameDead);
   connect(Model::GetInstance(), &Model::MobSound, this, &View::MobSound);
+}
+
+View::~View() {
+  instance_ = nullptr;
 }
 
 void View::SetInventoryDrawer(InventoryDrawer* drawer) {
@@ -42,16 +51,30 @@ void View::DrawPlayer(QPainter* painter) {
   // blocks will not break immediately
 }
 
-void View::paintEvent(QPaintEvent* event) {
-  Q_UNUSED(event);
-  QPainter painter(this);
+void View::initializeGL() {
+  assert(context());
+  makeCurrent();
+  auto* gl = GLFunctions::GetInstance();
+  gl->initializeOpenGLFunctions();
+  gl->glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-  // TODO(degmuk): temporary code; replace with background drawer
-  painter.setBrush(Qt::white);
-  painter.drawRect(rect());
+  if (drawer_) {
+    drawer_->Init();
+  }
+}
+
+void View::paintGL() {
+  auto* gl = GLFunctions::GetInstance();
+  QPainter painter(this);
+  painter.beginNativePainting();
+
+  gl->glClear(GL_COLOR_BUFFER_BIT);
 
   camera_.SetPoint(Model::GetInstance()->GetPlayer()->GetPosition());
-  drawer_->DrawMapWithCenter(&painter, camera_.GetPoint(), rect());
+  QPointF camera_pos = camera_.GetPoint();
+
+  UpdateLight(QPoint(camera_pos.x(), camera_pos.y()));
+  drawer_->DrawMapWithCenter(&painter, camera_pos, rect());
 
   inventory_drawer_->DrawInventory(&painter);
 
@@ -64,6 +87,7 @@ void View::paintEvent(QPaintEvent* event) {
         rect().center();
     MovingObjectDrawer::DrawMob(&painter, mob_point, mob);
   }
+  painter.endNativePainting();
 }
 
 void View::DamageDealt(MovingObject* object) {
@@ -137,6 +161,15 @@ QPointF View::GetCoordUnderCursor() const {
 QPoint View::GetBlockCoordUnderCursor() const {
   QPointF pos = GetCoordUnderCursor();
   return QPoint(std::floor(pos.x()), std::floor(pos.y()));
+}
+
+void View::UpdateLight(QPoint camera_pos) {
+  light_map_->CalculateRegion(drawer_->GetDrawRegion(camera_pos));
+  const auto& to_update = light_map_->TakeUpdateList();
+  for (auto pos : to_update) {
+    drawer_->UpdateBlock(pos);
+  }
+  light_map_->ClearUpdateList();
 }
 
 QPointF View::GetTopLeftWindowCoord() const {
