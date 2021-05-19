@@ -41,6 +41,8 @@ View::View()
   settings_menu_.reset(new SettingsMenu(this));
   connect(settings_menu_.data(), &AbstractMenu::GameStateChanged, this,
           &View::ChangeGameState);
+  connect(settings_menu_.data(), &SettingsMenu::SettingsChanged, this,
+          &View::UpdateSettings);
   settings_menu_->setVisible(false);
 }
 
@@ -84,6 +86,8 @@ void View::ChangeGameState(GameState new_state) {
   game_state_ = new_state;
   repaint();
 }
+
+void View::UpdateSettings() { sound_manager_->UpdateVolumes(); }
 
 void View::SetInventoryDrawer(InventoryDrawer* drawer) {
   inventory_drawer_.reset(drawer);

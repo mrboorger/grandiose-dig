@@ -47,6 +47,7 @@ class View : public QOpenGLWidget {
 
  public slots:
   void ChangeGameState(GameState new_state);
+  void UpdateSettings();
 
  private slots:
   void DamageDealt(MovingObject* object);

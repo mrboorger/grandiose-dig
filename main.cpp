@@ -23,8 +23,6 @@ int main(int argc, char* argv[]) {
   controller->SetPlayer();
   controller->SetMob();
   // }
-  QTranslator new_translator;
-  new_translator.load(":resources/translations/translation_ru_RU");
   // QApplication::installTranslator(&new_translator);
   view->show();
   view->setWindowState(Qt::WindowMaximized);

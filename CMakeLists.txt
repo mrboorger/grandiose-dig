@@ -68,6 +68,7 @@ set(SOURCES
         view/light_map.cpp
         view/main_menu.cpp
         view/menu_button.cpp
+        view/named_menu_slider.cpp
         view/map_drawer.cpp
         view/moving_object_drawer.cpp
         view/pause_menu.cpp

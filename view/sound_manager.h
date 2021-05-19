@@ -30,7 +30,11 @@ class SoundManager {
   void PauseAllSounds();
   void StopAllSounds();
 
+  void UpdateVolumes();
+
  private:
+  static bool IsMusic(const QString& name);
+
   std::vector<std::shared_ptr<QMediaPlayer>> sounds_;
 };
 

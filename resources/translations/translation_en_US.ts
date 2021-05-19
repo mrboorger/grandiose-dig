@@ -45,32 +45,52 @@
 <context>
     <name>SettingsMenu</name>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="119"/>
+        <location filename="../../view/settings_menu.cpp" line="178"/>
         <source>General</source>
         <translation>General</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="120"/>
+        <location filename="../../view/settings_menu.cpp" line="179"/>
         <source>Controls</source>
         <translation>Controls</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="121"/>
+        <location filename="../../view/settings_menu.cpp" line="180"/>
+        <source>Language</source>
+        <translation>Language</translation>
+    </message>
+    <message>
+        <location filename="../../view/settings_menu.cpp" line="181"/>
         <source>Exit</source>
         <translation>Exit</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="122"/>
+        <location filename="../../view/settings_menu.cpp" line="182"/>
         <source>Save and exit</source>
         <translation>Save and exit</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="124"/>
+        <location filename="../../view/settings_menu.cpp" line="184"/>
+        <source>General volume</source>
+        <translation>General volume</translation>
+    </message>
+    <message>
+        <location filename="../../view/settings_menu.cpp" line="185"/>
+        <source>Music volume</source>
+        <translation>Music volume</translation>
+    </message>
+    <message>
+        <location filename="../../view/settings_menu.cpp" line="186"/>
+        <source>Sounds volume</source>
+        <translation>Sounds volume</translation>
+    </message>
+    <message>
+        <location filename="../../view/settings_menu.cpp" line="188"/>
         <source>English</source>
         <translation>English (shosen)</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="125"/>
+        <location filename="../../view/settings_menu.cpp" line="189"/>
         <source>Русский</source>
         <translation>Русский</translation>
     </message>

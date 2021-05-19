@@ -1,5 +1,7 @@
 #include "sound_manager.h"
 
+#include <QSettings>
+
 namespace {
 
 const std::vector<QString> kNames = {"player_damage.mp3",
@@ -31,8 +33,8 @@ SoundManager::SoundManager() : sounds_(kNames.size()) {
   for (size_t i = 0; i < kNames.size(); i++) {
     sounds_[i] = std::make_shared<QMediaPlayer>();
     sounds_[i]->setMedia(QUrl("qrc:/resources/sounds/" + kNames[i]));
-    sounds_[i]->setVolume(100);
   }
+  UpdateVolumes();
 }
 
 void SoundManager::PauseAllSounds() {
@@ -61,5 +63,22 @@ int SoundManager::SoundIndex(Sound sound, int mob_id, MobSound mob_sound) {
     }
     default:
       assert(false);
+  }
+}
+
+bool SoundManager::IsMusic(const QString& name) {
+  return name.startsWith("music");
+}
+
+void SoundManager::UpdateVolumes() {
+  QSettings settings;
+  int general_volume = settings.value("general_volume", 100).toInt();
+  int music_volume = settings.value("music_volume", 100).toInt();
+  int sounds_volume = settings.value("sounds_volume", 100).toInt();
+  for (size_t i = 0; i < kNames.size(); i++) {
+    int volume =
+        general_volume * (IsMusic(kNames[i]) ? music_volume : sounds_volume);
+    volume = volume * volume / 1000000;
+    sounds_[i]->setVolume(volume);
   }
 }

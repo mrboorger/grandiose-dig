@@ -6,6 +6,6 @@ MenuButton::MenuButton(QWidget* parent, MenuButtonType button_type)
     setFlat(true);
   }
   setStyleSheet(
-      menu_button_constants::kBasicStyleSheets[static_cast<int>(button_type)]);
+      menu_button_styles::kBasicStyles[static_cast<int>(button_type)]);
   setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 }

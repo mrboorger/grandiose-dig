@@ -35,10 +35,15 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   controls_settings_widget_.reset(new QWidget);
   controls_settings_layout_.reset(new QVBoxLayout);
   controls_settings_widget_->setLayout(controls_settings_layout_.data());
+  language_settings_widget_.reset(new QWidget);
+  language_settings_layout_.reset(new QVBoxLayout);
+  language_settings_widget_->setLayout(language_settings_layout_.data());
 
+  // --------------------------Settings types-----------------------------------
   current_settings_.reset(new QStackedWidget);
   current_settings_->addWidget(general_settings_widget_.data());
   current_settings_->addWidget(controls_settings_widget_.data());
+  current_settings_->addWidget(language_settings_widget_.data());
 
   general_settings_button_.reset(new MenuButton(this));
   auto on_general_settings_button_click = [this] {
@@ -54,12 +59,20 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   connect(controls_settings_button_.data(), &QPushButton::clicked, this,
           on_controls_settings_button_click);
 
+  language_settings_button_.reset(new MenuButton(this));
+  auto on_language_settings_button_click = [this] {
+    current_settings_->setCurrentWidget(language_settings_widget_.data());
+  };
+  connect(language_settings_button_.data(), &QPushButton::clicked, this,
+          on_language_settings_button_click);
+
   close_button_.reset(new MenuButton(this));
   auto on_close_button_click = [this]() {
     QString saved_language = settings_->value("language").toString();
     if (current_language_ != saved_language) {
       ChangeLanguage(saved_language);
     }
+    temporary_settings_changes_.clear();
     emit(AbstractMenu::GameStateChanged(GameState::kSwitchingToPrevious));
   };
   connect(close_button_.data(), &QPushButton::clicked, this,
@@ -68,6 +81,11 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   save_and_close_button_.reset(new MenuButton(this));
   auto on_save_and_close_button_click = [this]() {
     settings_->setValue("language", current_language_);
+    for (const auto& [key, value] : temporary_settings_changes_) {
+      settings_->setValue(key, value);
+    }
+    temporary_settings_changes_.clear();
+    emit(SettingsMenu::SettingsChanged());
     emit(AbstractMenu::GameStateChanged(GameState::kSwitchingToPrevious));
   };
   connect(save_and_close_button_.data(), &QPushButton::clicked, this,
@@ -77,10 +95,49 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   settings_types_layout_->addStretch(2);
   settings_types_layout_->addWidget(general_settings_button_.data());
   settings_types_layout_->addWidget(controls_settings_button_.data());
+  settings_types_layout_->addWidget(language_settings_button_.data());
   settings_types_layout_->addWidget(close_button_.data());
   settings_types_layout_->addWidget(save_and_close_button_.data());
   settings_types_layout_->addStretch(2);
 
+  // --------------------------General Settings---------------------------------
+  general_volume_slider_.reset(new NamedMenuSlider("", Qt::Orientation::Horizontal, this));
+  general_volume_slider_->setValue(
+      settings_->value("general_volume", 100).toInt());
+  auto on_general_volume_slider_change = [this](int value) {
+    temporary_settings_changes_["general_volume"] = value;
+  };
+  connect(general_volume_slider_.data(), &NamedMenuSlider::valueChanged, this,
+          on_general_volume_slider_change);
+
+  music_volume_slider_.reset(new NamedMenuSlider("", Qt::Orientation::Horizontal, this));
+  music_volume_slider_->setValue(settings_->value("music_volume", 100).toInt());
+  auto on_music_volume_slider_change = [this](int value) {
+    temporary_settings_changes_["music_volume"] = value;
+  };
+  connect(music_volume_slider_.data(), &NamedMenuSlider::valueChanged, this,
+          on_music_volume_slider_change);
+
+  sounds_volume_slider_.reset(new NamedMenuSlider("", Qt::Orientation::Horizontal, this));
+  sounds_volume_slider_->setValue(
+      settings_->value("sounds_volume", 100).toInt());
+  auto on_sounds_volume_slider_change = [this](int value) {
+    temporary_settings_changes_["sounds_volume"] = value;
+  };
+  connect(sounds_volume_slider_.data(), &NamedMenuSlider::valueChanged, this,
+          on_sounds_volume_slider_change);
+
+  general_settings_layout_->addStretch(2);
+  general_settings_layout_->addWidget(general_volume_slider_.data());
+  general_settings_layout_->addWidget(music_volume_slider_.data());
+  general_settings_layout_->addWidget(sounds_volume_slider_.data());
+  general_settings_layout_->addStretch(2);
+
+  // --------------------------Controls Settings--------------------------------
+  controls_settings_layout_->addStretch(2);
+  controls_settings_layout_->addStretch(2);
+
+  // --------------------------Language Settings--------------------------------
   english_language_button_.reset(new MenuButton(this));
   auto on_english_language_button_click = [this]() {
     ChangeLanguage(current_language_ = "en_US");
@@ -95,10 +152,12 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   connect(russian_language_button_.data(), &QPushButton::clicked, this,
           on_change_language_button_click);
 
-  general_settings_layout_->addStretch(2);
-  general_settings_layout_->addWidget(english_language_button_.data());
-  general_settings_layout_->addWidget(russian_language_button_.data());
-  general_settings_layout_->addStretch(2);
+  language_settings_layout_->addStretch(2);
+  language_settings_layout_->addWidget(english_language_button_.data());
+  language_settings_layout_->addWidget(russian_language_button_.data());
+  language_settings_layout_->addStretch(2);
+
+  // ---------------------------------------------------------------------------
 
   horizontal_layout_.reset(new QHBoxLayout(this));
   horizontal_layout_->addStretch(1);
@@ -118,8 +177,13 @@ void SettingsMenu::Resize(const QSize& size) {
 void SettingsMenu::ReTranslateButtons() {
   general_settings_button_->setText(tr("General"));
   controls_settings_button_->setText(tr("Controls"));
+  language_settings_button_->setText(tr("Language"));
   close_button_->setText(tr("Exit"));
   save_and_close_button_->setText(tr("Save and exit"));
+
+  general_volume_slider_->setText(tr("General volume"));
+  music_volume_slider_->setText(tr("Music volume"));
+  sounds_volume_slider_->setText(tr("Sounds volume"));
 
   english_language_button_->setText(tr("English"));
   russian_language_button_->setText(tr("Русский"));
