@@ -15,6 +15,9 @@ class PerlinChunkMapGenerator : public AbstractMapGenerator {
  private:
   class PerlinRegionGenerator : public AbstractRegionGenerator {
    public:
+    enum class Biome { kIcePlains, kPlains, kDesert, kTypesCount };
+    static constexpr int kTypesCount = static_cast<int>(Biome::kTypesCount);
+
     static constexpr int32_t kUpperChunk = Chunk::kHeight;
 
     explicit PerlinRegionGenerator(uint32_t seed);
@@ -25,6 +28,20 @@ class PerlinChunkMapGenerator : public AbstractMapGenerator {
     static constexpr double kCavesRate = 0.3;
     static constexpr double kCavesScale = 8.5;
 
+    static Biome GetBiome(double noise);
+
+    void GenerateBasicBiome(
+        QPoint chunk_pos, Chunk* chunk, int x,
+        const std::array<int32_t, Chunk::kWidth>& height_map, Block upper,
+        Block lower);
+    void GenerateIcePlains(
+        QPoint chunk_pos, Chunk* chunk, int x,
+        const std::array<int32_t, Chunk::kWidth>& height_map);
+    void GeneratePlains(QPoint chunk_pos, Chunk* chunk, int x,
+                        const std::array<int32_t, Chunk::kWidth>& height_map);
+    void GenerateDesert(QPoint chunk_pos, Chunk* chunk, int x,
+                        const std::array<int32_t, Chunk::kWidth>& height_map);
+
     Chunk LandscapeGeneration(QPoint chunk_pos);
 
     void GenerateCaves(Chunk* chunk, QPoint chunk_pos);
@@ -33,18 +50,22 @@ class PerlinChunkMapGenerator : public AbstractMapGenerator {
     static double HeightNoise(double noise);
     static double StoneNoise(double noise);
 
+    static constexpr double kColdNoise = -0.3;
+    static constexpr double kHotNoise = 0.3;
+
     static constexpr double kHillsRapidness = 3.5;
     static constexpr double kStoneRapidness = 2;
     static constexpr double kStoneMaxHeight = 8;
 
-    static constexpr double kCoalMainRate = 0.1;  // vein precision
-    static constexpr double kCoalRate = 0.35;     // amount in one vein
+    static constexpr double kCoalMainRate = 0.18;  // vein precision
+    static constexpr double kCoalRate = 0.50;      // amount in one vein
     static constexpr double kCoalScale = 10;
 
-    static constexpr double kIronMainRate = 0.17;
-    static constexpr double kIronRate = 0.4;
+    static constexpr double kIronMainRate = 0.25;
+    static constexpr double kIronRate = 0.55;
     static constexpr double kIronScale = 10;
 
+    PerlinNoise1D noise_biome_temperature_;
     PerlinNoise1D noise_hills_;
     PerlinNoise1D noise_stone_;
     PerlinNoise2D noise_caves_;

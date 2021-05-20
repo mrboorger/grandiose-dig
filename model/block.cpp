@@ -17,6 +17,9 @@ const Block::Characteristics& Block::GetCharactistics(int32_t id) {
     set(Type::kAir, Characteristics{Light(0, 0, 0, 0), 0, false, false});
     set(Type::kDirt, kDefaultBlockCharactestics);
     set(Type::kGrass, kDefaultBlockCharactestics);
+    set(Type::kSnowyGrass, kDefaultBlockCharactestics);
+    set(Type::kSand, kDefaultBlockCharactestics);
+    set(Type::kSandstone, kDefaultBlockCharactestics);
     set(Type::kStone, kDefaultBlockCharactestics);
     set(Type::kCoalOre, kDefaultBlockCharactestics);
     set(Type::kIronOre, kDefaultBlockCharactestics);

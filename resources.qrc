@@ -50,5 +50,8 @@
         <file>resources/textures/technical.png</file>
         <file>resources/textures/coal_ore.png</file>
         <file>resources/textures/iron_ore.png</file>
+        <file>resources/textures/sand.png</file>
+        <file>resources/textures/sandstone.png</file>
+        <file>resources/textures/snowy_grass.png</file>
     </qresource>
 </RCC>
