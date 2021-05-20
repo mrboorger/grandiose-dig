@@ -6,7 +6,9 @@
 #include <QSettings>
 
 SettingsMenu::SettingsMenu(QWidget* parent)
-    : AbstractMenu(parent), transparent_background_(false) {
+    : AbstractMenu(parent),
+      transparent_background_(false),
+      listening_to_press_event_(false) {
   settings_.reset(new QSettings);
   if (settings_->value("kLeft", -1) == -1) {
     settings_->setValue("kLeft", Qt::Key::Key_Left);
@@ -39,12 +41,12 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   language_settings_layout_.reset(new QVBoxLayout);
   language_settings_widget_->setLayout(language_settings_layout_.data());
 
-  // --------------------------Settings types-----------------------------------
-  current_settings_.reset(new QStackedWidget);
+  current_settings_.reset(new QStackedWidget(this));
   current_settings_->addWidget(general_settings_widget_.data());
   current_settings_->addWidget(controls_settings_widget_.data());
   current_settings_->addWidget(language_settings_widget_.data());
 
+  // --------------------------Settings types-----------------------------------
   general_settings_button_.reset(new MenuButton(this));
   auto on_general_settings_button_click = [this] {
     current_settings_->setCurrentWidget(general_settings_widget_.data());
@@ -101,6 +103,7 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   settings_types_layout_->addStretch(2);
 
   // --------------------------General Settings---------------------------------
+  scrollable_generals_widget_.reset(new ScrollableVBoxWidget(this));
   general_volume_slider_.reset(
       new NamedMenuSlider("", Qt::Orientation::Horizontal, this));
   general_volume_slider_->setValue(
@@ -130,14 +133,52 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   connect(sounds_volume_slider_.data(), &NamedMenuSlider::valueChanged, this,
           on_sounds_volume_slider_change);
 
+  scrollable_generals_widget_->addWidget(general_volume_slider_.data());
+  scrollable_generals_widget_->addWidget(music_volume_slider_.data());
+  scrollable_generals_widget_->addWidget(sounds_volume_slider_.data());
+
   general_settings_layout_->addStretch(2);
-  general_settings_layout_->addWidget(general_volume_slider_.data());
-  general_settings_layout_->addWidget(music_volume_slider_.data());
-  general_settings_layout_->addWidget(sounds_volume_slider_.data());
+  general_settings_layout_->addWidget(scrollable_generals_widget_.data(), 4);
   general_settings_layout_->addStretch(2);
 
   // --------------------------Controls Settings--------------------------------
+  scrollable_controls_widget_.reset(new ScrollableVBoxWidget(this));
+  change_left_key_button_.reset(new MenuButton(this));
+  auto on_change_left_key_button_click = [this]() {
+    setFocus();
+    listening_to_press_event_ = true;
+    controller_type_to_change_ = "kLeft";
+    button_to_update_on_press_event_ = change_left_key_button_.data();
+  };
+  connect(change_left_key_button_.data(), &QPushButton::clicked, this,
+          on_change_left_key_button_click);
+
+  change_right_key_button_.reset(new MenuButton(this));
+  auto on_change_right_key_button_click = [this]() {
+    setFocus();
+    listening_to_press_event_ = true;
+    controller_type_to_change_ = "kRight";
+    button_to_update_on_press_event_ = change_right_key_button_.data();
+  };
+  connect(change_right_key_button_.data(), &QPushButton::clicked, this,
+          on_change_right_key_button_click);
+
+  change_jump_key_button_.reset(new MenuButton(this));
+  auto on_change_jump_key_button_click = [this]() {
+    setFocus();
+    listening_to_press_event_ = true;
+    controller_type_to_change_ = "kJump";
+    button_to_update_on_press_event_ = change_jump_key_button_.data();
+  };
+  connect(change_jump_key_button_.data(), &QPushButton::clicked, this,
+          on_change_jump_key_button_click);
+
+  scrollable_controls_widget_->addWidget(change_left_key_button_.data());
+  scrollable_controls_widget_->addWidget(change_right_key_button_.data());
+  scrollable_controls_widget_->addWidget(change_jump_key_button_.data());
+
   controls_settings_layout_->addStretch(2);
+  controls_settings_layout_->addWidget(scrollable_controls_widget_.data(), 4);
   controls_settings_layout_->addStretch(2);
 
   // --------------------------Language Settings--------------------------------
@@ -212,6 +253,34 @@ void SettingsMenu::ReTranslateButtons() {
   music_volume_slider_->setText(tr("Music volume"));
   sounds_volume_slider_->setText(tr("Sounds volume"));
 
+  {
+    QString text = tr("Move left: ");
+    if (change_left_key_button_->text().isEmpty()) {
+      text += QKeySequence(settings_->value("kLeft").toInt()).toString();
+    } else {
+      text += change_left_key_button_->text().split(" ").back();
+    }
+    change_left_key_button_->setText(text);
+  }
+  {
+    QString text = tr("Move right: ");
+    if (change_right_key_button_->text().isEmpty()) {
+      text += QKeySequence(settings_->value("kRight").toInt()).toString();
+    } else {
+      text += change_right_key_button_->text().split(" ").back();
+    }
+    change_right_key_button_->setText(text);
+  }
+  {
+    QString text = tr("Jump: ");
+    if (change_jump_key_button_->text().isEmpty()) {
+      text += QKeySequence(settings_->value("kJump").toInt()).toString();
+    } else {
+      text += change_jump_key_button_->text().split(" ").back();
+    }
+    change_jump_key_button_->setText(text);
+  }
+
   english_language_button_->setText(tr("English"));
   russian_language_button_->setText(tr("Русский"));
   german_language_button_->setText(tr("Deutsche"));
@@ -234,4 +303,16 @@ void SettingsMenu::paintEvent(QPaintEvent* event) {
 void SettingsMenu::ChangeLanguage(const QString& language) {
   translator_->load(":resources/translations/translation_" + language);
   qt_translator_->load("qtbase_" + language);
+}
+
+void SettingsMenu::keyPressEvent(QKeyEvent* event) {
+  if (listening_to_press_event_) {
+    temporary_settings_changes_[controller_type_to_change_] = event->key();
+    listening_to_press_event_ = false;
+    QString prev_key =
+        button_to_update_on_press_event_->text().split(" ").back();
+    button_to_update_on_press_event_->setText(
+        button_to_update_on_press_event_->text().replace(
+            prev_key, QKeySequence(event->key()).toString()));
+  }
 }

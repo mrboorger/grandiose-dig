@@ -7,5 +7,5 @@ MenuButton::MenuButton(QWidget* parent, MenuButtonType button_type)
   }
   setStyleSheet(
       menu_button_styles::kBasicStyles[static_cast<int>(button_type)]);
-  setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+  setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
 }

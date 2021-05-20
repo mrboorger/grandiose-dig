@@ -45,62 +45,77 @@
 <context>
     <name>SettingsMenu</name>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="205"/>
+        <location filename="../../view/settings_menu.cpp" line="249"/>
         <source>General</source>
         <translation>Общие</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="206"/>
+        <location filename="../../view/settings_menu.cpp" line="250"/>
         <source>Controls</source>
         <translation>Управление</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="207"/>
+        <location filename="../../view/settings_menu.cpp" line="251"/>
         <source>Language</source>
         <translation>Язык</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="208"/>
+        <location filename="../../view/settings_menu.cpp" line="252"/>
         <source>Exit</source>
         <translation>Выйти</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="209"/>
+        <location filename="../../view/settings_menu.cpp" line="253"/>
         <source>Save and exit</source>
         <translation>Сохранить и Выйти</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="211"/>
+        <location filename="../../view/settings_menu.cpp" line="255"/>
         <source>General volume</source>
         <translation>Общая громкость</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="212"/>
+        <location filename="../../view/settings_menu.cpp" line="256"/>
         <source>Music volume</source>
         <translation>Громкость музыки</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="213"/>
+        <location filename="../../view/settings_menu.cpp" line="257"/>
         <source>Sounds volume</source>
         <translation>Громкость звуков</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="215"/>
+        <location filename="../../view/settings_menu.cpp" line="260"/>
+        <source>Move left: </source>
+        <translation>Движение влево: </translation>
+    </message>
+    <message>
+        <location filename="../../view/settings_menu.cpp" line="269"/>
+        <source>Move right: </source>
+        <translation>Движение вправо: </translation>
+    </message>
+    <message>
+        <location filename="../../view/settings_menu.cpp" line="278"/>
+        <source>Jump: </source>
+        <translation>Прыжок: </translation>
+    </message>
+    <message>
+        <location filename="../../view/settings_menu.cpp" line="287"/>
         <source>English</source>
         <translation>English</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="216"/>
+        <location filename="../../view/settings_menu.cpp" line="288"/>
         <source>Русский</source>
         <translation>Русский (выбран)</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="217"/>
+        <location filename="../../view/settings_menu.cpp" line="289"/>
         <source>Deutsche</source>
         <translation>Deutsche</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="218"/>
+        <location filename="../../view/settings_menu.cpp" line="290"/>
         <source>Українська</source>
         <translation>Українська</translation>
     </message>

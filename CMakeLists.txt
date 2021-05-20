@@ -72,10 +72,11 @@ set(SOURCES
         view/map_drawer.cpp
         view/moving_object_drawer.cpp
         view/pause_menu.cpp
+        view/scrollable_v_box_widget.cpp
         view/settings_menu.cpp
         view/sound_manager.cpp
         view/texture_atlas.cpp
-        view/view.cpp view/scrollable_v_box_layout.cpp view/scrollable_v_box_layout.h)
+        view/view.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${RESOURCES})
 target_link_libraries(${PROJECT_NAME} ${REQUIRED_LIBS_QUALIFIED})

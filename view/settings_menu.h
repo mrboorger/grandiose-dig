@@ -2,6 +2,8 @@
 #define VIEW_SETTINGS_MENU_H_
 
 #include <QHBoxLayout>
+#include <QKeyEvent>
+#include <QKeySequence>
 #include <QPushButton>
 #include <QScrollArea>
 #include <QSettings>
@@ -9,10 +11,11 @@
 #include <QStackedWidget>
 #include <QTranslator>
 
+#include "controller/controller_types.h"
 #include "view/abstract_menu.h"
 #include "view/menu_button.h"
 #include "view/named_menu_slider.h"
-#include "view/scrollable_v_box_layout.h"
+#include "view/scrollable_v_box_widget.h"
 
 class SettingsMenu final : public AbstractMenu {
   Q_OBJECT
@@ -38,9 +41,14 @@ class SettingsMenu final : public AbstractMenu {
   void ChangeLanguage(const QString& language);
 
   void paintEvent(QPaintEvent* event) final;
+  void keyPressEvent(QKeyEvent* event) final;
 
   bool transparent_background_;
   std::map<QString, QVariant> temporary_settings_changes_;
+
+  bool listening_to_press_event_;
+  QString controller_type_to_change_;
+  MenuButton* button_to_update_on_press_event_;
 
   QString current_language_;
   QScopedPointer<QSettings> settings_;
@@ -65,9 +73,16 @@ class SettingsMenu final : public AbstractMenu {
   QScopedPointer<MenuButton> save_and_close_button_;
 
   // General Settings
+  QScopedPointer<ScrollableVBoxWidget> scrollable_generals_widget_;
   QScopedPointer<NamedMenuSlider> general_volume_slider_;
   QScopedPointer<NamedMenuSlider> music_volume_slider_;
   QScopedPointer<NamedMenuSlider> sounds_volume_slider_;
+
+  // Controls Settings
+  QScopedPointer<ScrollableVBoxWidget> scrollable_controls_widget_;
+  QScopedPointer<MenuButton> change_left_key_button_;
+  QScopedPointer<MenuButton> change_right_key_button_;
+  QScopedPointer<MenuButton> change_jump_key_button_;
 
   // Language Settings
   QScopedPointer<ScrollableVBoxWidget> scrollable_languages_widget_;

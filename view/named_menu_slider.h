@@ -11,6 +11,7 @@ const QString kBasicStyle =
     "QLabel {"
     "   font-family: Comic Sans MS;"
     "   font-size: 50px;"
+    "   height: 50px;"
     "   min-width: 420px;"
     "   color: black;"
     "   border-radius: 10px;"

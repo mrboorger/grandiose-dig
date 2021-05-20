@@ -6,11 +6,12 @@ NamedMenuSlider::NamedMenuSlider(const QString& text,
       layout_(QHBoxLayout()),
       label_(text, this),
       slider_(orientation, this) {
-  setStyleSheet(menu_named_slider_styles::kBasicStyle);
   label_.setAlignment(Qt::AlignCenter);
+  label_.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   layout_.addWidget(&label_);
   layout_.addWidget(&slider_);
   setLayout(&layout_);
+  setStyleSheet(menu_named_slider_styles::kBasicStyle);
 
   connect(&slider_, &QSlider::valueChanged, this,
           &NamedMenuSlider::ChangeValue);
