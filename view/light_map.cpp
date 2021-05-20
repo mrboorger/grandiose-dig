@@ -45,7 +45,7 @@ Light LightMap::GetLightRB(QPoint pos) {
 }
 
 void LightMap::CalculateRegion(const QRect& region) {
-  /*std::queue<QPoint> update_queue;
+  std::queue<QPoint> update_queue;
   std::set<QPoint, utils::QPointLexicographicalCompare> removed;
   data_.MarkUsedOrInsert(region);
   while (!invalidate_queue_.empty()) {
@@ -93,7 +93,7 @@ void LightMap::CalculateRegion(const QRect& region) {
         update_queue.push(neighbour);
       }
     }
-  }*/
+  }
 }
 
 LightMap::Buffer LightMap::BufferConstructor::operator()(QPoint pos) {

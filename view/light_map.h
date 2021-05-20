@@ -9,8 +9,8 @@
 #include <utility>
 
 #include "model/abstract_map.h"
-#include "model/region_cache.h"
 #include "model/constants.h"
+#include "model/region_cache.h"
 #include "utils.h"
 
 class LightMap {
@@ -48,9 +48,8 @@ class LightMap {
    private:
     std::queue<QPoint>* update_queue_;
   };
-  using Container =
-      containers::RegionCache<Light, kBufferWidth, kBufferHeight,
-                                         Buffer, BufferConstructor>;
+  using Container = containers::RegionCache<Light, kBufferWidth, kBufferHeight,
+                                            Buffer, BufferConstructor>;
   static constexpr int kUpdateDepth = 2;
 
   void SetPointUpdated(QPoint pos, int iteration = kUpdateDepth);
