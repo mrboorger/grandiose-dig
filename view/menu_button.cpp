@@ -1,4 +1,4 @@
-#include "menu_button.h"
+#include "view/menu_button.h"
 
 MenuButton::MenuButton(QWidget* parent, MenuButtonType button_type)
     : QPushButton(parent) {

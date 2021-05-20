@@ -1,5 +1,4 @@
 #include <QApplication>
-#include <QDebug>
 #include <QFontDatabase>
 #include <QLibraryInfo>
 #include <QSettings>

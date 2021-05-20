@@ -3,6 +3,7 @@
 
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QScrollArea>
 #include <QSettings>
 #include <QSlider>
 #include <QStackedWidget>
@@ -11,6 +12,7 @@
 #include "view/abstract_menu.h"
 #include "view/menu_button.h"
 #include "view/named_menu_slider.h"
+#include "view/scrollable_v_box_layout.h"
 
 class SettingsMenu final : public AbstractMenu {
   Q_OBJECT
@@ -38,7 +40,7 @@ class SettingsMenu final : public AbstractMenu {
   void paintEvent(QPaintEvent* event) final;
 
   bool transparent_background_;
-  std::map<QString,QVariant> temporary_settings_changes_;
+  std::map<QString, QVariant> temporary_settings_changes_;
 
   QString current_language_;
   QScopedPointer<QSettings> settings_;
@@ -68,8 +70,11 @@ class SettingsMenu final : public AbstractMenu {
   QScopedPointer<NamedMenuSlider> sounds_volume_slider_;
 
   // Language Settings
+  QScopedPointer<ScrollableVBoxWidget> scrollable_languages_widget_;
   QScopedPointer<MenuButton> english_language_button_;
   QScopedPointer<MenuButton> russian_language_button_;
+  QScopedPointer<MenuButton> german_language_button_;
+  QScopedPointer<MenuButton> ukrainian_language_button_;
 };
 
 #endif  // VIEW_SETTINGS_MENU_H_

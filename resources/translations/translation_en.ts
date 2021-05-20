@@ -29,7 +29,7 @@
     <message>
         <location filename="../../view/pause_menu.cpp" line="54"/>
         <source>Resume</source>
-        <translation>Resume</translation>
+        <translation>Continue</translation>
     </message>
     <message>
         <location filename="../../view/pause_menu.cpp" line="55"/>
@@ -45,54 +45,64 @@
 <context>
     <name>SettingsMenu</name>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="178"/>
+        <location filename="../../view/settings_menu.cpp" line="205"/>
         <source>General</source>
         <translation>General</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="179"/>
+        <location filename="../../view/settings_menu.cpp" line="206"/>
         <source>Controls</source>
         <translation>Controls</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="180"/>
+        <location filename="../../view/settings_menu.cpp" line="207"/>
         <source>Language</source>
         <translation>Language</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="181"/>
+        <location filename="../../view/settings_menu.cpp" line="208"/>
         <source>Exit</source>
         <translation>Exit</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="182"/>
+        <location filename="../../view/settings_menu.cpp" line="209"/>
         <source>Save and exit</source>
         <translation>Save and exit</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="184"/>
+        <location filename="../../view/settings_menu.cpp" line="211"/>
         <source>General volume</source>
         <translation>General volume</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="185"/>
+        <location filename="../../view/settings_menu.cpp" line="212"/>
         <source>Music volume</source>
         <translation>Music volume</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="186"/>
+        <location filename="../../view/settings_menu.cpp" line="213"/>
         <source>Sounds volume</source>
         <translation>Sounds volume</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="188"/>
+        <location filename="../../view/settings_menu.cpp" line="215"/>
         <source>English</source>
         <translation>English (shosen)</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="189"/>
+        <location filename="../../view/settings_menu.cpp" line="216"/>
         <source>Русский</source>
         <translation>Русский</translation>
+    </message>
+    <message>
+        <location filename="../../view/settings_menu.cpp" line="217"/>
+        <source>Deutsche</source>
+        <translation>Deutsche</translation>
+    </message>
+    <message>
+        <location filename="../../view/settings_menu.cpp" line="218"/>
+        <source>Українська</source>
+        <translation>Українська</translation>
     </message>
 </context>
 </TS>

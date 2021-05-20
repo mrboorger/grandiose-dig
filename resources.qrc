@@ -33,10 +33,14 @@
         <file>resources/textures/quiox1.png</file>
         <file>resources/textures/magic_quiox1.png</file>
         <file>resources/textures/magic_quiox0.png</file>
-        <file>resources/translations/translation_en_US.ts</file>
-        <file>resources/translations/translation_en_US.qm</file>
-        <file>resources/translations/translation_ru_RU.ts</file>
-        <file>resources/translations/translation_ru_RU.qm</file>
+        <file>resources/translations/translation_en.ts</file>
+        <file>resources/translations/translation_en.qm</file>
+        <file>resources/translations/translation_ru.ts</file>
+        <file>resources/translations/translation_ru.qm</file>
+        <file>resources/translations/translation_de.ts</file>
+        <file>resources/translations/translation_de.qm</file>
+        <file>resources/translations/translation_uk.ts</file>
+        <file>resources/translations/translation_uk.qm</file>
         <file>resources/sounds/magic_quiox_death.mp3</file>
         <file>resources/sounds/magic_quiox2.mp3</file>
         <file>resources/sounds/magic_quiox1.mp3</file>

@@ -1,4 +1,4 @@
-#include "settings_menu.h"
+#include "view/settings_menu.h"
 
 #include <QApplication>
 #include <QKeySequence>
@@ -35,7 +35,7 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   controls_settings_widget_.reset(new QWidget);
   controls_settings_layout_.reset(new QVBoxLayout);
   controls_settings_widget_->setLayout(controls_settings_layout_.data());
-  language_settings_widget_.reset(new QWidget);
+  language_settings_widget_.reset(new ScrollableVBoxWidget);
   language_settings_layout_.reset(new QVBoxLayout);
   language_settings_widget_->setLayout(language_settings_layout_.data());
 
@@ -101,7 +101,8 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   settings_types_layout_->addStretch(2);
 
   // --------------------------General Settings---------------------------------
-  general_volume_slider_.reset(new NamedMenuSlider("", Qt::Orientation::Horizontal, this));
+  general_volume_slider_.reset(
+      new NamedMenuSlider("", Qt::Orientation::Horizontal, this));
   general_volume_slider_->setValue(
       settings_->value("general_volume", 100).toInt());
   auto on_general_volume_slider_change = [this](int value) {
@@ -110,7 +111,8 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   connect(general_volume_slider_.data(), &NamedMenuSlider::valueChanged, this,
           on_general_volume_slider_change);
 
-  music_volume_slider_.reset(new NamedMenuSlider("", Qt::Orientation::Horizontal, this));
+  music_volume_slider_.reset(
+      new NamedMenuSlider("", Qt::Orientation::Horizontal, this));
   music_volume_slider_->setValue(settings_->value("music_volume", 100).toInt());
   auto on_music_volume_slider_change = [this](int value) {
     temporary_settings_changes_["music_volume"] = value;
@@ -118,7 +120,8 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   connect(music_volume_slider_.data(), &NamedMenuSlider::valueChanged, this,
           on_music_volume_slider_change);
 
-  sounds_volume_slider_.reset(new NamedMenuSlider("", Qt::Orientation::Horizontal, this));
+  sounds_volume_slider_.reset(
+      new NamedMenuSlider("", Qt::Orientation::Horizontal, this));
   sounds_volume_slider_->setValue(
       settings_->value("sounds_volume", 100).toInt());
   auto on_sounds_volume_slider_change = [this](int value) {
@@ -138,23 +141,47 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   controls_settings_layout_->addStretch(2);
 
   // --------------------------Language Settings--------------------------------
-  english_language_button_.reset(new MenuButton(this));
+  scrollable_languages_widget_.reset(new ScrollableVBoxWidget(this));
+
+  english_language_button_.reset(
+      new MenuButton(scrollable_languages_widget_.data()));
   auto on_english_language_button_click = [this]() {
-    ChangeLanguage(current_language_ = "en_US");
+    ChangeLanguage(current_language_ = "en");
   };
   connect(english_language_button_.data(), &QPushButton::clicked, this,
           on_english_language_button_click);
 
-  russian_language_button_.reset(new MenuButton(this));
-  auto on_change_language_button_click = [this]() {
-    ChangeLanguage(current_language_ = "ru_RU");
+  russian_language_button_.reset(
+      new MenuButton(scrollable_languages_widget_.data()));
+  auto on_russian_language_button_click = [this]() {
+    ChangeLanguage(current_language_ = "ru");
   };
   connect(russian_language_button_.data(), &QPushButton::clicked, this,
-          on_change_language_button_click);
+          on_russian_language_button_click);
+
+  german_language_button_.reset(
+      new MenuButton(scrollable_languages_widget_.data()));
+  auto on_german_language_button_click = [this]() {
+    ChangeLanguage(current_language_ = "de");
+  };
+  connect(german_language_button_.data(), &QPushButton::clicked, this,
+          on_german_language_button_click);
+
+  ukrainian_language_button_.reset(
+      new MenuButton(scrollable_languages_widget_.data()));
+  auto on_ukrainian_language_button_click = [this]() {
+    ChangeLanguage(current_language_ = "uk");
+  };
+  connect(ukrainian_language_button_.data(), &QPushButton::clicked, this,
+          on_ukrainian_language_button_click);
+
+  scrollable_languages_widget_->addWidget(english_language_button_.data());
+  scrollable_languages_widget_->addWidget(russian_language_button_.data());
+  scrollable_languages_widget_->addWidget(german_language_button_.data());
+  scrollable_languages_widget_->addWidget(ukrainian_language_button_.data());
 
   language_settings_layout_->addStretch(2);
-  language_settings_layout_->addWidget(english_language_button_.data());
-  language_settings_layout_->addWidget(russian_language_button_.data());
+  language_settings_layout_->addWidget(scrollable_languages_widget_.data(), 4);
   language_settings_layout_->addStretch(2);
 
   // ---------------------------------------------------------------------------
@@ -187,6 +214,8 @@ void SettingsMenu::ReTranslateButtons() {
 
   english_language_button_->setText(tr("English"));
   russian_language_button_->setText(tr("Русский"));
+  german_language_button_->setText(tr("Deutsche"));
+  ukrainian_language_button_->setText(tr("Українська"));
 }
 
 void SettingsMenu::paintEvent(QPaintEvent* event) {
@@ -204,5 +233,5 @@ void SettingsMenu::paintEvent(QPaintEvent* event) {
 
 void SettingsMenu::ChangeLanguage(const QString& language) {
   translator_->load(":resources/translations/translation_" + language);
-  qt_translator_->load("qt_base" + language);
+  qt_translator_->load("qtbase_" + language);
 }

@@ -1,4 +1,4 @@
-#include "sound_manager.h"
+#include "view/sound_manager.h"
 
 #include <QSettings>
 

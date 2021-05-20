@@ -1,4 +1,4 @@
-#include "named_menu_slider.h"
+#include "view/named_menu_slider.h"
 
 NamedMenuSlider::NamedMenuSlider(const QString& text,
                                  Qt::Orientation orientation, QWidget* parent)
@@ -7,6 +7,7 @@ NamedMenuSlider::NamedMenuSlider(const QString& text,
       label_(text, this),
       slider_(orientation, this) {
   setStyleSheet(menu_named_slider_styles::kBasicStyle);
+  label_.setAlignment(Qt::AlignCenter);
   layout_.addWidget(&label_);
   layout_.addWidget(&slider_);
   setLayout(&layout_);
