@@ -105,8 +105,8 @@ bool Controller::IsVisible(QPointF player_center, QPointF mob_point) const {
     for (double x = center_left_x + constants::kEps;; x += 1) {
       QPoint block_pos{static_cast<int>(std::floor(x)),
                        static_cast<int>(std::floor(y))};
-      if (Model::GetInstance()->GetMap()->GetBlock(block_pos).GetType() !=
-          Block::Type::kAir) {
+      if (Model::GetInstance()->GetMap()->GetBlock(block_pos).GetFrontType() !=
+          Block::FrontType::kAir) {
         return false;
       }
       if (x >= std::floor(center_right_x)) {

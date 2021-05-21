@@ -119,10 +119,5 @@ void LightMap::SetPointUpdated(QPoint pos, int iteration) {
 }
 
 Light LightMap::GetLuminosity(QPoint pos) const {
-  Block block = map_->GetBlock(pos);
-  Light light = block.GetLuminosity();
-  if (pos.y() < map_->GroundLevel() && !block.IsOpaque()) {
-    light.SetSun(Light::kMaxLight);
-  }
-  return light;
+  return map_->GetBlock(pos).GetLuminosity();
 }

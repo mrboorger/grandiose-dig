@@ -169,7 +169,7 @@ bool MovingObject::FindCollisionGround(
     for (double x = bottom_left_x + constants::kEps;; x += 1) {
       QPoint block_pos{static_cast<int>(std::floor(x)),
                        static_cast<int>(std::floor(y))};
-      if (map->GetBlock(block_pos).GetType() != Block::Type::kAir) {
+      if (map->GetBlock(block_pos).GetFrontType () != Block::FrontType::kAir) {
         *ground_y = block_pos.y() - size_.y();
         return true;
       }
@@ -199,7 +199,7 @@ bool MovingObject::FindCollisionCeiling(
     for (double x = top_left_x + constants::kEps;; x += 1) {
       QPoint block_pos{static_cast<int>(std::floor(x)),
                        static_cast<int>(std::floor(y))};
-      if (map->GetBlock(block_pos).GetType() != Block::Type::kAir) {
+      if (map->GetBlock(block_pos).GetFrontType() != Block::FrontType::kAir) {
         *ceiling_y = block_pos.y() + 1;
         return true;
       }
@@ -230,7 +230,7 @@ bool MovingObject::FindCollisionLeft(
     for (double y = bottom_left_y;; y -= 1) {
       QPoint block_pos{static_cast<int>(std::floor(x)),
                        static_cast<int>(std::floor(y))};
-      if (map->GetBlock(block_pos).GetType() != Block::Type::kAir) {
+      if (map->GetBlock(block_pos).GetFrontType() != Block::FrontType::kAir) {
         *left_wall_x = block_pos.x() + 1;
         return true;
       }
@@ -263,7 +263,7 @@ bool MovingObject::FindCollisionRight(
     for (double y = bottom_right_y;; y -= 1) {
       QPoint block_pos{static_cast<int>(std::floor(x)),
                        static_cast<int>(std::floor(y))};
-      if (map->GetBlock(block_pos).GetType() != Block::Type::kAir) {
+      if (map->GetBlock(block_pos).GetFrontType() != Block::FrontType::kAir) {
         *right_wall_x = block_pos.x() - size_.x();
         return true;
       }

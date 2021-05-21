@@ -10,7 +10,7 @@ class TextureAtlas : public QOpenGLTexture {
  public:
   TextureAtlas();
 
-  static constexpr int kSize = Block::kTypesCount;
+  static constexpr int kSize = Block::kFrontTypesCount;
   static constexpr int kTextureWidth = 3 * kSize * constants::kBlockSz;
   static constexpr int kTextureHeight = constants::kBlockSz;
 

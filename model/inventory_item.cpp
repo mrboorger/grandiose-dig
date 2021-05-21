@@ -19,5 +19,5 @@ int InventoryItem::ItemsLeft() const {
 }
 
 InventoryItem InventoryItem::GetDropItem(Block block) {
-  return kDropItemOfBlock[block.GetId()];
+  return kDropItemOfBlock[block.GetFrontId()];
 }

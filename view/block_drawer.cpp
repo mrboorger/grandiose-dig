@@ -8,9 +8,9 @@
 
 namespace {
 
-const std::array<QString, Block::kTypesCount> kNames = {"", "dirt.png",
+const std::array<QString, Block::kFrontTypesCount> kNames = {"", "dirt.png",
                                                         "grass.png"};
-std::array<QImage, Block::kTypesCount> images;
+std::array<QImage, Block::kFrontTypesCount> images;
 
 const QImage& GetTexture(int32_t id) {
   if (images[id].isNull()) {
@@ -24,13 +24,13 @@ const QImage& GetTexture(int32_t id) {
 
 void BlockDrawer::DrawBlock(QPainter* painter, QPointF point, Block block) {
   if (block.IsVisible()) {
-    painter->drawImage(point, GetTexture(block.GetId()));
+    painter->drawImage(point, GetTexture(block.GetFrontId()));
   }
 }
 
 void BlockDrawer::DrawBlock(QPainter* painter, QPoint point, Block block) {
   if (block.IsVisible()) {
-    painter->drawImage(point, GetTexture(block.GetId()));
+    painter->drawImage(point, GetTexture(block.GetFrontId()));
   }
 }
 

@@ -12,6 +12,6 @@ Block* Map::GetBlockMutable(QPoint pos) {
 }
 
 Map::Map(int width, int height)
-    : blocks_(width * height, Block(Block::Type::kAir)),
+    : blocks_(width * height, Block(Block::FrontType::kAir)),
       width_(width),
       height_(height) {}

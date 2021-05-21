@@ -11,10 +11,10 @@ void TextureAtlas::Init() {
   QPixmap buffer(kTextureWidth, kTextureHeight);
   QPainter painter(&buffer);
   painter.fillRect(0, 0, kTextureWidth, kTextureHeight, Qt::white);
-  for (int i = Block::kFirstType; i != Block::kTypesCount; ++i) {
+  for (int i = Block::kFirstFrontType; i != Block::kFrontTypesCount; ++i) {
     QPoint position(GetBlockPixmapXCoordinate(i) - constants::kBlockSz, 0);
     for (int j = 0; j < 3; ++j) {
-      BlockDrawer::DrawBlock(&painter, position, Block(Block::Type(i)));
+      BlockDrawer::DrawBlock(&painter, position, Block(Block::FrontType(i)));
       position.rx() += constants::kBlockSz;
     }
   }
@@ -43,27 +43,27 @@ int32_t TextureAtlas::GetBlockPixmapXCoordinate(int32_t id) {
 }
 
 QPointF TextureAtlas::GetBlockTCLT(Block block) {
-  QPointF position(GetBlockPixmapXCoordinate(block.GetId()), 0.0);
+  QPointF position(GetBlockPixmapXCoordinate(block.GetFrontId()), 0.0);
   position.rx() /= kTextureWidth;
   return position;
 }
 
 QPointF TextureAtlas::GetBlockTCLB(Block block) {
-  QPointF position(GetBlockPixmapXCoordinate(block.GetId()), 1.0);
+  QPointF position(GetBlockPixmapXCoordinate(block.GetFrontId()), 1.0);
   position.rx() /= kTextureWidth;
   return position;
 }
 
 QPointF TextureAtlas::GetBlockTCRT(Block block) {
   QPointF position(
-      GetBlockPixmapXCoordinate(block.GetId()) + constants::kBlockSz - 1, 0.0);
+      GetBlockPixmapXCoordinate(block.GetFrontId()) + constants::kBlockSz - 1, 0.0);
   position.rx() /= kTextureWidth;
   return position;
 }
 
 QPointF TextureAtlas::GetBlockTCRB(Block block) {
   QPointF position(
-      GetBlockPixmapXCoordinate(block.GetId()) + constants::kBlockSz - 1, 1.0);
+      GetBlockPixmapXCoordinate(block.GetFrontId()) + constants::kBlockSz - 1, 1.0);
   position.rx() /= kTextureWidth;
   return position;
 }
