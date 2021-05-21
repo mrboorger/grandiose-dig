@@ -22,7 +22,6 @@ class LightMap {
       : map_(std::move(map)), thread_([this]() { CalculateRegionThread(); }) {}
 
   ~LightMap() {
-    qDebug() << "?";
     thread_stop_ = true;
     thread_.join();
   }
@@ -38,12 +37,17 @@ class LightMap {
   void CalculateRegion(const QRect& region);
   void CalculateRegionThread();
 
-  const std::set<QPoint, utils::QPointLexicographicalCompare>& TakeUpdateList()
-      const {
-    return updated_;
+  std::set<QPoint, utils::QPointLexicographicalCompare> TakeUpdateList() {
+    std::set<QPoint, utils::QPointLexicographicalCompare> result;
+    if (mutex_.try_lock()) {
+      const std::lock_guard<std::recursive_mutex> lock(mutex_);
+      result.swap(updated_);
+      return result;
+    }
+    return result;
   }
 
-  void ClearUpdateList() { updated_.clear(); }
+  // void ClearUpdateList() { updated_.clear(); }
 
  private:
   static constexpr int kBufferWidth = 64;
