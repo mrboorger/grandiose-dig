@@ -78,5 +78,6 @@ set(SOURCES
         view/view.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${RESOURCES})
-target_link_libraries(${PROJECT_NAME} ${REQUIRED_LIBS_QUALIFIED})
+find_package(Threads REQUIRED)
+target_link_libraries(${PROJECT_NAME} Threads::Threads ${REQUIRED_LIBS_QUALIFIED})
 

@@ -2,10 +2,13 @@
 #define VIEW_LIGHT_MAP_H_
 
 #include <QRect>
+#include <atomic>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <queue>
 #include <set>
+#include <thread>
 #include <utility>
 
 #include "model/abstract_map.h"
@@ -15,7 +18,14 @@
 
 class LightMap {
  public:
-  explicit LightMap(std::shared_ptr<AbstractMap> map) : map_(std::move(map)) {}
+  explicit LightMap(std::shared_ptr<AbstractMap> map)
+      : map_(std::move(map)), thread_([this]() { CalculateRegionThread(); }) {}
+
+  ~LightMap() {
+    qDebug() << "?";
+    thread_stop_ = true;
+    thread_.join();
+  }
 
   void UpdateLight(QPoint pos);
   Light GetLight(QPoint pos);
@@ -26,6 +36,7 @@ class LightMap {
   Light GetLightRT(QPoint pos);
   Light GetLightRB(QPoint pos);
   void CalculateRegion(const QRect& region);
+  void CalculateRegionThread();
 
   const std::set<QPoint, utils::QPointLexicographicalCompare>& TakeUpdateList()
       const {
@@ -61,6 +72,9 @@ class LightMap {
   std::queue<QPoint> invalidate_queue_;
   std::set<QPoint, utils::QPointLexicographicalCompare> updated_;
   std::shared_ptr<AbstractMap> map_;
+  std::thread thread_;
+  std::mutex mutex_;
+  bool thread_stop_ = false;
 };
 
 #endif  // VIEW_LIGHT_MAP_H_
