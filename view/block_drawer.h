@@ -9,6 +9,7 @@
 class BlockDrawer {
  public:
   static void DrawBlock(QPainter* painter, QPointF point, Block block);
+  static void DrawBlock(QPainter* painter, QPoint point, Block block);
 
   static void ClearBlock(QPainter* painter, QPointF point);
 };

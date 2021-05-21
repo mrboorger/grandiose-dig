@@ -10,12 +10,9 @@ class TextureAtlas : public QOpenGLTexture {
  public:
   TextureAtlas();
 
-  static constexpr int kWidth = 512;
-  static constexpr int kHeight = 512;
-  // Sometimes fragment shader picks color from neighbour texture because of
-  // wrong rounding. By adding this shift, it makes mistakes rarelier.
-  static constexpr double kRoundShift = 2.5 / constants::kBlockSz;
-  static_assert(kWidth * kHeight >= Block::kTypesCount);
+  static constexpr int kSize = Block::kTypesCount;
+  static constexpr int kTextureWidth = 3 * kSize * constants::kBlockSz;
+  static constexpr int kTextureHeight = constants::kBlockSz;
 
   void Init();
 
@@ -29,7 +26,7 @@ class TextureAtlas : public QOpenGLTexture {
 
  private:
   static QImage GetImage(const QPixmap& pixmap);
-  static QPointF GetBlockPC(int32_t id);
+  static int32_t GetBlockPixmapXCoordinate(int32_t id);
 };
 
 #endif  // VIEW_TEXTURE_ATLAS_H_

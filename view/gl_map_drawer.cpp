@@ -224,9 +224,6 @@ void GLMapDrawer::GenerateMesh(QOpenGLBuffer* buffer, QPoint buffer_pos) {
 GLMapDrawer::BlockData GLMapDrawer::GetBlockData(QPoint world_pos,
                                                  QPoint mesh_pos) {
   Block block = map_->GetBlock(world_pos);
-  if (!block.IsVisible()) {
-    return kNoDrawBlockData;
-  }
   BlockData data{};
   data.left_top = GenData(mesh_pos, TextureAtlas::GetBlockTCLT(block),
                          light_map_->GetLightLT(world_pos));

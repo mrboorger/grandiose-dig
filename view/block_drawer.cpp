@@ -12,15 +12,25 @@ const std::array<QString, Block::kTypesCount> kNames = {"", "dirt.png",
                                                         "grass.png"};
 std::array<QImage, Block::kTypesCount> images;
 
+const QImage& GetTexture(int32_t id) {
+  if (images[id].isNull()) {
+    images[id] =
+        QImage(":/resources/textures/" + kNames[id]);
+  }
+  return images[id];
+}
+
 }  // namespace
 
 void BlockDrawer::DrawBlock(QPainter* painter, QPointF point, Block block) {
   if (block.IsVisible()) {
-    if (images[block.GetId()].isNull()) {
-      images[block.GetId()] =
-          QImage(":/resources/textures/" + kNames[block.GetId()]);
-    }
-    painter->drawImage(point, images[block.GetId()]);
+    painter->drawImage(point, GetTexture(block.GetId()));
+  }
+}
+
+void BlockDrawer::DrawBlock(QPainter* painter, QPoint point, Block block) {
+  if (block.IsVisible()) {
+    painter->drawImage(point, GetTexture(block.GetId()));
   }
 }
 
