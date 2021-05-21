@@ -27,7 +27,7 @@ class ScrollableVBoxWidget final : public QWidget {
   explicit ScrollableVBoxWidget(QWidget* parent = nullptr);
   ~ScrollableVBoxWidget() final = default;
 
-  void addWidget(QWidget* widget) { widgets_layout_->addWidget(widget); };
+  void addWidget(QWidget* widget) { widgets_layout_->addWidget(widget); }
 
  private:
   void resizeEvent(QResizeEvent* event) override;

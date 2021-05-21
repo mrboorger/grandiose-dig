@@ -29,7 +29,6 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   qt_translator_.reset(new QTranslator);
   QApplication::installTranslator(translator_.data());
   QApplication::installTranslator(qt_translator_.data());
-  ChangeLanguage(current_language_);
 
   general_settings_widget_.reset(new QWidget);
   general_settings_layout_.reset(new QVBoxLayout);
@@ -234,7 +233,7 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   horizontal_layout_->addStretch(1);
 
   Resize(parent->size());
-  ReTranslateButtons();
+  ChangeLanguage(current_language_);
 }
 
 void SettingsMenu::Resize(const QSize& size) {

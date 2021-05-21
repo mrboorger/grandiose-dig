@@ -1,6 +1,7 @@
 #ifndef VIEW_NAMED_MENU_SLIDER_H_
 #define VIEW_NAMED_MENU_SLIDER_H_
 
+#include <QScopedPointer>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QSlider>
@@ -8,7 +9,7 @@
 namespace menu_named_slider_styles {
 
 const QString kBasicStyle =
-    "QLabel {"
+    "QLabel#name {"
     "   font-family: Comic Sans MS;"
     "   font-size: 50px;"
     "   height: 50px;"
@@ -83,19 +84,19 @@ class NamedMenuSlider final : public QWidget {
       QWidget* parent = nullptr);
   ~NamedMenuSlider() final = default;
 
-  void setText(const QString& text) { label_.setText(text); };
-  void setValue(int value) { slider_.setValue(value); }
+  void setText(const QString& text) { label_->setText(text); }
+  void setValue(int value) { slider_->setValue(value); }
 
  signals:
   void valueChanged(int value);
 
  public slots:
-  void ChangeValue(int value) { emit(valueChanged(value)); };
+  void ChangeValue(int value) { emit(valueChanged(value)); }
 
  private:
-  QHBoxLayout layout_;
-  QLabel label_;
-  QSlider slider_;
+  QScopedPointer<QHBoxLayout> layout_;
+  QScopedPointer<QLabel> label_;
+  QScopedPointer<QSlider> slider_;
 };
 
 #endif  // VIEW_NAMED_MENU_SLIDER_H_

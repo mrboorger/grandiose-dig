@@ -10,6 +10,7 @@
 #include <QSlider>
 #include <QStackedWidget>
 #include <QTranslator>
+#include <map>
 
 #include "controller/controller_types.h"
 #include "view/abstract_menu.h"
