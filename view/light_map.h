@@ -19,10 +19,12 @@
 class LightMap {
  public:
   explicit LightMap(std::shared_ptr<AbstractMap> map)
-      : map_(std::move(map)), thread_([this]() { CalculateRegionThread(); }) {}
+      : map_(std::move(map)) {
+    thread_ = std::thread([this]() { CalculateRegionThread(); });
+  }
 
   ~LightMap() {
-    thread_stop_ = true;
+    thread_stop_.store(true);
     thread_.join();
   }
 
@@ -39,8 +41,8 @@ class LightMap {
 
   std::set<QPoint, utils::QPointLexicographicalCompare> TakeUpdateList() {
     std::set<QPoint, utils::QPointLexicographicalCompare> result;
-    if (mutex_.try_lock()) {
-      const std::lock_guard<std::recursive_mutex> lock(mutex_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_, std::try_to_lock);
+    if (lock) {
       result.swap(updated_);
       return result;
     }
@@ -78,7 +80,7 @@ class LightMap {
   std::shared_ptr<AbstractMap> map_;
   std::thread thread_;
   std::recursive_mutex mutex_;
-  bool thread_stop_ = false;
+  std::atomic<bool> thread_stop_ = false;
 };
 
 #endif  // VIEW_LIGHT_MAP_H_
