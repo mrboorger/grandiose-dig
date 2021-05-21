@@ -73,7 +73,7 @@ class LightMap {
   std::set<QPoint, utils::QPointLexicographicalCompare> updated_;
   std::shared_ptr<AbstractMap> map_;
   std::thread thread_;
-  std::mutex mutex_;
+  std::recursive_mutex mutex_;
   bool thread_stop_ = false;
 };
 
