@@ -5,18 +5,15 @@
 #include "model/constants.h"
 #include "view/block_drawer.h"
 
-TextureAtlas::TextureAtlas() : QOpenGLTexture(QOpenGLTexture::Target2D) {}
+TextureAtlas::TextureAtlas() : AbstractAtlas(QOpenGLTexture::Target2D) {}
 
 void TextureAtlas::Init() {
   QPixmap buffer(kTextureWidth, kTextureHeight);
   QPainter painter(&buffer);
   painter.fillRect(0, 0, kTextureWidth, kTextureHeight, Qt::white);
   for (int i = Block::kFirstFrontType; i != Block::kFrontTypesCount; ++i) {
-    QPoint position(GetBlockPixmapXCoordinate(i) - constants::kBlockSz, 0);
-    for (int j = 0; j < 3; ++j) {
-      BlockDrawer::DrawBlock(&painter, position, Block(Block::FrontType(i)));
-      position.rx() += constants::kBlockSz;
-    }
+    QPoint position(GetBlockPixmapXCoordinate(i), 0);
+    BlockDrawer::DrawBlockFront(&painter, position, Block(Block::FrontType(i)));
   }
 
   create();
@@ -30,16 +27,8 @@ void TextureAtlas::Init() {
           GetImage(buffer).constBits());
 }
 
-QImage TextureAtlas::GetImage(const QPixmap& pixmap) {
-  QImage image = pixmap.toImage();
-  if (image.format() != QImage::Format_RGBA8888) {
-    return image.convertToFormat(QImage::Format_RGBA8888);
-  }
-  return image;
-}
-
 int32_t TextureAtlas::GetBlockPixmapXCoordinate(int32_t id) {
-  return (3 * id + 1) * constants::kBlockSz;
+  return id * constants::kBlockSz;
 }
 
 QPointF TextureAtlas::GetBlockTCLT(Block block) {

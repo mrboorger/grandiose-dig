@@ -1,20 +1,19 @@
 #ifndef VIEW_TEXTURE_ATLAS_H_
 #define VIEW_TEXTURE_ATLAS_H_
 
-#include <QOpenGLTexture>
-
 #include "model/block.h"
 #include "model/constants.h"
+#include "view/abstract_atlas.h"
 
-class TextureAtlas : public QOpenGLTexture {
+class TextureAtlas : public AbstractAtlas {
  public:
   TextureAtlas();
 
   static constexpr int kSize = Block::kFrontTypesCount;
-  static constexpr int kTextureWidth = 3 * kSize * constants::kBlockSz;
+  static constexpr int kTextureWidth = kSize * constants::kBlockSz;
   static constexpr int kTextureHeight = constants::kBlockSz;
 
-  void Init();
+  void Init() override;
 
   // Get texture coordinate (TC) of Left/Right Top/Bottom block corner
   // I. e. GetBlockTCLT == Get the texture coordinate of the left top block
@@ -25,7 +24,6 @@ class TextureAtlas : public QOpenGLTexture {
   static QPointF GetBlockTCRB(Block block);
 
  private:
-  static QImage GetImage(const QPixmap& pixmap);
   static int32_t GetBlockPixmapXCoordinate(int32_t id);
 };
 

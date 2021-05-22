@@ -65,7 +65,7 @@ const QPixmap& BufferedMapDrawer::GetBufferPixmap(QPoint buffer_pos) {
 void BufferedMapDrawer::RenderBlock(QPainter* painter, QPointF block_drawer_pos,
                                     Block block, bool need_reset) {
   if (block.IsVisible()) {
-    BlockDrawer::DrawBlock(painter, block_drawer_pos, block);
+    BlockDrawer::DrawBlockFront(painter, block_drawer_pos, block);
   } else if (need_reset) {
     BlockDrawer::ClearBlock(painter, block_drawer_pos);
   }

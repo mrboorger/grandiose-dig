@@ -61,6 +61,7 @@ set(SOURCES
         model/player.cpp
         model/strategy.cpp
         utils.cpp
+        view/background_atlas.cpp
         view/block_drawer.cpp
         view/block_drawer.cpp
         view/buffered_map_drawer.cpp

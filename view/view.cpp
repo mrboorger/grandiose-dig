@@ -58,6 +58,8 @@ void View::initializeGL() {
   makeCurrent();
   auto* gl = GLFunctions::GetInstance();
   gl->initializeOpenGLFunctions();
+  gl->glEnable(GL_DEPTH_TEST);
+  gl->glDepthFunc(GL_LESS);
   gl->glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
 
   if (drawer_) {
@@ -74,7 +76,7 @@ void View::paintGL() {
   QPainter painter(this);
   painter.beginNativePainting();
 
-  gl->glClear(GL_COLOR_BUFFER_BIT);
+  gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   camera_pos_ = Model::GetInstance()->GetPlayer()->GetPosition();
 

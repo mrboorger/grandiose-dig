@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>resources/textures/cave_background.png</file>
         <file>resources/textures/dirt.png</file>
         <file>resources/textures/grass.png</file>
         <file>resources/textures/inventory_cell.png</file>
@@ -40,6 +41,7 @@
         <file>resources/sounds/quiox1.mp3</file>
         <file>resources/sounds/quiox_damage2.mp3</file>
         <file>resources/sounds/quiox_damage1.mp3</file>
+        <file>resources/textures/sky_background.png</file>
         <file>resources/sounds/zombie_lord_death.mp3</file>
         <file>resources/sounds/zombie_lord_damage2.mp3</file>
         <file>resources/sounds/zombie_lord_damage1.mp3</file>

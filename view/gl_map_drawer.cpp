@@ -7,6 +7,7 @@
 #include <utility>
 
 #include "model/constants.h"
+#include "view/background_atlas.h"
 #include "view/gl_func.h"
 #include "view/texture_atlas.h"
 
@@ -20,7 +21,8 @@ GLMapDrawer::GLMapDrawer(std::shared_ptr<AbstractMap> map,
 void GLMapDrawer::InitImpl() {
   GenerateIndexBuffer(&index_buffer_);
   LoadShader(&shader_);
-  atlas_.Init();
+  block_textures_.Init();
+  backgrounds_.Init();
 }
 
 void GLMapDrawer::DrawMapWithCenterImpl(QPainter* painter, const QPointF& pos,
@@ -28,7 +30,6 @@ void GLMapDrawer::DrawMapWithCenterImpl(QPainter* painter, const QPointF& pos,
   Q_UNUSED(painter);
   auto* gl = GLFunctions::GetInstance();
 
-  atlas_.bind();
   shader_.bind();
 
   QPoint start = RoundToMeshPos(QPoint(pos.x(), pos.y()) -
@@ -61,10 +62,10 @@ void GLMapDrawer::DrawMapWithCenterImpl(QPainter* painter, const QPointF& pos,
       QPointF point = QPointF(x, y) - pos;
       shader_.setUniformValue("buffer_pos", point);
       auto* mesh = GetMesh(QPoint(x, y));
-
       mesh->bind();
 
       for (int i = 0, shift = 0; i < kAttribsCount; ++i) {
+        shift += kBackgroundStrides[i];
         gl->glEnableVertexAttribArray(i);
         gl->glVertexAttribPointer(
             i, kAttribSizes[i], GL_FLOAT, GL_FALSE, sizeof(VertexData),
@@ -72,8 +73,25 @@ void GLMapDrawer::DrawMapWithCenterImpl(QPainter* painter, const QPointF& pos,
         shift += kAttribSizes[i];
       }
 
+      backgrounds_.bind();
       gl->glDrawElements(GL_TRIANGLES, kElementsCount, GL_UNSIGNED_INT,
                          nullptr);
+      backgrounds_.release();
+
+      for (int i = 0, shift = 0; i < kAttribsCount; ++i) {
+        shift += kBlockStrides[i];
+        gl->glEnableVertexAttribArray(i);
+        gl->glVertexAttribPointer(
+            i, kAttribSizes[i], GL_FLOAT, GL_FALSE, sizeof(VertexData),
+            reinterpret_cast<void*>(shift * sizeof(GLfloat)));
+        shift += kAttribSizes[i];
+      }
+
+      block_textures_.bind();
+      gl->glDrawElements(GL_TRIANGLES, kElementsCount, GL_UNSIGNED_INT,
+                         nullptr);
+      block_textures_.release();
+
       mesh->release();
     }
   }
@@ -85,7 +103,6 @@ void GLMapDrawer::DrawMapWithCenterImpl(QPainter* painter, const QPointF& pos,
   }
   index_buffer_.release();
   shader_.release();
-  atlas_.release();
 }
 
 void GLMapDrawer::UpdateBlockImpl(QPoint position) {
@@ -104,12 +121,17 @@ void GLMapDrawer::UpdateBlockImpl(QPoint position) {
   casted.release();
 }
 
-GLMapDrawer::VertexData GLMapDrawer::GenData(QPoint pos, QPointF tex_coords,
-                                             Light light) {
+GLMapDrawer::VertexData GLMapDrawer::GenData(QPoint pos, double z,
+                                             QPointF tex_coords,
+                                             QPointF back_coords, Light light) {
   return VertexData{static_cast<GLfloat>(pos.x()),
                     static_cast<GLfloat>(pos.y()),
+                    static_cast<GLfloat>(z),
+                    static_cast<GLfloat>(kBackgroundZ),
                     static_cast<GLfloat>(tex_coords.x()),
                     static_cast<GLfloat>(tex_coords.y()),
+                    static_cast<GLfloat>(back_coords.x()),
+                    static_cast<GLfloat>(back_coords.y()),
                     static_cast<GLfloat>(light.GetRed()) / Light::kMaxLight,
                     static_cast<GLfloat>(light.GetGreen()) / Light::kMaxLight,
                     static_cast<GLfloat>(light.GetBlue()) / Light::kMaxLight,
@@ -224,18 +246,26 @@ void GLMapDrawer::GenerateMesh(QOpenGLBuffer* buffer, QPoint buffer_pos) {
 GLMapDrawer::BlockData GLMapDrawer::GetBlockData(QPoint world_pos,
                                                  QPoint mesh_pos) {
   Block block = map_->GetBlock(world_pos);
+  double z_coord =
+      map_->GetBlock(world_pos).IsVisible() ? kBlocksZ : kNotVisibleZ;
   BlockData data{};
-  data.left_top = GenData(mesh_pos, TextureAtlas::GetBlockTCLT(block),
-                         light_map_->GetLightLT(world_pos));
-  data.right_top = GenData(QPoint(mesh_pos.x() + 1, mesh_pos.y()),
-                          TextureAtlas::GetBlockTCRT(block),
-                          light_map_->GetLightRT(world_pos));
-  data.left_bottom = GenData(QPoint(mesh_pos.x(), mesh_pos.y() + 1),
-                          TextureAtlas::GetBlockTCLB(block),
-                          light_map_->GetLightLB(world_pos));
-  data.right_bottom = GenData(QPoint(mesh_pos.x() + 1, mesh_pos.y() + 1),
-                          TextureAtlas::GetBlockTCRB(block),
-                          light_map_->GetLightRB(world_pos));
+  data.left_top = GenData(mesh_pos, z_coord, TextureAtlas::GetBlockTCLT(block),
+                          BackgroundAtlas::GetBackgroundTCLT(block, world_pos),
+                          light_map_->GetLightLT(world_pos));
+  data.right_top = GenData(QPoint(mesh_pos.x() + 1, mesh_pos.y()), z_coord,
+                           TextureAtlas::GetBlockTCRT(block),
+                           BackgroundAtlas::GetBackgroundTCRT(block, world_pos),
+                           light_map_->GetLightRT(world_pos));
+  data.left_bottom =
+      GenData(QPoint(mesh_pos.x(), mesh_pos.y() + 1), z_coord,
+              TextureAtlas::GetBlockTCLB(block),
+              BackgroundAtlas::GetBackgroundTCLB(block, world_pos),
+              light_map_->GetLightLB(world_pos));
+  data.right_bottom =
+      GenData(QPoint(mesh_pos.x() + 1, mesh_pos.y() + 1), z_coord,
+              TextureAtlas::GetBlockTCRB(block),
+              BackgroundAtlas::GetBackgroundTCRB(block, world_pos),
+              light_map_->GetLightRB(world_pos));
   data.center = Average(data.left_top, data.left_bottom, data.right_top,
                         data.right_bottom);
   return data;

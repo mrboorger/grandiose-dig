@@ -14,7 +14,7 @@ void MapDrawer::DrawMapWithCenterImpl(QPainter* painter, const QPointF& pos,
       QPointF point =
           (QPointF(x, y) - pos) * constants::kBlockSz + screen_coords.center();
 
-      BlockDrawer::DrawBlock(painter, point, map_->GetBlock(QPoint(x, y)));
+      BlockDrawer::DrawBlockFront(painter, point, map_->GetBlock(QPoint(x, y)));
     }
   }
 }
