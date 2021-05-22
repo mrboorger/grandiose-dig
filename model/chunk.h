@@ -15,6 +15,9 @@ class Chunk {
 
   Chunk() : blocks_(kWidth * kHeight, Block(Block::Type::kAir)) {}
 
+  Block& operator[](int32_t i) { return blocks_[i]; }
+  const Block& operator[](int32_t i) const { return blocks_[i]; }
+
   const Block& GetBlock(QPoint pos) const { return blocks_[BlockIndex(pos)]; }
 
   Block* GetBlockMutable(QPoint pos) { return &blocks_[BlockIndex(pos)]; }

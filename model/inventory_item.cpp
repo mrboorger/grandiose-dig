@@ -14,7 +14,8 @@ const std::array<InventoryItem,
                         InventoryItem(InventoryItem::Type::kBlockStone)};
 const std::array<Block, Block::kTypesCount> kBlockTypeFromItem = {
     Block(Block::Type::kAir), Block(Block::Type::kDirt),
-    Block(Block::Type::kGrass), Block(Block::Type::kStone)};
+    Block(Block::Type::kGrass), Block(Block::Type::kStone),
+    Block(Block::Type::kTorch)};
 
 }  // namespace
 

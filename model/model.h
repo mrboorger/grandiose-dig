@@ -46,10 +46,12 @@ class Model : public QObject {
 
   std::shared_ptr<const AllCraftRecipes> GetAllCraftRecipes() const;
 
+  bool CanSpawnMobAt(QPointF pos, QPointF size) const;
+
  signals:
-  void DamageDealt(MovingObject::Type type);
-  void BecameDead(MovingObject::Type type);
-  void MobSound(MovingObject::Type type);
+  void DamageDealt(MovingObject* object);
+  void BecameDead(MovingObject* object);
+  void MobSound(MovingObject* object);
 
  private:
   bool IsAnyMovingObjectInBlock(QPoint block_coords);

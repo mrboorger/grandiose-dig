@@ -41,6 +41,7 @@ set(SOURCES
         model/block.cpp
         model/chunk.cpp
         model/chunk_map.cpp
+        model/effects.cpp
         model/flat_chunk_map_generator.cpp
         model/flat_map_generator.cpp
         model/inventory_item.cpp
@@ -64,10 +65,15 @@ set(SOURCES
         view/buffered_map_drawer.cpp
         view/camera.cpp
         view/camera.cpp
+        view/gl_func.cpp
+        view/gl_map_drawer.cpp
         view/inventory_drawer.cpp
+        view/light.cpp
+        view/light_map.cpp
         view/map_drawer.cpp
-        view/mob_drawer.cpp
+        view/moving_object_drawer.cpp
         view/sound_manager.cpp
+        view/texture_atlas.cpp
         view/view.cpp
         view/view.cpp
         model/all_craft_recipes.cpp

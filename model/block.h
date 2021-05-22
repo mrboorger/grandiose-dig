@@ -3,23 +3,34 @@
 
 #include <cstdint>
 
+#include "view/light.h"
+
 class Block {
  public:
   enum class Type {
-    kAir,
+    kFirst,
+    kAir = kFirst,
     kDirt,
     kGrass,
     kStone,
+    kTorch,
     kTypesCount,
   };
 
+  static constexpr int kFirstType = static_cast<int>(Type::kFirst);
   static constexpr int kTypesCount = static_cast<int>(Type::kTypesCount);
 
-  explicit Block(Type type) : type_(type) {}
+  explicit Block(Type type)
+      : type_(type), durability_(GetDefaultDurability()) {}
 
-  static bool IsVisible(Type type) { return type != Type::kAir; }
-  bool IsVisible() const { return IsVisible(type_); }
   bool IsAir() const { return type_ == Type::kAir; };
+
+  bool IsVisible() const { return GetCharactistics(GetId()).is_visible; }
+  Light GetLuminosity() const { return GetCharactistics(GetId()).luminosity; }
+  bool IsOpaque() const { return GetCharactistics(GetId()).is_opaque; }
+  int GetDefaultDurability() const {
+    return GetCharactistics(GetId()).default_durability;
+  }
 
   Type GetType() const { return type_; }
 
@@ -29,11 +40,20 @@ class Block {
   bool DecreaseDurability(int delta);
 
  private:
-  static constexpr double kDurEps = 1e-6;
+  struct Characteristics {
+    Light luminosity;
+    int default_durability;
+    bool is_visible;
+    bool is_opaque;
+  };
+  static constexpr Characteristics kDefaultBlockCharactestics{Light(0, 0, 0, 0),
+                                                              200, true, true};
+
+  static const Characteristics& GetCharactistics(int32_t id);
 
   Type type_;
   // TODO(mrboorger): Make different durability_ of the blocks
-  double durability_ = 500.0;
+  int durability_;
 };
 
 #endif  // MODEL_BLOCK_H_

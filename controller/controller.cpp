@@ -9,9 +9,12 @@
 #include "model/abstract_map_generator.h"
 #include "model/chunk_map.h"
 #include "model/constants.h"
+#include "model/model.h"
 #include "view/abstract_map_drawer.h"
 #include "view/buffered_map_drawer.h"
+#include "view/gl_map_drawer.h"
 #include "view/map_drawer.h"
+#include "view/view.h"
 
 Controller* Controller::GetInstance() {
   static Controller controller;
@@ -21,7 +24,9 @@ Controller* Controller::GetInstance() {
 void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
   auto map = std::shared_ptr<AbstractMap>(generator->GenerateMap());
   Model::GetInstance()->SetMap(map);
-  View::GetInstance()->SetDrawer(new BufferedMapDrawer(map));
+  View::GetInstance()->SetLightMap(new LightMap(map));
+  View::GetInstance()->SetDrawer(
+      new GLMapDrawer(map, View::GetInstance()->GetLightMap()));
 }
 
 Controller::Controller() : tick_timer_() {
@@ -32,7 +37,7 @@ Controller::Controller() : tick_timer_() {
 void Controller::SetPlayer() {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->SetPlayer(
-      std::make_shared<Player>(QPointF(147.0, 109.0)));
+      std::make_shared<Player>(QPointF(125.0, 115.0)));
   View::GetInstance()->SetInventoryDrawer(
       new InventoryDrawer(Model::GetInstance()->GetPlayer()->GetInventory()));
 }
@@ -40,22 +45,24 @@ void Controller::SetPlayer() {
 void Controller::SetMob() {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->AddMob(
-      std::make_shared<Mob>(QPointF(157.0, 106.0), constants::kPlayerSize));
+      std::make_shared<Mob>(QPointF(162.0, 104.0), Mob::Type::kQuiox));
 }
 
 void Controller::BreakBlock(double time) {
   QPoint block_coords = View::GetInstance()->GetBlockCoordUnderCursor();
   if (Model::GetInstance()->GetPlayer()->IsBlockReachableForTool(
           block_coords)) {
-    // TODO(mrboorger): ToolPower * time
-    Model::GetInstance()->GetMap()->HitBlock(block_coords, 1.0 * time);
-    View::GetInstance()->UpdateBlock(block_coords);
+    Model::GetInstance()->GetPlayer()->SetDirection(
+        (View::GetInstance()->GetBlockCoordUnderCursor().x() <
+         Model::GetInstance()->GetPlayer()->GetPosition().x())
+            ? utils::Direction::kLeft
+            : utils::Direction::kRight);
+    qDebug() << time;
+    if (Model::GetInstance()->GetMap()->HitBlock(block_coords, 1.0 * time)) {
+      View::GetInstance()->UpdateBlock(block_coords);
+      View::GetInstance()->GetLightMap()->UpdateLight(block_coords);
+    }
   }
-}
-
-void Controller::PlaceBlock(QPoint block_coords, Block block) {
-  Model::GetInstance()->GetMap()->SetBlock(block_coords, block);
-  View::GetInstance()->UpdateBlock(block_coords);
 }
 
 void Controller::UseItem() {
@@ -89,6 +96,8 @@ void Controller::StartAttack() {
       (click_coord.x() < Model::GetInstance()->GetPlayer()->GetPosition().x())
           ? utils::Direction::kLeft
           : utils::Direction::kRight);
+  Model::GetInstance()->GetPlayer()->SetDirection(
+      Model::GetInstance()->GetPlayer()->GetAttackDirection());
   Model::GetInstance()->GetPlayer()->SetAttackTick(
       constants::kPlayerAttackTime);
   Model::GetInstance()->GetPlayer()->SetAttackCooldownInterval(
@@ -184,7 +193,8 @@ void Controller::PlayerAttack(double time) {
     if (CanAttackMob(mob, player_center, lower_angle, upper_angle)) {
       Damage damage(Model::GetInstance()->GetPlayer()->GetPosition(),
                     Damage::Type::kPlayer,
-                    Model::GetInstance()->GetPlayer()->GetDamage());
+                    Model::GetInstance()->GetPlayer()->GetDamage(),
+                    constants::kPlayerDamageAcceleration);
       mob->DealDamage(damage);
     }
   }
@@ -200,7 +210,6 @@ void Controller::TickEvent() {
   Model::GetInstance()->MoveObjects(pressed_keys_, time);
 
   if (is_pressed_left_mouse_button) {
-    // TODO(Wind-Eagle): make BreakBlock() dependible on time
     BreakBlock(time);
     StartAttack();
   }

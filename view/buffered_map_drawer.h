@@ -22,6 +22,8 @@ class BufferedMapDrawer : public AbstractMapDrawer {
 
   void UpdateBlock(QPoint pos) override;
 
+  QRect GetDrawRegion(QPoint center) const override;
+
  private:
   // In blocks
   static constexpr int32_t kFieldOfView = 64;

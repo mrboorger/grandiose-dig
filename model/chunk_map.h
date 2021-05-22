@@ -10,8 +10,8 @@
 
 #include "model/abstract_map.h"
 #include "model/abstract_region_generator.h"
+#include "model/region_cache.h"
 #include "model/chunk.h"
-#include "model/clearable_cache.h"
 #include "utils.h"
 
 class ChunkMap : public AbstractMap {
@@ -22,22 +22,23 @@ class ChunkMap : public AbstractMap {
   void SetBlock(QPoint pos, Block block) override;
   void CacheRegion(const QRect& region) override;
 
-  const Chunk& GetChunk(QPoint chunk_pos);
-
-  static std::pair<QPoint, QPoint> GetChunkCoords(QPoint pos);
-  static QPoint GetChunkCoords(QPointF pos);
-  static QPointF GetWorldCoords(QPoint chunk_pos);
-
   explicit ChunkMap(AbstractRegionGenerator* generator);
 
  private:
-  Block* GetBlockMutable(QPoint pos) override;
+  class GenChunk {
+   public:
+    explicit GenChunk(AbstractRegionGenerator* generator)
+        : generator_(generator) {}
+    Chunk operator()(QPoint pos) { return generator_->Generate(pos); }
 
-  Chunk& GetChunkMutable(QPoint chunk_pos);
-
+   private:
+    AbstractRegionGenerator* generator_;
+  };
   using NodesContainer =
-      containers::ClearableCache<QPoint, Chunk,
-                                 utils::QPointLexicographicalCompare>;
+      containers::RegionCache<Block, Chunk::kWidth, Chunk::kHeight,
+                                         Chunk, GenChunk>;
+
+  Block* GetBlockMutable(QPoint pos) override;
 
   NodesContainer nodes_;
   std::unique_ptr<AbstractRegionGenerator> generator_;

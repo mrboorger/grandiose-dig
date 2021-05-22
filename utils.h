@@ -3,6 +3,7 @@
 
 #include <QPoint>
 #include <QPointF>
+#include <array>
 #include <cassert>
 #include <cmath>
 #include <cstdint>
@@ -35,6 +36,8 @@ double DivideDouble(double first, double second, double percentage);
 QPointF DivideSegment(QPointF first, QPointF second, double percentage);
 
 double GetRandomDouble(double left_bound = 0, double right_bound = 1);
+
+std::array<QPoint, 4> NeighbourPoints(QPoint point);
 
 }  // namespace utils
 

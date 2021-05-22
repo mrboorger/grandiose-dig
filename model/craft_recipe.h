@@ -1,7 +1,6 @@
 #ifndef CRAFT_RECIPE_H_
 #define CRAFT_RECIPE_H_
 
-#include <QDebug>
 #include <QObject>
 #include <vector>
 

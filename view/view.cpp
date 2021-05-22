@@ -2,6 +2,7 @@
 
 #include <QColor>
 #include <QPainter>
+#include <chrono>
 #include <cmath>
 #include <ctime>
 #include <random>
@@ -10,88 +11,127 @@
 #include "model/constants.h"
 #include "utils.h"
 #include "view/block_drawer.h"
-#include "view/mob_drawer.h"
+#include "view/gl_func.h"
+#include "view/moving_object_drawer.h"
+
+View* View::instance_ = nullptr;
 
 View* View::GetInstance() {
-  static View view;
-  return &view;
+  return instance_;
 }
 
 View::View()
-    : QWidget(nullptr),
+    : QOpenGLWidget(nullptr),
       camera_(QPointF(150, 150)),
       sound_manager_(new SoundManager()),
       drawer_(nullptr) {
+  assert(!instance_);
+  instance_ = this;
   connect(Model::GetInstance(), &Model::DamageDealt, this, &View::DamageDealt);
   connect(Model::GetInstance(), &Model::BecameDead, this, &View::BecameDead);
   connect(Model::GetInstance(), &Model::MobSound, this, &View::MobSound);
+}
+
+View::~View() {
+  instance_ = nullptr;
 }
 
 void View::SetInventoryDrawer(InventoryDrawer* drawer) {
   inventory_drawer_.reset(drawer);
 }
 
-void View::paintEvent(QPaintEvent* event) {
-  Q_UNUSED(event);
-  QPainter painter(this);
+void View::DrawPlayer(QPainter* painter) {
+  auto player = Model::GetInstance()->GetPlayer();
+  QPointF point =
+      (player->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
+      rect().center();
 
-  // TODO(degmuk): temporary code; replace with background drawer
-  painter.setBrush(Qt::white);
-  painter.drawRect(rect());
+  MovingObjectDrawer::DrawPlayer(painter, point);
+  // TODO(Wind-Eagle): make animation for block breaking: will be done when
+  // blocks will not break immediately
+}
+
+void View::initializeGL() {
+  assert(context());
+  makeCurrent();
+  auto* gl = GLFunctions::GetInstance();
+  gl->initializeOpenGLFunctions();
+  gl->glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+  if (drawer_) {
+    drawer_->Init();
+  }
+}
+
+void View::paintGL() {
+  auto* gl = GLFunctions::GetInstance();
+  QPainter painter(this);
+  painter.beginNativePainting();
+
+  gl->glClear(GL_COLOR_BUFFER_BIT);
 
   camera_.SetPoint(Model::GetInstance()->GetPlayer()->GetPosition());
-  drawer_->DrawMapWithCenter(&painter, camera_.GetPoint(), rect());
+  QPointF camera_pos = camera_.GetPoint();
+
+  UpdateLight(QPoint(camera_pos.x(), camera_pos.y()));
+  drawer_->DrawMapWithCenter(&painter, camera_pos, rect());
 
   if (is_visible_inventory_) {
     inventory_drawer_->DrawInventory(&painter);
   }
 
   // TODO(Wind-Eagle): temporary code; need to make PlayerDrawer
-  auto player = Model::GetInstance()->GetPlayer();
-  QImage player_image(":/resources/textures/player.png");
-  QPointF point =
-      (player->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
-      rect().center();
-  painter.drawImage(point, player_image);
+  DrawPlayer(&painter);
   auto mobs = Model::GetInstance()->GetMobs();
   for (auto mob : mobs) {
     QPointF mob_point =
         (mob->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
         rect().center();
-    MobDrawer::DrawMob(&painter, mob_point, mob);
+    MovingObjectDrawer::DrawMob(&painter, mob_point, mob);
   }
+  painter.endNativePainting();
 }
 
-void View::DamageDealt(MovingObject::Type type) {
+void View::DamageDealt(MovingObject* object) {
   static std::uniform_int_distribution<int> distrib(0, 1);
-  switch (type) {
-    case MovingObject::Type::kPlayer:
-      sound_manager_->PlaySound(SoundManager::Sound::kPlayerDamage);
+  switch (object->GetType()) {
+    case MovingObject::Type::kPlayer: {
+      sound_manager_->PlaySound(
+          SoundManager::SoundIndex(SoundManager::Sound::kPlayerDamage));
       break;
-    case MovingObject::Type::kMob:
+    }
+    case MovingObject::Type::kMob: {
+      int id = static_cast<Mob*>(object)->GetId();
       if (distrib(utils::random) == 0) {
-        sound_manager_->PlaySound(SoundManager::Sound::kMobDamage1);
+        sound_manager_->PlaySound(SoundManager::SoundIndex(
+            SoundManager::Sound::kMob, id, SoundManager::MobSound::kDamage1));
       } else {
-        sound_manager_->PlaySound(SoundManager::Sound::kMobDamage2);
+        sound_manager_->PlaySound(SoundManager::SoundIndex(
+            SoundManager::Sound::kMob, id, SoundManager::MobSound::kDamage2));
       }
       break;
-    default:
-      break;
+    }
+    default: {
+      assert(false);
+    }
   }
 }
 
-void View::BecameDead(MovingObject::Type type) {
-  Q_UNUSED(type);
-  sound_manager_->PlaySound(SoundManager::Sound::kMobDeath);
+void View::BecameDead(MovingObject* object) {
+  int id = static_cast<Mob*>(object)->GetId();
+  sound_manager_->PlaySound(SoundManager::SoundIndex(
+      SoundManager::Sound::kMob, id, SoundManager::MobSound::kDeath));
 }
 
-void View::MobSound(MovingObject::Type type) {
-  Q_UNUSED(type);
+void View::MobSound(MovingObject* object) {
+  int id = static_cast<Mob*>(object)->GetId();
   static std::uniform_int_distribution<int> distrib(0, 1);
   if (distrib(utils::random) == 0) {
-    sound_manager_->PlaySound(SoundManager::Sound::kMob1);
+    sound_manager_->PlaySound(SoundManager::SoundIndex(
+        SoundManager::Sound::kMob, id, SoundManager::MobSound::kIdle1));
   } else {
-    sound_manager_->PlaySound(SoundManager::Sound::kMob2);
+    sound_manager_->PlaySound(SoundManager::SoundIndex(
+        SoundManager::Sound::kMob, id, SoundManager::MobSound::kIdle2));
   }
 }
 
@@ -127,6 +167,15 @@ QPointF View::GetCoordUnderCursor() const {
 QPoint View::GetBlockCoordUnderCursor() const {
   QPointF pos = GetCoordUnderCursor();
   return QPoint(std::floor(pos.x()), std::floor(pos.y()));
+}
+
+void View::UpdateLight(QPoint camera_pos) {
+  light_map_->CalculateRegion(drawer_->GetDrawRegion(camera_pos));
+  const auto& to_update = light_map_->TakeUpdateList();
+  for (auto pos : to_update) {
+    drawer_->UpdateBlock(pos);
+  }
+  light_map_->ClearUpdateList();
 }
 
 QPointF View::GetTopLeftWindowCoord() const {
