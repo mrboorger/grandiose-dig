@@ -1,5 +1,7 @@
 #include "model/craft_recipe.h"
 
+#include <utility>
+
 #include "controller/controller.h"
 
 CraftRecipe::CraftRecipe(InventoryItem resulting_item,

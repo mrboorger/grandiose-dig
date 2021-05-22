@@ -23,7 +23,7 @@ class Block {
   explicit Block(Type type)
       : type_(type), durability_(GetDefaultDurability()) {}
 
-  bool IsAir() const { return type_ == Type::kAir; };
+  bool IsAir() const { return type_ == Type::kAir; }
 
   bool IsVisible() const { return GetCharactistics(GetId()).is_visible; }
   Light GetLuminosity() const { return GetCharactistics(GetId()).luminosity; }

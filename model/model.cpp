@@ -38,7 +38,7 @@ void Model::MoveObjects(
 }
 
 bool Model::CanIPlaceBlock(QPoint block_coords) {
-  // TODO(mrboorger):Make that the block can only be placed next near bock
+  // TODO(mrboorger): Make that the block can only be placed next near bock
   if (!map_->GetBlock(block_coords).IsAir()) {
     return false;
   }

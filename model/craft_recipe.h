@@ -1,5 +1,5 @@
-#ifndef CRAFT_RECIPE_H_
-#define CRAFT_RECIPE_H_
+#ifndef MODEL_CRAFT_RECIPE_H_
+#define MODEL_CRAFT_RECIPE_H_
 
 #include <QObject>
 #include <vector>
@@ -27,4 +27,4 @@ class CraftRecipe : public QObject {
   std::vector<InventoryItem> needed_items_;
 };
 
-#endif  // CRAFT_RECIPE_H_
+#endif  // MODEL_CRAFT_RECIPE_H_
