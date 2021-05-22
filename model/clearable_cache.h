@@ -5,6 +5,7 @@
 #include <functional>
 #include <map>
 #include <utility>
+#include <mutex>
 
 namespace containers {
 
@@ -18,11 +19,13 @@ class ClearableCache {
   }
 
   Value& Insert(const Key& key, Value&& value) {
+    std::lock_guard<std::recursive_mutex> lock(mutex_);
     return nodes_.emplace(key, Node{std::forward<Value>(value), true})
         .first->second.value;
   }
 
   std::optional<std::reference_wrapper<Value>> Get(const Key& key) {
+    std::lock_guard<std::recursive_mutex> lock(mutex_);
     if (last_used_ == nodes_.end() || last_used_->first != key) {
       last_used_ = nodes_.find(key);
     }
@@ -34,6 +37,7 @@ class ClearableCache {
   }
 
   void ClearUnused() {
+    std::lock_guard<std::recursive_mutex> lock(mutex_);
     last_used_ = nodes_.end();
     for (auto i = nodes_.begin(); i != nodes_.end();) {
       if (!i->second.is_used) {
@@ -57,6 +61,7 @@ class ClearableCache {
   NodesContainer nodes_;
   QTimer timer_;
   NodesIterator last_used_;
+  std::recursive_mutex mutex_;
 };
 
 }  // namespace containers

@@ -12,7 +12,7 @@ Light LightMap::GetLight(QPoint pos) {
   std::unique_lock<std::recursive_mutex> lock(mutex_, std::try_to_lock);
   auto res = data_.TryGetValue(pos);
   if (!res) {
-    return Light();
+    return map_->GetBlock(pos).GetLuminosity();
   }
   return res.value();
 }
