@@ -82,7 +82,7 @@ void Controller::UseItem() {
       Model::GetInstance()->GetPlayer()->UseItem();
     }
   } else {
-    // TODO(mrboorger): UsePotion?
+    // UsePotion?
   }
   Model::GetInstance()->GetPlayer()->SetUseItemCooldownInterval();
 }

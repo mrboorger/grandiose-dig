@@ -105,15 +105,15 @@ void InventoryDrawer::CreateCraftScrollArea() {
 
   QVBoxLayout* layout = new QVBoxLayout(craft_menu_);
   auto all_craft_recipes = Model::GetInstance()->GetAllCraftRecipes();
-  for (int i = 0; i < all_craft_recipes->Size(); i += 6) {
+  for (int i = 0; i < all_craft_recipes->Size(); i += kCraftsInRow) {
     auto row_layout = new QHBoxLayout();
-    for (int j = 0; j < 6 && i + j < all_craft_recipes->Size(); ++j) {
+    for (int j = 0; j < kCraftsInRow && i + j < all_craft_recipes->Size();
+         ++j) {
       const CraftRecipe& recipe = all_craft_recipes->GetRecipe(i + j);
       auto* button = new QPushButton;
       button->setFocusPolicy(Qt::FocusPolicy::NoFocus);
       button->setIcon(QIcon(":/resources/textures/" +
                             kNames[recipe.GetResultingItem().GetId()]));
-      button->setIconSize(QSize(16, 16));
       button->connect(button, &QPushButton::clicked, &recipe,
                       &CraftRecipe::TryCraft);
       row_layout->addWidget(button);

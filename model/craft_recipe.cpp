@@ -17,3 +17,7 @@ CraftRecipe::CraftRecipe(CraftRecipe&& recipe) noexcept {
 void CraftRecipe::TryCraft() const {
   Controller::GetInstance()->TryCraft(*this);
 }
+
+const std::vector<InventoryItem>& CraftRecipe::GetNeededItems() const {
+  return needed_items_;
+}

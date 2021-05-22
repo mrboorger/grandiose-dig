@@ -52,7 +52,6 @@ class Block {
   static const Characteristics& GetCharactistics(int32_t id);
 
   Type type_;
-  // TODO(mrboorger): Make different durability_ of the blocks
   int durability_;
 };
 

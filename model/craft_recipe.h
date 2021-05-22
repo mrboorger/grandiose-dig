@@ -15,9 +15,7 @@ class CraftRecipe : public QObject {
   CraftRecipe(CraftRecipe&& recipe) noexcept;
   virtual ~CraftRecipe() {}
 
-  const std::vector<InventoryItem>& GetNeededItems() const {
-    return needed_items_;
-  }
+  const std::vector<InventoryItem>& GetNeededItems() const;
   const InventoryItem& GetResultingItem() const { return resulting_item_; }
 
   void TryCraft() const;
