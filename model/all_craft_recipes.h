@@ -1,6 +1,8 @@
 #ifndef MODEL_ALL_CRAFT_RECIPES_H_
 #define MODEL_ALL_CRAFT_RECIPES_H_
 
+#include <vector>
+
 #include "model/craft_recipe.h"
 
 class AllCraftRecipes {

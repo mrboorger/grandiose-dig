@@ -56,7 +56,7 @@ class Model : public QObject {
  private:
   bool IsAnyMovingObjectInBlock(QPoint block_coords);
 
-  Model() : all_craft_recipes_(new AllCraftRecipes){};
+  Model() : all_craft_recipes_(new AllCraftRecipes) {}
 
   std::set<std::shared_ptr<Mob>> mobs_;
   std::shared_ptr<AbstractMap> map_;

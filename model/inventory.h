@@ -18,7 +18,7 @@ class Inventory {
 
   void RemoveOneSelectedItem();
 
-  int GetSelectedItemNumber() const { return selected_item_; };
+  int GetSelectedItemNumber() const { return selected_item_; }
   const InventoryItem& GetSelectedItem() const;
 
   void ChangeSelectedItem(int selected_item) { selected_item_ = selected_item; }
