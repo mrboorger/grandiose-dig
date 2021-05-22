@@ -1,6 +1,7 @@
 #ifndef CONTROLLER_CONTROLLER_H_
 #define CONTROLLER_CONTROLLER_H_
 
+#include <QJsonObject>
 #include <QKeyEvent>
 #include <QSettings>
 #include <QTimer>
@@ -13,7 +14,9 @@
 #include "model/player.h"
 #include "view/view.h"
 
-class Controller {
+class Controller : QObject {
+  Q_OBJECT
+
  public:
   static Controller* GetInstance();
 
@@ -39,10 +42,19 @@ class Controller {
 
   void PickItemToPlayer(InventoryItem item);
 
+ public slots:
+  void CreateNewWorld(const QString& world_name, int generator_seed);
+  void LoadFromFile(const QString& file_name);
+  void SaveToFile(const QString& file_name) {
+    Model::GetInstance()->SaveToFile(file_name);
+  }
+  void SaveToFile() { Model::GetInstance()->SaveToFile(); }
+
  private:
   Controller();
 
   void TickEvent();
+  void SaveEvent();
 
   void BreakBlock();
   void StartAttack();
@@ -55,6 +67,7 @@ class Controller {
                     double lower_angle, double upper_angle) const;
 
   QTimer tick_timer_;
+  QTimer save_timer_;
   QSettings settings_;
   std::unordered_set<ControllerTypes::Key> pressed_keys_;
   bool is_pressed_right_mouse_button = false;

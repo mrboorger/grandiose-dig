@@ -1,6 +1,8 @@
 #ifndef MODEL_MODEL_H_
 #define MODEL_MODEL_H_
 
+#include <QDir>
+#include <QFile>
 #include <memory>
 #include <set>
 #include <unordered_set>
@@ -43,6 +45,19 @@ class Model : public QObject {
 
   bool CanSpawnMobAt(QPointF pos, QPointF size) const;
 
+  void Read(const QJsonObject& json);
+  void Write(QJsonObject& json) const;
+
+  void SetSaveFileName(const QString& save_file_name) {
+    current_save_file_name_ = save_file_name;
+  }
+
+  bool LoadFromFile(const QString& file_name);
+  bool SaveToFile(const QString& file_name);
+  bool SaveToFile() { return SaveToFile(current_save_file_name_); }
+
+  void Clear();
+
  signals:
   void DamageDealt(MovingObject* object);
   void BecameDead(MovingObject* object);
@@ -51,6 +66,7 @@ class Model : public QObject {
  private:
   Model() = default;
 
+  QString current_save_file_name_;
   std::set<std::shared_ptr<Mob>> mobs_;
   std::shared_ptr<AbstractMap> map_;
   std::shared_ptr<Player> player_;

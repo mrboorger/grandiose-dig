@@ -24,6 +24,9 @@ class Mob : public MovingObject {
     strategy_ = std::move(strategy);
   }
 
+  void Read(const QJsonObject& json) override;
+  void Write(QJsonObject& json) const override;
+
  private:
   MobState mob_state_;
   Type type_;

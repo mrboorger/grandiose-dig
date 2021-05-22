@@ -1,7 +1,6 @@
 #ifndef VIEW_VIEW_H_
 #define VIEW_VIEW_H_
 
-#include <QHBoxLayout>
 #include <QOpenGLWidget>
 #include <QScopedPointer>
 #include <memory>

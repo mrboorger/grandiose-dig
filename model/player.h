@@ -1,6 +1,7 @@
 #ifndef MODEL_PLAYER_H_
 #define MODEL_PLAYER_H_
 
+#include <QJsonObject>
 #include <QPoint>
 #include <algorithm>
 #include <memory>
@@ -44,6 +45,9 @@ class Player : public MovingObject {
   bool CanStartAttack() const {
     return attack_cooldown_interval_ <= constants::kEps;
   }
+
+  void Read(const QJsonObject& json) override;
+  void Write(QJsonObject& json) const override;
 
  private:
   std::shared_ptr<Inventory> inventory_;

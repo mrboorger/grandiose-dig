@@ -52,3 +52,33 @@ void Mob::MoveMob(double time) {
   UpdateState(strategy_->GetKeys(),
               time);  // maybe better to call MovingObject::Move
 }
+
+void Mob::Read(const QJsonObject& json) {
+  MovingObject::Read(json);
+
+  mob_state_.Read(json["mob_state"].toObject());
+  type_ = static_cast<Type>(json["type"].toInt());
+
+  QString strategy_type = json["strategy"].toObject()["strategy_type"].toString();
+  if (strategy_type == "BasicStrategy") {
+    strategy_ = std::make_shared<BasicStrategy>();
+  } else if (strategy_type == "ZombieSummonerStrategy") {
+    strategy_ = std::make_shared<ZombieSummonerStrategy>();
+  } else if (strategy_type == "MagicStrategy") {
+    strategy_ = std::make_shared<MagicStrategy>();
+  }
+  strategy_->Read(json["strategy"].toObject());
+}
+
+void Mob::Write(QJsonObject& json) const {
+  MovingObject::Write(json);
+
+  QJsonObject mob_state;
+  mob_state_.Write(mob_state);
+  json["mob_state"] = mob_state;
+  json["type"] = static_cast<int>(type_);
+
+  QJsonObject strategy;
+  strategy_->Write(strategy);
+  json["strategy"] = strategy;
+}

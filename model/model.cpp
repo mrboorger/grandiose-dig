@@ -1,5 +1,9 @@
 #include "model/model.h"
 
+#include <QCborMap>
+#include <QCborValue>
+#include <QJsonArray>
+#include <QJsonDocument>
 #include <ctime>
 #include <random>
 #include <vector>
@@ -57,4 +61,65 @@ bool Model::CanSpawnMobAt(QPointF pos, QPointF size) const {
     }
   }
   return true;
+}
+
+void Model::Read(const QJsonObject& json) {
+  // SetMap(std::make_shared<AbstractMap>(json["map"].toObject()));
+  player_ = std::make_shared<Player>(QPointF(0, 0));
+  player_->Read(json["player"].toObject());
+}
+
+void Model::Write(QJsonObject& json) const {
+  // QJsonObject map;
+  // map_->Write(map);
+  // json["map"] = map;
+  QJsonObject player;
+  player_->Write(player);
+  json["player"] = player;
+  QJsonArray mobs;
+  for (const auto& mob : mobs_) {
+    QJsonObject mob_object;
+    mob->Write(mob_object);
+    mobs.append(mob_object);
+  }
+  json["mobs"] = mobs;
+}
+
+bool Model::LoadFromFile(const QString& file_name) {
+  Clear();
+  QFile save_file(QDir::currentPath() + "/saves/" + file_name);
+  if (!save_file.open(QIODevice::ReadOnly)) {
+    qWarning("Couldn't open load file.");
+    return false;
+  }
+
+  current_save_file_name_ = file_name;
+  QByteArray save_data = save_file.readAll();
+  // QJsonDocument world(
+  //     QJsonDocument(QCborValue::fromCbor(save_data).toMap().toJsonObject()));
+  QJsonDocument world(QJsonDocument::fromJson(save_data));
+  Read(world.object());
+  return true;
+}
+
+bool Model::SaveToFile(const QString& file_name) {
+  QFile save_file(QDir::currentPath() + "/saves/" + file_name);
+  if (!save_file.open(QIODevice::WriteOnly)) {
+    qWarning("Couldn't open save file.");
+    return false;
+  }
+
+  current_save_file_name_ = file_name;
+  QJsonObject world;
+  Write(world);
+  save_file.write(QJsonDocument(world).toJson());
+  // save_file.write(QCborValue::fromJsonValue(world).toCbor());
+  return true;
+}
+
+void Model::Clear() {
+  SaveToFile();
+  map_.reset();
+  player_.reset();
+  mobs_.clear();
 }

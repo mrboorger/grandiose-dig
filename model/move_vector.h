@@ -1,6 +1,7 @@
 #ifndef MODEL_MOVE_VECTOR_H_
 #define MODEL_MOVE_VECTOR_H_
 
+#include <QJsonObject>
 #include <QPoint>
 
 #include "model/constants.h"
@@ -39,6 +40,9 @@ class MoveVector {
   QPointF GetMomentum() const { return momentum_; }
   double GetMomentumX() const { return momentum_.x(); }
   double GetMomentumY() const { return momentum_.y(); }
+
+  void Read(const QJsonObject& json);
+  void Write(QJsonObject& json) const;
 
  private:
   QPointF speed_;

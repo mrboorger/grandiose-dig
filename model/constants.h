@@ -13,6 +13,7 @@ constexpr double kEps = 0.00001;         // in blocks
 constexpr double kAirResistance = 0.05;  // in percents
 constexpr int kBlockSz = 16;             // in pixels
 constexpr int kTickDurationMsec = 10;
+constexpr int kSaveDurationMsec = 15'000;
 constexpr double kAbsoluteMaxSpeedX = 5.0;  // in blocks per ms
 constexpr double kAbsoluteMaxSpeedY = 5.0;  // in blocks per ms
 constexpr int kDamageCooldown = 500;        // in ms

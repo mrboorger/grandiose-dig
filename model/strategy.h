@@ -1,6 +1,7 @@
 #ifndef MODEL_STRATEGY_H_
 #define MODEL_STRATEGY_H_
 
+#include <QJsonArray>
 #include <QPointF>
 #include <memory>
 #include <unordered_set>
@@ -29,6 +30,43 @@ class BasicStrategy : public AbstractStrategy {
 
   const std::unordered_set<ControllerTypes::Key>& GetKeys() const override {
     return keys_;
+  }
+
+  void Read(const QJsonObject& json) override {
+    AbstractStrategy::Read(json);
+
+    vision_radius_ = json["vision_radius"].toDouble();
+    walk_time_count_ = json["walk_time_count"].toDouble();
+    attack_time_count_ = json["attack_time_count"].toDouble();
+    walk_precision_ = json["walk_precision"].toDouble();
+    random_walk_chance_ = json["random_walk_chance"].toDouble();
+    random_walk_distance_ = json["random_walk_distance"].toDouble();
+
+    attack_interval_ = json["attack_interval"].toDouble();
+    walk_interval_ = json["walk_interval"].toDouble();
+    walk_target_.setX(json["walk_target_x"].toDouble());
+    walk_target_.setY(json["walk_target_y"].toDouble());
+    conditions_ = json["conditions"].toInt();
+    state_ = static_cast<State>(json["state"].toInt());
+  }
+
+  void Write(QJsonObject& json) const override {
+    AbstractStrategy::Write(json);
+    json["strategy_type"] = "BasicStrategy";
+
+    json["vision_radius"] = vision_radius_;
+    json["walk_time_count"] = walk_time_count_;
+    json["attack_time_count"] = attack_time_count_;
+    json["walk_precision"] = walk_precision_;
+    json["random_walk_chance"] = random_walk_chance_;
+    json["random_walk_distance"] = random_walk_distance_;
+
+    json["attack_interval"] = attack_interval_;
+    json["walk_interval"] = walk_interval_;
+    json["walk_target_x"] = walk_target_.x();
+    json["walk_target_y"] = walk_target_.y();
+    json["conditions"] = static_cast<int>(conditions_);
+    json["state"] = static_cast<int>(state_);
   }
 
  protected:
@@ -91,6 +129,19 @@ class ZombieSummonerStrategy : public BasicStrategy {
  public:
   ZombieSummonerStrategy();
 
+  void Read(const QJsonObject& json) override {
+    BasicStrategy::Read(json);
+
+    summon_interval = json["summon_interval"].toDouble();
+  }
+
+  void Write(QJsonObject& json) const override {
+    BasicStrategy::Write(json);
+
+    json["strategy_type"] = "ZombieSummonerStrategy";
+    json["summon_interval"] = summon_interval;
+  }
+
  protected:
   void DecreaseIntervals(double times) override;
   void DoWalkActions() override;
@@ -102,6 +153,16 @@ class ZombieSummonerStrategy : public BasicStrategy {
 class MagicStrategy : public BasicStrategy {
  public:
   MagicStrategy();
+
+  void Read(const QJsonObject& json) override {
+    BasicStrategy::Read(json);
+  }
+
+  void Write(QJsonObject& json) const override {
+    BasicStrategy::Write(json);
+
+    json["strategy_type"] = "MagicStrategy";
+  }
 
  protected:
   void DoAttack() override;

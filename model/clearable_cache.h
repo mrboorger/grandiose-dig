@@ -1,6 +1,8 @@
 #ifndef MODEL_CLEARABLE_CACHE_H_
 #define MODEL_CLEARABLE_CACHE_H_
 
+#include <QJsonArray>
+#include <QJsonObject>
 #include <QTimer>
 #include <functional>
 #include <map>
@@ -44,6 +46,11 @@ class ClearableCache {
       }
     }
   }
+
+  // TODO(yaroslaffb): implement saving
+  void Read(const QJsonObject& json) { Q_UNUSED(json); }
+
+  void Write(QJsonObject& json) const { Q_UNUSED(json); }
 
  private:
   struct Node {

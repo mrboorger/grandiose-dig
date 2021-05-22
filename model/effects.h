@@ -1,6 +1,7 @@
 #ifndef MODEL_EFFECTS_H_
 #define MODEL_EFFECTS_H_
 
+#include <QJsonObject>
 #include <algorithm>
 
 class Effect {
@@ -32,6 +33,9 @@ class Effect {
   double GetTime() const { return time_; }
   double GetStrength() const { return strength_; }
   bool IsActive() const { return is_active_; }
+
+  void Read(const QJsonObject& json);
+  void Write(QJsonObject& json) const;
 
  private:
   Type type_;

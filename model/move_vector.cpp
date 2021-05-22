@@ -37,3 +37,17 @@ void MoveVector::TranslateSpeedWithLimits(double x, double y) {
   speed_.setY(std::clamp(speed_.y(), -constants::kAbsoluteMaxSpeedY,
                          constants::kAbsoluteMaxSpeedY));
 }
+
+void MoveVector::Read(const QJsonObject& json) {
+  speed_.setX(json["speed_x"].toDouble());
+  speed_.setY(json["speed_y"].toDouble());
+  momentum_.setX(json["momentum_x"].toDouble());
+  momentum_.setY(json["momentum_y"].toDouble());
+}
+
+void MoveVector::Write(QJsonObject& json) const {
+  json["speed_x"] = speed_.x();
+  json["speed_y"] = speed_.y();
+  json["momentum_x"] = momentum_.x();
+  json["momentum_y"] = momentum_.y();
+}

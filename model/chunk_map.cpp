@@ -19,3 +19,8 @@ void ChunkMap::SetBlock(QPoint pos, Block block) {
 void ChunkMap::CacheRegion(const QRect& region) {
   nodes_.MarkUsedOrInsert(region);
 }
+
+// TODO(yaroslaffb): implement saving
+void ChunkMap::Read(const QJsonObject& json) { Q_UNUSED(json); }
+
+void ChunkMap::Write(QJsonObject& json) const { Q_UNUSED(json); }

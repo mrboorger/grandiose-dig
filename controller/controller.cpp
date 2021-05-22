@@ -10,6 +10,7 @@
 #include "model/chunk_map.h"
 #include "model/constants.h"
 #include "model/model.h"
+#include "model/perlin_chunk_map_generator.h"
 #include "view/abstract_map_drawer.h"
 #include "view/buffered_map_drawer.h"
 #include "view/gl_map_drawer.h"
@@ -29,9 +30,12 @@ void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
       new GLMapDrawer(map, View::GetInstance()->GetLightMap()));
 }
 
-Controller::Controller() : tick_timer_() {
+Controller::Controller() : tick_timer_(), save_timer_() {
   tick_timer_.callOnTimeout([this]() { TickEvent(); });
   tick_timer_.start(constants::kTickDurationMsec);
+  save_timer_.callOnTimeout([this]() { SaveEvent(); });
+  save_timer_.start(
+      settings_.value("save_duration", constants::kSaveDurationMsec).toInt());
 }
 
 void Controller::SetPlayer() {
@@ -208,6 +212,8 @@ void Controller::TickEvent() {
   }
 }
 
+void Controller::SaveEvent() { Model::GetInstance()->SaveToFile(); }
+
 ControllerTypes::Key Controller::TranslateKeyCode(int key_code) {
   if (key_code == GetInstance()->settings_.value("kLeft").toInt()) {
     return ControllerTypes::Key::kLeft;
@@ -247,4 +253,29 @@ void Controller::ButtonRelease(Qt::MouseButton button) {
   if (button == Qt::MouseButton::LeftButton) {
     is_pressed_right_mouse_button = false;
   }
+}
+
+void Controller::CreateNewWorld(const QString& world_name, int generator_seed) {
+  Model::GetInstance()->Clear();
+  Model::GetInstance()->SetSaveFileName(world_name);
+  // Temporary code
+  PerlinChunkMapGenerator generator(generator_seed);
+  SetGeneratedMap(&generator);
+  SetPlayer();
+  SetMob();
+}
+
+void Controller::LoadFromFile(const QString& file_name) {
+  Model::GetInstance()->LoadFromFile(file_name);
+  View::GetInstance()->SetInventoryDrawer(
+      new InventoryDrawer(Model::GetInstance()->GetPlayer()->GetInventory()));
+
+  // TODO(yaroslaffb): implement map saving instead of this temporary code {
+  PerlinChunkMapGenerator generator(42);
+  auto map = std::shared_ptr<AbstractMap>(generator.GenerateMap());
+  Model::GetInstance()->SetMap(map);
+  View::GetInstance()->SetLightMap(new LightMap(map));
+  View::GetInstance()->SetDrawer(
+      new GLMapDrawer(map, View::GetInstance()->GetLightMap()));
+  // }
 }

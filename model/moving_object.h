@@ -101,6 +101,9 @@ class MovingObject {
   void AddEffect(Effect effect);
   void DeleteEffect(Effect::Type type);
 
+  virtual void Read(const QJsonObject& json);
+  virtual void Write(QJsonObject& json) const;
+
  protected:
   MovingObject(QPointF pos, QPointF size);
   void UpdateState(const std::unordered_set<ControllerTypes::Key>& pressed_keys,

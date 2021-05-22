@@ -1,6 +1,7 @@
 #ifndef MODEL_ABSTRACT_MAP_H_
 #define MODEL_ABSTRACT_MAP_H_
 
+#include <QJsonObject>
 #include <QPoint>
 #include <QRect>
 
@@ -25,6 +26,9 @@ class AbstractMap {
   virtual void CacheRegion(const QRect& region) { Q_UNUSED(region); }
 
   bool HitBlock(QPoint pos, int hit_power);
+
+  virtual void Read(const QJsonObject& json) = 0;
+  virtual void Write(QJsonObject& json) const = 0;
 
  protected:
   virtual Block* GetBlockMutable(QPoint pos) = 0;

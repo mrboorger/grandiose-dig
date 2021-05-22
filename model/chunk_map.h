@@ -24,6 +24,9 @@ class ChunkMap : public AbstractMap {
 
   explicit ChunkMap(AbstractRegionGenerator* generator);
 
+  void Read(const QJsonObject &json) override;
+  void Write(QJsonObject &json) const override;
+
  private:
   class GenChunk {
    public:

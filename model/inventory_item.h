@@ -1,6 +1,7 @@
 #ifndef MODEL_INVENTORY_ITEM_H_
 #define MODEL_INVENTORY_ITEM_H_
 
+#include <QJsonObject>
 #include <cstdint>
 
 #include "model/block.h"
@@ -33,6 +34,9 @@ class InventoryItem {
   int ItemsLeft() const;
 
   static InventoryItem GetDropItem(Block block);
+
+  void Read(const QJsonObject& json);
+  void Write(QJsonObject& json) const;
 
  private:
   Type type_;

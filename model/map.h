@@ -13,10 +13,13 @@ class Map : public AbstractMap {
  public:
   void SetBlock(QPoint pos, Block block) override;
 
+  void Read(const QJsonObject &json) override;
+  void Write(QJsonObject &json) const override;
+
  private:
   Map(int width, int height);
 
-  Block* GetBlockMutable(QPoint pos) override;
+  Block *GetBlockMutable(QPoint pos) override;
 
   std::vector<Block> blocks_;
   int width_;

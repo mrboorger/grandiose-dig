@@ -21,3 +21,13 @@ int InventoryItem::ItemsLeft() const {
 InventoryItem InventoryItem::GetDropItem(Block block) {
   return kDropItemOfBlock[block.GetId()];
 }
+
+void InventoryItem::Read(const QJsonObject& json) {
+  type_ = static_cast<Type>(json["type"].toInt());
+  count_ = json["count"].toInt();
+}
+
+void InventoryItem::Write(QJsonObject& json) const {
+  json["type"] = static_cast<int>(type_);
+  json["count"] = count_;
+}

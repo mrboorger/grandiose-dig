@@ -1,6 +1,7 @@
 #ifndef MODEL_INVENTORY_H_
 #define MODEL_INVENTORY_H_
 
+#include <QJsonObject>
 #include <array>
 
 #include "model/inventory_item.h"
@@ -14,6 +15,9 @@ class Inventory {
 
   const InventoryItem& operator[](int ind) const { return items_[ind]; }
   void AddItem(InventoryItem item);
+
+  void Read(const QJsonObject& json);
+  void Write(QJsonObject& json) const;
 
  private:
   static constexpr int kInventorySize = kItemsInColumn * kItemsInRow;

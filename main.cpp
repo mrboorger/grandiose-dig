@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QDir>
 #include <QFontDatabase>
 #include <QLibraryInfo>
 #include <QSettings>
@@ -14,15 +15,14 @@ int main(int argc, char* argv[]) {
   QCoreApplication::setOrganizationName("ШУБКА");
   QCoreApplication::setApplicationName("Grandiose dig");
 
-  View* view(View::GetInstance());
-  // TODO(Wind-Eagle): delete. {
+  QDir dir;
+  dir.mkdir(QDir::currentPath() + "/saves");
+
   Controller* controller(Controller::GetInstance());
-  PerlinChunkMapGenerator generator(42);
-  controller->SetGeneratedMap(&generator);
-  controller->SetPlayer();
-  controller->SetMob();
-  // }
-  // QApplication::installTranslator(&new_translator);
+  View* view(View::GetInstance());
+  controller->CreateNewWorld("world1", 42);
+  // controller->LoadFromFile("world1");
+
   view->show();
   view->setWindowState(Qt::WindowMaximized);
   return QApplication::exec();
