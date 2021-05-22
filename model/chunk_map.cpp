@@ -12,10 +12,10 @@ Block* ChunkMap::GetBlockMutable(QPoint pos) {
   return nodes_.GetMutableValue(pos);
 }
 
-void ChunkMap::SetBlock(QPoint pos, Block block) {
+void ChunkMap::SetBlockImpl(QPoint pos, Block block) {
   nodes_.SetValue(pos, block);
 }
 
-void ChunkMap::CacheRegion(const QRect& region) {
+void ChunkMap::CacheRegionImpl(const QRect& region) {
   nodes_.MarkUsedOrInsert(region);
 }

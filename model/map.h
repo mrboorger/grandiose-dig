@@ -10,11 +10,11 @@ class Map : public AbstractMap {
   friend class AbstractMapGenerator;
   friend class FlatMapGenerator;
 
- public:
-  void SetBlock(QPoint pos, Block block) override;
-
  private:
   Map(int width, int height);
+
+  void SetBlockImpl(QPoint pos, Block block) override;
+
 
   Block* GetBlockMutable(QPoint pos) override;
 

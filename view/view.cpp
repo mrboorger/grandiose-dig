@@ -5,6 +5,7 @@
 #include <chrono>
 #include <cmath>
 #include <ctime>
+#include <mutex>
 #include <random>
 
 #include "controller/controller.h"
@@ -22,7 +23,6 @@ View* View::GetInstance() {
 
 View::View()
     : QOpenGLWidget(nullptr),
-      camera_(QPointF(150, 150)),
       sound_manager_(new SoundManager()),
       drawer_(nullptr) {
   assert(!instance_);
@@ -33,6 +33,8 @@ View::View()
 }
 
 View::~View() {
+  need_continue_ = false;
+  update_light_thread_->join();
   instance_ = nullptr;
 }
 
@@ -43,7 +45,7 @@ void View::SetInventoryDrawer(InventoryDrawer* drawer) {
 void View::DrawPlayer(QPainter* painter) {
   auto player = Model::GetInstance()->GetPlayer();
   QPointF point =
-      (player->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
+      (player->GetPosition() - camera_pos_) * constants::kBlockSz +
       rect().center();
 
   MovingObjectDrawer::DrawPlayer(painter, point);
@@ -61,6 +63,7 @@ void View::initializeGL() {
   if (drawer_) {
     drawer_->Init();
   }
+  update_light_thread_.reset(new std::thread([this]{UpdateLight();}));
 }
 
 void View::paintGL() {
@@ -70,11 +73,13 @@ void View::paintGL() {
 
   gl->glClear(GL_COLOR_BUFFER_BIT);
 
-  camera_.SetPoint(Model::GetInstance()->GetPlayer()->GetPosition());
-  QPointF camera_pos = camera_.GetPoint();
+  camera_pos_ = Model::GetInstance()->GetPlayer()->GetPosition();
 
-  UpdateLight(QPoint(camera_pos.x(), camera_pos.y()));
-  drawer_->DrawMapWithCenter(&painter, camera_pos, rect());
+  auto to_update = light_map_->TakeUpdateList();
+  for (auto pos : to_update) {
+    drawer_->UpdateBlock(pos);
+  }
+  drawer_->DrawMapWithCenter(&painter, camera_pos_, rect());
 
   inventory_drawer_->DrawInventory(&painter);
 
@@ -83,7 +88,7 @@ void View::paintGL() {
   auto mobs = Model::GetInstance()->GetMobs();
   for (auto mob : mobs) {
     QPointF mob_point =
-        (mob->GetPosition() - camera_.GetPoint()) * constants::kBlockSz +
+        (mob->GetPosition() - camera_pos_) * constants::kBlockSz +
         rect().center();
     MovingObjectDrawer::DrawMob(&painter, mob_point, mob);
   }
@@ -163,15 +168,15 @@ QPoint View::GetBlockCoordUnderCursor() const {
   return QPoint(std::floor(pos.x()), std::floor(pos.y()));
 }
 
-void View::UpdateLight(QPoint camera_pos) {
-  light_map_->CalculateRegion(drawer_->GetDrawRegion(camera_pos));
-  const auto& to_update = light_map_->TakeUpdateList();
-  for (auto pos : to_update) {
-    drawer_->UpdateBlock(pos);
+void View::UpdateLight() {
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  while (need_continue_) {
+    light_map_->CalculateRegion(
+        drawer_->GetDrawRegion(QPoint(camera_pos_.x(), camera_pos_.y())));
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
   }
-  light_map_->ClearUpdateList();
 }
 
 QPointF View::GetTopLeftWindowCoord() const {
-  return camera_.GetPoint() - QPointF(rect().center()) / constants::kBlockSz;
+  return camera_pos_ - QPointF(rect().center()) / constants::kBlockSz;
 }

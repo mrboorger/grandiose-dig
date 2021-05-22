@@ -169,7 +169,7 @@ bool MovingObject::FindCollisionGround(
     for (double x = bottom_left_x + constants::kEps;; x += 1) {
       QPoint block_pos{static_cast<int>(std::floor(x)),
                        static_cast<int>(std::floor(y))};
-      if (map->GetBlock(block_pos).GetFrontType () != Block::FrontType::kAir) {
+      if (map->GetBlock(block_pos).GetFrontType() != Block::FrontType::kAir) {
         *ground_y = block_pos.y() - size_.y();
         return true;
       }

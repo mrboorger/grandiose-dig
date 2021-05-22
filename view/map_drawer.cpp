@@ -7,7 +7,7 @@
 
 MapDrawer::MapDrawer(std::shared_ptr<AbstractMap> map) : map_(std::move(map)) {}
 
-void MapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
+void MapDrawer::DrawMapWithCenterImpl(QPainter* painter, const QPointF& pos,
                                   const QRect& screen_coords) {
   for (int32_t y = pos.y() - kFieldOfView; y <= pos.y() + kFieldOfView; ++y) {
     for (int32_t x = pos.x() - kFieldOfView; x <= pos.x() + kFieldOfView; ++x) {
@@ -19,7 +19,7 @@ void MapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
   }
 }
 
-QRect MapDrawer::GetDrawRegion(QPoint center) const {
+QRect MapDrawer::GetDrawRegionImpl(QPoint center) const {
   return QRect(center.x() - kFieldOfView, center.y() - kFieldOfView,
                center.x() + kFieldOfView, center.y() + kFieldOfView);
 }

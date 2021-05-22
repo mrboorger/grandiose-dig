@@ -17,14 +17,14 @@ GLMapDrawer::GLMapDrawer(std::shared_ptr<AbstractMap> map,
       map_(std::move(map)),
       light_map_(std::move(light_map)) {}
 
-void GLMapDrawer::Init() {
+void GLMapDrawer::InitImpl() {
   GenerateIndexBuffer(&index_buffer_);
   LoadShader(&shader_);
   atlas_.Init();
 }
 
-void GLMapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
-                                    const QRect& screen_coords) {
+void GLMapDrawer::DrawMapWithCenterImpl(QPainter* painter, const QPointF& pos,
+                                        const QRect& screen_coords) {
   Q_UNUSED(painter);
   auto* gl = GLFunctions::GetInstance();
 
@@ -88,7 +88,7 @@ void GLMapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
   atlas_.release();
 }
 
-void GLMapDrawer::UpdateBlock(QPoint position) {
+void GLMapDrawer::UpdateBlockImpl(QPoint position) {
   auto buffer_pos = RoundToMeshPos(position);
   auto buffer = buffers_.Get(buffer_pos);
   if (!buffer) {
@@ -141,7 +141,7 @@ GLMapDrawer::VertexData GLMapDrawer::Average(const VertexData& a,
   return *reinterpret_cast<VertexData*>(&result);
 }
 
-QRect GLMapDrawer::GetDrawRegion(QPoint center) const {
+QRect GLMapDrawer::GetDrawRegionImpl(QPoint center) const {
   QRect result(center.x() - kFieldOfView, center.y() - kFieldOfView,
                2 * kFieldOfView + 1, 2 * kFieldOfView + 1);
   return result;

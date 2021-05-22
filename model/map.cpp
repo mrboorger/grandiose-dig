@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <utility>
 
-void Map::SetBlock(QPoint pos, Block block) {
+void Map::SetBlockImpl(QPoint pos, Block block) {
   blocks_[pos.y() * width_ + pos.x()] = block;
 }
 

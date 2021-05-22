@@ -56,14 +56,16 @@ QPointF TextureAtlas::GetBlockTCLB(Block block) {
 
 QPointF TextureAtlas::GetBlockTCRT(Block block) {
   QPointF position(
-      GetBlockPixmapXCoordinate(block.GetFrontId()) + constants::kBlockSz - 1, 0.0);
+      GetBlockPixmapXCoordinate(block.GetFrontId()) + constants::kBlockSz - 1,
+      0.0);
   position.rx() /= kTextureWidth;
   return position;
 }
 
 QPointF TextureAtlas::GetBlockTCRB(Block block) {
   QPointF position(
-      GetBlockPixmapXCoordinate(block.GetFrontId()) + constants::kBlockSz - 1, 1.0);
+      GetBlockPixmapXCoordinate(block.GetFrontId()) + constants::kBlockSz - 1,
+      1.0);
   position.rx() /= kTextureWidth;
   return position;
 }

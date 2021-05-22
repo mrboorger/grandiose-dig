@@ -20,15 +20,6 @@ class GLMapDrawer : public AbstractMapDrawer {
   explicit GLMapDrawer(std::shared_ptr<AbstractMap> map,
                        std::shared_ptr<LightMap> light_map);
 
-  void Init() override;
-
-  void DrawMapWithCenter(QPainter* painter, const QPointF& pos,
-                         const QRect& screen_coords) override;
-
-  void UpdateBlock(QPoint position) override;
-
-  QRect GetDrawRegion(QPoint center) const override;
-
  private:
   struct VertexData {
     GLfloat pos_x;
@@ -48,6 +39,16 @@ class GLMapDrawer : public AbstractMapDrawer {
     VertexData left_bottom;
     VertexData center;
   };
+
+  void InitImpl() override;
+
+  void DrawMapWithCenterImpl(QPainter* painter, const QPointF& pos,
+                             const QRect& screen_coords) override;
+
+  void UpdateBlockImpl(QPoint position) override;
+
+  QRect GetDrawRegionImpl(QPoint center) const override;
+
 
   // In blocks
   static constexpr int32_t kFieldOfView = 64;
