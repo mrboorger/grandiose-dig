@@ -6,7 +6,6 @@
 #include <QRect>
 #include <mutex>
 
-#include <QDebug>
 class AbstractMapDrawer {
  public:
   AbstractMapDrawer() = default;

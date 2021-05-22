@@ -63,7 +63,10 @@ void View::initializeGL() {
   if (drawer_) {
     drawer_->Init();
   }
-  update_light_thread_.reset(new std::thread([this]{UpdateLight();}));
+  if (auto player = Model::GetInstance()->GetPlayer()) {
+    camera_pos_ = Model::GetInstance()->GetPlayer()->GetPosition();
+  }
+  update_light_thread_.reset(new std::thread([this] { UpdateLight(); }));
 }
 
 void View::paintGL() {
@@ -169,11 +172,11 @@ QPoint View::GetBlockCoordUnderCursor() const {
 }
 
 void View::UpdateLight() {
-  std::this_thread::sleep_for(std::chrono::milliseconds(100));
   while (need_continue_) {
     light_map_->CalculateRegion(
         drawer_->GetDrawRegion(QPoint(camera_pos_.x(), camera_pos_.y())));
-    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    std::this_thread::sleep_for(
+        std::chrono::milliseconds(2 * constants::kTickDurationMsec));
   }
 }
 
