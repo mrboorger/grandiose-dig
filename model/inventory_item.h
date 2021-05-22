@@ -19,9 +19,10 @@ class InventoryItem {
   static constexpr int kTypesCount = static_cast<int>(Type::kTypesCount);
 
   InventoryItem() : type_(Type::kEmptyItem), count_(0) {}
-
   explicit InventoryItem(Type type, int count = 1)
       : type_(type), count_(count) {}
+
+  bool operator==(const InventoryItem& rhs) const;
 
   bool IsEmpty() const { return type_ == Type::kEmptyItem; }
 
@@ -30,7 +31,7 @@ class InventoryItem {
   int32_t GetIdOfBlock() const { return static_cast<int32_t>(type_); }
   int GetCount() const { return count_; }
 
-  void ChangeCount(int new_count) { count_ = new_count; }
+  void ChangeCount(int new_count);
 
   int ItemsLeft() const;
 

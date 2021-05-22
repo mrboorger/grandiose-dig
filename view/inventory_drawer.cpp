@@ -1,8 +1,11 @@
 #include "view/inventory_drawer.h"
 
-#include <QString>
+#include <QHBoxLayout>
+#include <QPushButton>
 #include <QTextItem>
 #include <utility>
+
+#include "view.h"
 
 namespace {
 
@@ -16,8 +19,11 @@ QImage selection_box;
 }  // namespace
 
 InventoryDrawer::InventoryDrawer(std::shared_ptr<const Inventory> inventory)
-    : inventory_(std::move(inventory)) {
+    : inventory_(std::move(inventory)),
+      craft_menu_(new QScrollArea(View::GetInstance())) {
   LoadInventoryBackground();
+  CreateCraftScrollArea();
+  craft_menu_->setStyleSheet("background-color: rgba(0,0,0, 100)");
 }
 
 void InventoryDrawer::DrawInventory(QPainter* painter) {
@@ -88,4 +94,33 @@ void InventoryDrawer::DrawSelectionBox(QPainter* painter) {
   painter->drawImage(
       inventory_->GetSelectedItemNumber() * (kCellSize + kIndentSize), 0,
       selection_box);
+}
+
+void InventoryDrawer::CreateCraftScrollArea() {
+  craft_menu_->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+  craft_menu_->setGeometry(QRect(10, 200, 250, 150));
+  craft_menu_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  craft_menu_->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  craft_menu_->setVisible(false);
+
+  QVBoxLayout* layout = new QVBoxLayout(craft_menu_);
+  auto all_craft_recipes = Model::GetInstance()->GetAllCraftRecipes();
+  for (int i = 0; i < all_craft_recipes->Size(); i += 6) {
+    auto row_layout = new QHBoxLayout();
+    for (int j = 0; j < 6 && i + j < all_craft_recipes->Size(); ++j) {
+      const CraftRecipe& recipe = all_craft_recipes->GetRecipe(i + j);
+      auto* button = new QPushButton;
+      button->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+      button->setIcon(QIcon(":/resources/textures/" +
+                            kNames[recipe.GetResultingItem().GetId()]));
+      button->setIconSize(QSize(16, 16));
+      button->connect(button, &QPushButton::clicked, &recipe,
+                      &CraftRecipe::TryCraft);
+      row_layout->addWidget(button);
+    }
+    layout->addLayout(row_layout);
+  }
+  QWidget* widget = new QWidget;
+  widget->setLayout(layout);
+  craft_menu_->setWidget(widget);
 }

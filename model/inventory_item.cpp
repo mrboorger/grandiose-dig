@@ -18,6 +18,10 @@ const std::array<Block, Block::kTypesCount> kBlockTypeFromItem = {
 
 }  // namespace
 
+bool InventoryItem::operator==(const InventoryItem& rhs) const {
+  return type_ == rhs.type_;
+}
+
 int InventoryItem::ItemsLeft() const {
   return kMaximumCount[static_cast<int>(type_)] - count_;
 }
@@ -32,4 +36,12 @@ Block InventoryItem::GetBlockFromItem(InventoryItem item) {
 
 bool InventoryItem::IsBlock() const {
   return (type_ >= Type::kBlockDirt && type_ <= Type::kBlockStone);
+}
+
+void InventoryItem::ChangeCount(int new_count) {
+  count_ = new_count;
+  if (count_ <= 0) {
+    type_ = Type::kEmptyItem;
+    count_ = 0;
+  }
 }

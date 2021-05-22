@@ -40,6 +40,8 @@ class Controller {
 
   void PlaceBlock(QPoint block_coords, Block block);
 
+  void TryCraft(const CraftRecipe& recipe);
+
  private:
   Controller();
 

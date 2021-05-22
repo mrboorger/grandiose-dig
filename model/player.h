@@ -48,11 +48,12 @@ class Player : public MovingObject {
   bool IsAttackFinished() const { return attack_tick_ <= constants::kEps; }
   bool CanStartAttack() const;
 
-  // TODO(mrboorger):
   void SetUseItemCooldownInterval();
   void DecItemUsingCooldownInterval(double time);
 
   bool CanUseItem() const { return use_item_cooldown_interval == 0; }
+
+  void TryCraft(const CraftRecipe& recipe);
 
  private:
   static constexpr int kUseItemCooldown = 100;

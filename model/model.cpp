@@ -59,3 +59,6 @@ bool Model::IsAnyMovingObjectInBlock(QPoint block_coords) {
   }
   return false;
 }
+std::shared_ptr<const AllCraftRecipes> Model::GetAllCraftRecipes() const {
+  return all_craft_recipes_;
+}

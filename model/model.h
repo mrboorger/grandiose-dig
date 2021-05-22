@@ -6,6 +6,7 @@
 #include <unordered_set>
 #include <utility>
 
+#include "model/all_craft_recipes.h"
 #include "model/map.h"
 #include "model/mob.h"
 #include "model/player.h"
@@ -43,6 +44,8 @@ class Model : public QObject {
 
   bool CanIPlaceBlock(QPoint block_coords);
 
+  std::shared_ptr<const AllCraftRecipes> GetAllCraftRecipes() const;
+
  signals:
   void DamageDealt(MovingObject::Type type);
   void BecameDead(MovingObject::Type type);
@@ -51,11 +54,12 @@ class Model : public QObject {
  private:
   bool IsAnyMovingObjectInBlock(QPoint block_coords);
 
-  Model() = default;
+  Model() : all_craft_recipes_(new AllCraftRecipes){};
 
   std::set<std::shared_ptr<Mob>> mobs_;
   std::shared_ptr<AbstractMap> map_;
   std::shared_ptr<Player> player_;
+  std::shared_ptr<AllCraftRecipes> all_craft_recipes_;
 };
 
 #endif  // MODEL_MODEL_H_

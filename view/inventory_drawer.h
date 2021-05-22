@@ -2,15 +2,18 @@
 #define VIEW_INVENTORY_DRAWER_H_
 
 #include <QPainter>
+#include <QScrollArea>
 #include <memory>
 
-#include "model/inventory.h"
+#include "model/model.h"
 
 class InventoryDrawer {
  public:
   explicit InventoryDrawer(std::shared_ptr<const Inventory> inventory);
 
   void DrawInventory(QPainter* painter);
+
+  void SetCraftMenuVisible(bool visible) { craft_menu_->setVisible(visible); }
 
  private:
   static constexpr float kBackgroundOpacity = 0.70;
@@ -30,7 +33,11 @@ class InventoryDrawer {
 
   void LoadInventoryBackground();
 
+  void CreateCraftScrollArea();
+
   std::shared_ptr<const Inventory> inventory_;
+
+  QScrollArea* craft_menu_;
 
   QPixmap inventory_background_;
 };

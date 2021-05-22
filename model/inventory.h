@@ -3,6 +3,7 @@
 
 #include <array>
 
+#include "model/craft_recipe.h"
 #include "model/inventory_item.h"
 
 class Inventory {
@@ -21,6 +22,9 @@ class Inventory {
   const InventoryItem& GetSelectedItem() const;
 
   void ChangeSelectedItem(int selected_item) { selected_item_ = selected_item; }
+
+  bool CanCraft(const CraftRecipe& recipe);
+  void Craft(const CraftRecipe& recipe);
 
  private:
   static constexpr int kInventorySize = kItemsInColumn * kItemsInRow;

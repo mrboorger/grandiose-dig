@@ -35,3 +35,9 @@ void Player::SetUseItemCooldownInterval() {
 void Player::DecItemUsingCooldownInterval(double time) {
   use_item_cooldown_interval = std::max(use_item_cooldown_interval - time, 0.0);
 }
+
+void Player::TryCraft(const CraftRecipe& recipe) {
+  if (inventory_->CanCraft(recipe)) {
+    inventory_->Craft(recipe);
+  }
+}

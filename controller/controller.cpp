@@ -205,7 +205,6 @@ void Controller::TickEvent() {
     StartAttack();
   }
   if (is_pressed_right_mouse_button) {
-    // TODO(mrboorger): make PlaceBlock() dependible on time
     UseItem();
   }
   PlayerAttack(time);
@@ -246,7 +245,6 @@ ControllerTypes::Key Controller::TranslateKeyCode(int key_code) {
 }
 
 void Controller::KeyPress(int key) {
-  // TODO(mrboorger): fix it
   ParseInventoryKey(TranslateKeyCode(key));
   pressed_keys_.insert(TranslateKeyCode(key));
 }
@@ -282,4 +280,8 @@ void Controller::ParseInventoryKey(ControllerTypes::Key translated_key) {
         static_cast<int>(translated_key) -
         static_cast<int>(ControllerTypes::Key::kInventory0));
   }
+}
+
+void Controller::TryCraft(const CraftRecipe& recipe) {
+  Model::GetInstance()->GetPlayer()->TryCraft(recipe);
 }

@@ -1,6 +1,7 @@
 #include "inventory.h"
 
 #include <algorithm>
+#include <map>
 #include <utility>
 
 Inventory::Inventory() {
@@ -39,12 +40,38 @@ void Inventory::AddItem(InventoryItem item) {
 void Inventory::RemoveOneSelectedItem() {
   if (!items_[selected_item_].IsEmpty()) {
     items_[selected_item_].ChangeCount(items_[selected_item_].GetCount() - 1);
-    if (items_[selected_item_].GetCount() == 0) {
-      items_[selected_item_] = InventoryItem(InventoryItem::Type::kEmptyItem);
-    }
   }
 }
 
 const InventoryItem& Inventory::GetSelectedItem() const {
   return items_[selected_item_];
+}
+
+bool Inventory::CanCraft(const CraftRecipe& recipe) {
+  auto needed_items = recipe.GetNeededItems();
+  for (const auto& item : items_) {
+    auto it = std::find(needed_items.begin(), needed_items.end(), item);
+    if (it != needed_items.end()) {
+      it->ChangeCount(std::max(0, it->GetCount() - item.GetCount()));
+    }
+  }
+  for (const auto& item : needed_items) {
+    if (item.GetCount() != 0) {
+      return false;
+    }
+  }
+  return true;
+}
+
+void Inventory::Craft(const CraftRecipe& recipe) {
+  auto needed_items = recipe.GetNeededItems();
+  for (auto& item : items_) {
+    auto it = std::find(needed_items.begin(), needed_items.end(), item);
+    if (it != needed_items.end()) {
+      int needed_count = it->GetCount();
+      it->ChangeCount(std::max(0, needed_count - item.GetCount()));
+      item.ChangeCount(std::max(0, item.GetCount() - needed_count));
+    }
+  }
+  AddItem(recipe.GetResultingItem());
 }
