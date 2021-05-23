@@ -16,7 +16,9 @@
 
 View* View::instance_ = nullptr;
 
-View* View::GetInstance() { return instance_; }
+View* View::GetInstance() {
+  return instance_;
+}
 
 View::View()
     : QOpenGLWidget(nullptr),
@@ -30,7 +32,9 @@ View::View()
   connect(Model::GetInstance(), &Model::MobSound, this, &View::MobSound);
 }
 
-View::~View() { instance_ = nullptr; }
+View::~View() {
+  instance_ = nullptr;
+}
 
 void View::SetInventoryDrawer(InventoryDrawer* drawer) {
   inventory_drawer_.reset(drawer);
@@ -165,7 +169,7 @@ void View::UpdateLight(QPoint camera_pos) {
   for (auto pos : to_update) {
     drawer_->UpdateBlock(pos);
   }
-  // light_map_->ClearUpdateList();
+  light_map_->ClearUpdateList();
 }
 
 QPointF View::GetTopLeftWindowCoord() const {
