@@ -112,10 +112,8 @@ void LightMap::CalculateRegionThread() {
   }
 }
 
-std::recursive_mutex mu;
-
 LightMap::Buffer LightMap::BufferConstructor::operator()(QPoint pos) {
-  const std::lock_guard<std::recursive_mutex> lock(mu);
+  // const std::lock_guard<std::recursive_mutex> lock(mutex_);
   for (int32_t y = pos.y(); y < pos.y() + LightMap::kBufferHeight; ++y) {
     for (int32_t x = pos.x(); x < pos.x() + LightMap::kBufferWidth; ++x) {
       update_queue_->push(QPoint(x, y));
