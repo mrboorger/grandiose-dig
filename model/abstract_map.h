@@ -3,7 +3,6 @@
 
 #include <QPoint>
 #include <QRect>
-#include <mutex>
 
 #include "model/block.h"
 
@@ -18,10 +17,7 @@ class AbstractMap {
   AbstractMap& operator=(const AbstractMap&) = default;
   AbstractMap& operator=(AbstractMap&&) = default;
 
-  const Block& GetBlock(QPoint pos) {
-    const std::lock_guard<std::mutex> lock(mutex_);
-    return *GetBlockMutable(pos);
-  }
+  const Block& GetBlock(QPoint pos) { return *GetBlockMutable(pos); }
   virtual void SetBlock(QPoint pos, Block block) = 0;
 
   virtual int32_t GroundLevel() { return kDefaultGroundLevel; }
@@ -35,7 +31,6 @@ class AbstractMap {
 
  private:
   static constexpr int32_t kDefaultGroundLevel = 150;
-  std::mutex mutex_;
 };
 
 #endif  // MODEL_ABSTRACT_MAP_H_
