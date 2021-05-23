@@ -7,7 +7,7 @@ bool AbstractMap::HitBlock(QPoint pos, int hit_power) {
   if (block->DecreaseDurability(hit_power)) {
     Controller::GetInstance()->PickItemToPlayer(
         InventoryItem::GetDropItem(*block));
-    SetBlock(pos, Block(Block::Type::kAir));
+    GetBlockMutable(pos)->SetFrontType(Block::FrontType::kAir);
     return true;
   }
   return false;

@@ -11,6 +11,7 @@
 #include "model/constants.h"
 #include "utils.h"
 #include "view/abstract_map_drawer.h"
+#include "view/background_atlas.h"
 #include "view/gl_func.h"
 #include "view/light_map.h"
 #include "view/texture_atlas.h"
@@ -20,21 +21,16 @@ class GLMapDrawer : public AbstractMapDrawer {
   explicit GLMapDrawer(std::shared_ptr<AbstractMap> map,
                        std::shared_ptr<LightMap> light_map);
 
-  void Init() override;
-
-  void DrawMapWithCenter(QPainter* painter, const QPointF& pos,
-                         const QRect& screen_coords) override;
-
-  void UpdateBlock(QPoint position) override;
-
-  QRect GetDrawRegion(QPoint center) const override;
-
  private:
   struct VertexData {
     GLfloat pos_x;
     GLfloat pos_y;
+    GLfloat tex_z;
+    GLfloat back_z;
     GLfloat tex_u;
     GLfloat tex_v;
+    GLfloat back_u;
+    GLfloat back_v;
     GLfloat light_r;
     GLfloat light_g;
     GLfloat light_b;
@@ -49,6 +45,16 @@ class GLMapDrawer : public AbstractMapDrawer {
     VertexData center;
   };
 
+  void InitImpl() override;
+
+  void DrawMapWithCenterImpl(QPainter* painter, const QPointF& pos,
+                             const QRect& screen_coords) override;
+
+  void UpdateBlockImpl(QPoint position) override;
+
+  QRect GetDrawRegionImpl(QPoint center) const override;
+
+
   // In blocks
   static constexpr int32_t kFieldOfView = 64;
   static constexpr int32_t kMeshWidth = 32;
@@ -56,10 +62,16 @@ class GLMapDrawer : public AbstractMapDrawer {
   static constexpr int32_t kMeshSize = kMeshWidth * kMeshHeight;
   static constexpr int32_t kElementsPerBlock = 4 * 3;
   static constexpr int32_t kElementsCount = kElementsPerBlock * kMeshSize;
-  static constexpr int kAttribsCount = 4;
-  static constexpr std::array<int, kAttribsCount> kAttribSizes{2, 2, 3, 1};
+  static constexpr int kAttribsCount = 5;
+  static constexpr std::array<int, kAttribsCount> kAttribSizes{2, 1, 2, 3, 1};
+  static constexpr std::array<int, kAttribsCount> kBlockStrides{0, 0, 1, 2, 0};
+  static constexpr std::array<int, kAttribsCount> kBackgroundStrides{0, 1, 2, 0,
+                                                                     0};
+  static constexpr double kNotVisibleZ = 0.0;
+  static constexpr double kBackgroundZ = 1.1;
+  static constexpr double kBlocksZ = 1.0;
   static constexpr std::array<const char*, kAttribsCount> kAttribNames{
-      "in_pos", "in_tex_coords", "in_light", "in_sun"};
+      "in_pos", "in_z_coord", "in_tex_coords", "in_light", "in_sun"};
   static constexpr VertexData kNoDrawVertex = VertexData{};
   static constexpr BlockData kNoDrawBlockData = BlockData{
       kNoDrawVertex, kNoDrawVertex, kNoDrawVertex, kNoDrawVertex, kNoDrawVertex,
@@ -67,7 +79,8 @@ class GLMapDrawer : public AbstractMapDrawer {
   static constexpr int32_t kVerticesPerBlock =
       sizeof(BlockData) / sizeof(VertexData);
 
-  static VertexData GenData(QPoint pos, QPointF tex_coords, Light light);
+  static VertexData GenData(QPoint pos, double z, QPointF tex_coords,
+                            QPointF back_coords, Light light);
 
   static QPoint RoundToMeshPos(QPoint p);
   static VertexData Average(const VertexData& a, const VertexData& b,
@@ -88,7 +101,8 @@ class GLMapDrawer : public AbstractMapDrawer {
       buffers_;
   QOpenGLBuffer index_buffer_;
   QOpenGLShaderProgram shader_;
-  TextureAtlas atlas_;
+  TextureAtlas block_textures_;
+  BackgroundAtlas backgrounds_;
   std::shared_ptr<AbstractMap> map_;
   std::shared_ptr<LightMap> light_map_;
 };

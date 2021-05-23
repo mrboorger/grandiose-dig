@@ -13,7 +13,7 @@ class Chunk {
   static constexpr int32_t kWidth = 64;
   static constexpr int32_t kHeight = 64;
 
-  Chunk() : blocks_(kWidth * kHeight, Block(Block::Type::kAir)) {}
+  Chunk() : blocks_(kWidth * kHeight, Block(Block::FrontType::kAir)) {}
 
   Block& operator[](int32_t i) { return blocks_[i]; }
   const Block& operator[](int32_t i) const { return blocks_[i]; }

@@ -37,7 +37,7 @@ Controller::Controller() : tick_timer_() {
 void Controller::SetPlayer() {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->SetPlayer(
-      std::make_shared<Player>(QPointF(125.0, 67.0)));
+      std::make_shared<Player>(QPointF(-16.0, 96.0)));
   View::GetInstance()->SetInventoryDrawer(
       new InventoryDrawer(Model::GetInstance()->GetPlayer()->GetInventory()));
 }
@@ -105,8 +105,8 @@ bool Controller::IsVisible(QPointF player_center, QPointF mob_point) const {
     for (double x = center_left_x + constants::kEps;; x += 1) {
       QPoint block_pos{static_cast<int>(std::floor(x)),
                        static_cast<int>(std::floor(y))};
-      if (Model::GetInstance()->GetMap()->GetBlock(block_pos).GetType() !=
-          Block::Type::kAir) {
+      if (Model::GetInstance()->GetMap()->GetBlock(block_pos).GetFrontType() !=
+          Block::FrontType::kAir) {
         return false;
       }
       if (x >= std::floor(center_right_x)) {
@@ -187,6 +187,7 @@ void Controller::TickEvent() {
   }
   PlayerAttack(time);
   View::GetInstance()->repaint();
+  View::GetInstance()->PlayMusic();
 }
 
 ControllerTypes::Key Controller::TranslateKeyCode(int key_code) {

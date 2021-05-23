@@ -42,8 +42,10 @@ bool Model::CanSpawnMobAt(QPointF pos, QPointF size) const {
        j < std::floor(pos.x() + size.x() - constants::kEps); j++) {
     for (int i = std::floor(pos.y());
          i < std::floor(pos.y() + size.y() - constants::kEps); i++) {
-      if (Model::GetInstance()->GetMap()->GetBlock(QPoint(j, i)).GetType() !=
-          Block::Type::kAir) {
+      if (Model::GetInstance()
+              ->GetMap()
+              ->GetBlock(QPoint(j, i))
+              .GetFrontType() != Block::FrontType::kAir) {
         return false;
       }
     }
@@ -52,7 +54,7 @@ bool Model::CanSpawnMobAt(QPointF pos, QPointF size) const {
             ->GetMap()
             ->GetBlock(
                 QPoint(j, std::floor(pos.y() + size.y() + 1 - constants::kEps)))
-            .GetType() == Block::Type::kAir) {
+            .GetFrontType() == Block::FrontType::kAir) {
       return false;
     }
   }

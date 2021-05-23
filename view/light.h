@@ -13,7 +13,7 @@ class Light {
   static constexpr int kSunIndex = 3;
   static constexpr uint8_t kMaxLight = 255;
   static constexpr uint8_t kMinLight = 0;
-  static constexpr uint8_t kDecreaseFactor = 5;
+  static constexpr uint8_t kDecreaseFactor = 10;
 
   Light() = default;
   constexpr Light(uint8_t red, uint8_t green, uint8_t blue, uint8_t sun)

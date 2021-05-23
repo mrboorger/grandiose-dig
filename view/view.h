@@ -4,6 +4,7 @@
 #include <QHBoxLayout>
 #include <QOpenGLWidget>
 #include <memory>
+#include <thread>
 
 #include "model/model.h"
 #include "view/abstract_map_drawer.h"
@@ -39,6 +40,8 @@ class View : public QOpenGLWidget {
   void UpdateBlock(QPoint pos) { drawer_->UpdateBlock(pos); }
   std::shared_ptr<LightMap> GetLightMap() { return light_map_; }
 
+  void PlayMusic();
+
  private slots:
   void DamageDealt(MovingObject* object);
   void BecameDead(MovingObject* object);
@@ -57,15 +60,17 @@ class View : public QOpenGLWidget {
   void mousePressEvent(QMouseEvent* event) override;
   void mouseReleaseEvent(QMouseEvent* event) override;
 
-  void UpdateLight(QPoint camera_pos);
+  void UpdateLight();
 
   QPointF GetTopLeftWindowCoord() const;  // in blocks
 
-  Camera camera_;
+  QPointF camera_pos_;
   std::unique_ptr<SoundManager> sound_manager_;
   std::unique_ptr<AbstractMapDrawer> drawer_;
   std::shared_ptr<LightMap> light_map_;
   std::unique_ptr<InventoryDrawer> inventory_drawer_;
+  std::atomic<bool> need_continue_ = true;
+  std::unique_ptr<std::thread> update_light_thread_;
 };
 
 #endif  // VIEW_VIEW_H_

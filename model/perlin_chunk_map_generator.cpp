@@ -15,13 +15,13 @@ PerlinChunkMapGenerator::PerlinChunkMapGenerator(uint32_t seed) : seed_(seed) {}
 PerlinChunkMapGenerator::PerlinRegionGenerator::PerlinRegionGenerator(
     uint32_t seed)
     : noise_biome_temperature_(seed + 1),
-      noise_hills_(seed + 2),
-      noise_stone_(seed + 3),
-      noise_caves_(seed + 4),
-      noise_coal_(seed + 5),
-      noise_coal2_(seed + 6),
-      noise_iron_(seed + 7),
-      noise_iron2_(seed + 8) {}
+      noise_hills_(seed + 10),
+      noise_stone_(seed + 2),
+      noise_caves_(seed + 5),
+      noise_coal_(seed + 3),
+      noise_coal2_(seed + 4),
+      noise_iron_(seed + 8),
+      noise_iron2_(seed + 9) {}
 
 Chunk PerlinChunkMapGenerator::PerlinRegionGenerator::Generate(
     QPoint chunk_pos) {
@@ -67,7 +67,7 @@ void PerlinChunkMapGenerator::PerlinRegionGenerator::GenerateBasicBiome(
       if (y - height_map[x] <= stone_height) {
         chunk->SetBlock(QPoint(x, y), lower);
       } else {
-        chunk->SetBlock(QPoint(x, y), Block(Block::Type::kStone));
+        chunk->SetBlock(QPoint(x, y), Block(Block::FrontType::kStone));
       }
     } else if (height_map[x] == y) {
       chunk->SetBlock(QPoint(x, y), upper);
@@ -78,27 +78,29 @@ void PerlinChunkMapGenerator::PerlinRegionGenerator::GenerateIcePlains(
     QPoint chunk_pos, Chunk* chunk, int x,
     const std::array<int32_t, Chunk::kWidth>& height_map) {
   GenerateBasicBiome(chunk_pos, chunk, x, height_map,
-                     Block(Block::Type::kSnowyGrass),
-                     Block(Block::Type::kDirt));
+                     Block(Block::FrontType::kSnowyGrass),
+                     Block(Block::FrontType::kDirt));
 }
 void PerlinChunkMapGenerator::PerlinRegionGenerator::GeneratePlains(
     QPoint chunk_pos, Chunk* chunk, int x,
     const std::array<int32_t, Chunk::kWidth>& height_map) {
   GenerateBasicBiome(chunk_pos, chunk, x, height_map,
-                     Block(Block::Type::kGrass), Block(Block::Type::kDirt));
+                     Block(Block::FrontType::kGrass),
+                     Block(Block::FrontType::kDirt));
 }
 void PerlinChunkMapGenerator::PerlinRegionGenerator::GenerateDesert(
     QPoint chunk_pos, Chunk* chunk, int x,
     const std::array<int32_t, Chunk::kWidth>& height_map) {
-  GenerateBasicBiome(chunk_pos, chunk, x, height_map, Block(Block::Type::kSand),
-                     Block(Block::Type::kSandstone));
+  GenerateBasicBiome(chunk_pos, chunk, x, height_map,
+                     Block(Block::FrontType::kSand),
+                     Block(Block::FrontType::kSandstone));
 }
 
 Chunk PerlinChunkMapGenerator::PerlinRegionGenerator::LandscapeGeneration(
     QPoint chunk_pos) {
   Chunk chunk;
   if (chunk_pos.y() > kUpperChunk) {
-    chunk.FillWith(Block(Block::Type::kStone));
+    chunk.FillWith(Block(Block::FrontType::kStone));
   } else if (chunk_pos.y() == kUpperChunk) {
     std::array<int32_t, Chunk::kWidth> height_map;
     for (int i = 0; i < Chunk::kWidth; ++i) {
@@ -138,25 +140,27 @@ void PerlinChunkMapGenerator::PerlinRegionGenerator::GenerateOres(
   }
   for (int y = 0; y < Chunk::kHeight; ++y) {
     for (int x = 0; x < Chunk::kWidth; ++x) {
-      if (chunk->GetBlock(QPoint(x, y)).GetType() == Block::Type::kStone) {
+      if (chunk->GetBlock(QPoint(x, y)).GetFrontType() ==
+          Block::FrontType::kStone) {
         double coal = abs(noise_coal_(kCoalScale * (chunk_pos.x() + x),
                                       kCoalScale * (chunk_pos.y() + y)));
         if (coal > kCoalMainRate) {
           double coal2 = abs(noise_coal2_(kCoalScale * (chunk_pos.x() + x),
                                           kCoalScale * (chunk_pos.y() + y)));
           if (coal2 > kCoalRate) {
-            chunk->SetBlock(QPoint(x, y), Block(Block::Type::kCoalOre));
+            chunk->SetBlock(QPoint(x, y), Block(Block::FrontType::kCoalOre));
           }
         }
       }
-      if (chunk->GetBlock(QPoint(x, y)).GetType() == Block::Type::kStone) {
+      if (chunk->GetBlock(QPoint(x, y)).GetFrontType() ==
+          Block::FrontType::kStone) {
         double iron = abs(noise_iron_(kIronScale * (chunk_pos.x() + x),
                                       kIronScale * (chunk_pos.y() + y)));
         if (iron > kIronMainRate) {
           double iron2 = abs(noise_iron2_(kIronScale * (chunk_pos.x() + x),
                                           kIronScale * (chunk_pos.y() + y)));
           if (iron2 > kIronRate) {
-            chunk->SetBlock(QPoint(x, y), Block(Block::Type::kIronOre));
+            chunk->SetBlock(QPoint(x, y), Block(Block::FrontType::kIronOre));
           }
         }
       }
@@ -173,7 +177,8 @@ void PerlinChunkMapGenerator::PerlinRegionGenerator::GenerateCaves(
     for (int x = 0; x < Chunk::kWidth; ++x) {
       if (noise_caves_(kCavesScale * (chunk_pos.x() + x),
                        kCavesScale * (chunk_pos.y() + y)) > kCavesRate) {
-        chunk->SetBlock(QPoint(x, y), Block(Block::Type::kAir));
+        chunk->GetBlockMutable(QPoint(x, y))
+            ->SetFrontType(Block::FrontType::kAir);
       }
     }
   }

@@ -183,7 +183,7 @@ bool BasicStrategy::IsNearPit(QPointF src, utils::Direction side) const {
       if (Model::GetInstance()
               ->GetMap()
               ->GetBlock(QPoint(x + direction * j, y + i))
-              .GetType() != Block::Type::kAir) {
+              .GetFrontType() != Block::FrontType::kAir) {
         is_pit_near = false;
         position = i;
         break;
@@ -217,7 +217,7 @@ void BasicStrategy::DoWalk() {
     if (map->GetBlock(QPoint(static_cast<int32_t>(
                                  std::floor(GetMobState().GetPos().x())),
                              i))
-            .GetType() != Block::Type::kAir) {
+            .GetFrontType() != Block::FrontType::kAir) {
       succesful_jump_up = false;
       break;
     }

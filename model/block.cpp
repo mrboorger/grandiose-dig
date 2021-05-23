@@ -4,35 +4,62 @@
 #include <array>
 #include <cassert>
 
-const Block::Characteristics& Block::GetCharactistics(int32_t id) {
-  static std::array<Characteristics, kTypesCount> characteristics;
-  static std::array<bool, kTypesCount> is_set{};
+Light Block::GetLuminosity() const {
+  auto result = GetFrontCharacteristics(GetFrontId()).luminosity;
+  if (!GetFrontCharacteristics(GetFrontId()).is_opaque) {
+    result.UpdateMax(GetBackCharacteristics(GetBackId()).luminosity);
+  }
+  return result;
+}
+
+const Block::FrontCharacteristics& Block::GetFrontCharacteristics(int32_t id) {
+  static std::array<FrontCharacteristics, kFrontTypesCount> characteristics;
+  static std::array<bool, kFrontTypesCount> is_set{};
   static bool is_initialized = false;
   if (!is_initialized) {
-    auto set = [](Type type, const Characteristics& chs) {
+    auto set = [](FrontType type, const FrontCharacteristics& chs) {
       characteristics[static_cast<int>(type)] = chs;
       is_set[static_cast<int>(type)] = true;
     };
     is_initialized = true;
-    set(Type::kAir, Characteristics{Light(0, 0, 0, 0), 0, false, false});
-    set(Type::kDirt, kDefaultBlockCharactestics);
-    set(Type::kGrass, kDefaultBlockCharactestics);
-    set(Type::kSnowyGrass, kDefaultBlockCharactestics);
-    set(Type::kSand, kDefaultBlockCharactestics);
-    set(Type::kSandstone, kDefaultBlockCharactestics);
-    set(Type::kStone, kDefaultBlockCharactestics);
-    set(Type::kCoalOre, kDefaultBlockCharactestics);
-    set(Type::kIronOre, kDefaultBlockCharactestics);
-    set(Type::kTechnical, kDefaultBlockCharactestics);
-    set(Type::kTorch,
-        Characteristics{Light(120, 120, 120, 0), 1, false, false});
+    set(FrontType::kAir,
+        FrontCharacteristics{Light(0, 0, 0, 0), 0, false, false});
+    set(FrontType::kDirt, kDefaultBlockCharactestics);
+    set(FrontType::kGrass, kDefaultBlockCharactestics);
+    set(FrontType::kSnowyGrass, kDefaultBlockCharactestics);
+    set(FrontType::kSand, kDefaultBlockCharactestics);
+    set(FrontType::kSandstone, kDefaultBlockCharactestics);
+    set(FrontType::kStone, kDefaultBlockCharactestics);
+    set(FrontType::kCoalOre, kDefaultBlockCharactestics);
+    set(FrontType::kIronOre, kDefaultBlockCharactestics);
+    set(FrontType::kTechnical, kDefaultBlockCharactestics);
+    set(FrontType::kTorch,
+        FrontCharacteristics{Light(120, 120, 120, 0), 1, false, false});
+  }
+  assert(is_set[id]);
+  return characteristics[id];
+}
+
+const Block::BackCharacteristics& Block::GetBackCharacteristics(int32_t id) {
+  static std::array<BackCharacteristics, kBackTypesCount> characteristics;
+  static std::array<bool, kBackTypesCount> is_set{};
+  static bool is_initialized = false;
+  if (!is_initialized) {
+    auto set = [](BackType type, const BackCharacteristics& chs) {
+      characteristics[static_cast<int>(type)] = chs;
+      is_set[static_cast<int>(type)] = true;
+    };
+    is_initialized = true;
+    set(BackType::kOverworld,
+        BackCharacteristics{Light(0, 0, 0, Light::kMaxLight), false});
+    set(BackType::kCave, BackCharacteristics{Light(0, 0, 0, 0), false});
   }
   assert(is_set[id]);
   return characteristics[id];
 }
 
 bool Block::DecreaseDurability(int delta) {
-  if (type_ != Type::kAir) {
+  if (front_type_ != FrontType::kAir) {
     durability_ = std::max(0, durability_ - delta);
   }
   return durability_ == 0;

@@ -1,4 +1,4 @@
-#version 120
+#version 130
 
 in vec2 vert_tex_coords;
 in vec3 vert_light;
