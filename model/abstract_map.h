@@ -56,7 +56,7 @@ class AbstractMap {
 
  private:
   static constexpr int32_t kDefaultGroundLevel = 128;
-  static constexpr int32_t kDefaultSkyLevel = 64;
+  static constexpr int32_t kDefaultSkyLevel = 63;
   static constexpr int32_t kDefaultSpaceLevel = 120 - 128;
   std::recursive_mutex mutex_;
 };
