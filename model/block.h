@@ -33,8 +33,8 @@ class Block {
   }
 
   Type GetType() const { return type_; }
-
   int32_t GetId() const { return static_cast<int32_t>(type_); }
+  int GetRemainingDurabilityPercentage() const;
 
   // returns true, if block is broken
   bool DecreaseDurability(int delta);

@@ -61,6 +61,7 @@ void Controller::BreakBlock(double time) {
       View::GetInstance()->UpdateBlock(block_coords);
       View::GetInstance()->GetLightMap()->UpdateLight(block_coords);
     }
+    View::GetInstance()->UpdateBlock(block_coords);
   }
 }
 

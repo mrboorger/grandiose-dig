@@ -25,6 +25,11 @@ const Block::Characteristics& Block::GetCharactistics(int32_t id) {
   return characteristics[id];
 }
 
+int Block::GetRemainingDurabilityPercentage() const {
+  int default_durability = GetDefaultDurability();
+  return (100 * durability_ + default_durability - 1) / default_durability;
+}
+
 bool Block::DecreaseDurability(int delta) {
   if (type_ != Type::kAir) {
     durability_ = std::max(0, durability_ - delta);
