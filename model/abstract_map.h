@@ -19,7 +19,7 @@ class AbstractMap {
   AbstractMap& operator=(AbstractMap&&) = default;
 
   const Block& GetBlock(QPoint pos) {
-    const std::lock_guard<std::recursive_mutex> lock(mutex_);
+    const std::lock_guard<std::mutex> lock(mutex_);
     return *GetBlockMutable(pos);
   }
   virtual void SetBlock(QPoint pos, Block block) = 0;
@@ -35,7 +35,7 @@ class AbstractMap {
 
  private:
   static constexpr int32_t kDefaultGroundLevel = 150;
-  std::recursive_mutex mutex_;
+  std::mutex mutex_;
 };
 
 #endif  // MODEL_ABSTRACT_MAP_H_

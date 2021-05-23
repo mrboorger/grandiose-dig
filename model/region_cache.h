@@ -39,7 +39,7 @@ class RegionCache {
       : data_(clear_time_msec), gen_buffer_(std::move(gen_buffer)) {}
 
   std::optional<std::reference_wrapper<const T>> TryGetValue(QPoint pos) {
-    const std::lock_guard<std::recursive_mutex> lock(mutex_);
+    const std::lock_guard<std::mutex> lock(mutex_);
     auto [buffer_pos, local_pos] = RoundToBufferPos(pos);
     auto found = data_.Get(buffer_pos);
     if (!found) {
@@ -51,7 +51,7 @@ class RegionCache {
   }
 
   std::optional<T*> TryGetMutalbeValue(QPoint pos) {
-    const std::lock_guard<std::recursive_mutex> lock(mutex_);
+    const std::lock_guard<std::mutex> lock(mutex_);
     auto result = TryGetValue(pos);
     if (!result) {
       return std::nullopt;
@@ -60,32 +60,32 @@ class RegionCache {
   }
 
   const T& GetValue(QPoint pos) {
-    const std::lock_guard<std::recursive_mutex> lock(mutex_);
+    const std::lock_guard<std::mutex> lock(mutex_);
     auto [buffer_pos, local_pos] = RoundToBufferPos(pos);
     return GetOrInsertBufferRounded(buffer_pos)[BufferIndex(local_pos)];
   }
 
   T* GetMutableValue(QPoint pos) {
-    const std::lock_guard<std::recursive_mutex> lock(mutex_);
+    const std::lock_guard<std::mutex> lock(mutex_);
     return const_cast<T*>(&GetValue(pos));
   }
 
   template <typename V>
   T& SetValue(QPoint pos, V&& value) {
-    const std::lock_guard<std::recursive_mutex> lock(mutex_);
+    const std::lock_guard<std::mutex> lock(mutex_);
     auto [buffer_pos, local_pos] = RoundToBufferPos(pos);
     return GetOrInsertBufferRounded(buffer_pos)[BufferIndex(local_pos)] =
                std::forward<T>(value);
   }
 
   Buffer& GetOrInsertBuffer(QPoint pos) {
-    const std::lock_guard<std::recursive_mutex> lock(mutex_);
+    const std::lock_guard<std::mutex> lock(mutex_);
     QPoint buffer_pos = RoundToBufferPos(pos).first;
     return GetOrInsertBufferRounded(buffer_pos);
   }
 
   void MarkUsedOrInsert(const QRect& rect) {
-    const std::lock_guard<std::recursive_mutex> lock(mutex_);
+    const std::lock_guard<std::mutex> lock(mutex_);
     QPoint begin = RoundToBufferPos(rect.topLeft()).first;
     QPoint end = RoundToBufferPos(rect.bottomRight()).first;
     for (int32_t y = begin.y(); y <= end.y(); y += height) {
@@ -97,21 +97,21 @@ class RegionCache {
 
  private:
   static std::pair<QPoint, QPoint> RoundToBufferPos(QPoint p) {
-    // const std::lock_guard<std::recursive_mutex> lock(mutex_);
+    // const std::lock_guard<std::mutex> lock(mutex_);
     QPoint local_pos = QPoint(utils::ArithmeticalMod(p.x(), width),
                               utils::ArithmeticalMod(p.y(), height));
     return std::pair(p - local_pos, local_pos);
   }
 
   static int32_t BufferIndex(QPoint local_pos) {
-    // const std::lock_guard<std::recursive_mutex> lock(mutex_);
+    // const std::lock_guard<std::mutex> lock(mutex_);
     assert(0 <= local_pos.x() && local_pos.x() < width && 0 <= local_pos.y() &&
            local_pos.y() < height);
     return local_pos.y() * width + local_pos.x();
   }
 
   Buffer& GetOrInsertBufferRounded(QPoint buffer_pos) {
-    const std::lock_guard<std::recursive_mutex> lock(mutex_);
+    const std::lock_guard<std::mutex> lock(mutex_);
     assert(RoundToBufferPos(buffer_pos).second == QPoint(0, 0));
     auto found = data_.Get(buffer_pos);
     if (!found) {
@@ -120,7 +120,7 @@ class RegionCache {
     return found.value();
   }
 
-  std::recursive_mutex mutex_;
+  std::mutex mutex_;
   ClearableCache<QPoint, Buffer, utils::QPointLexicographicalCompare> data_;
   F gen_buffer_;
 };
