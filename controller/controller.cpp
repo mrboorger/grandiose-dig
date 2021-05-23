@@ -31,6 +31,11 @@ void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
 }
 
 Controller::Controller() : tick_timer_(), save_timer_() {
+  View* view = View::GetInstance();
+  Model* model = Model::GetInstance();
+  connect(view, &View::CreateNewWorldSignal, this,
+          &Controller::CreateNewWorld);
+
   tick_timer_.callOnTimeout([this]() { TickEvent(); });
   tick_timer_.start(constants::kTickDurationMsec);
   save_timer_.callOnTimeout([this]() { SaveEvent(); });
@@ -185,6 +190,9 @@ void Controller::TickEvent() {
       case GameState::kGame:
         View::GetInstance()->ChangeGameState(GameState::kPaused);
         break;
+      case GameState::kNewWorldMenu:
+        View::GetInstance()->ChangeGameState(GameState::kMainMenu);
+        break;
       case GameState::kMainMenu:
         View::GetInstance()->close();
         break;
@@ -212,7 +220,11 @@ void Controller::TickEvent() {
   }
 }
 
-void Controller::SaveEvent() { Model::GetInstance()->SaveToFile(); }
+void Controller::SaveEvent() {
+  if (View::GetInstance()->GetGameState() == GameState::kGame) {
+    Model::GetInstance()->SaveToFile();
+  }
+}
 
 ControllerTypes::Key Controller::TranslateKeyCode(int key_code) {
   if (key_code == GetInstance()->settings_.value("kLeft").toInt()) {
@@ -255,11 +267,11 @@ void Controller::ButtonRelease(Qt::MouseButton button) {
   }
 }
 
-void Controller::CreateNewWorld(const QString& world_name, int generator_seed) {
+void Controller::CreateNewWorld(const QString& world_name, uint32_t seed) {
   Model::GetInstance()->Clear();
   Model::GetInstance()->SetSaveFileName(world_name);
   // Temporary code
-  PerlinChunkMapGenerator generator(generator_seed);
+  PerlinChunkMapGenerator generator(seed);
   SetGeneratedMap(&generator);
   SetPlayer();
   SetMob();

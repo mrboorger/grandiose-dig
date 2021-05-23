@@ -71,12 +71,13 @@ set(SOURCES
         view/named_menu_slider.cpp
         view/map_drawer.cpp
         view/moving_object_drawer.cpp
+        view/new_world_menu.cpp
         view/pause_menu.cpp
         view/scrollable_v_box_widget.cpp
         view/settings_menu.cpp
         view/sound_manager.cpp
         view/texture_atlas.cpp
-        view/view.cpp)
+        view/view.cpp view/menu_line_edit.cpp view/menu_line_edit.h)
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${RESOURCES})
 target_link_libraries(${PROJECT_NAME} ${REQUIRED_LIBS_QUALIFIED})

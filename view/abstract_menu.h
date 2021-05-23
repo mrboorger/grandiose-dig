@@ -8,6 +8,8 @@ enum class GameState {
   kSettings,
   kGame,
   kPaused,
+  kNewWorldMenu,
+  kSelectWorldMeu,
   kSwitchingToPrevious
 };
 

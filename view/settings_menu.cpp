@@ -236,10 +236,7 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   ChangeLanguage(current_language_);
 }
 
-void SettingsMenu::Resize(const QSize& size) {
-  QWidget::resize(size);
-  update();
-}
+void SettingsMenu::Resize(const QSize& size) { QWidget::resize(size); }
 
 void SettingsMenu::ReTranslateButtons() {
   general_settings_button_->setText(tr("General"));

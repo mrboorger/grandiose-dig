@@ -3,6 +3,7 @@
 
 #include <QJsonObject>
 #include <QKeyEvent>
+#include <QObject>
 #include <QSettings>
 #include <QTimer>
 #include <memory>
@@ -14,7 +15,7 @@
 #include "model/player.h"
 #include "view/view.h"
 
-class Controller : QObject {
+class Controller : public QObject {
   Q_OBJECT
 
  public:
@@ -43,7 +44,7 @@ class Controller : QObject {
   void PickItemToPlayer(InventoryItem item);
 
  public slots:
-  void CreateNewWorld(const QString& world_name, int generator_seed);
+  void CreateNewWorld(const QString& world_name, uint32_t generator_seed);
   void LoadFromFile(const QString& file_name);
   void SaveToFile(const QString& file_name) {
     Model::GetInstance()->SaveToFile(file_name);

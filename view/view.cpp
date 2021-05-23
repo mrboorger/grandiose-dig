@@ -22,6 +22,7 @@ View::View()
       camera_(QPointF(150, 150)),
       sound_manager_(new SoundManager()),
       drawer_(nullptr),
+      should_initialize_drawer_(false),
       game_state_(GameState::kMainMenu),
       previous_game_state_(GameState::kMainMenu) {
   connect(Model::GetInstance(), &Model::DamageDealt, this, &View::DamageDealt);
@@ -32,6 +33,13 @@ View::View()
   connect(main_menu_.data(), &AbstractMenu::GameStateChanged, this,
           &View::ChangeGameState);
   main_menu_->setVisible(true);
+
+  new_world_menu_.reset(new NewWorldMenu(this));
+  connect(new_world_menu_.data(), &AbstractMenu::GameStateChanged, this,
+          &View::ChangeGameState);
+  connect(new_world_menu_.data(), &NewWorldMenu::CreateNewWorldsSignal, this,
+          &View::CreateNewWorld);
+  new_world_menu_->setVisible(false);
 
   pause_menu_.reset(new PauseMenu(this));
   connect(pause_menu_.data(), &AbstractMenu::GameStateChanged, this,
@@ -51,6 +59,9 @@ void View::ChangeGameState(GameState new_state) {
     case GameState::kMainMenu:
       main_menu_->setVisible(false);
       break;
+    case GameState::kNewWorldMenu:
+      new_world_menu_->setVisible(false);
+      break;
     case GameState::kPaused:
       pause_menu_->setVisible(false);
       break;
@@ -64,6 +75,10 @@ void View::ChangeGameState(GameState new_state) {
     case GameState::kMainMenu:
       main_menu_->setVisible(true);
       main_menu_->setFocus();
+      break;
+    case GameState::kNewWorldMenu:
+      new_world_menu_->setVisible(true);
+      new_world_menu_->setFocus();
       break;
     case GameState::kGame:
       setFocus();
@@ -110,14 +125,14 @@ void View::initializeGL() {
   auto* gl = GLFunctions::GetInstance();
   gl->initializeOpenGLFunctions();
   gl->glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
-
-  if (drawer_) {
-    drawer_->Init();
-  }
 }
 
 void View::paintGL() {
   auto* gl = GLFunctions::GetInstance();
+  if (should_initialize_drawer_) {
+    drawer_->Init();
+    should_initialize_drawer_ = false;
+  }
   QPainter painter(this);
   painter.beginNativePainting();
 
@@ -197,6 +212,7 @@ void View::MobSound(MovingObject* object) {
 void View::changeEvent(QEvent* event) {
   if (event->type() == QEvent::LanguageChange) {
     main_menu_->ReTranslateButtons();
+    new_world_menu_->ReTranslateButtons();
     pause_menu_->ReTranslateButtons();
     settings_menu_->ReTranslateButtons();
   } else {
@@ -215,15 +231,18 @@ void View::keyReleaseEvent(QKeyEvent* event) {
 void View::resizeEvent(QResizeEvent* event) {
   QOpenGLWidget::resizeEvent(event);
   main_menu_->Resize(event->size());
+  new_world_menu_->Resize(event->size());
   pause_menu_->Resize(event->size());
   settings_menu_->Resize(event->size());
 }
 
 void View::paintEvent(QPaintEvent* event) {
-  QOpenGLWidget::paintEvent(event);
   switch (game_state_) {
     case GameState::kMainMenu:
       main_menu_->update();
+      break;
+    case GameState::kNewWorldMenu:
+      new_world_menu_->update();
       break;
     case GameState::kGame:
       paintGL();
@@ -271,4 +290,8 @@ QPoint View::GetBlockCoordUnderCursor() const {
 
 QPointF View::GetTopLeftWindowCoord() const {
   return camera_.GetPoint() - QPointF(rect().center()) / constants::kBlockSz;
+}
+
+void View::CreateNewWorld(const QString& name, uint32_t seed) {
+  emit(CreateNewWorldSignal(name, seed));
 }

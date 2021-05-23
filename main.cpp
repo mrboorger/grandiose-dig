@@ -20,8 +20,6 @@ int main(int argc, char* argv[]) {
 
   Controller* controller(Controller::GetInstance());
   View* view(View::GetInstance());
-  controller->CreateNewWorld("world1", 42);
-  // controller->LoadFromFile("world1");
 
   view->show();
   view->setWindowState(Qt::WindowMaximized);

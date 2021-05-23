@@ -6,8 +6,8 @@
 MainMenu::MainMenu(QWidget* parent) : AbstractMenu(parent) {
   new_world_button_.reset(
       new MenuButton(this, MenuButtonType::kTransparentExpanding));
-  auto on_new_world_button_click = []() {
-    // TODO(yaroslaffb): implement CreateNewWorldMenu class and GameState
+  auto on_new_world_button_click = [this]() {
+    emit(GameStateChanged(GameState::kNewWorldMenu));
   };
   connect(new_world_button_.data(), &QPushButton::clicked, this,
           on_new_world_button_click);

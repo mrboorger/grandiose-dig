@@ -64,15 +64,11 @@ bool Model::CanSpawnMobAt(QPointF pos, QPointF size) const {
 }
 
 void Model::Read(const QJsonObject& json) {
-  // SetMap(std::make_shared<AbstractMap>(json["map"].toObject()));
   player_ = std::make_shared<Player>(QPointF(0, 0));
   player_->Read(json["player"].toObject());
 }
 
 void Model::Write(QJsonObject& json) const {
-  // QJsonObject map;
-  // map_->Write(map);
-  // json["map"] = map;
   QJsonObject player;
   player_->Write(player);
   json["player"] = player;
@@ -95,14 +91,17 @@ bool Model::LoadFromFile(const QString& file_name) {
 
   current_save_file_name_ = file_name;
   QByteArray save_data = save_file.readAll();
-  // QJsonDocument world(
-  //     QJsonDocument(QCborValue::fromCbor(save_data).toMap().toJsonObject()));
-  QJsonDocument world(QJsonDocument::fromJson(save_data));
+  QJsonDocument world(
+      QJsonDocument(QCborValue::fromCbor(save_data).toMap().toJsonObject()));
+  // QJsonDocument world(QJsonDocument::fromJson(save_data));
   Read(world.object());
   return true;
 }
 
 bool Model::SaveToFile(const QString& file_name) {
+  if (file_name.isEmpty()) {
+    return false;
+  }
   QFile save_file(QDir::currentPath() + "/saves/" + file_name);
   if (!save_file.open(QIODevice::WriteOnly)) {
     qWarning("Couldn't open save file.");
@@ -112,14 +111,16 @@ bool Model::SaveToFile(const QString& file_name) {
   current_save_file_name_ = file_name;
   QJsonObject world;
   Write(world);
-  save_file.write(QJsonDocument(world).toJson());
-  // save_file.write(QCborValue::fromJsonValue(world).toCbor());
+  // save_file.write(QJsonDocument(world).toJson());
+  save_file.write(QCborValue::fromJsonValue(world).toCbor());
   return true;
 }
 
 void Model::Clear() {
-  SaveToFile();
-  map_.reset();
-  player_.reset();
-  mobs_.clear();
+  if (!current_save_file_name_.isEmpty()) {
+    SaveToFile();
+    map_.reset();
+    player_.reset();
+    mobs_.clear();
+  }
 }

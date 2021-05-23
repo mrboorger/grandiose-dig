@@ -30,8 +30,6 @@ class MainMenu final : public AbstractMenu {
 
   QVBoxLayout* buttons_layout_;
   QScopedPointer<QHBoxLayout> horizontal_layout_;
-
-  QScopedPointer<QImage> background_;
 };
 
 #endif  // VIEW_MAIN_MENU_H_
