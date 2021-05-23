@@ -98,7 +98,7 @@ void InventoryDrawer::DrawSelectionBox(QPainter* painter) {
 
 void InventoryDrawer::CreateCraftScrollArea() {
   craft_menu_->setFocusPolicy(Qt::FocusPolicy::NoFocus);
-  craft_menu_->setGeometry(QRect(10, 200, 250, 150));
+  craft_menu_->setGeometry(kMenuRect);
   craft_menu_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   craft_menu_->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   craft_menu_->setVisible(false);

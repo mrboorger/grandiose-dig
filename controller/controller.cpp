@@ -57,7 +57,6 @@ void Controller::BreakBlock(double time) {
          Model::GetInstance()->GetPlayer()->GetPosition().x())
             ? utils::Direction::kLeft
             : utils::Direction::kRight);
-    qDebug() << time;
     if (Model::GetInstance()->GetMap()->HitBlock(block_coords, 1.0 * time)) {
       View::GetInstance()->UpdateBlock(block_coords);
       View::GetInstance()->GetLightMap()->UpdateLight(block_coords);
