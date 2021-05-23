@@ -22,10 +22,9 @@ class SoundManager {
       static_cast<int>(MobSound::kMobSoundsCount);
 
   SoundManager();
-  void PlaySound(int id) {
-    if (sounds_[id]->state() != QMediaPlayer::PlayingState) {
-      sounds_[id]->play();
-    }
+  void PlaySound(int id, int volume = 100) {
+    sounds_[id]->setVolume(volume);
+    sounds_[id]->play();
   }
   void PauseSound(int id) { sounds_[id]->pause(); }
   void StopSound(int id) { sounds_[id]->stop(); }

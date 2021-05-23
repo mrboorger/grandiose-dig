@@ -38,9 +38,8 @@ void Model::MoveObjects(
 }
 
 bool Model::CanSpawnMobAt(QPointF pos, QPointF size) const {
-  for (int j = std::floor(pos.x());
-       j < std::floor(pos.x() + size.x() - constants::kEps); j++) {
-    for (int i = std::floor(pos.y());
+  for (int j = std::floor(pos.x()); j < std::floor(pos.x() + size.x()); j++) {
+    for (int i = std::floor(pos.y() - constants::kEps);
          i < std::floor(pos.y() + size.y() - constants::kEps); i++) {
       if (Model::GetInstance()
               ->GetMap()
@@ -59,4 +58,16 @@ bool Model::CanSpawnMobAt(QPointF pos, QPointF size) const {
     }
   }
   return true;
+}
+
+void Model::DespawnMobs() {
+  for (auto i = mobs_.begin(), last = mobs_.end(); i != last;) {
+    if (utils::GetDistance(Model::GetInstance()->GetPlayer()->GetPosition(),
+                           (*i)->GetPosition()) >
+        constants::kMobsDespawnRadius) {
+      i = mobs_.erase(i);
+    } else {
+      i++;
+    }
+  }
 }

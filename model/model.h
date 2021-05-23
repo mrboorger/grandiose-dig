@@ -43,6 +43,10 @@ class Model : public QObject {
 
   bool CanSpawnMobAt(QPointF pos, QPointF size) const;
 
+  int GetMobsCount() const { return mobs_.size(); }
+
+  void DespawnMobs();
+
  signals:
   void DamageDealt(MovingObject* object);
   void BecameDead(MovingObject* object);

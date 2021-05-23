@@ -97,6 +97,18 @@ void View::paintGL() {
   painter.endNativePainting();
 }
 
+namespace {
+double GetSoundVolume(MovingObject* object) {
+  double dist =
+      utils::GetDistance(static_cast<Mob*>(object)->GetPosition(),
+                         Model::GetInstance()->GetPlayer()->GetPosition());
+  double volume =
+      std::pow(constants::kMobSoundC1, std::pow(dist, constants::kMobSoundC2));
+  return volume * 100;
+}
+
+}  // namespace
+
 void View::DamageDealt(MovingObject* object) {
   static std::uniform_int_distribution<int> distrib(0, 1);
   switch (object->GetType()) {
@@ -107,12 +119,17 @@ void View::DamageDealt(MovingObject* object) {
     }
     case MovingObject::Type::kMob: {
       int id = static_cast<Mob*>(object)->GetId();
+
       if (distrib(utils::random) == 0) {
-        sound_manager_->PlaySound(SoundManager::SoundIndex(
-            SoundManager::Sound::kMob, id, SoundManager::MobSound::kDamage1));
+        sound_manager_->PlaySound(
+            SoundManager::SoundIndex(SoundManager::Sound::kMob, id,
+                                     SoundManager::MobSound::kDamage1),
+            GetSoundVolume(object));
       } else {
-        sound_manager_->PlaySound(SoundManager::SoundIndex(
-            SoundManager::Sound::kMob, id, SoundManager::MobSound::kDamage2));
+        sound_manager_->PlaySound(
+            SoundManager::SoundIndex(SoundManager::Sound::kMob, id,
+                                     SoundManager::MobSound::kDamage2),
+            GetSoundVolume(object));
       }
       break;
     }
@@ -124,25 +141,32 @@ void View::DamageDealt(MovingObject* object) {
 
 void View::BecameDead(MovingObject* object) {
   int id = static_cast<Mob*>(object)->GetId();
-  sound_manager_->PlaySound(SoundManager::SoundIndex(
-      SoundManager::Sound::kMob, id, SoundManager::MobSound::kDeath));
+  sound_manager_->PlaySound(
+      SoundManager::SoundIndex(SoundManager::Sound::kMob, id,
+                               SoundManager::MobSound::kDeath),
+      GetSoundVolume(object));
 }
 
 void View::MobSound(MovingObject* object) {
   int id = static_cast<Mob*>(object)->GetId();
   static std::uniform_int_distribution<int> distrib(0, 1);
   if (distrib(utils::random) == 0) {
-    sound_manager_->PlaySound(SoundManager::SoundIndex(
-        SoundManager::Sound::kMob, id, SoundManager::MobSound::kIdle1));
+    sound_manager_->PlaySound(
+        SoundManager::SoundIndex(SoundManager::Sound::kMob, id,
+                                 SoundManager::MobSound::kIdle1),
+        GetSoundVolume(object));
   } else {
-    sound_manager_->PlaySound(SoundManager::SoundIndex(
-        SoundManager::Sound::kMob, id, SoundManager::MobSound::kIdle2));
+    sound_manager_->PlaySound(
+        SoundManager::SoundIndex(SoundManager::Sound::kMob, id,
+                                 SoundManager::MobSound::kIdle2),
+        GetSoundVolume(object));
   }
 }
 
 void View::PlayMusic() {
   sound_manager_->PlaySound(
-      SoundManager::SoundIndex(SoundManager::Sound::kMusic));
+      SoundManager::SoundIndex(SoundManager::Sound::kMusic),
+      constants::kMusicVolume);
 }
 
 void View::keyPressEvent(QKeyEvent* event) {

@@ -26,6 +26,11 @@ class Light {
   uint8_t GetGreen() const { return data_[kGreenIndex]; }
   uint8_t GetBlue() const { return data_[kBlueIndex]; }
   uint8_t GetSun() const { return data_[kSunIndex]; }
+  uint8_t GetCombinedLight() const {
+    return std::max(0.30 * data_[kRedIndex] + 0.59 * data_[kGreenIndex] +
+                        0.11 * data_[kBlueIndex],
+                    data_[kSunIndex] * 1.0);
+  }
 
   void SetChannel(int index, uint8_t value) { data_[index] = value; }
   void SetRed(uint8_t value) { data_[kRedIndex] = value; }

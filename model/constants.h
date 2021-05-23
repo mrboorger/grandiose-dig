@@ -122,14 +122,14 @@ constexpr MobParameters kMagicQuioxParameters = {
 constexpr int kMagicStrategyEffectDuration = 10000;
 constexpr double kMagicStrategyEffectChance = 0.2;
 
-constexpr double kBasicStrategyVisionRadius = 16.0;  // in blocks
+constexpr double kBasicStrategyVisionRadius = 24.0;  // in blocks
 constexpr double kBasicStrategyWalkTimeCount = 3000;
 constexpr double kBasicStrategyAttackTimeCount = 1000;
 constexpr double kBasicStrategyWalkPrecision = 0.1;  // in blocks
 constexpr double kBasicStrategyRandomWalkChance = 0.01;
 constexpr double kBasicStrategyRandomWalkDistance = 10;  // in blocks
 
-constexpr double kZombieSummonerStrategyVisionRadius = 24.0;  // in blocks
+constexpr double kZombieSummonerStrategyVisionRadius = 40.0;  // in blocks
 constexpr double kZombieSummonerStrategyWalkTime = 5000;
 constexpr double kZombieSummonerStrategyAttackTime = 1250;
 constexpr double kZombieSummonerStrategySummonTime = 1000;  // before check
@@ -142,6 +142,26 @@ constexpr double kZombieSummonerStrategyRandomWalkDistance = 15;  // in blocks
 
 constexpr double kEffectInterval = 1000;          // in ms
 constexpr double kMobSoundChance = 1.0 / 1500.0;  // once in 1500 ticks
+
+constexpr int kMusicVolume = 50;
+
+constexpr int kMobsCount = 20;
+constexpr double kMobSoundRadius = 50;
+constexpr double kMobSoundC1 = 0.99;
+constexpr double kMobSoundC2 = 1.1;
+constexpr double kMobsDespawnRadius = 128;
+constexpr int kMobsSpawnLight = 64;
+
+constexpr double kMobSpawnChance = 0.002;
+constexpr double kMobMinSpawnDistance = 24;
+constexpr double kMobMaxSpawnDistance = 120;
+constexpr int kMobSpawnAttempts = 1000;
+
+constexpr int kMobSpawnStartDelay = 5000;
+
+constexpr double kMobsSpawnRate[4] = {1, 0.2, 0.8, 0.4};
+constexpr double kMobsSumRate = kMobsSpawnRate[0] + kMobsSpawnRate[1] +
+                                kMobsSpawnRate[2] + kMobsSpawnRate[3];
 
 constexpr int kDefaultClearTimeMSec = 1'000;
 

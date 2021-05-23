@@ -18,7 +18,7 @@ void main() {
       proj_matrix * vec4(float(in_pos.x) + buffer_pos.x,
                          float(in_pos.y) + buffer_pos.y, in_z_coord, 1.0);
   float result_sun = global_sun - (1.0 - in_sun);
-  vert_light = vec3(max(in_light.r, /*result_sun*/1), max(in_light.g, /*result_sun*/1),
-                    max(in_light.b, /*result_sun*/1));
+  vert_light = vec3(max(in_light.r, result_sun), max(in_light.g, result_sun),
+                    max(in_light.b, result_sun));
   vert_tex_coords = in_tex_coords;
 }

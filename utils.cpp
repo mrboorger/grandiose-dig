@@ -1,5 +1,6 @@
 #include "utils.h"
 
+#include <QDebug>
 #include <chrono>
 
 namespace utils {
@@ -41,6 +42,11 @@ QPointF DivideSegment(QPointF first, QPointF second, double percentage) {
 double GetRandomDouble(double left_bound, double right_bound) {
   std::uniform_real_distribution<double> distrib(left_bound, right_bound);
   return distrib(random);
+}
+
+double GetDistance(QPointF lhs, QPointF rhs) {
+  return sqrt((lhs.x() - rhs.x()) * (lhs.x() - rhs.x()) +
+              (lhs.y() - rhs.y()) * (lhs.y() - rhs.y()));
 }
 
 std::array<QPoint, 4> NeighbourPoints(QPoint point) {
