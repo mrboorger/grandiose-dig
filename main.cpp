@@ -18,10 +18,10 @@ int main(int argc, char* argv[]) {
   QDir dir;
   dir.mkdir(QDir::currentPath() + "/saves");
 
+  View view;
   Controller* controller(Controller::GetInstance());
-  View* view(View::GetInstance());
-
-  view->show();
-  view->setWindowState(Qt::WindowMaximized);
+  controller->CreateNewWorld("Lol", 42);
+  view.show();
+  view.setWindowState(Qt::WindowMaximized);
   return QApplication::exec();
 }

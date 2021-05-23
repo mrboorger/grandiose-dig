@@ -33,8 +33,7 @@ void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
 Controller::Controller() : tick_timer_(), save_timer_() {
   View* view = View::GetInstance();
   Model* model = Model::GetInstance();
-  connect(view, &View::CreateNewWorldSignal, this,
-          &Controller::CreateNewWorld);
+  connect(view, &View::CreateNewWorldSignal, this, &Controller::CreateNewWorld);
 
   tick_timer_.callOnTimeout([this]() { TickEvent(); });
   tick_timer_.start(constants::kTickDurationMsec);
@@ -57,17 +56,43 @@ void Controller::SetMob() {
       std::make_shared<Mob>(QPointF(162.0, 104.0), Mob::Type::kQuiox));
 }
 
-void Controller::BreakBlock() {
+void Controller::BreakBlock(double time) {
   QPoint block_coords = View::GetInstance()->GetBlockCoordUnderCursor();
-  Model::GetInstance()->GetPlayer()->SetDirection(
-      (View::GetInstance()->GetBlockCoordUnderCursor().x() <
-       Model::GetInstance()->GetPlayer()->GetPosition().x())
-          ? utils::Direction::kLeft
-          : utils::Direction::kRight);
-  if (Model::GetInstance()->GetMap()->HitBlock(block_coords, 1)) {
-    View::GetInstance()->GetLightMap()->UpdateLight(block_coords);
+  if (Model::GetInstance()->GetPlayer()->IsBlockReachableForTool(
+          block_coords)) {
+    Model::GetInstance()->GetPlayer()->SetDirection(
+        (View::GetInstance()->GetBlockCoordUnderCursor().x() <
+         Model::GetInstance()->GetPlayer()->GetPosition().x())
+            ? utils::Direction::kLeft
+            : utils::Direction::kRight);
+    qDebug() << time;
+    if (Model::GetInstance()->GetMap()->HitBlock(block_coords, 1.0 * time)) {
+      View::GetInstance()->UpdateBlock(block_coords);
+      View::GetInstance()->GetLightMap()->UpdateLight(block_coords);
+    }
   }
-  View::GetInstance()->UpdateBlock(block_coords);
+}
+
+void Controller::UseItem() {
+  if (!Model::GetInstance()->GetPlayer()->CanUseItem()) {
+    return;
+  }
+  QPoint block_coords = View::GetInstance()->GetBlockCoordUnderCursor();
+  const InventoryItem& item =
+      Model::GetInstance()->GetPlayer()->GetInventory()->GetSelectedItem();
+  if (item.IsBlock()) {
+    if (Model::GetInstance()->GetPlayer()->IsBlockReachableForTool(
+            block_coords) &&
+        Model::GetInstance()->CanIPlaceBlock(block_coords)) {
+      Model::GetInstance()->GetMap()->SetBlock(
+          block_coords, InventoryItem::GetBlockFromItem(item));
+      View::GetInstance()->UpdateBlock(block_coords);
+      Model::GetInstance()->GetPlayer()->UseItem();
+    }
+  } else {
+    // UsePotion?
+  }
+  Model::GetInstance()->GetPlayer()->SetUseItemCooldownInterval();
 }
 
 void Controller::StartAttack() {
@@ -210,10 +235,15 @@ void Controller::TickEvent() {
         std::chrono::duration_cast<std::chrono::milliseconds>(cur - prev_time_)
             .count();
     prev_time_ = cur;
+    Model::GetInstance()->GetPlayer()->DecItemUsingCooldownInterval(time);
     Model::GetInstance()->MoveObjects(pressed_keys_, time);
-    if (is_pressed_right_mouse_button) {
-      BreakBlock();
+
+    if (is_pressed_left_mouse_button) {
+      BreakBlock(time);
       StartAttack();
+    }
+    if (is_pressed_right_mouse_button) {
+      UseItem();
     }
     PlayerAttack(time);
     View::GetInstance()->repaint();
@@ -227,6 +257,10 @@ void Controller::SaveEvent() {
 }
 
 ControllerTypes::Key Controller::TranslateKeyCode(int key_code) {
+  if (key_code == Qt::Key::Key_Escape || key_code == Qt::Key::Key_Exit ||
+      key_code == Qt::Key::Key_Menu) {
+    return ControllerTypes::Key::kExit;
+  }
   if (key_code == GetInstance()->settings_.value("kLeft").toInt()) {
     return ControllerTypes::Key::kLeft;
   }
@@ -236,14 +270,35 @@ ControllerTypes::Key Controller::TranslateKeyCode(int key_code) {
   if (key_code == GetInstance()->settings_.value("kJump").toInt()) {
     return ControllerTypes::Key::kJump;
   }
-  if (key_code == Qt::Key::Key_Escape || key_code == Qt::Key::Key_Exit ||
-      key_code == Qt::Key::Key_Menu) {
-    return ControllerTypes::Key::kExit;
+  switch (key_code) {
+    case Qt::Key::Key_1:
+      return ControllerTypes::Key::kInventory0;
+    case Qt::Key::Key_2:
+      return ControllerTypes::Key::kInventory1;
+    case Qt::Key::Key_3:
+      return ControllerTypes::Key::kInventory2;
+    case Qt::Key::Key_4:
+      return ControllerTypes::Key::kInventory3;
+    case Qt::Key::Key_5:
+      return ControllerTypes::Key::kInventory4;
+    case Qt::Key::Key_6:
+      return ControllerTypes::Key::kInventory5;
+    case Qt::Key::Key_7:
+      return ControllerTypes::Key::kInventory6;
+    case Qt::Key::Key_8:
+      return ControllerTypes::Key::kInventory7;
+    case Qt::Key::Key_9:
+      return ControllerTypes::Key::kInventory8;
+    case Qt::Key::Key_0:
+      return ControllerTypes::Key::kInventory9;
+    default:
+      return ControllerTypes::Key::kUnused;
   }
   return ControllerTypes::Key::kUnused;
 }
 
 void Controller::KeyPress(int key) {
+  ParseInventoryKey(TranslateKeyCode(key));
   pressed_keys_.insert(TranslateKeyCode(key));
 }
 
@@ -257,12 +312,16 @@ void Controller::PickItemToPlayer(InventoryItem item) {
 
 void Controller::ButtonPress(Qt::MouseButton button) {
   if (button == Qt::MouseButton::LeftButton) {
+    is_pressed_left_mouse_button = true;
+  } else if (button == Qt::MouseButton::RightButton) {
     is_pressed_right_mouse_button = true;
   }
 }
 
 void Controller::ButtonRelease(Qt::MouseButton button) {
   if (button == Qt::MouseButton::LeftButton) {
+    is_pressed_left_mouse_button = false;
+  } else if (button == Qt::MouseButton::RightButton) {
     is_pressed_right_mouse_button = false;
   }
 }
@@ -290,4 +349,17 @@ void Controller::LoadFromFile(const QString& file_name) {
   View::GetInstance()->SetDrawer(
       new GLMapDrawer(map, View::GetInstance()->GetLightMap()));
   // }
+}
+
+void Controller::ParseInventoryKey(ControllerTypes::Key translated_key) {
+  if (translated_key >= ControllerTypes::Key::kInventory0 &&
+      translated_key <= ControllerTypes::Key::kInventory9) {
+    Model::GetInstance()->GetPlayer()->GetInventory()->ChangeSelectedItem(
+        static_cast<int>(translated_key) -
+        static_cast<int>(ControllerTypes::Key::kInventory0));
+  }
+}
+
+void Controller::TryCraft(const CraftRecipe& recipe) {
+  Model::GetInstance()->GetPlayer()->TryCraft(recipe);
 }

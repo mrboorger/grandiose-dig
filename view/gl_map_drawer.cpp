@@ -54,12 +54,12 @@ void GLMapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
   }
 
   index_buffer_.bind();
+  shader_.setUniformValue("global_sun", 1.0F);
 
   for (int32_t x = start.x(); x <= finish.x(); x += kMeshWidth) {
     for (int32_t y = start.y(); y <= finish.y(); y += kMeshHeight) {
-      QPointF point = (QPointF(x, y) - pos);
+      QPointF point = QPointF(x, y) - pos;
       shader_.setUniformValue("buffer_pos", point);
-      shader_.setUniformValue("global_sun", 1.0F);
       auto* mesh = GetMesh(QPoint(x, y));
 
       mesh->bind();
@@ -77,6 +77,9 @@ void GLMapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
       mesh->release();
     }
   }
+  // We don't need to invoke glDisableVertexAttribArray in each loop iteration,
+  // like glEnableVertexAttribArray. This function is just used to keep Qt
+  // invariant, so need to be called only once in the end.
   for (int i = 0; i < kAttribsCount; ++i) {
     gl->glDisableVertexAttribArray(i);
   }
@@ -93,10 +96,11 @@ void GLMapDrawer::UpdateBlock(QPoint position) {
   }
   QOpenGLBuffer& casted = buffer.value();
   casted.bind();
-  auto data = GetBlockData(position, position - buffer_pos);
-  position -= buffer_pos;
-  casted.write((position.y() * kMeshWidth + position.x()) * sizeof(BlockData),
-               &data, sizeof(BlockData));
+  const QPoint mesh_position = position - buffer_pos;;
+  auto data = GetBlockData(position, mesh_position);
+  casted.write(
+      (mesh_position.y() * kMeshWidth + mesh_position.x()) * sizeof(BlockData),
+      &data, sizeof(BlockData));
   casted.release();
 }
 
@@ -117,8 +121,24 @@ QPoint GLMapDrawer::RoundToMeshPos(QPoint p) {
                 p.y() - utils::ArithmeticalMod(p.y(), kMeshHeight));
 }
 
-GLfloat GLMapDrawer::Average(GLfloat a, GLfloat b, GLfloat c, GLfloat d) {
-  return (a + b + c + d) / 4.0F;
+GLMapDrawer::VertexData GLMapDrawer::Average(const VertexData& a,
+                                             const VertexData& b,
+                                             const VertexData& c,
+                                             const VertexData& d) {
+  constexpr int kDataSize = sizeof(VertexData) / sizeof(GLfloat);
+  using ArrayData = std::array<GLfloat, kDataSize>;
+  std::array<const ArrayData*, 4> data{reinterpret_cast<const ArrayData*>(&a),
+                                       reinterpret_cast<const ArrayData*>(&b),
+                                       reinterpret_cast<const ArrayData*>(&c),
+                                       reinterpret_cast<const ArrayData*>(&d)};
+  ArrayData result{};
+  for (int i = 0; i < kDataSize; ++i) {
+    for (int j = 0; j < 4; ++j) {
+      result[i] += (*data[j])[i];
+    }
+    result[i] /= 4.0F;
+  }
+  return *reinterpret_cast<VertexData*>(&result);
 }
 
 QRect GLMapDrawer::GetDrawRegion(QPoint center) const {
@@ -132,6 +152,9 @@ void GLMapDrawer::GenerateIndexBuffer(QOpenGLBuffer* index_buffer) {
   for (int y = 0; y < kMeshHeight; ++y) {
     for (int x = 0; x < kMeshWidth; ++x) {
       int i = y * kMeshWidth + x;
+      // Generates order of drawing queue.
+      // To draw a block it draws 4 triangles with common vertex
+      // in the center of block.
       data[kElementsPerBlock * i + 0] = kVerticesPerBlock * i + 0;
       data[kElementsPerBlock * i + 1] = kVerticesPerBlock * i + 1;
       data[kElementsPerBlock * i + 2] = kVerticesPerBlock * i + 4;
@@ -155,7 +178,11 @@ void GLMapDrawer::LoadShader(QOpenGLShaderProgram* shader) {
                                   ":/resources/shaders/vertex.glsl");
   shader->addShaderFromSourceFile(QOpenGLShader::Fragment,
                                   ":/resources/shaders/fragment.glsl");
-  assert(shader->link());
+  bool link_result = shader->link();
+  assert(link_result);
+  for (int i = 0; i < kAttribsCount; ++i) {
+    shader->bindAttributeLocation(kAttribNames[i], i);
+  }
 }
 
 QOpenGLBuffer* GLMapDrawer::GetMesh(QPoint buffer_pos) {
@@ -212,22 +239,7 @@ GLMapDrawer::BlockData GLMapDrawer::GetBlockData(QPoint world_pos,
   data.right_bottom = GenData(QPoint(mesh_pos.x() + 1, mesh_pos.y() + 1),
                           TextureAtlas::GetBlockTCRB(block),
                           light_map_->GetLightRB(world_pos));
-  data.center = VertexData{
-      Average(data.left_top.pos_x, data.left_bottom.pos_x, data.right_top.pos_x,
-              data.right_bottom.pos_x),
-      Average(data.left_top.pos_y, data.left_bottom.pos_y, data.right_top.pos_y,
-              data.right_bottom.pos_y),
-      Average(data.left_top.tex_u, data.left_bottom.tex_u, data.right_top.tex_u,
-              data.right_bottom.tex_u),
-      Average(data.left_top.tex_v, data.left_bottom.tex_v, data.right_top.tex_v,
-              data.right_bottom.tex_v),
-      Average(data.left_top.light_r, data.left_bottom.light_r,
-              data.right_top.light_r, data.right_bottom.light_r),
-      Average(data.left_top.light_g, data.left_bottom.light_g,
-              data.right_top.light_g, data.right_bottom.light_g),
-      Average(data.left_top.light_b, data.left_bottom.light_b,
-              data.right_top.light_b, data.right_bottom.light_b),
-      Average(data.left_top.light_sun, data.left_bottom.light_sun,
-              data.right_top.light_sun, data.right_bottom.light_sun)};
+  data.center = Average(data.left_top, data.left_bottom, data.right_top,
+                        data.right_bottom);
   return data;
 }

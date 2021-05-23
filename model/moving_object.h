@@ -91,6 +91,8 @@ class MovingObject {
 
   bool IsDead() const;
 
+  bool IsInBlock(QPoint block_pos) const;
+
   void SetDirection(utils::Direction direction) { direction_ = direction; }
   utils::Direction GetDirection() const { return direction_; }
 
@@ -142,8 +144,8 @@ class MovingObject {
   std::vector<Effect> effects_;
 
   MoveVector move_vector_ = MoveVector(0, 0, 0, 0);
-  QPointF pos_;
-  QPointF size_;
+  QPointF pos_;   // in bocks
+  QPointF size_;  // in bocks
   State state_ = MovingObject::State::kStay;
 
   double walk_acceleration_ = constants::kPlayerWalkAcceleration;

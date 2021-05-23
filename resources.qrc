@@ -5,6 +5,10 @@
         <file>resources/textures/dirt.png</file>
         <file>resources/textures/grass.png</file>
         <file>resources/textures/inventory_cell.png</file>
+        <file>resources/textures/dirt.png</file>
+        <file>resources/textures/grass.png</file>
+        <file>resources/textures/inventory_cell.png</file>
+        <file>resources/textures/selection_box.png</file>
         <file>resources/sounds/player_damage.mp3</file>
         <file>resources/sounds/zombie_death.mp3</file>
         <file>resources/sounds/zombie_damage2.mp3</file>

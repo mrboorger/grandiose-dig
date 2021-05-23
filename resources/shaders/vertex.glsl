@@ -1,9 +1,9 @@
-#version 330 core
+#version 130
 
-layout(location = 0) in vec2 in_pos;
-layout(location = 1) in vec2 in_tex_coords;
-layout(location = 2) in vec3 in_light;
-layout(location = 3) in float in_sun;
+in vec2 in_pos;
+in vec2 in_tex_coords;
+in vec3 in_light;
+in float in_sun;
 
 uniform mat4 proj_matrix;
 uniform vec2 buffer_pos;

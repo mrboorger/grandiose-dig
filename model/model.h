@@ -8,6 +8,7 @@
 #include <unordered_set>
 #include <utility>
 
+#include "model/all_craft_recipes.h"
 #include "model/map.h"
 #include "model/mob.h"
 #include "model/player.h"
@@ -30,7 +31,7 @@ class Model : public QObject {
 
   void SetMap(std::shared_ptr<AbstractMap> map) { map_ = std::move(map); }
 
-  std::shared_ptr<Player> GetPlayer() const { return player_; }
+  std::shared_ptr<Player> GetPlayer() { return player_; }
 
   void SetPlayer(const std::shared_ptr<Player>& player) { player_ = player; }
 
@@ -42,6 +43,10 @@ class Model : public QObject {
                    double time);
 
   void PickItemToPlayer(InventoryItem item) { player_->PickItem(item); }
+
+  bool CanIPlaceBlock(QPoint block_coords);
+
+  std::shared_ptr<const AllCraftRecipes> GetAllCraftRecipes() const;
 
   bool CanSpawnMobAt(QPointF pos, QPointF size) const;
 
@@ -64,12 +69,15 @@ class Model : public QObject {
   void MobSound(MovingObject* object);
 
  private:
-  Model() = default;
+  bool IsAnyMovingObjectInBlock(QPoint block_coords);
+
+  Model() : all_craft_recipes_(new AllCraftRecipes) {}
 
   QString current_save_file_name_;
   std::set<std::shared_ptr<Mob>> mobs_;
   std::shared_ptr<AbstractMap> map_;
   std::shared_ptr<Player> player_;
+  std::shared_ptr<AllCraftRecipes> all_craft_recipes_;
 };
 
 #endif  // MODEL_MODEL_H_

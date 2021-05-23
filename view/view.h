@@ -1,6 +1,7 @@
 #ifndef VIEW_VIEW_H_
 #define VIEW_VIEW_H_
 
+#include <QHBoxLayout>
 #include <QOpenGLWidget>
 #include <QScopedPointer>
 #include <memory>
@@ -23,10 +24,11 @@ class View : public QOpenGLWidget {
  public:
   static View* GetInstance();
 
+  View();
   View(const View&) = delete;
   View(View&&) = delete;
 
-  ~View() override = default;
+  ~View();
 
   View& operator=(const View&) = delete;
   View& operator=(View&&) = delete;
@@ -62,7 +64,7 @@ class View : public QOpenGLWidget {
   void MobSound(MovingObject* object);
 
  private:
-  View();
+  static View* instance_;
 
   void initializeGL() override;
   void paintGL() override;
@@ -77,6 +79,8 @@ class View : public QOpenGLWidget {
   void paintEvent(QPaintEvent* event) override;
   void resizeEvent(QResizeEvent* event) override;
 
+  void UpdateLight(QPoint camera_pos);
+
   QPointF GetTopLeftWindowCoord() const;  // in blocks
 
   Camera camera_;
@@ -85,6 +89,7 @@ class View : public QOpenGLWidget {
   std::unique_ptr<InventoryDrawer> inventory_drawer_;
   std::shared_ptr<LightMap> light_map_;
   bool should_initialize_drawer_;
+  bool is_visible_inventory_ = false;
 
   QScopedPointer<MainMenu> main_menu_;
   QScopedPointer<NewWorldMenu> new_world_menu_;

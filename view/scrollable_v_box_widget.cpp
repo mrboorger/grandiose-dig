@@ -6,7 +6,7 @@ ScrollableVBoxWidget::ScrollableVBoxWidget(QWidget *parent) : QWidget(parent) {
   scroll_area_.reset(new QScrollArea(this));
   widgets_.reset(new QWidget(scroll_area_.data()));
   scroll_area_->setWidget(widgets_.data());
-  widgets_layout_.reset(new QVBoxLayout(widgets_.data()));
+  widgets_layout_ = new QVBoxLayout(widgets_.data());
 
   widgets_->setObjectName("widgets");
   scroll_area_->setAlignment(Qt::AlignRight);

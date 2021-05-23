@@ -31,7 +31,6 @@ bool Block::DecreaseDurability(int delta) {
   }
   return durability_ == 0;
 }
-
 void Block::Read(const QJsonObject& json) {
   type_ = static_cast<Type>(json["type"].toInt());
   durability_ = json["durability"].toDouble();

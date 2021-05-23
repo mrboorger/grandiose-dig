@@ -6,6 +6,12 @@
 
 class GLFunctions : public QOpenGLFunctions {
  public:
+  GLFunctions(const GLFunctions&) = delete;
+  GLFunctions(GLFunctions&&) = delete;
+  ~GLFunctions() = default;
+  GLFunctions& operator=(const GLFunctions&) = delete;
+  GLFunctions& operator=(GLFunctions&&) = delete;
+
   static GLFunctions* GetInstance();
 
  private:

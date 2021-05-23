@@ -38,9 +38,11 @@ set(SOURCES
         controller/controller.cpp
         main.cpp
         model/abstract_map.cpp
+        model/all_craft_recipes.cpp
         model/block.cpp
         model/chunk.cpp
         model/chunk_map.cpp
+        model/craft_recipe.cpp
         model/effects.cpp
         model/flat_chunk_map_generator.cpp
         model/flat_map_generator.cpp
@@ -68,6 +70,7 @@ set(SOURCES
         view/light_map.cpp
         view/main_menu.cpp
         view/menu_button.cpp
+        view/menu_line_edit.cpp
         view/named_menu_slider.cpp
         view/map_drawer.cpp
         view/moving_object_drawer.cpp
@@ -77,7 +80,7 @@ set(SOURCES
         view/settings_menu.cpp
         view/sound_manager.cpp
         view/texture_atlas.cpp
-        view/view.cpp view/menu_line_edit.cpp view/menu_line_edit.h)
+        view/view.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${RESOURCES})
 target_link_libraries(${PROJECT_NAME} ${REQUIRED_LIBS_QUALIFIED})

@@ -57,12 +57,12 @@ class SettingsMenu final : public AbstractMenu {
   QScopedPointer<QTranslator> qt_translator_;
 
   QScopedPointer<QHBoxLayout> horizontal_layout_;
-  QScopedPointer<QVBoxLayout> settings_types_layout_;
+  QVBoxLayout* settings_types_layout_;
 
   QScopedPointer<QStackedWidget> current_settings_;
-  QScopedPointer<QVBoxLayout> general_settings_layout_;
-  QScopedPointer<QVBoxLayout> controls_settings_layout_;
-  QScopedPointer<QVBoxLayout> language_settings_layout_;
+  QVBoxLayout* general_settings_layout_;
+  QVBoxLayout* controls_settings_layout_;
+  QVBoxLayout* language_settings_layout_;
   QScopedPointer<QWidget> general_settings_widget_;
   QScopedPointer<QWidget> controls_settings_widget_;
   QScopedPointer<QWidget> language_settings_widget_;

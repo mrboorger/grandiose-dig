@@ -19,7 +19,7 @@ class Map : public AbstractMap {
  private:
   Map(int width, int height);
 
-  Block *GetBlockMutable(QPoint pos) override;
+  Block* GetBlockMutable(QPoint pos) override;
 
   std::vector<Block> blocks_;
   int width_;

@@ -31,14 +31,14 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   QApplication::installTranslator(qt_translator_.data());
 
   general_settings_widget_.reset(new QWidget);
-  general_settings_layout_.reset(new QVBoxLayout);
-  general_settings_widget_->setLayout(general_settings_layout_.data());
+  general_settings_layout_ = new QVBoxLayout;
+  general_settings_widget_->setLayout(general_settings_layout_);
   controls_settings_widget_.reset(new QWidget);
-  controls_settings_layout_.reset(new QVBoxLayout);
-  controls_settings_widget_->setLayout(controls_settings_layout_.data());
+  controls_settings_layout_ = new QVBoxLayout;
+  controls_settings_widget_->setLayout(controls_settings_layout_);
   language_settings_widget_.reset(new ScrollableVBoxWidget);
-  language_settings_layout_.reset(new QVBoxLayout);
-  language_settings_widget_->setLayout(language_settings_layout_.data());
+  language_settings_layout_ = new QVBoxLayout;
+  language_settings_widget_->setLayout(language_settings_layout_);
 
   current_settings_.reset(new QStackedWidget(this));
   current_settings_->addWidget(general_settings_widget_.data());
@@ -92,7 +92,7 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   connect(save_and_close_button_.data(), &QPushButton::clicked, this,
           on_save_and_close_button_click);
 
-  settings_types_layout_.reset(new QVBoxLayout);
+  settings_types_layout_ = new QVBoxLayout;
   settings_types_layout_->addStretch(2);
   settings_types_layout_->addWidget(general_settings_button_.data());
   settings_types_layout_->addWidget(controls_settings_button_.data());
@@ -228,7 +228,7 @@ SettingsMenu::SettingsMenu(QWidget* parent)
 
   horizontal_layout_.reset(new QHBoxLayout(this));
   horizontal_layout_->addStretch(1);
-  horizontal_layout_->addLayout(settings_types_layout_.data(), 2);
+  horizontal_layout_->addLayout(settings_types_layout_, 2);
   horizontal_layout_->addWidget(current_settings_.data(), 3);
   horizontal_layout_->addStretch(1);
 

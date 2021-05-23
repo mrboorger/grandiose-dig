@@ -9,8 +9,8 @@
 #include <utility>
 
 #include "model/abstract_map.h"
-#include "model/buffered_clearable_cache.h"
 #include "model/constants.h"
+#include "model/region_cache.h"
 #include "utils.h"
 
 class LightMap {
@@ -19,15 +19,20 @@ class LightMap {
 
   void UpdateLight(QPoint pos);
   Light GetLight(QPoint pos);
+  // Returns light at specific block corner
+  // (Left/Right, Top/Bottom)
   Light GetLightLT(QPoint pos);
   Light GetLightLB(QPoint pos);
   Light GetLightRT(QPoint pos);
   Light GetLightRB(QPoint pos);
   void CalculateRegion(const QRect& region);
 
-  std::set<QPoint, utils::QPointLexicographicalCompare>* UpdateList() {
-    return &updated_;
+  const std::set<QPoint, utils::QPointLexicographicalCompare>& TakeUpdateList()
+      const {
+    return updated_;
   }
+
+  void ClearUpdateList() { updated_.clear(); }
 
  private:
   static constexpr int kBufferWidth = 64;
@@ -43,18 +48,17 @@ class LightMap {
    private:
     std::queue<QPoint>* update_queue_;
   };
-  using Container =
-      containers::BufferedClearableCache<Light, kBufferWidth, kBufferHeight,
-                                         Buffer, BufferConstructor>;
-  static constexpr int kUpdateDeep = 1;
+  using Container = containers::RegionCache<Light, kBufferWidth, kBufferHeight,
+                                            Buffer, BufferConstructor>;
+  static constexpr int kUpdateDepth = 2;
 
-  void SetPointUpdated(QPoint pos, int iteration = kUpdateDeep);
+  void SetPointUpdated(QPoint pos, int iteration = kUpdateDepth);
 
   Light GetLuminosity(QPoint pos) const;
 
   Container data_ = Container(constants::kDefaultClearTimeMSec,
-                              BufferConstructor(&remove_queue_));
-  std::queue<QPoint> remove_queue_;
+                              BufferConstructor(&invalidate_queue_));
+  std::queue<QPoint> invalidate_queue_;
   std::set<QPoint, utils::QPointLexicographicalCompare> updated_;
   std::shared_ptr<AbstractMap> map_;
 };

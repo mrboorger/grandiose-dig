@@ -1,5 +1,7 @@
 #include "view/view.h"
 
+#include <QColor>
+#include <QPainter>
 #include <chrono>
 #include <cmath>
 #include <ctime>
@@ -12,10 +14,9 @@
 #include "view/gl_func.h"
 #include "view/moving_object_drawer.h"
 
-View* View::GetInstance() {
-  static View view;
-  return &view;
-}
+View* View::instance_ = nullptr;
+
+View* View::GetInstance() { return instance_; }
 
 View::View()
     : QOpenGLWidget(nullptr),
@@ -25,6 +26,8 @@ View::View()
       should_initialize_drawer_(false),
       game_state_(GameState::kMainMenu),
       previous_game_state_(GameState::kMainMenu) {
+  assert(!instance_);
+  instance_ = this;
   connect(Model::GetInstance(), &Model::DamageDealt, this, &View::DamageDealt);
   connect(Model::GetInstance(), &Model::BecameDead, this, &View::BecameDead);
   connect(Model::GetInstance(), &Model::MobSound, this, &View::MobSound);
@@ -53,6 +56,8 @@ View::View()
           &View::UpdateSettings);
   settings_menu_->setVisible(false);
 }
+
+View::~View() { instance_ = nullptr; }
 
 void View::ChangeGameState(GameState new_state) {
   switch (game_state_) {
@@ -125,6 +130,11 @@ void View::initializeGL() {
   auto* gl = GLFunctions::GetInstance();
   gl->initializeOpenGLFunctions();
   gl->glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+  if (should_initialize_drawer_) {
+    drawer_->Init();
+    should_initialize_drawer_ = false;
+  }
 }
 
 void View::paintGL() {
@@ -141,18 +151,12 @@ void View::paintGL() {
   camera_.SetPoint(Model::GetInstance()->GetPlayer()->GetPosition());
   QPointF camera_pos = camera_.GetPoint();
 
-  light_map_->CalculateRegion(
-      drawer_->GetDrawRegion(QPoint(camera_pos.x(), camera_pos.y())));
-  for (auto* to_update = light_map_->UpdateList(); !to_update->empty();) {
-    for (auto pos : *to_update) {
-      drawer_->UpdateBlock(pos);
-    }
-    to_update->clear();
-  }
-
+  UpdateLight(QPoint(camera_pos.x(), camera_pos.y()));
   drawer_->DrawMapWithCenter(&painter, camera_pos, rect());
 
-  inventory_drawer_->DrawInventory(&painter);
+  if (is_visible_inventory_) {
+    inventory_drawer_->DrawInventory(&painter);
+  }
 
   // TODO(Wind-Eagle): temporary code; need to make PlayerDrawer
   DrawPlayer(&painter);
@@ -221,6 +225,10 @@ void View::changeEvent(QEvent* event) {
 }
 
 void View::keyPressEvent(QKeyEvent* event) {
+  if (event->key() == Qt::Key_Escape) {
+    is_visible_inventory_ = !is_visible_inventory_;
+    inventory_drawer_->SetCraftMenuVisible(is_visible_inventory_);
+  }
   Controller::GetInstance()->KeyPress(event->key());
 }
 
@@ -294,4 +302,13 @@ QPointF View::GetTopLeftWindowCoord() const {
 
 void View::CreateNewWorld(const QString& name, uint32_t seed) {
   emit(CreateNewWorldSignal(name, seed));
+}
+
+void View::UpdateLight(QPoint camera_pos) {
+  light_map_->CalculateRegion(drawer_->GetDrawRegion(camera_pos));
+  const auto& to_update = light_map_->TakeUpdateList();
+  for (auto pos : to_update) {
+    drawer_->UpdateBlock(pos);
+  }
+  light_map_->ClearUpdateList();
 }

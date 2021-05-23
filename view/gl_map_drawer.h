@@ -58,6 +58,8 @@ class GLMapDrawer : public AbstractMapDrawer {
   static constexpr int32_t kElementsCount = kElementsPerBlock * kMeshSize;
   static constexpr int kAttribsCount = 4;
   static constexpr std::array<int, kAttribsCount> kAttribSizes{2, 2, 3, 1};
+  static constexpr std::array<const char*, kAttribsCount> kAttribNames{
+      "in_pos", "in_tex_coords", "in_light", "in_sun"};
   static constexpr VertexData kNoDrawVertex = VertexData{};
   static constexpr BlockData kNoDrawBlockData = BlockData{
       kNoDrawVertex, kNoDrawVertex, kNoDrawVertex, kNoDrawVertex, kNoDrawVertex,
@@ -68,7 +70,8 @@ class GLMapDrawer : public AbstractMapDrawer {
   static VertexData GenData(QPoint pos, QPointF tex_coords, Light light);
 
   static QPoint RoundToMeshPos(QPoint p);
-  static GLfloat Average(GLfloat a, GLfloat b, GLfloat c, GLfloat d);
+  static VertexData Average(const VertexData& a, const VertexData& b,
+                            const VertexData& c, const VertexData& d);
 
   static void GenerateIndexBuffer(QOpenGLBuffer* index_buffer);
   static void LoadShader(QOpenGLShaderProgram* shader);

@@ -33,7 +33,7 @@ class ScrollableVBoxWidget final : public QWidget {
   void resizeEvent(QResizeEvent* event) override;
 
   QScopedPointer<QScrollArea> scroll_area_;
-  QScopedPointer<QVBoxLayout> widgets_layout_;
+  QVBoxLayout* widgets_layout_;
   QScopedPointer<QWidget> widgets_;
 };
 
