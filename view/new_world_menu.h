@@ -23,13 +23,13 @@ class NewWorldMenu final : public AbstractMenu {
   void ReTranslateButtons() final;
 
  signals:
-  void CreateNewWorldsSignal(const QString& world_name, uint32_t seed);
+  void CreateNewWorldSignal(const QString& world_name, uint32_t seed);
 
  private:
   void paintEvent(QPaintEvent* event) final;
 
   QScopedPointer<QHBoxLayout> horizontal_layout_;
-  QScopedPointer<QVBoxLayout> vertical_layout_;
+  QVBoxLayout* vertical_layout_;
 
   QScopedPointer<QHBoxLayout> settings_layout_;
   QScopedPointer<QVBoxLayout> settings_names_layout_;

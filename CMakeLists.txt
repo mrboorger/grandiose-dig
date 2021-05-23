@@ -77,6 +77,7 @@ set(SOURCES
         view/new_world_menu.cpp
         view/pause_menu.cpp
         view/scrollable_v_box_widget.cpp
+        view/select_world_menu.cpp
         view/settings_menu.cpp
         view/sound_manager.cpp
         view/texture_atlas.cpp

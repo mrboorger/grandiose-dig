@@ -16,14 +16,10 @@ const QString kLineEditLabelStyle =
 }  // namespace
 
 NewWorldMenu::NewWorldMenu(QWidget *parent) : AbstractMenu(parent) {
-  horizontal_layout_.reset(new QHBoxLayout);
-  vertical_layout_.reset(new QVBoxLayout);
-  setLayout(horizontal_layout_.data());
-
   create_world_button_.reset(new MenuButton(this));
   auto on_create_world_button_click = [this]() {
     if (!world_name_line_edit_->text().isEmpty()) {
-      emit(CreateNewWorldsSignal(world_name_line_edit_->text(),
+      emit(CreateNewWorldSignal(world_name_line_edit_->text(),
                                  seed_line_edit_->text().toUInt()));
       emit(GameStateChanged(GameState::kGame));
     }
@@ -54,13 +50,14 @@ NewWorldMenu::NewWorldMenu(QWidget *parent) : AbstractMenu(parent) {
   settings_layout_->addLayout(settings_names_layout_.data());
   settings_layout_->addLayout(settings_inputs_layout_.data());
 
+  horizontal_layout_.reset(new QHBoxLayout(this));
+  vertical_layout_ = new QVBoxLayout;
   vertical_layout_->addStretch(2);
   vertical_layout_->addLayout(settings_layout_.data());
   vertical_layout_->addWidget(create_world_button_.data());
   vertical_layout_->addStretch(1);
-
   horizontal_layout_->addStretch(2);
-  horizontal_layout_->addLayout(vertical_layout_.data(), 4);
+  horizontal_layout_->addLayout(vertical_layout_, 4);
   horizontal_layout_->addStretch(2);
 
   Resize(parent->size());

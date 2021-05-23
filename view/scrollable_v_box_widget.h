@@ -13,9 +13,28 @@ const QString kBasicStyle =
     "QWidget {"
     "   background-color: transparent;"
     "}"
-    "QScrollBar:vertical { "
-    "   width: 24px;"
-    "   margin-left: -24px;"
+    "QScrollBar:vertical {"
+    "   border: 0px solid #999999;"
+    "   border-radius: 8px;"
+    "   background: grey;"
+    "   width: 20px;"
+    "   margin: 0px 0px 0px 0px;"
+    "}"
+    "QScrollBar::handle:vertical {         "
+    "   min-height: 0px;"
+    "   border: 0px solid red;"
+    "   border-radius: 8px;"
+    "   background-color: black;"
+    "}"
+    "QScrollBar::add-line:vertical {"
+    "   height: 0px;"
+    "   subcontrol-position: bottom;"
+    "   subcontrol-origin: margin;"
+    "}"
+    "QScrollBar::sub-line:vertical {"
+    "   height: 0px;"
+    "   subcontrol-position: top;"
+    "   subcontrol-origin: margin;"
     "}";
 
 }  // namespace scrollable_v_box_layout_styles
@@ -28,6 +47,8 @@ class ScrollableVBoxWidget final : public QWidget {
   ~ScrollableVBoxWidget() final = default;
 
   void addWidget(QWidget* widget) { widgets_layout_->addWidget(widget); }
+
+  void Clear();
 
  private:
   void resizeEvent(QResizeEvent* event) override;

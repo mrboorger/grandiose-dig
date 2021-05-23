@@ -22,24 +22,25 @@ Controller* Controller::GetInstance() {
   return &controller;
 }
 
-void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
-  auto map = std::shared_ptr<AbstractMap>(generator->GenerateMap());
-  Model::GetInstance()->SetMap(map);
-  View::GetInstance()->SetLightMap(new LightMap(map));
-  View::GetInstance()->SetDrawer(
-      new GLMapDrawer(map, View::GetInstance()->GetLightMap()));
-}
-
 Controller::Controller() : tick_timer_(), save_timer_() {
   View* view = View::GetInstance();
   Model* model = Model::GetInstance();
   connect(view, &View::CreateNewWorldSignal, this, &Controller::CreateNewWorld);
+  connect(view, &View::LoadWorldSignal, this, &Controller::LoadFromFile);
 
   tick_timer_.callOnTimeout([this]() { TickEvent(); });
   tick_timer_.start(constants::kTickDurationMsec);
   save_timer_.callOnTimeout([this]() { SaveEvent(); });
   save_timer_.start(
       settings_.value("save_duration", constants::kSaveDurationMsec).toInt());
+}
+
+void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
+  auto map = std::shared_ptr<AbstractMap>(generator->GenerateMap());
+  Model::GetInstance()->SetMap(map);
+  View::GetInstance()->SetLightMap(new LightMap(map));
+  View::GetInstance()->SetDrawer(
+      new GLMapDrawer(map, View::GetInstance()->GetLightMap()));
 }
 
 void Controller::SetPlayer() {
@@ -218,6 +219,9 @@ void Controller::TickEvent() {
       case GameState::kNewWorldMenu:
         View::GetInstance()->ChangeGameState(GameState::kMainMenu);
         break;
+      case GameState::kSelectWorldMenu:
+        View::GetInstance()->ChangeGameState(GameState::kMainMenu);
+        break;
       case GameState::kMainMenu:
         View::GetInstance()->close();
         break;
@@ -230,6 +234,9 @@ void Controller::TickEvent() {
         break;
     }
   } else if (View::GetInstance()->GetGameState() == GameState::kGame) {
+    if (pressed_keys_.count(ControllerTypes::Key::kShowInventory)) {
+      View::GetInstance()->SwitchInventory();
+    }
     auto cur = std::chrono::high_resolution_clock::now();
     double time =
         std::chrono::duration_cast<std::chrono::milliseconds>(cur - prev_time_)
@@ -269,6 +276,9 @@ ControllerTypes::Key Controller::TranslateKeyCode(int key_code) {
   }
   if (key_code == GetInstance()->settings_.value("kJump").toInt()) {
     return ControllerTypes::Key::kJump;
+  }
+  if (key_code == GetInstance()->settings_.value("kShowInventory").toInt()) {
+    return ControllerTypes::Key::kShowInventory;
   }
   switch (key_code) {
     case Qt::Key::Key_1:

@@ -7,6 +7,7 @@ enum class Key {
   kLeft,
   kRight,
   kJump,
+  kShowInventory,
   kInventory0,
   kInventory1,
   kInventory2,

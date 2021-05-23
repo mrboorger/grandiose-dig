@@ -9,7 +9,7 @@ enum class GameState {
   kGame,
   kPaused,
   kNewWorldMenu,
-  kSelectWorldMeu,
+  kSelectWorldMenu,
   kSwitchingToPrevious
 };
 

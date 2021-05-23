@@ -25,6 +25,19 @@
     </message>
 </context>
 <context>
+    <name>NewWorldMenu</name>
+    <message>
+        <location filename="../../view/new_world_menu.cpp" line="70"/>
+        <source>World name:</source>
+        <translation>Світова назва:</translation>
+    </message>
+    <message>
+        <location filename="../../view/new_world_menu.cpp" line="71"/>
+        <source>Seed:</source>
+        <translation>Seed:</translation>
+    </message>
+</context>
+<context>
     <name>PauseMenu</name>
     <message>
         <location filename="../../view/pause_menu.cpp" line="54"/>
@@ -45,77 +58,77 @@
 <context>
     <name>SettingsMenu</name>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="249"/>
+        <location filename="../../view/settings_menu.cpp" line="242"/>
         <source>General</source>
         <translation>Загальні</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="250"/>
+        <location filename="../../view/settings_menu.cpp" line="243"/>
         <source>Controls</source>
         <translation>Управління</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="251"/>
+        <location filename="../../view/settings_menu.cpp" line="244"/>
         <source>Language</source>
         <translation>Мова</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="252"/>
+        <location filename="../../view/settings_menu.cpp" line="245"/>
         <source>Exit</source>
         <translation>Вихід</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="253"/>
+        <location filename="../../view/settings_menu.cpp" line="246"/>
         <source>Save and exit</source>
         <translation>Зберегти і вийти</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="255"/>
+        <location filename="../../view/settings_menu.cpp" line="248"/>
         <source>General volume</source>
         <translation>Загальна гучність</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="256"/>
+        <location filename="../../view/settings_menu.cpp" line="249"/>
         <source>Music volume</source>
         <translation>Гучність музики</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="257"/>
+        <location filename="../../view/settings_menu.cpp" line="250"/>
         <source>Sounds volume</source>
         <translation>Гучність звуків</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="260"/>
+        <location filename="../../view/settings_menu.cpp" line="253"/>
         <source>Move left: </source>
         <translation>Рухатися вліво: </translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="269"/>
+        <location filename="../../view/settings_menu.cpp" line="262"/>
         <source>Move right: </source>
         <translation>Рухатися вправо: </translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="278"/>
+        <location filename="../../view/settings_menu.cpp" line="271"/>
         <source>Jump: </source>
         <translation>Стрибок: </translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="287"/>
+        <location filename="../../view/settings_menu.cpp" line="280"/>
         <source>English</source>
         <translation>English</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="288"/>
+        <location filename="../../view/settings_menu.cpp" line="281"/>
         <source>Русский</source>
         <translation>Русский</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="289"/>
+        <location filename="../../view/settings_menu.cpp" line="282"/>
         <source>Deutsche</source>
         <translation>Deutsche</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="290"/>
+        <location filename="../../view/settings_menu.cpp" line="283"/>
         <source>Українська</source>
         <translation>Українська (обрана)</translation>
     </message>

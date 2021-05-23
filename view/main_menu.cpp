@@ -15,7 +15,7 @@ MainMenu::MainMenu(QWidget* parent) : AbstractMenu(parent) {
   continue_button_.reset(
       new MenuButton(this, MenuButtonType::kTransparentExpanding));
   auto on_continue_button_click = [this]() {
-    emit(GameStateChanged(GameState::kGame));
+    emit(GameStateChanged(GameState::kSelectWorldMenu));
   };
   connect(continue_button_.data(), &QPushButton::clicked, this,
           on_continue_button_click);

@@ -15,6 +15,7 @@
 #include "view/main_menu.h"
 #include "view/new_world_menu.h"
 #include "view/pause_menu.h"
+#include "view/select_world_menu.h"
 #include "view/settings_menu.h"
 #include "view/sound_manager.h"
 
@@ -50,11 +51,15 @@ class View : public QOpenGLWidget {
 
   std::shared_ptr<LightMap> GetLightMap() { return light_map_; }
 
+  void SwitchInventory();
+
  signals:
   void CreateNewWorldSignal(const QString& name, uint32_t seed);
+  void LoadWorldSignal(const QString& world_name);
 
  public slots:
   void CreateNewWorld(const QString& name, uint32_t seed);
+  void LoadWorld(const QString& world_name);
   void ChangeGameState(GameState new_state);
   void UpdateSettings();
 
@@ -93,6 +98,7 @@ class View : public QOpenGLWidget {
 
   QScopedPointer<MainMenu> main_menu_;
   QScopedPointer<NewWorldMenu> new_world_menu_;
+  QScopedPointer<SelectWorldMenu> select_world_menu_;
   QScopedPointer<PauseMenu> pause_menu_;
   QScopedPointer<SettingsMenu> settings_menu_;
   GameState game_state_;

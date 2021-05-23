@@ -76,6 +76,8 @@ class MenuButton final : public QPushButton {
  public:
   explicit MenuButton(QWidget* parent = nullptr,
                       MenuButtonType button_type = MenuButtonType::kBasic);
+  explicit MenuButton(const QString& text, QWidget* parent = nullptr,
+                      MenuButtonType button_type = MenuButtonType::kBasic);
   ~MenuButton() final = default;
 };
 

@@ -40,9 +40,16 @@ View::View()
   new_world_menu_.reset(new NewWorldMenu(this));
   connect(new_world_menu_.data(), &AbstractMenu::GameStateChanged, this,
           &View::ChangeGameState);
-  connect(new_world_menu_.data(), &NewWorldMenu::CreateNewWorldsSignal, this,
+  connect(new_world_menu_.data(), &NewWorldMenu::CreateNewWorldSignal, this,
           &View::CreateNewWorld);
   new_world_menu_->setVisible(false);
+
+  select_world_menu_.reset(new SelectWorldMenu(this));
+  connect(select_world_menu_.data(), &AbstractMenu::GameStateChanged, this,
+          &View::ChangeGameState);
+  connect(select_world_menu_.data(), &SelectWorldMenu::LoadWorldSignal, this,
+          &View::LoadWorld);
+  select_world_menu_->setVisible(false);
 
   pause_menu_.reset(new PauseMenu(this));
   connect(pause_menu_.data(), &AbstractMenu::GameStateChanged, this,
@@ -67,6 +74,9 @@ void View::ChangeGameState(GameState new_state) {
     case GameState::kNewWorldMenu:
       new_world_menu_->setVisible(false);
       break;
+    case GameState::kSelectWorldMenu:
+      select_world_menu_->setVisible(false);
+      break;
     case GameState::kPaused:
       pause_menu_->setVisible(false);
       break;
@@ -84,6 +94,11 @@ void View::ChangeGameState(GameState new_state) {
     case GameState::kNewWorldMenu:
       new_world_menu_->setVisible(true);
       new_world_menu_->setFocus();
+      break;
+    case GameState::kSelectWorldMenu:
+      select_world_menu_->UpdateAvailableSaves();
+      select_world_menu_->setVisible(true);
+      select_world_menu_->setFocus();
       break;
     case GameState::kGame:
       setFocus();
@@ -217,6 +232,7 @@ void View::changeEvent(QEvent* event) {
   if (event->type() == QEvent::LanguageChange) {
     main_menu_->ReTranslateButtons();
     new_world_menu_->ReTranslateButtons();
+    select_world_menu_->ReTranslateButtons();
     pause_menu_->ReTranslateButtons();
     settings_menu_->ReTranslateButtons();
   } else {
@@ -225,10 +241,6 @@ void View::changeEvent(QEvent* event) {
 }
 
 void View::keyPressEvent(QKeyEvent* event) {
-  if (event->key() == Qt::Key_Escape) {
-    is_visible_inventory_ = !is_visible_inventory_;
-    inventory_drawer_->SetCraftMenuVisible(is_visible_inventory_);
-  }
   Controller::GetInstance()->KeyPress(event->key());
 }
 
@@ -240,38 +252,21 @@ void View::resizeEvent(QResizeEvent* event) {
   QOpenGLWidget::resizeEvent(event);
   main_menu_->Resize(event->size());
   new_world_menu_->Resize(event->size());
+  select_world_menu_->Resize(event->size());
   pause_menu_->Resize(event->size());
   settings_menu_->Resize(event->size());
 }
 
 void View::paintEvent(QPaintEvent* event) {
-  switch (game_state_) {
-    case GameState::kMainMenu:
-      main_menu_->update();
-      break;
-    case GameState::kNewWorldMenu:
-      new_world_menu_->update();
-      break;
-    case GameState::kGame:
-      paintGL();
-      break;
-    case GameState::kPaused:
-      paintGL();
-      pause_menu_->update();
-      break;
-    case GameState::kSettings:
-      if (previous_game_state_ == GameState::kGame ||
-          previous_game_state_ == GameState::kPaused) {
-        paintGL();
-        settings_menu_->setTransparentBackground(true);
-      } else {
-        settings_menu_->setTransparentBackground(false);
-      }
-      settings_menu_->update();
-      break;
-    default:
-      break;
+  Q_UNUSED(event);
+  if (game_state_ == GameState::kGame) {
+    paintGL();
   }
+}
+
+void View::SwitchInventory() {
+  is_visible_inventory_ = !is_visible_inventory_;
+  inventory_drawer_->SetCraftMenuVisible(is_visible_inventory_);
 }
 
 void View::mousePressEvent(QMouseEvent* event) {
@@ -302,6 +297,12 @@ QPointF View::GetTopLeftWindowCoord() const {
 
 void View::CreateNewWorld(const QString& name, uint32_t seed) {
   emit(CreateNewWorldSignal(name, seed));
+  should_initialize_drawer_ = true;
+}
+
+void View::LoadWorld(const QString& world_name) {
+  emit(LoadWorldSignal(world_name));
+  should_initialize_drawer_ = true;
 }
 
 void View::UpdateLight(QPoint camera_pos) {

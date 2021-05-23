@@ -21,3 +21,10 @@ void ScrollableVBoxWidget::resizeEvent(QResizeEvent *event) {
   QWidget::resizeEvent(event);
   scroll_area_->resize(event->size());
 }
+
+void ScrollableVBoxWidget::Clear() {
+  QLayoutItem* item;
+  while ((item = widgets_layout_->takeAt(0))) {
+    delete item->widget();
+  }
+}
