@@ -11,6 +11,9 @@ void LightMap::UpdateLight(QPoint pos) {
 
 Light LightMap::GetLight(QPoint pos) {
   std::unique_lock<std::recursive_mutex> lock(mutex_, std::try_to_lock);
+  if (!lock.owns_lock()) {
+    return map_->GetBlock(pos).GetLuminosity();
+  }
   auto res = data_.TryGetValue(pos);
   if (!res) {
     return map_->GetBlock(pos).GetLuminosity();

@@ -35,6 +35,7 @@ class GLMapDrawer : public AbstractMapDrawer {
     GLfloat light_g;
     GLfloat light_b;
     GLfloat light_sun;
+    GLfloat pos_shift;
   };
 
   struct BlockData {
@@ -62,11 +63,13 @@ class GLMapDrawer : public AbstractMapDrawer {
   static constexpr int32_t kMeshSize = kMeshWidth * kMeshHeight;
   static constexpr int32_t kElementsPerBlock = 4 * 3;
   static constexpr int32_t kElementsCount = kElementsPerBlock * kMeshSize;
-  static constexpr int kAttribsCount = 5;
-  static constexpr std::array<int, kAttribsCount> kAttribSizes{2, 1, 2, 3, 1};
-  static constexpr std::array<int, kAttribsCount> kBlockStrides{0, 0, 1, 2, 0};
-  static constexpr std::array<int, kAttribsCount> kBackgroundStrides{0, 1, 2, 0,
-                                                                     0};
+  static constexpr int kAttribsCount = 6;
+  static constexpr std::array<int, kAttribsCount> kAttribSizes{2, 1, 2,
+                                                               3, 1, 1};
+  static constexpr std::array<int, kAttribsCount> kBlockStrides{0, 0, 1,
+                                                                2, 0, 0};
+  static constexpr std::array<int, kAttribsCount> kBackgroundStrides{0, 1, 2,
+                                                                     0, 0, 0};
   static constexpr double kNotVisibleZ = 0.0;
   static constexpr double kBackgroundZ = 1.1;
   static constexpr double kBlocksZ = 1.0;
@@ -80,7 +83,8 @@ class GLMapDrawer : public AbstractMapDrawer {
       sizeof(BlockData) / sizeof(VertexData);
 
   static VertexData GenData(QPoint pos, double z, QPointF tex_coords,
-                            QPointF back_coords, Light light);
+                            QPointF back_coords, Light light,
+                            double pos_shift);
 
   static QPoint RoundToMeshPos(QPoint p);
   static VertexData Average(const VertexData& a, const VertexData& b,

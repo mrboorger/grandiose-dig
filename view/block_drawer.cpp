@@ -18,8 +18,7 @@ const std::array<QString, Block::kFrontTypesCount> kFrontNames = {
     "iron_ore", "technical.png", "torch.png"};
 
 const std::array<QString, kBackgroundsCount> kBackgroundNames = {
-    "forest_background.png", "sky_background.png", "space_background.png",
-    "cave_background.png"};
+    "forest_background.png", "sky_background.png", "cave_background.png"};
 
 std::array<QImage, Block::kFrontTypesCount> fronts;
 std::array<QImage, kBackgroundsCount> backgrounds;
@@ -46,10 +45,7 @@ Backgrounds BackIdToBackgroundId(Block block, QPoint pos) {
       if (pos.y() > Model::GetInstance()->GetMap()->SkyLevel()) {
         return Backgrounds::kForest;
       }
-      if (pos.y() > Model::GetInstance()->GetMap()->SpaceLevel()) {
-        return Backgrounds::kSky;
-      }
-      return Backgrounds::kSpace;
+      return Backgrounds::kSky;
     }
     case Block::BackType::kCave: {
       return Backgrounds::kCave;
