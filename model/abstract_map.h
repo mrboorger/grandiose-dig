@@ -34,11 +34,6 @@ class AbstractMap {
     return SkyLevelImpl();
   }
 
-  int32_t SpaceLevel() {
-    std::lock_guard<std::recursive_mutex> lock(mutex_);
-    return SpaceLevelImpl();
-  }
-
   void CacheRegion(const QRect& region) {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
     CacheRegionImpl(region);
@@ -52,12 +47,10 @@ class AbstractMap {
   virtual void CacheRegionImpl(const QRect& region) { Q_UNUSED(region); }
   virtual int32_t GroundLevelImpl() const { return kDefaultGroundLevel; }
   virtual int32_t SkyLevelImpl() const { return kDefaultSkyLevel; }
-  virtual int32_t SpaceLevelImpl() const { return kDefaultSpaceLevel; }
 
  private:
   static constexpr int32_t kDefaultGroundLevel = 128;
   static constexpr int32_t kDefaultSkyLevel = 63;
-  static constexpr int32_t kDefaultSpaceLevel = 120 - 128;
   std::recursive_mutex mutex_;
 };
 

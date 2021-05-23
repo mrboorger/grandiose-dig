@@ -14,7 +14,6 @@ enum class Backgrounds {
   kFirst,
   kForest = kFirst,
   kSky,
-  kSpace,
   kCave,
   kBackgroundsCount
 };

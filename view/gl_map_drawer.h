@@ -64,7 +64,8 @@ class GLMapDrawer : public AbstractMapDrawer {
   static constexpr int32_t kElementsPerBlock = 4 * 3;
   static constexpr int32_t kElementsCount = kElementsPerBlock * kMeshSize;
   static constexpr int kAttribsCount = 6;
-  static constexpr std::array<int, kAttribsCount> kAttribSizes{2, 1, 2, 3, 1, 1};
+  static constexpr std::array<int, kAttribsCount> kAttribSizes{2, 1, 2,
+                                                               3, 1, 1};
   static constexpr std::array<int, kAttribsCount> kBlockStrides{0, 0, 1,
                                                                 2, 0, 0};
   static constexpr std::array<int, kAttribsCount> kBackgroundStrides{0, 1, 2,
