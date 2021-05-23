@@ -8,9 +8,9 @@
 
 class BackgroundAtlas : public AbstractAtlas {
  public:
-  static constexpr int kSize = Block::kBackTypesCount;
-  static constexpr int kBackgroundWidth = kSize * BlockDrawer::kBackgroundWidth;
-  static constexpr int kBackgroundHeight = BlockDrawer::kBackgroundHeight;
+  static constexpr int kSize = BlockDrawer::kBackgroundsCount;
+  static constexpr int kPixmapWidth = BlockDrawer::kBackgroundWidth;
+  static constexpr int kPixmapHeight = kSize * BlockDrawer::kBackgroundHeight;
 
   BackgroundAtlas() : AbstractAtlas(QOpenGLTexture::Target2D) {}
 

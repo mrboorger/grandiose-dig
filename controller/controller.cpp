@@ -37,7 +37,7 @@ Controller::Controller() : tick_timer_() {
 void Controller::SetPlayer() {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->SetPlayer(
-      std::make_shared<Player>(QPointF(125.0, 115.0)));
+      std::make_shared<Player>(QPointF(-25.0, 90.0)));
   View::GetInstance()->SetInventoryDrawer(
       new InventoryDrawer(Model::GetInstance()->GetPlayer()->GetInventory()));
 }
