@@ -31,11 +31,6 @@ Chunk PerlinChunkMapGenerator::PerlinRegionGenerator::Generate(
   return chunk;
 }
 
-double PerlinChunkMapGenerator::PerlinRegionGenerator::PerlinBiomeNoise(
-    double seed) {
-  return noise_biome_temperature_(seed / kBiomeLength);
-}
-
 double PerlinChunkMapGenerator::PerlinRegionGenerator::HeightNoise(
     double noise) {
   return (1.0 / (1 + exp(-noise * kHillsRapidness))) * 2 - 1;
@@ -107,7 +102,7 @@ Chunk PerlinChunkMapGenerator::PerlinRegionGenerator::LandscapeGeneration(
           PerlinNoise1D::kMax, 0, Chunk::kHeight - 1);
     }
     for (int32_t x = 0; x < Chunk::kWidth; ++x) {
-      Biome biome = GetBiome(PerlinBiomeNoise(chunk_pos.x() + x));
+      Biome biome = GetBiome(noise_biome_temperature_(chunk_pos.x() + x));
       switch (biome) {
         case PerlinChunkMapGenerator::PerlinRegionGenerator::Biome::
             kIcePlains: {

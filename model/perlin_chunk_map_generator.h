@@ -47,14 +47,11 @@ class PerlinChunkMapGenerator : public AbstractMapGenerator {
     void GenerateCaves(Chunk* chunk, QPoint chunk_pos);
     void GenerateOres(Chunk* chunk, QPoint chunk_pos);
 
-    double PerlinBiomeNoise(double seed);
     static double HeightNoise(double noise);
     static double StoneNoise(double noise);
 
-    static constexpr double kBiomeLength = 3;
-
-    static constexpr double kColdNoise = -0.35;
-    static constexpr double kHotNoise = 0.35;
+    static constexpr double kColdNoise = -0.3;
+    static constexpr double kHotNoise = 0.3;
 
     static constexpr double kHillsRapidness = 3.5;
     static constexpr double kStoneRapidness = 2;
