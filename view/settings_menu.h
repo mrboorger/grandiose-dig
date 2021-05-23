@@ -23,7 +23,7 @@ class SettingsMenu final : public AbstractMenu {
 
  public:
   explicit SettingsMenu(QWidget* parent = nullptr);
-  ~SettingsMenu() final = default;
+  ~SettingsMenu() final;
 
   void Resize(const QSize& size) final;
 
@@ -81,9 +81,7 @@ class SettingsMenu final : public AbstractMenu {
 
   // Controls Settings
   QScopedPointer<ScrollableVBoxWidget> scrollable_controls_widget_;
-  QScopedPointer<MenuButton> change_left_key_button_;
-  QScopedPointer<MenuButton> change_right_key_button_;
-  QScopedPointer<MenuButton> change_jump_key_button_;
+  std::vector<MenuButton*> change_key_buttons_;
 
   // Language Settings
   QScopedPointer<ScrollableVBoxWidget> scrollable_languages_widget_;

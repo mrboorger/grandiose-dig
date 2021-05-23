@@ -58,77 +58,99 @@
 <context>
     <name>SettingsMenu</name>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="242"/>
+        <location filename="../../view/settings_menu.cpp" line="238"/>
         <source>General</source>
         <translation>Allgemeines</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="243"/>
+        <location filename="../../view/settings_menu.cpp" line="239"/>
         <source>Controls</source>
         <translation>Kontrollen</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="244"/>
+        <location filename="../../view/settings_menu.cpp" line="240"/>
         <source>Language</source>
         <translation>Sprache</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="245"/>
+        <location filename="../../view/settings_menu.cpp" line="241"/>
         <source>Exit</source>
         <translation>Ausgang</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="246"/>
+        <location filename="../../view/settings_menu.cpp" line="242"/>
         <source>Save and exit</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="248"/>
+        <location filename="../../view/settings_menu.cpp" line="244"/>
         <source>General volume</source>
         <translation>Allgemeines Volumen</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="249"/>
+        <location filename="../../view/settings_menu.cpp" line="245"/>
         <source>Music volume</source>
         <translation>Musiklautstärke</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="250"/>
+        <location filename="../../view/settings_menu.cpp" line="246"/>
         <source>Sounds volume</source>
         <translation>Klingt nach Lautstärke</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="253"/>
+        <location filename="../../view/settings_menu.cpp" line="249"/>
+        <source>Move left</source>
+        <translation>Geh nach links</translation>
+    </message>
+    <message>
+        <location filename="../../view/settings_menu.cpp" line="250"/>
+        <source>Move right</source>
+        <translation>Nach rechts bewegen</translation>
+    </message>
+    <message>
+        <location filename="../../view/settings_menu.cpp" line="251"/>
+        <source>Jump</source>
+        <translation>Prallen</translation>
+    </message>
+    <message>
+        <location filename="../../view/settings_menu.cpp" line="252"/>
+        <source>Show/Hide inventory</source>
+        <translation>Inventar ein- / ausblenden</translation>
+    </message>
+    <message>
+        <location filename="../../view/settings_menu.cpp" line="254"/>
+        <source>Select slot </source>
+        <translation>Nimm den Gegenstand </translation>
+    </message>
+    <message>
         <source>Move left: </source>
-        <translation>Geh nach links: </translation>
+        <translation type="vanished">Geh nach links: </translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="262"/>
         <source>Move right: </source>
-        <translation>Nach rechts bewegen: </translation>
+        <translation type="vanished">Nach rechts bewegen: </translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="271"/>
         <source>Jump: </source>
-        <translation>Prallen: </translation>
+        <translation type="vanished">Prallen: </translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="280"/>
+        <location filename="../../view/settings_menu.cpp" line="268"/>
         <source>English</source>
         <translation>English</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="281"/>
+        <location filename="../../view/settings_menu.cpp" line="269"/>
         <source>Русский</source>
         <translation>Русский</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="282"/>
+        <location filename="../../view/settings_menu.cpp" line="270"/>
         <source>Deutsche</source>
         <translation>Deutsche (gewählt)</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="283"/>
+        <location filename="../../view/settings_menu.cpp" line="271"/>
         <source>Українська</source>
         <translation>Українська</translation>
     </message>

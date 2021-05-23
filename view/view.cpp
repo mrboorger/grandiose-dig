@@ -83,6 +83,11 @@ void View::ChangeGameState(GameState new_state) {
     case GameState::kSettings:
       settings_menu_->setVisible(false);
       break;
+    case GameState::kGame:
+      if (is_visible_inventory_) {
+        SwitchInventory();
+      }
+      break;
     default:
       break;
   }

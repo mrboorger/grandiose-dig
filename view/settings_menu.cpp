@@ -5,26 +5,36 @@
 #include <QPainter>
 #include <QSettings>
 
+#include "controller/controller_types.h"
+
 SettingsMenu::SettingsMenu(QWidget* parent)
     : AbstractMenu(parent),
       transparent_background_(false),
       listening_to_press_event_(false) {
   settings_.reset(new QSettings);
-  if (settings_->value("kLeft", -1) == -1) {
-    settings_->setValue("kLeft", Qt::Key::Key_Left);
+  if (!settings_->contains(ControllerTypes::kKeyNames[0])) {
+    settings_->setValue(ControllerTypes::kKeyNames[0], Qt::Key::Key_Left);
   }
-  if (settings_->value("kRight", -1) == -1) {
-    settings_->setValue("kRight", Qt::Key::Key_Right);
+  if (!settings_->contains(ControllerTypes::kKeyNames[1])) {
+    settings_->setValue(ControllerTypes::kKeyNames[1], Qt::Key::Key_Right);
   }
-  if (settings_->value("kJump", -1) == -1) {
-    settings_->setValue("kJump", Qt::Key::Key_Space);
+  if (!settings_->contains(ControllerTypes::kKeyNames[2])) {
+    settings_->setValue(ControllerTypes::kKeyNames[2], Qt::Key::Key_Space);
+  }
+  if (!settings_->contains(ControllerTypes::kKeyNames[3])) {
+    settings_->setValue(ControllerTypes::kKeyNames[3], Qt::Key::Key_I);
+  }
+  for (int index = 0; index < 10; ++index) {
+    if (!settings_->contains(ControllerTypes::kKeyNames[4 + index])) {
+      settings_->setValue(ControllerTypes::kKeyNames[4 + index],
+                          Qt::Key::Key_1 + (index == 9 ? -1 : index));
+    }
+  }
+  if (!settings_->contains(ControllerTypes::kKeyNames[14])) {
+    settings_->setValue(ControllerTypes::kKeyNames[14], Qt::Key::Key_Escape);
   }
 
-  current_language_ = settings_->value("language", "none").toString();
-  if (current_language_ == "none") {
-    current_language_ = "en_US";
-    settings_->setValue("language", "en_US");
-  }
+  current_language_ = settings_->value("language", "en").toString();
   translator_.reset(new QTranslator);
   qt_translator_.reset(new QTranslator);
   QApplication::installTranslator(translator_.data());
@@ -142,39 +152,19 @@ SettingsMenu::SettingsMenu(QWidget* parent)
 
   // --------------------------Controls Settings--------------------------------
   scrollable_controls_widget_.reset(new ScrollableVBoxWidget(this));
-  change_left_key_button_.reset(new MenuButton(this));
-  auto on_change_left_key_button_click = [this]() {
-    setFocus();
-    listening_to_press_event_ = true;
-    controller_type_to_change_ = "kLeft";
-    button_to_update_on_press_event_ = change_left_key_button_.data();
-  };
-  connect(change_left_key_button_.data(), &QPushButton::clicked, this,
-          on_change_left_key_button_click);
-
-  change_right_key_button_.reset(new MenuButton(this));
-  auto on_change_right_key_button_click = [this]() {
-    setFocus();
-    listening_to_press_event_ = true;
-    controller_type_to_change_ = "kRight";
-    button_to_update_on_press_event_ = change_right_key_button_.data();
-  };
-  connect(change_right_key_button_.data(), &QPushButton::clicked, this,
-          on_change_right_key_button_click);
-
-  change_jump_key_button_.reset(new MenuButton(this));
-  auto on_change_jump_key_button_click = [this]() {
-    setFocus();
-    listening_to_press_event_ = true;
-    controller_type_to_change_ = "kJump";
-    button_to_update_on_press_event_ = change_jump_key_button_.data();
-  };
-  connect(change_jump_key_button_.data(), &QPushButton::clicked, this,
-          on_change_jump_key_button_click);
-
-  scrollable_controls_widget_->addWidget(change_left_key_button_.data());
-  scrollable_controls_widget_->addWidget(change_right_key_button_.data());
-  scrollable_controls_widget_->addWidget(change_jump_key_button_.data());
+  change_key_buttons_.reserve(ControllerTypes::kKeysCount);
+  for (int index = 0; index < ControllerTypes::kKeysCount; ++index) {
+    change_key_buttons_.emplace_back(new MenuButton(this));
+    auto on_change_key_button_click = [this, index]() {
+      setFocus();
+      listening_to_press_event_ = true;
+      controller_type_to_change_ = ControllerTypes::kKeyNames[index];
+      button_to_update_on_press_event_ = change_key_buttons_[index];
+    };
+    connect(change_key_buttons_[index], &QPushButton::clicked, this,
+            on_change_key_button_click);
+    scrollable_controls_widget_->addWidget(change_key_buttons_[index]);
+  }
 
   controls_settings_layout_->addStretch(2);
   controls_settings_layout_->addWidget(scrollable_controls_widget_.data(), 4);
@@ -236,6 +226,12 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   ChangeLanguage(current_language_);
 }
 
+SettingsMenu::~SettingsMenu() {
+  for (auto& button : change_key_buttons_) {
+    delete button;
+  }
+}
+
 void SettingsMenu::Resize(const QSize& size) { QWidget::resize(size); }
 
 void SettingsMenu::ReTranslateButtons() {
@@ -249,32 +245,24 @@ void SettingsMenu::ReTranslateButtons() {
   music_volume_slider_->setText(tr("Music volume"));
   sounds_volume_slider_->setText(tr("Sounds volume"));
 
-  {
-    QString text = tr("Move left: ");
-    if (change_left_key_button_->text().isEmpty()) {
-      text += QKeySequence(settings_->value("kLeft").toInt()).toString();
-    } else {
-      text += change_left_key_button_->text().split(" ").back();
-    }
-    change_left_key_button_->setText(text);
+  change_key_buttons_.resize(ControllerTypes::kKeysCount);
+  change_key_buttons_[0]->setText(tr("Move left"));
+  change_key_buttons_[1]->setText(tr("Move right"));
+  change_key_buttons_[2]->setText(tr("Jump"));
+  change_key_buttons_[3]->setText(tr("Show/Hide inventory"));
+  for (int index = 0; index < 10; ++index) {
+    change_key_buttons_[4 + index]->setText(tr("Select slot ") +
+                                            QString::number(index + 1));
   }
-  {
-    QString text = tr("Move right: ");
-    if (change_right_key_button_->text().isEmpty()) {
-      text += QKeySequence(settings_->value("kRight").toInt()).toString();
-    } else {
-      text += change_right_key_button_->text().split(" ").back();
+  change_key_buttons_.back()->setText("Exit");
+  for (int index = 0; index < ControllerTypes::kKeysCount; ++index) {
+    int key = settings_->value(ControllerTypes::kKeyNames[index]).toInt();
+    if (temporary_settings_changes_.count(ControllerTypes::kKeyNames[index])) {
+      key = temporary_settings_changes_[ControllerTypes::kKeyNames[index]]
+                .toInt();
     }
-    change_right_key_button_->setText(text);
-  }
-  {
-    QString text = tr("Jump: ");
-    if (change_jump_key_button_->text().isEmpty()) {
-      text += QKeySequence(settings_->value("kJump").toInt()).toString();
-    } else {
-      text += change_jump_key_button_->text().split(" ").back();
-    }
-    change_jump_key_button_->setText(text);
+    change_key_buttons_[index]->setText(change_key_buttons_[index]->text() +
+                                        ": " + QKeySequence(key).toString());
   }
 
   english_language_button_->setText(tr("English"));

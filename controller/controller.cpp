@@ -66,7 +66,6 @@ void Controller::BreakBlock(double time) {
          Model::GetInstance()->GetPlayer()->GetPosition().x())
             ? utils::Direction::kLeft
             : utils::Direction::kRight);
-    qDebug() << time;
     if (Model::GetInstance()->GetMap()->HitBlock(block_coords, 1.0 * time)) {
       View::GetInstance()->UpdateBlock(block_coords);
       View::GetInstance()->GetLightMap()->UpdateLight(block_coords);
@@ -236,6 +235,10 @@ void Controller::TickEvent() {
   } else if (View::GetInstance()->GetGameState() == GameState::kGame) {
     if (pressed_keys_.count(ControllerTypes::Key::kShowInventory)) {
       View::GetInstance()->SwitchInventory();
+      pressed_keys_.erase(ControllerTypes::Key::kShowInventory);
+    }
+    for (const auto& key : pressed_keys_) {
+      ParseInventoryKey(key);
     }
     auto cur = std::chrono::high_resolution_clock::now();
     double time =
@@ -259,56 +262,20 @@ void Controller::TickEvent() {
 
 void Controller::SaveEvent() {
   if (View::GetInstance()->GetGameState() == GameState::kGame) {
-    Model::GetInstance()->SaveToFile();
+    SaveToFile();
   }
 }
 
 ControllerTypes::Key Controller::TranslateKeyCode(int key_code) {
-  if (key_code == Qt::Key::Key_Escape || key_code == Qt::Key::Key_Exit ||
-      key_code == Qt::Key::Key_Menu) {
-    return ControllerTypes::Key::kExit;
-  }
-  if (key_code == GetInstance()->settings_.value("kLeft").toInt()) {
-    return ControllerTypes::Key::kLeft;
-  }
-  if (key_code == GetInstance()->settings_.value("kRight").toInt()) {
-    return ControllerTypes::Key::kRight;
-  }
-  if (key_code == GetInstance()->settings_.value("kJump").toInt()) {
-    return ControllerTypes::Key::kJump;
-  }
-  if (key_code == GetInstance()->settings_.value("kShowInventory").toInt()) {
-    return ControllerTypes::Key::kShowInventory;
-  }
-  switch (key_code) {
-    case Qt::Key::Key_1:
-      return ControllerTypes::Key::kInventory0;
-    case Qt::Key::Key_2:
-      return ControllerTypes::Key::kInventory1;
-    case Qt::Key::Key_3:
-      return ControllerTypes::Key::kInventory2;
-    case Qt::Key::Key_4:
-      return ControllerTypes::Key::kInventory3;
-    case Qt::Key::Key_5:
-      return ControllerTypes::Key::kInventory4;
-    case Qt::Key::Key_6:
-      return ControllerTypes::Key::kInventory5;
-    case Qt::Key::Key_7:
-      return ControllerTypes::Key::kInventory6;
-    case Qt::Key::Key_8:
-      return ControllerTypes::Key::kInventory7;
-    case Qt::Key::Key_9:
-      return ControllerTypes::Key::kInventory8;
-    case Qt::Key::Key_0:
-      return ControllerTypes::Key::kInventory9;
-    default:
-      return ControllerTypes::Key::kUnused;
+  for (int key = 0; key < ControllerTypes::kKeysCount; ++key) {
+    if (key_code == GetInstance()->settings_.value(ControllerTypes::kKeyNames[key]).toInt()) {
+      return static_cast<ControllerTypes::Key>(key);
+    }
   }
   return ControllerTypes::Key::kUnused;
 }
 
 void Controller::KeyPress(int key) {
-  ParseInventoryKey(TranslateKeyCode(key));
   pressed_keys_.insert(TranslateKeyCode(key));
 }
 
