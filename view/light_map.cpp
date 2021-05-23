@@ -59,7 +59,7 @@ void LightMap::CalculateRegion(const QRect& region) {
 }
 
 void LightMap::CalculateRegionThread() {
-  while (!thread_stop_) {
+  while (!thread_stop_.load()) {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     std::queue<QPoint> update_queue;
     std::set<QPoint, utils::QPointLexicographicalCompare> removed;
