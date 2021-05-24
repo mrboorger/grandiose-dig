@@ -216,10 +216,10 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   // ---------------------------------------------------------------------------
 
   horizontal_layout_.reset(new QHBoxLayout(this));
-  horizontal_layout_->addStretch(1);
-  horizontal_layout_->addLayout(settings_types_layout_, 2);
-  horizontal_layout_->addWidget(current_settings_.data(), 3);
-  horizontal_layout_->addStretch(1);
+  horizontal_layout_->addStretch(2);
+  horizontal_layout_->addLayout(settings_types_layout_, 5);
+  horizontal_layout_->addWidget(current_settings_.data(), 9);
+  horizontal_layout_->addStretch(2);
 
   Resize(parent->size());
   ChangeLanguage(current_language_);
