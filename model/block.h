@@ -18,6 +18,8 @@ class Block {
     kStone,
     kCoalOre,
     kIronOre,
+    kShimondOre,
+    kFiremondOre,
     kTechnical,
     kTorch,
     kTypesCount,

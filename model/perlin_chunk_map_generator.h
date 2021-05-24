@@ -46,6 +46,7 @@ class PerlinChunkMapGenerator : public AbstractMapGenerator {
 
     void GenerateCaves(Chunk* chunk, QPoint chunk_pos);
     void GenerateOres(Chunk* chunk, QPoint chunk_pos);
+    void GenerateUndergroundDecoration(Chunk* chunk, QPoint chunk_pos);
 
     double PerlinBiomeNoise(double seed);
     static double HeightNoise(double noise);
@@ -68,6 +69,11 @@ class PerlinChunkMapGenerator : public AbstractMapGenerator {
     static constexpr double kIronRate = 0.55;
     static constexpr double kIronScale = 10;
 
+    static constexpr double kShifiremondMainRate = 0.45;
+    static constexpr double kShifiremondLowerRate = 0.2;
+    static constexpr double kShifiremondUpperRate = 0.3;
+    static constexpr double kShifiremondScale = 10;
+
     PerlinNoise1D noise_biome_temperature_;
     PerlinNoise1D noise_hills_;
     PerlinNoise1D noise_stone_;
@@ -76,6 +82,8 @@ class PerlinChunkMapGenerator : public AbstractMapGenerator {
     PerlinNoise2D noise_coal2_;
     PerlinNoise2D noise_iron_;
     PerlinNoise2D noise_iron2_;
+    PerlinNoise2D noise_shimond_;
+    PerlinNoise2D noise_shimond2_;
   };
 
   uint32_t seed_;

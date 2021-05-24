@@ -60,5 +60,7 @@
         <file>resources/sounds/zombie2.mp3</file>
         <file>resources/textures/torch.png</file>
         <file>resources/sounds/music.mp3</file>
+        <file>resources/textures/shimond_ore.png</file>
+        <file>resources/textures/firemond_ore.png</file>
     </qresource>
 </RCC>

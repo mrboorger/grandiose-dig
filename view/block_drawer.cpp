@@ -13,9 +13,10 @@ namespace BlockDrawer {
 namespace {
 
 const std::array<QString, Block::kFrontTypesCount> kFrontNames = {
-    "",         "dirt.png",      "grass.png", "snowy_grass.png",
-    "sand.png", "sandstone.png", "stone.png", "coal_ore.png",
-    "iron_ore", "technical.png", "torch.png"};
+    "",         "dirt.png",        "grass.png",        "snowy_grass.png",
+    "sand.png", "sandstone.png",   "stone.png",        "coal_ore.png",
+    "iron_ore", "shimond_ore.png", "firemond_ore.png", "technical.png",
+    "torch.png"};
 
 const std::array<QString, kBackgroundsCount> kBackgroundNames = {
     "forest_background.png", "sky_background.png", "cave_background.png"};

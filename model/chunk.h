@@ -26,6 +26,11 @@ class Chunk {
 
   void FillWith(Block block);
 
+  static bool IsPositionLegit(QPoint pos) {
+    return (0 <= pos.x() && pos.x() < kWidth) &&
+           (0 <= pos.y() && pos.y() < kHeight);
+  }
+
  private:
   static int BlockIndex(QPoint pos) {
     assert(0 <= pos.x() && pos.x() < kWidth);

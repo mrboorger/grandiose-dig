@@ -21,13 +21,16 @@ PerlinChunkMapGenerator::PerlinRegionGenerator::PerlinRegionGenerator(
       noise_coal_(seed + 3),
       noise_coal2_(seed + 4),
       noise_iron_(seed + 8),
-      noise_iron2_(seed + 9) {}
+      noise_iron2_(seed + 9),
+      noise_shimond_(seed + 11),
+      noise_shimond2_(seed + 12) {}
 
 Chunk PerlinChunkMapGenerator::PerlinRegionGenerator::Generate(
     QPoint chunk_pos) {
   Chunk chunk = LandscapeGeneration(chunk_pos);
   GenerateOres(&chunk, chunk_pos);
   GenerateCaves(&chunk, chunk_pos);
+  GenerateUndergroundDecoration(&chunk, chunk_pos);
   return chunk;
 }
 
@@ -179,6 +182,56 @@ void PerlinChunkMapGenerator::PerlinRegionGenerator::GenerateCaves(
                        kCavesScale * (chunk_pos.y() + y)) > kCavesRate) {
         chunk->GetBlockMutable(QPoint(x, y))
             ->SetFrontType(Block::FrontType::kAir);
+      }
+    }
+  }
+}
+
+namespace {
+bool IsNearBlock(Chunk* chunk, int x, int y, Block::FrontType type) {
+  for (int i = -1; i <= 1; i++) {
+    for (int j = -1; j <= 1; j++) {
+      if (i * j != 0) {
+        continue;
+      }
+      if (Chunk::IsPositionLegit(QPoint(x + i, y + j)) &&
+          chunk->GetBlock(QPoint(x + i, y + j)).GetFrontType() == type) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+}  // namespace
+
+void PerlinChunkMapGenerator::PerlinRegionGenerator::
+    GenerateUndergroundDecoration(Chunk* chunk, QPoint chunk_pos) {
+  for (int x = 0; x < Chunk::kWidth; ++x) {
+    Biome biome = GetBiome(PerlinBiomeNoise(chunk_pos.x() + x));
+    if (biome != Biome::kIcePlains && biome != Biome::kDesert) {
+      continue;
+    }
+    Block::FrontType type =
+        (biome == Biome::kIcePlains ? Block::FrontType::kShimondOre
+                                    : Block::FrontType::kFiremondOre);
+    for (int y = 0; y < Chunk::kHeight; ++y) {
+      if (chunk->GetBlock(QPoint(x, y)).GetFrontType() ==
+          Block::FrontType::kStone) {
+        double shifiremond =
+            abs(noise_shimond_(kShifiremondScale * (chunk_pos.x() + x),
+                               kShifiremondScale * (chunk_pos.y() + y)));
+        if (shifiremond > kShifiremondMainRate) {
+          double shifiremond2 =
+              abs(noise_shimond2_(kShifiremondScale * (chunk_pos.x() + x),
+                                  kShifiremondScale * (chunk_pos.y() + y)));
+          if (shifiremond2 > kShifiremondLowerRate &&
+              shifiremond2 < kShifiremondUpperRate) {
+            if (IsNearBlock(chunk, x, y, Block::FrontType::kAir)) {
+              chunk->SetBlock(QPoint(x, y), Block(type));
+            }
+          }
+        }
       }
     }
   }

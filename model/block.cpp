@@ -32,9 +32,13 @@ const Block::FrontCharacteristics& Block::GetFrontCharacteristics(int32_t id) {
     set(FrontType::kStone, kDefaultBlockCharactestics);
     set(FrontType::kCoalOre, kDefaultBlockCharactestics);
     set(FrontType::kIronOre, kDefaultBlockCharactestics);
+    set(FrontType::kShimondOre,
+        FrontCharacteristics{Light(27, 108, 127, 0), 1, true, false});
+    set(FrontType::kFiremondOre,
+        FrontCharacteristics{Light(127, 36, 22, 0), 1, true, false});
     set(FrontType::kTechnical, kDefaultBlockCharactestics);
     set(FrontType::kTorch,
-        FrontCharacteristics{Light(120, 120, 120, 0), 1, false, false});
+        FrontCharacteristics{Light(120, 120, 120, 0), 1, true, false});
   }
   assert(is_set[id]);
   return characteristics[id];
