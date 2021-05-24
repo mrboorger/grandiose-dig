@@ -38,11 +38,18 @@ class Controller {
 
   void PickItemToPlayer(InventoryItem item);
 
+  void PlaceBlock(QPoint block_coords, Block block);
+
+  void TryCraft(const CraftRecipe& recipe);
+
  private:
   Controller();
 
   void TickEvent();
-  void BreakBlock();
+
+  void BreakBlock(double time);
+  void UseItem();
+
   void StartAttack();
   void PlayerAttack(double time);
 
@@ -52,9 +59,12 @@ class Controller {
   bool CanAttackMob(std::shared_ptr<MovingObject> mob, QPointF player_center,
                     double lower_angle, double upper_angle) const;
 
+  static void ParseInventoryKey(ControllerTypes::Key translated_key);
+
   QTimer tick_timer_;
   std::unordered_set<ControllerTypes::Key> pressed_keys_;
   bool is_pressed_right_mouse_button = false;
+  bool is_pressed_left_mouse_button = false;
 
   std::chrono::time_point<std::chrono::high_resolution_clock> prev_time_ =
       std::chrono::high_resolution_clock::now();

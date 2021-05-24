@@ -75,7 +75,9 @@ set(SOURCES
         view/sound_manager.cpp
         view/texture_atlas.cpp
         view/view.cpp
-        view/view.cpp)
+        view/view.cpp
+        model/all_craft_recipes.cpp
+        model/craft_recipe.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${RESOURCES})
 target_link_libraries(${PROJECT_NAME} ${REQUIRED_LIBS_QUALIFIED})

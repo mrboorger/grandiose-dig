@@ -23,15 +23,18 @@ class Block {
   explicit Block(Type type)
       : type_(type), durability_(GetDefaultDurability()) {}
 
-  bool IsVisible() const { return GetCharactistics(GetId()).is_visible; }
-  Light GetLuminosity() const { return GetCharactistics(GetId()).luminosity; }
-  bool IsOpaque() const { return GetCharactistics(GetId()).is_opaque; }
+  bool IsAir() const { return type_ == Type::kAir; }
+
+  bool IsVisible() const { return GetCharacteristics(GetId()).is_visible; }
+  Light GetLuminosity() const { return GetCharacteristics(GetId()).luminosity; }
+  bool IsOpaque() const { return GetCharacteristics(GetId()).is_opaque; }
   int GetDefaultDurability() const {
-    return GetCharactistics(GetId()).default_durability; }
+    return GetCharacteristics(GetId()).default_durability;
+  }
 
   Type GetType() const { return type_; }
-
   int32_t GetId() const { return static_cast<int32_t>(type_); }
+  int GetRemainingDurabilityPercentage() const;
 
   // returns true, if block is broken
   bool DecreaseDurability(int delta);
@@ -44,12 +47,11 @@ class Block {
     bool is_opaque;
   };
   static constexpr Characteristics kDefaultBlockCharactestics{Light(0, 0, 0, 0),
-                                                              5, true, true};
+                                                              200, true, true};
 
-  static const Characteristics& GetCharactistics(int32_t id);
+  static const Characteristics& GetCharacteristics(int32_t id);
 
   Type type_;
-  // TODO(mrboorger): Make different durability_ of the blocks
   int durability_;
 };
 

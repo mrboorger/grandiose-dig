@@ -76,7 +76,9 @@ void View::paintGL() {
   UpdateLight(QPoint(camera_pos.x(), camera_pos.y()));
   drawer_->DrawMapWithCenter(&painter, camera_pos, rect());
 
-  inventory_drawer_->DrawInventory(&painter);
+  if (is_visible_inventory_) {
+    inventory_drawer_->DrawInventory(&painter);
+  }
 
   // TODO(Wind-Eagle): temporary code; need to make PlayerDrawer
   DrawPlayer(&painter);
@@ -134,6 +136,10 @@ void View::MobSound(MovingObject* object) {
 }
 
 void View::keyPressEvent(QKeyEvent* event) {
+  if (event->key() == Qt::Key_Escape) {
+    is_visible_inventory_ = !is_visible_inventory_;
+    inventory_drawer_->SetCraftMenuVisible(is_visible_inventory_);
+  }
   Controller::GetInstance()->KeyPress(event->key());
 }
 

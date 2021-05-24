@@ -1,24 +1,34 @@
 #include "view/inventory_drawer.h"
 
-#include <QString>
+#include <QHBoxLayout>
+#include <QPushButton>
 #include <QTextItem>
 #include <utility>
 
+#include "view.h"
+
 namespace {
 
-std::array<QString, InventoryItem::kTypesCount> kNames = {"", "dirt.png",
-                                                          "grass.png"};
+const std::array<QString, InventoryItem::kTypesCount> kNames = {"", "dirt.png",
+                                                                "grass.png"};
 std::array<QImage, InventoryItem::kTypesCount> images;
+
+const QString kSelectionBoxName = "selection_box.png";
+QImage selection_box;
 
 }  // namespace
 
 InventoryDrawer::InventoryDrawer(std::shared_ptr<const Inventory> inventory)
-    : inventory_(std::move(inventory)) {
+    : inventory_(std::move(inventory)),
+      craft_menu_(new QScrollArea(View::GetInstance())) {
   LoadInventoryBackground();
+  CreateCraftScrollArea();
+  craft_menu_->setStyleSheet("background-color: rgba(0,0,0,100)");
 }
 
 void InventoryDrawer::DrawInventory(QPainter* painter) {
   painter->drawPixmap(QPoint(0, 0), inventory_background_);
+  DrawSelectionBox(painter);
   for (int i = 0; i < Inventory::kItemsInColumn; ++i) {
     for (int j = 0; j < Inventory::kItemsInRow; ++j) {
       const auto& item = (*inventory_)[i * Inventory::kItemsInRow + j];
@@ -74,4 +84,43 @@ void InventoryDrawer::LoadInventoryBackground() {
           cell_png);
     }
   }
+}
+
+void InventoryDrawer::DrawSelectionBox(QPainter* painter) {
+  if (selection_box.isNull()) {
+    selection_box.load(":/resources/textures/" + kSelectionBoxName);
+  }
+  assert(!selection_box.isNull());
+  painter->drawImage(
+      inventory_->GetSelectedItemNumber() * (kCellSize + kIndentSize), 0,
+      selection_box);
+}
+
+void InventoryDrawer::CreateCraftScrollArea() {
+  craft_menu_->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+  craft_menu_->setGeometry(kMenuRect);
+  craft_menu_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  craft_menu_->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  craft_menu_->setVisible(false);
+
+  auto* layout = new QVBoxLayout(craft_menu_);
+  auto all_craft_recipes = Model::GetInstance()->GetCraftRecipeCollection();
+  for (int i = 0; i < all_craft_recipes->Size(); i += kCraftsInRow) {
+    auto row_layout = new QHBoxLayout();
+    for (int j = 0; j < kCraftsInRow && i + j < all_craft_recipes->Size();
+         ++j) {
+      const CraftRecipe& recipe = all_craft_recipes->GetRecipe(i + j);
+      auto* button = new QPushButton;
+      button->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+      button->setIcon(QIcon(":/resources/textures/" +
+                            kNames[recipe.GetResultingItem().GetId()]));
+      button->connect(button, &QPushButton::clicked, &recipe,
+                      &CraftRecipe::TryCraft);
+      row_layout->addWidget(button);
+    }
+    layout->addLayout(row_layout);
+  }
+  auto* widget = new QWidget;
+  widget->setLayout(layout);
+  craft_menu_->setWidget(widget);
 }

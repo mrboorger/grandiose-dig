@@ -4,7 +4,7 @@
 #include <array>
 #include <cassert>
 
-const Block::Characteristics& Block::GetCharactistics(int32_t id) {
+const Block::Characteristics& Block::GetCharacteristics(int32_t id) {
   static std::array<Characteristics, kTypesCount> characteristics;
   static std::array<bool, kTypesCount> is_set{};
   static bool is_initialized = false;
@@ -23,6 +23,11 @@ const Block::Characteristics& Block::GetCharactistics(int32_t id) {
   }
   assert(is_set[id]);
   return characteristics[id];
+}
+
+int Block::GetRemainingDurabilityPercentage() const {
+  int default_durability = GetDefaultDurability();
+  return (100 * durability_ + default_durability - 1) / default_durability;
 }
 
 bool Block::DecreaseDurability(int delta) {
