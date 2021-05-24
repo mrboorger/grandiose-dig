@@ -12,16 +12,17 @@ class Block {
     kAir = kFirst,
     kDirt,
     kGrass,
+    kStone,
     kSnowyGrass,
     kSand,
     kSandstone,
-    kStone,
     kCoalOre,
     kIronOre,
     kShimondOre,
     kFiremondOre,
     kTechnical,
-    kTorch,
+    kYellowLight,
+    kBlueLight,
     kTypesCount,
   };
 
@@ -92,7 +93,7 @@ class Block {
   };
 
   static constexpr FrontCharacteristics kDefaultBlockCharactestics{
-      Light(0, 0, 0, 0), 5, true, true};
+      Light(0, 0, 0, 0), 200, true, true};
 
   static const FrontCharacteristics& GetFrontCharacteristics(int32_t id);
   static const BackCharacteristics& GetBackCharacteristics(int32_t id);

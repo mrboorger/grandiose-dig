@@ -83,8 +83,9 @@ void Controller::UseItem() {
       View::GetInstance()->GetLightMap()->UpdateLight(block_coords);
       Model::GetInstance()->GetPlayer()->UseItem();
     }
+  } else if (item.IsPotion()) {
+    Model::GetInstance()->GetPlayer()->UsePotion();
   }
-  // UsePotion?
   Model::GetInstance()->GetPlayer()->SetUseItemCooldownInterval();
 }
 

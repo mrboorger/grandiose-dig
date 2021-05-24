@@ -6,10 +6,6 @@
 
 Inventory::Inventory() {
   // TODO(mrboorger): it is a temporary code
-  items_[0] = InventoryItem(InventoryItem::Type::kBlockGrass, 1);
-  items_[1] = InventoryItem(InventoryItem::Type::kBlockGrass, 2);
-  items_[2] = InventoryItem(InventoryItem::Type::kBlockGrass, 1);
-  items_[3] = InventoryItem(InventoryItem::Type::kBlockGrass, 1);
 }
 
 void Inventory::AddItem(InventoryItem item) {

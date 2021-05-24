@@ -15,7 +15,9 @@ void Model::MoveObjects(
     const std::unordered_set<ControllerTypes::Key>& pressed_keys, double time) {
   // TODO(Wind-Eagle): this is temporary code.
   if (player_->IsDead()) {
-    exit(0);
+    player_->DeleteAllEffects();
+    player_->SetHealth(constants::kPlayerHealth);
+    player_->SetPosition(QPointF(0.0, 90.0));
   }
   for (auto i = mobs_.begin(), last = mobs_.end(); i != last;) {
     if ((*i)->IsDead()) {
