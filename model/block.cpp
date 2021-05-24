@@ -37,8 +37,10 @@ const Block::FrontCharacteristics& Block::GetFrontCharacteristics(int32_t id) {
     set(FrontType::kFiremondOre,
         FrontCharacteristics{Light(127, 36, 22, 0), 3000, true, false});
     set(FrontType::kTechnical, kDefaultBlockCharactestics);
-    set(FrontType::kTorch,
-        FrontCharacteristics{Light(120, 120, 120, 0), 1, true, false});
+    set(FrontType::kYellowLight,
+        FrontCharacteristics{Light(255, 255, 144, 0), 500, true, false});
+    set(FrontType::kBlueLight,
+        FrontCharacteristics{Light(144, 255, 255, 0), 500, true, false});
   }
   assert(is_set[id]);
   return characteristics[id];

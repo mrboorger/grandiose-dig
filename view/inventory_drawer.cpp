@@ -22,7 +22,8 @@ const std::array<QString, InventoryItem::kTypesCount> kNames = {
     "shimond_ore.png",
     "firemond_ore.png",
     "technical.png",
-    "torch.png",
+    "yellow_light.png",
+    "blue_light.png",
     "",
     "speed_potion.png",
     "strength_potion.png"};

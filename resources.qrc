@@ -72,11 +72,12 @@
         <file>resources/sounds/zombie_lord2.mp3</file>
         <file>resources/sounds/zombie1.mp3</file>
         <file>resources/sounds/zombie2.mp3</file>
-        <file>resources/textures/torch.png</file>
         <file>resources/sounds/music.mp3</file>
         <file>resources/textures/shimond_ore.png</file>
         <file>resources/textures/firemond_ore.png</file>
         <file>resources/textures/speed_potion.png</file>
         <file>resources/textures/strength_potion.png</file>
+        <file>resources/textures/blue_light.png</file>
+        <file>resources/textures/yellow_light.png</file>
     </qresource>
 </RCC>

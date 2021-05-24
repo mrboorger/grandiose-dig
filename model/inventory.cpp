@@ -6,7 +6,6 @@
 
 Inventory::Inventory() {
   // TODO(mrboorger): it is a temporary code
-  items_[0] = InventoryItem(InventoryItem::Type::kSpeedPotion, 1);
 }
 
 void Inventory::AddItem(InventoryItem item) {

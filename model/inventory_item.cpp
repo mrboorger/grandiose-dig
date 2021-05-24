@@ -21,7 +21,8 @@ const std::array<InventoryItem,
                         InventoryItem(InventoryItem::Type::kBlockShimondOre),
                         InventoryItem(InventoryItem::Type::kBlockFiremondOre),
                         InventoryItem(InventoryItem::Type::kBlockTechnical),
-                        InventoryItem(InventoryItem::Type::kBlockTorch)};
+                        InventoryItem(InventoryItem::Type::kBlockYellowLight),
+                        InventoryItem(InventoryItem::Type::kBlockBlueLight)};
 
 const std::array<Block::FrontType, Block::kFrontTypesCount> kBlockTypeFromItem =
     {Block::FrontType::kAir,         Block::FrontType::kDirt,
@@ -30,7 +31,7 @@ const std::array<Block::FrontType, Block::kFrontTypesCount> kBlockTypeFromItem =
      Block::FrontType::kSandstone,   Block::FrontType::kCoalOre,
      Block::FrontType::kIronOre,     Block::FrontType::kShimondOre,
      Block::FrontType::kFiremondOre, Block::FrontType::kTechnical,
-     Block::FrontType::kTorch};
+     Block::FrontType::kYellowLight, Block::FrontType::kBlueLight};
 
 }  // namespace
 

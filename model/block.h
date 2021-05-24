@@ -21,7 +21,8 @@ class Block {
     kShimondOre,
     kFiremondOre,
     kTechnical,
-    kTorch,
+    kYellowLight,
+    kBlueLight,
     kTypesCount,
   };
 

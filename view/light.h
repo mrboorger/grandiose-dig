@@ -1,6 +1,7 @@
 #ifndef VIEW_LIGHT_H_
 #define VIEW_LIGHT_H_
 
+#include <algorithm>
 #include <array>
 #include <cstdint>
 
