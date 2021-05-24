@@ -1,6 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>resources/images/main_menu_background.png</file>
+        <file>resources/images/seed_icon.png</file>
+        <file>resources/images/world_name_icon.png</file>
         <file>resources/fonts/ComicSansMS3.ttf</file>
         <file>resources/textures/dirt.png</file>
         <file>resources/textures/grass.png</file>

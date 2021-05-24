@@ -6,7 +6,7 @@
 enum class MenuButtonType {
   kBasic,
   kTransparentExpanding,
-  kExpanding,
+  kEmpty,
   kMenuButtonTypes
 };
 
@@ -30,7 +30,7 @@ const QString kBasicStyles[static_cast<int>(MenuButtonType::kMenuButtonTypes)]{
     "   background-color: #838581;"
     "   outline: none;"
     "}",
-    // -------------Expanding----------------
+    // --------TransparentExpanding-----------
     "QPushButton {"
     "   font-family: Comic Sans MS;"
     "   font-size: 70px;"
@@ -51,21 +51,21 @@ const QString kBasicStyles[static_cast<int>(MenuButtonType::kMenuButtonTypes)]{
     "   border: none;"
     "   outline: none;"
     "}",
-    // ---------TransparentExpanding----------
+    // --------------Empty--------------------
     "QPushButton {"
-    "   font-family: Comic Sans MS;"
-    "   font-size: 70px;"
-    "   color: black;"
-    "   background-color: #7a3916;"
+    "   background: transparent;"
+    "   border: none;"
     "}"
     "QPushButton:hover {"
-    "   font-size: 90px;"
-    "   color: #f7e300;"
+    "   background-color: rgba(131, 133, 129, 100);"
+    "   border: none;"
+    "   border-radius: 10px;"
+    "   outline: none;"
     "}"
     "QPushButton:hover:pressed {"
+    "   background-color: rgba(131, 133, 129, 100);"
     "   border: none;"
-    "   color: #f7e300;"
-    "   background-color: #7a3916;"
+    "   outline: none;"
     "}"};
 
 }  // namespace menu_button_styles

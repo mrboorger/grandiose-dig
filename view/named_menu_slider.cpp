@@ -7,6 +7,7 @@ NamedMenuSlider::NamedMenuSlider(const QString& text,
   label_.reset(new QLabel(text, this));
   slider_.reset(new QSlider(orientation, this));
   label_->setObjectName("name");
+  label_->setAutoFillBackground(true);
   label_->setAlignment(Qt::AlignCenter);
   label_->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   layout_->addWidget(label_.data());

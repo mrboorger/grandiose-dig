@@ -86,6 +86,7 @@ void View::ChangeGameState(GameState new_state) {
     case GameState::kGame:
       if (is_visible_inventory_) {
         SwitchInventory();
+        paintGL();
       }
       break;
     default:

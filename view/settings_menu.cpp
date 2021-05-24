@@ -12,26 +12,26 @@ SettingsMenu::SettingsMenu(QWidget* parent)
       transparent_background_(false),
       listening_to_press_event_(false) {
   settings_.reset(new QSettings);
-  if (!settings_->contains(ControllerTypes::kKeyNames[0])) {
-    settings_->setValue(ControllerTypes::kKeyNames[0], Qt::Key::Key_Left);
+  if (!settings_->contains("controller_key0")) {
+    settings_->setValue("controller_key0", Qt::Key::Key_Left);
   }
-  if (!settings_->contains(ControllerTypes::kKeyNames[1])) {
-    settings_->setValue(ControllerTypes::kKeyNames[1], Qt::Key::Key_Right);
+  if (!settings_->contains("controller_key1")) {
+    settings_->setValue("controller_key1", Qt::Key::Key_Right);
   }
-  if (!settings_->contains(ControllerTypes::kKeyNames[2])) {
-    settings_->setValue(ControllerTypes::kKeyNames[2], Qt::Key::Key_Space);
+  if (!settings_->contains("controller_key2")) {
+    settings_->setValue("controller_key2", Qt::Key::Key_Space);
   }
-  if (!settings_->contains(ControllerTypes::kKeyNames[3])) {
-    settings_->setValue(ControllerTypes::kKeyNames[3], Qt::Key::Key_I);
+  if (!settings_->contains("controller_key3")) {
+    settings_->setValue("controller_key3", Qt::Key::Key_I);
   }
   for (int index = 0; index < 10; ++index) {
-    if (!settings_->contains(ControllerTypes::kKeyNames[4 + index])) {
-      settings_->setValue(ControllerTypes::kKeyNames[4 + index],
+    if (!settings_->contains("controller_key" + QString::number(4 + index))) {
+      settings_->setValue("controller_key" + QString::number(4 + index),
                           Qt::Key::Key_1 + (index == 9 ? -1 : index));
     }
   }
-  if (!settings_->contains(ControllerTypes::kKeyNames[14])) {
-    settings_->setValue(ControllerTypes::kKeyNames[14], Qt::Key::Key_Escape);
+  if (!settings_->contains("controller_key14")) {
+    settings_->setValue("controller_key14", Qt::Key::Key_Escape);
   }
 
   current_language_ = settings_->value("language", "en").toString();
@@ -158,8 +158,7 @@ SettingsMenu::SettingsMenu(QWidget* parent)
     auto on_change_key_button_click = [this, index]() {
       setFocus();
       listening_to_press_event_ = true;
-      controller_type_to_change_ = ControllerTypes::kKeyNames[index];
-      button_to_update_on_press_event_ = change_key_buttons_[index];
+      controller_key_to_change_ = "controller_key" + QString::number(index);
     };
     connect(change_key_buttons_[index], &QPushButton::clicked, this,
             on_change_key_button_click);
@@ -256,10 +255,10 @@ void SettingsMenu::ReTranslateButtons() {
   }
   change_key_buttons_.back()->setText("Exit");
   for (int index = 0; index < ControllerTypes::kKeysCount; ++index) {
-    int key = settings_->value(ControllerTypes::kKeyNames[index]).toInt();
-    if (temporary_settings_changes_.count(ControllerTypes::kKeyNames[index])) {
-      key = temporary_settings_changes_[ControllerTypes::kKeyNames[index]]
-                .toInt();
+    QString key_str = "controller_key" + QString::number(index);
+    int key = settings_->value(key_str).toInt();
+    if (temporary_settings_changes_.count(key_str)) {
+      key = temporary_settings_changes_[key_str].toInt();
     }
     change_key_buttons_[index]->setText(change_key_buttons_[index]->text() +
                                         ": " + QKeySequence(key).toString());
@@ -291,12 +290,8 @@ void SettingsMenu::ChangeLanguage(const QString& language) {
 
 void SettingsMenu::keyPressEvent(QKeyEvent* event) {
   if (listening_to_press_event_) {
-    temporary_settings_changes_[controller_type_to_change_] = event->key();
+    temporary_settings_changes_[controller_key_to_change_] = event->key();
     listening_to_press_event_ = false;
-    QString prev_key =
-        button_to_update_on_press_event_->text().split(" ").back();
-    button_to_update_on_press_event_->setText(
-        button_to_update_on_press_event_->text().replace(
-            prev_key, QKeySequence(event->key()).toString()));
+    ReTranslateButtons();
   }
 }

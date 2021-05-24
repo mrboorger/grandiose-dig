@@ -268,7 +268,10 @@ void Controller::SaveEvent() {
 
 ControllerTypes::Key Controller::TranslateKeyCode(int key_code) {
   for (int key = 0; key < ControllerTypes::kKeysCount; ++key) {
-    if (key_code == GetInstance()->settings_.value(ControllerTypes::kKeyNames[key]).toInt()) {
+    if (key_code ==
+        GetInstance()
+            ->settings_.value("controller_key" + QString::number(key))
+            .toInt()) {
       return static_cast<ControllerTypes::Key>(key);
     }
   }

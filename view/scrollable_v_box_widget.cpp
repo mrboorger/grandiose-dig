@@ -9,8 +9,8 @@ ScrollableVBoxWidget::ScrollableVBoxWidget(QWidget *parent) : QWidget(parent) {
   widgets_layout_ = new QVBoxLayout(widgets_.data());
 
   widgets_->setObjectName("widgets");
+  widgets_layout_->setAlignment(Qt::AlignTop);
   scroll_area_->setAlignment(Qt::AlignRight);
-  scroll_area_->setBackgroundRole(QPalette::Dark);
   scroll_area_->setWidgetResizable(true);
   scroll_area_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   scroll_area_->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);

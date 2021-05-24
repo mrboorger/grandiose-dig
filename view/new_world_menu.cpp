@@ -3,12 +3,14 @@
 #include <QIntValidator>
 #include <QPainter>
 
+#include "utils.h"
+
 namespace {
 
 const QString kLineEditLabelStyle =
     "QLabel {"
     "   font-family: Comic Sans MS;"
-    "   font-size: 40px;"
+    "   font-size: 50px;"
     "   color: black;"
     "   background-color: transparent;"
     "}";
@@ -16,11 +18,21 @@ const QString kLineEditLabelStyle =
 }  // namespace
 
 NewWorldMenu::NewWorldMenu(QWidget *parent) : AbstractMenu(parent) {
+  back_button_.reset(new MenuButton(this));
+  auto on_back_button_click = [this]() {
+    world_name_line_edit_->clear();
+    seed_line_edit_->clear();
+    emit(GameStateChanged(GameState::kMainMenu));
+  };
+  connect(back_button_.data(), &QPushButton::clicked, this,
+          on_back_button_click);
   create_world_button_.reset(new MenuButton(this));
   auto on_create_world_button_click = [this]() {
     if (!world_name_line_edit_->text().isEmpty()) {
       emit(CreateNewWorldSignal(world_name_line_edit_->text(),
-                                 seed_line_edit_->text().toUInt()));
+                                seed_line_edit_->text().toUInt()));
+      world_name_line_edit_->clear();
+      seed_line_edit_->clear();
       emit(GameStateChanged(GameState::kGame));
     }
   };
@@ -46,15 +58,43 @@ NewWorldMenu::NewWorldMenu(QWidget *parent) : AbstractMenu(parent) {
   settings_inputs_layout_->addWidget(world_name_line_edit_.data());
   settings_inputs_layout_->addWidget(seed_line_edit_.data());
 
+  settings_input_buttons_layout_.reset(new QVBoxLayout);
+  random_world_name_button_.reset(new MenuButton(this, MenuButtonType::kEmpty));
+  auto on_random_world_name_button_click = [this]() {
+    world_name_line_edit_->setText("World" + QString::number(utils::random()));
+  };
+  connect(random_world_name_button_.data(), &QPushButton::clicked, this,
+          on_random_world_name_button_click);
+  auto world_name_pixmap = QPixmap(":/resources/images/world_name_icon.png");
+  random_world_name_button_->setIcon(QIcon(world_name_pixmap));
+  random_world_name_button_->setIconSize(world_name_pixmap.size());
+
+  random_seed_button_.reset(new MenuButton(this, MenuButtonType::kEmpty));
+  auto on_random_seed_button_click = [this]() {
+    seed_line_edit_->setText(QString::number(utils::random()));
+  };
+  connect(random_seed_button_.data(), &QPushButton::clicked, this,
+          on_random_seed_button_click);
+  auto seed_pixmap = QPixmap(":/resources/images/seed_icon.png");
+  random_seed_button_->setIcon(QIcon(seed_pixmap));
+  random_seed_button_->setIconSize(seed_pixmap.size());
+
+  settings_input_buttons_layout_->addWidget(random_world_name_button_.data());
+  settings_input_buttons_layout_->addWidget(random_seed_button_.data());
+
   settings_layout_.reset(new QHBoxLayout);
-  settings_layout_->addLayout(settings_names_layout_.data());
-  settings_layout_->addLayout(settings_inputs_layout_.data());
+  settings_layout_->addLayout(settings_names_layout_.data(), 2);
+  settings_layout_->addLayout(settings_inputs_layout_.data(), 7);
+  settings_layout_->addLayout(settings_input_buttons_layout_.data(), 1);
+  buttons_layout_.reset(new QHBoxLayout);
+  buttons_layout_->addWidget(back_button_.data());
+  buttons_layout_->addWidget(create_world_button_.data());
 
   horizontal_layout_.reset(new QHBoxLayout(this));
   vertical_layout_ = new QVBoxLayout;
   vertical_layout_->addStretch(2);
   vertical_layout_->addLayout(settings_layout_.data());
-  vertical_layout_->addWidget(create_world_button_.data());
+  vertical_layout_->addLayout(buttons_layout_.data());
   vertical_layout_->addStretch(1);
   horizontal_layout_->addStretch(2);
   horizontal_layout_->addLayout(vertical_layout_, 4);
@@ -67,10 +107,11 @@ NewWorldMenu::NewWorldMenu(QWidget *parent) : AbstractMenu(parent) {
 void NewWorldMenu::Resize(const QSize &size) { QWidget::resize(size); }
 
 void NewWorldMenu::ReTranslateButtons() {
-  world_name_label_->setText(tr("World name:"));
-  seed_label_->setText(tr("Seed:"));
+  world_name_label_->setText(tr("Name") + ": ");
+  seed_label_->setText(tr("Seed") + ": ");
   seed_label_->setMinimumWidth(world_name_label_->width());
-  create_world_button_->setText("Create world");
+  back_button_->setText(tr("Back"));
+  create_world_button_->setText(tr("Create"));
 }
 
 void NewWorldMenu::paintEvent(QPaintEvent *event) {

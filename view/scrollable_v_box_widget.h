@@ -10,7 +10,10 @@
 namespace scrollable_v_box_layout_styles {
 
 const QString kBasicStyle =
-    "QWidget {"
+    "QWidget#widgets {"
+    "   background-color: transparent;"
+    "}"
+    "QScrollArea {"
     "   background-color: transparent;"
     "}"
     "QScrollBar:vertical {"

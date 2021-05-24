@@ -48,8 +48,7 @@ class SettingsMenu final : public AbstractMenu {
   std::map<QString, QVariant> temporary_settings_changes_;
 
   bool listening_to_press_event_;
-  QString controller_type_to_change_;
-  MenuButton* button_to_update_on_press_event_;
+  QString controller_key_to_change_;
 
   QString current_language_;
   QScopedPointer<QSettings> settings_;
