@@ -142,11 +142,14 @@ void View::DamageDealt(MovingObject* object) {
 }
 
 void View::BecameDead(MovingObject* object) {
-  int id = static_cast<Mob*>(object)->GetId();
-  sound_manager_->PlaySound(
-      SoundManager::SoundIndex(SoundManager::Sound::kMob, id,
-                               SoundManager::MobSound::kDeath),
-      GetSoundVolume(object));
+  auto mob = dynamic_cast<Mob*>(object);
+  if (mob) {
+    int id = mob->GetId();
+    sound_manager_->PlaySound(
+        SoundManager::SoundIndex(SoundManager::Sound::kMob, id,
+                                 SoundManager::MobSound::kDeath),
+        GetSoundVolume(object));
+  }
 }
 
 void View::MobSound(MovingObject* object) {

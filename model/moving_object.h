@@ -43,6 +43,8 @@ class MovingObject {
     damage_acceleration_ = damage_acceleration;
   }
 
+  void SetPosition(QPointF pos) { pos_ = pos; }
+
   void SetParamaters(const MobParameters& parameters) {
     damage_ = parameters.damage_;
     damage_acceleration_ = parameters.damage_acceleration_;
@@ -102,6 +104,7 @@ class MovingObject {
 
   void AddEffect(Effect effect);
   void DeleteEffect(Effect::Type type);
+  void DeleteAllEffects() { effects_.clear(); }
 
  protected:
   MovingObject(QPointF pos, QPointF size);
