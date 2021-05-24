@@ -28,7 +28,8 @@ NewWorldMenu::NewWorldMenu(QWidget *parent) : AbstractMenu(parent) {
           on_back_button_click);
   create_world_button_.reset(new MenuButton(this));
   auto on_create_world_button_click = [this]() {
-    if (!world_name_line_edit_->text().isEmpty()) {
+    if (!world_name_line_edit_->text().isEmpty() &&
+        !seed_line_edit_->text().isEmpty()) {
       emit(CreateNewWorldSignal(world_name_line_edit_->text(),
                                 seed_line_edit_->text().toUInt()));
       world_name_line_edit_->clear();

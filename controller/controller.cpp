@@ -27,6 +27,7 @@ Controller::Controller() : tick_timer_(), save_timer_() {
   Model* model = Model::GetInstance();
   connect(view, &View::CreateNewWorldSignal, this, &Controller::CreateNewWorld);
   connect(view, &View::LoadWorldSignal, this, &Controller::LoadFromFile);
+  connect(view, &View::ChangeGameStateSignal, this, &Controller::ChangeGameState);
 
   tick_timer_.callOnTimeout([this]() { TickEvent(); });
   tick_timer_.start(constants::kTickDurationMsec);
@@ -244,6 +245,11 @@ void Controller::TickEvent() {
     double time =
         std::chrono::duration_cast<std::chrono::milliseconds>(cur - prev_time_)
             .count();
+    if (last_menu_time_ > prev_time_) {
+      time = std::chrono::duration_cast<std::chrono::milliseconds>(
+                 last_menu_time_ - prev_time_)
+                 .count();
+    }
     prev_time_ = cur;
     Model::GetInstance()->GetPlayer()->DecItemUsingCooldownInterval(time);
     Model::GetInstance()->MoveObjects(pressed_keys_, time);
@@ -342,4 +348,11 @@ void Controller::ParseInventoryKey(ControllerTypes::Key translated_key) {
 
 void Controller::TryCraft(const CraftRecipe& recipe) {
   Model::GetInstance()->GetPlayer()->TryCraft(recipe);
+}
+
+void Controller::ChangeGameState(GameState state) {
+  if (state != GameState::kGame) {
+    last_menu_time_ = std::chrono::high_resolution_clock::now();
+  }
+  View::GetInstance()->ChangeGameState(state);
 }

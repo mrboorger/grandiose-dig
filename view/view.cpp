@@ -34,31 +34,31 @@ View::View()
 
   main_menu_.reset(new MainMenu(this));
   connect(main_menu_.data(), &AbstractMenu::GameStateChanged, this,
-          &View::ChangeGameState);
+          &View::ChangeGameStateSignal);
   main_menu_->setVisible(true);
 
   new_world_menu_.reset(new NewWorldMenu(this));
   connect(new_world_menu_.data(), &AbstractMenu::GameStateChanged, this,
-          &View::ChangeGameState);
+          &View::ChangeGameStateSignal);
   connect(new_world_menu_.data(), &NewWorldMenu::CreateNewWorldSignal, this,
-          &View::CreateNewWorld);
+          &View::CreateNewWorldSignal);
   new_world_menu_->setVisible(false);
 
   select_world_menu_.reset(new SelectWorldMenu(this));
   connect(select_world_menu_.data(), &AbstractMenu::GameStateChanged, this,
-          &View::ChangeGameState);
+          &View::ChangeGameStateSignal);
   connect(select_world_menu_.data(), &SelectWorldMenu::LoadWorldSignal, this,
-          &View::LoadWorld);
+          &View::LoadWorldSignal);
   select_world_menu_->setVisible(false);
 
   pause_menu_.reset(new PauseMenu(this));
   connect(pause_menu_.data(), &AbstractMenu::GameStateChanged, this,
-          &View::ChangeGameState);
+          &View::ChangeGameStateSignal);
   pause_menu_->setVisible(false);
 
   settings_menu_.reset(new SettingsMenu(this));
   connect(settings_menu_.data(), &AbstractMenu::GameStateChanged, this,
-          &View::ChangeGameState);
+          &View::ChangeGameStateSignal);
   connect(settings_menu_.data(), &SettingsMenu::SettingsChanged, this,
           &View::UpdateSettings);
   settings_menu_->setVisible(false);
@@ -299,16 +299,6 @@ QPoint View::GetBlockCoordUnderCursor() const {
 
 QPointF View::GetTopLeftWindowCoord() const {
   return camera_.GetPoint() - QPointF(rect().center()) / constants::kBlockSz;
-}
-
-void View::CreateNewWorld(const QString& name, uint32_t seed) {
-  emit(CreateNewWorldSignal(name, seed));
-  should_initialize_drawer_ = true;
-}
-
-void View::LoadWorld(const QString& world_name) {
-  emit(LoadWorldSignal(world_name));
-  should_initialize_drawer_ = true;
 }
 
 void View::UpdateLight(QPoint camera_pos) {

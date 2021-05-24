@@ -53,14 +53,14 @@ class View : public QOpenGLWidget {
 
   void SwitchInventory();
 
+  void ChangeGameState(GameState new_state);
+
  signals:
   void CreateNewWorldSignal(const QString& name, uint32_t seed);
   void LoadWorldSignal(const QString& world_name);
+  void ChangeGameStateSignal(GameState state);
 
  public slots:
-  void CreateNewWorld(const QString& name, uint32_t seed);
-  void LoadWorld(const QString& world_name);
-  void ChangeGameState(GameState new_state);
   void UpdateSettings();
 
  private slots:

@@ -43,6 +43,8 @@ class Controller : public QObject {
 
   void PickItemToPlayer(InventoryItem item);
 
+  void ChangeGameState(GameState state);
+
  public slots:
   void CreateNewWorld(const QString& world_name, uint32_t generator_seed);
   void LoadFromFile(const QString& file_name);
@@ -84,6 +86,8 @@ class Controller : public QObject {
   bool is_pressed_left_mouse_button = false;
 
   std::chrono::time_point<std::chrono::high_resolution_clock> prev_time_ =
+      std::chrono::high_resolution_clock::now();
+  std::chrono::time_point<std::chrono::high_resolution_clock> last_menu_time_ =
       std::chrono::high_resolution_clock::now();
 };
 
