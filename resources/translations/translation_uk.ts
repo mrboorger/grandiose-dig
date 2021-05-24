@@ -27,14 +27,32 @@
 <context>
     <name>NewWorldMenu</name>
     <message>
-        <location filename="../../view/new_world_menu.cpp" line="70"/>
         <source>World name:</source>
-        <translation>Світова назва:</translation>
+        <translation type="vanished">Світова назва:</translation>
     </message>
     <message>
-        <location filename="../../view/new_world_menu.cpp" line="71"/>
         <source>Seed:</source>
-        <translation>Seed:</translation>
+        <translation type="vanished">Seed:</translation>
+    </message>
+    <message>
+        <location filename="../../view/new_world_menu.cpp" line="111"/>
+        <source>Name</source>
+        <translation>Назва</translation>
+    </message>
+    <message>
+        <location filename="../../view/new_world_menu.cpp" line="112"/>
+        <source>Seed</source>
+        <translation>Seed</translation>
+    </message>
+    <message>
+        <location filename="../../view/new_world_menu.cpp" line="114"/>
+        <source>Back</source>
+        <translation>Назад</translation>
+    </message>
+    <message>
+        <location filename="../../view/new_world_menu.cpp" line="115"/>
+        <source>Create</source>
+        <translation>Створити</translation>
     </message>
 </context>
 <context>
@@ -58,67 +76,67 @@
 <context>
     <name>SettingsMenu</name>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="238"/>
+        <location filename="../../view/settings_menu.cpp" line="237"/>
         <source>General</source>
         <translation>Загальні</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="239"/>
+        <location filename="../../view/settings_menu.cpp" line="238"/>
         <source>Controls</source>
         <translation>Управління</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="240"/>
+        <location filename="../../view/settings_menu.cpp" line="239"/>
         <source>Language</source>
         <translation>Мова</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="241"/>
+        <location filename="../../view/settings_menu.cpp" line="240"/>
         <source>Exit</source>
         <translation>Вихід</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="242"/>
+        <location filename="../../view/settings_menu.cpp" line="241"/>
         <source>Save and exit</source>
         <translation>Зберегти і вийти</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="244"/>
+        <location filename="../../view/settings_menu.cpp" line="243"/>
         <source>General volume</source>
         <translation>Загальна гучність</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="245"/>
+        <location filename="../../view/settings_menu.cpp" line="244"/>
         <source>Music volume</source>
         <translation>Гучність музики</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="246"/>
+        <location filename="../../view/settings_menu.cpp" line="245"/>
         <source>Sounds volume</source>
         <translation>Гучність звуків</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="249"/>
+        <location filename="../../view/settings_menu.cpp" line="248"/>
         <source>Move left</source>
         <translation>Рухатися вліво</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="250"/>
+        <location filename="../../view/settings_menu.cpp" line="249"/>
         <source>Move right</source>
         <translation>Рухатися вправо</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="251"/>
+        <location filename="../../view/settings_menu.cpp" line="250"/>
         <source>Jump</source>
         <translation>Стрибок</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="252"/>
+        <location filename="../../view/settings_menu.cpp" line="251"/>
         <source>Show/Hide inventory</source>
         <translation>Показати/Cховати інвентар</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="254"/>
+        <location filename="../../view/settings_menu.cpp" line="253"/>
         <source>Select slot </source>
         <translation>Взяти предмет </translation>
     </message>
@@ -135,22 +153,22 @@
         <translation type="vanished">Стрибок: </translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="268"/>
+        <location filename="../../view/settings_menu.cpp" line="267"/>
         <source>English</source>
         <translation>English</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="269"/>
+        <location filename="../../view/settings_menu.cpp" line="268"/>
         <source>Русский</source>
         <translation>Русский</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="270"/>
+        <location filename="../../view/settings_menu.cpp" line="269"/>
         <source>Deutsche</source>
         <translation>Deutsche</translation>
     </message>
     <message>
-        <location filename="../../view/settings_menu.cpp" line="271"/>
+        <location filename="../../view/settings_menu.cpp" line="270"/>
         <source>Українська</source>
         <translation>Українська (обрана)</translation>
     </message>
