@@ -8,6 +8,7 @@
 
 #include "model/constants.h"
 #include "view/background_atlas.h"
+#include "view/block_drawer.h"
 #include "view/gl_func.h"
 #include "view/texture_atlas.h"
 
@@ -64,7 +65,10 @@ void GLMapDrawer::DrawMapWithCenterImpl(QPainter* painter, const QPointF& pos,
       auto* mesh = GetMesh(QPoint(x, y));
       mesh->bind();
 
-      shader_.setUniformValue("player_x", static_cast<float>(pos.x()));
+      shader_.setUniformValue("player_pos", QPointF(pos.x(), pos.y() / 10.0));
+      shader_.setUniformValue(
+          "tex_height", static_cast<GLfloat>(BlockDrawer::kBackgroundHeight) /
+                            BackgroundAtlas::kPixmapHeight);
       for (int i = 0, shift = 0; i < kAttribsCount; ++i) {
         shift += kBackgroundStrides[i];
         gl->glEnableVertexAttribArray(i);
@@ -79,7 +83,10 @@ void GLMapDrawer::DrawMapWithCenterImpl(QPainter* painter, const QPointF& pos,
                          nullptr);
       backgrounds_.release();
 
-      shader_.setUniformValue("player_x", 0.0F);
+      shader_.setUniformValue("tex_height",
+                              static_cast<GLfloat>(constants::kBlockSz) /
+                                  TextureAtlas::kTextureHeight);
+      shader_.setUniformValue("player_pos", QPointF(0.0, 0.0));
       for (int i = 0, shift = 0; i < kAttribsCount; ++i) {
         shift += kBlockStrides[i];
         gl->glEnableVertexAttribArray(i);

@@ -74,7 +74,8 @@ class GLMapDrawer : public AbstractMapDrawer {
   static constexpr double kBackgroundZ = 1.1;
   static constexpr double kBlocksZ = 1.0;
   static constexpr std::array<const char*, kAttribsCount> kAttribNames{
-      "in_pos", "in_z_coord", "in_tex_coords", "in_light", "in_sun"};
+      "in_pos",   "in_z_coord", "in_tex_coords",
+      "in_light", "in_sun",     "pos_shift"};
   static constexpr VertexData kNoDrawVertex = VertexData{};
   static constexpr BlockData kNoDrawBlockData = BlockData{
       kNoDrawVertex, kNoDrawVertex, kNoDrawVertex, kNoDrawVertex, kNoDrawVertex,
