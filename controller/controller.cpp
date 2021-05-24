@@ -61,7 +61,6 @@ void Controller::BreakBlock(double time) {
       View::GetInstance()->UpdateBlock(block_coords);
       View::GetInstance()->GetLightMap()->UpdateLight(block_coords);
     }
-    View::GetInstance()->UpdateBlock(block_coords);
   }
 }
 
@@ -75,15 +74,14 @@ void Controller::UseItem() {
   if (item.IsBlock()) {
     if (Model::GetInstance()->GetPlayer()->IsBlockReachableForTool(
             block_coords) &&
-        Model::GetInstance()->CanIPlaceBlock(block_coords)) {
+        Model::GetInstance()->CanPlaceBlock(block_coords)) {
       Model::GetInstance()->GetMap()->SetBlock(
           block_coords, InventoryItem::GetBlockFromItem(item));
       View::GetInstance()->UpdateBlock(block_coords);
       Model::GetInstance()->GetPlayer()->UseItem();
     }
-  } else {
-    // UsePotion?
   }
+  // UsePotion?
   Model::GetInstance()->GetPlayer()->SetUseItemCooldownInterval();
 }
 
@@ -206,7 +204,7 @@ void Controller::TickEvent() {
       std::chrono::duration_cast<std::chrono::milliseconds>(cur - prev_time_)
           .count();
   prev_time_ = cur;
-  Model::GetInstance()->GetPlayer()->DecItemUsingCooldownInterval(time);
+  Model::GetInstance()->GetPlayer()->DecUseItemCooldownInterval(time);
   Model::GetInstance()->MoveObjects(pressed_keys_, time);
 
   if (is_pressed_left_mouse_button) {

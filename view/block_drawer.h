@@ -15,9 +15,10 @@ class BlockDrawer {
   static constexpr int kCrackBoundary3 = 30;
 
   static void DrawBlock(QPainter* painter, QPointF point, Block block);
-  static void DrawCracks(QPainter* painter, QPointF point, Block block);
-
   static void ClearBlock(QPainter* painter, QPointF point);
+
+ private:
+  static void DrawCracks(QPainter* painter, QPointF point, Block block);
 };
 
 #endif  // VIEW_BLOCK_DRAWER_H_

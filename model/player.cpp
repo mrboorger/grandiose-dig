@@ -21,7 +21,7 @@ void Player::UseItem() { inventory_->RemoveOneSelectedItem(); }
 
 bool Player::IsBlockReachableForTool(QPoint block_coords) {
   return std::hypot((GetPosition().x() - block_coords.x()),
-                    (GetPosition().y() - block_coords.y())) <= ToolRadius;
+                    (GetPosition().y() - block_coords.y())) <= tool_radius_;
 }
 
 bool Player::CanStartAttack() const {
@@ -29,11 +29,12 @@ bool Player::CanStartAttack() const {
 }
 
 void Player::SetUseItemCooldownInterval() {
-  use_item_cooldown_interval = kUseItemCooldown;
+  use_item_cooldown_interval_ = kUseItemCooldown;
 }
 
-void Player::DecItemUsingCooldownInterval(double time) {
-  use_item_cooldown_interval = std::max(use_item_cooldown_interval - time, 0.0);
+void Player::DecUseItemCooldownInterval(double time) {
+  use_item_cooldown_interval_ =
+      std::max(use_item_cooldown_interval_ - time, 0.0);
 }
 
 void Player::TryCraft(const CraftRecipe& recipe) {

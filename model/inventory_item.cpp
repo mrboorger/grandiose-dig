@@ -36,7 +36,7 @@ Block InventoryItem::GetBlockFromItem(InventoryItem item) {
 }
 
 bool InventoryItem::IsBlock() const {
-  return (type_ >= Type::kBlockDirt && type_ <= Type::kBlockStone);
+  return (type_ > Type::kBlockMin && type_ < Type::kBlockMax);
 }
 
 void InventoryItem::ChangeCount(int new_count) {
@@ -45,4 +45,8 @@ void InventoryItem::ChangeCount(int new_count) {
     type_ = Type::kEmptyItem;
     count_ = 0;
   }
+}
+
+int32_t InventoryItem::GetIdOfBlock() const {
+  return static_cast<int32_t>(type_) - static_cast<int32_t>(Type::kBlockMin);
 }

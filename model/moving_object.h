@@ -141,8 +141,8 @@ class MovingObject {
   std::vector<Effect> effects_;
 
   MoveVector move_vector_ = MoveVector(0, 0, 0, 0);
-  QPointF pos_;   // in bocks
-  QPointF size_;  // in bocks
+  QPointF pos_;   // in blocks
+  QPointF size_;  // in blocks
   State state_ = MovingObject::State::kStay;
 
   double walk_acceleration_ = constants::kPlayerWalkAcceleration;

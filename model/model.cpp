@@ -37,7 +37,7 @@ void Model::MoveObjects(
   }
 }
 
-bool Model::CanIPlaceBlock(QPoint block_coords) {
+bool Model::CanPlaceBlock(QPoint block_coords) {
   if (!map_->GetBlock(block_coords).IsAir()) {
     return false;
   }
@@ -58,7 +58,8 @@ bool Model::IsAnyMovingObjectInBlock(QPoint block_coords) {
   }
   return false;
 }
-std::shared_ptr<const AllCraftRecipes> Model::GetAllCraftRecipes() const {
+std::shared_ptr<const CraftRecipeCollection> Model::GetCraftRecipeCollection()
+    const {
   return all_craft_recipes_;
 }
 

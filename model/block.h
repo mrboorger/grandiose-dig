@@ -25,11 +25,11 @@ class Block {
 
   bool IsAir() const { return type_ == Type::kAir; }
 
-  bool IsVisible() const { return GetCharactistics(GetId()).is_visible; }
-  Light GetLuminosity() const { return GetCharactistics(GetId()).luminosity; }
-  bool IsOpaque() const { return GetCharactistics(GetId()).is_opaque; }
+  bool IsVisible() const { return GetCharacteristics(GetId()).is_visible; }
+  Light GetLuminosity() const { return GetCharacteristics(GetId()).luminosity; }
+  bool IsOpaque() const { return GetCharacteristics(GetId()).is_opaque; }
   int GetDefaultDurability() const {
-    return GetCharactistics(GetId()).default_durability;
+    return GetCharacteristics(GetId()).default_durability;
   }
 
   Type GetType() const { return type_; }
@@ -49,7 +49,7 @@ class Block {
   static constexpr Characteristics kDefaultBlockCharactestics{Light(0, 0, 0, 0),
                                                               200, true, true};
 
-  static const Characteristics& GetCharactistics(int32_t id);
+  static const Characteristics& GetCharacteristics(int32_t id);
 
   Type type_;
   int durability_;

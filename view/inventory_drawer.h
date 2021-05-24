@@ -29,7 +29,7 @@ class InventoryDrawer {
 
   static constexpr QRect kMenuRect{10, 200, 250, 150};
 
-  static constexpr int kCraftsInRow = 6;
+  static constexpr int kCraftsInRow = 5;
 
   void DrawItemSprite(QPainter* painter, QPoint pos, int id);
   void DrawItemCount(QPainter* painter, QPoint pos, int cnt);

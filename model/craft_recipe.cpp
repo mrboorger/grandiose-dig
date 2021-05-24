@@ -14,6 +14,12 @@ CraftRecipe::CraftRecipe(CraftRecipe&& recipe) noexcept {
   needed_items_ = std::move(recipe.needed_items_);
 }
 
+CraftRecipe& CraftRecipe::operator=(CraftRecipe&& recipe) noexcept {
+  resulting_item_ = recipe.resulting_item_;
+  needed_items_ = std::move(recipe.needed_items_);
+  return *this;
+}
+
 void CraftRecipe::TryCraft() const {
   Controller::GetInstance()->TryCraft(*this);
 }

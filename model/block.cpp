@@ -4,7 +4,7 @@
 #include <array>
 #include <cassert>
 
-const Block::Characteristics& Block::GetCharactistics(int32_t id) {
+const Block::Characteristics& Block::GetCharacteristics(int32_t id) {
   static std::array<Characteristics, kTypesCount> characteristics;
   static std::array<bool, kTypesCount> is_set{};
   static bool is_initialized = false;

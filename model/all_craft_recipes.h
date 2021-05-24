@@ -5,9 +5,9 @@
 
 #include "model/craft_recipe.h"
 
-class AllCraftRecipes {
+class CraftRecipeCollection {
  public:
-  AllCraftRecipes() { LoadRecipes(); }
+  CraftRecipeCollection() { LoadRecipes(); }
 
   int Size() const { return craft_recipes_.size(); }
 
