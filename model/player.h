@@ -55,6 +55,8 @@ class Player : public MovingObject {
 
   void TryCraft(const CraftRecipe& recipe);
 
+  void UsePotion();
+
  private:
   static constexpr int kUseItemCooldown = 100;
   static constexpr int kDeafultToolRadius = 8;  // in blocks

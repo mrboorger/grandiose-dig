@@ -14,7 +14,18 @@ class InventoryItem {
     kBlockDirt,
     kBlockGrass,
     kBlockStone,
+    kBlockSnowyGrass,
+    kBlockSand,
+    kBlockSandstone,
+    kBlockCoalOre,
+    kBlockIronOre,
+    kBlockShimondOre,
+    kBlockFiremondOre,
+    kBlockTechnical,
+    kBlockTorch,
     kBlockMax,
+    kSpeedPotion,
+    kStrengthPotion,
     kTypesCount,
   };
 
@@ -47,6 +58,7 @@ class InventoryItem {
   static Block::FrontType GetBlockFromItem(InventoryItem item);
 
   bool IsBlock() const;
+  bool IsPotion() const;
 
  private:
   Type type_;

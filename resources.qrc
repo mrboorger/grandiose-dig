@@ -76,5 +76,7 @@
         <file>resources/sounds/music.mp3</file>
         <file>resources/textures/shimond_ore.png</file>
         <file>resources/textures/firemond_ore.png</file>
+        <file>resources/textures/speed_potion.png</file>
+        <file>resources/textures/strength_potion.png</file>
     </qresource>
 </RCC>
