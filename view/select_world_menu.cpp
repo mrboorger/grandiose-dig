@@ -29,7 +29,7 @@ void SelectWorldMenu::UpdateAvailableSaves() {
   worlds_->Clear();
   QDir save_directory(QDir::currentPath() + "/saves");
   QStringList saves =
-      save_directory.entryList(QStringList() << "*", QDir::Files);
+      save_directory.entryList(QStringList() << "*");
   for (const auto& save_name : saves) {
     auto* button = new MenuButton(save_name, this);
     auto on_button_click = [this, save_name]() {

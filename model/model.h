@@ -46,6 +46,8 @@ class Model : public QObject {
 
   bool CanIPlaceBlock(QPoint block_coords);
 
+  uint32_t GetCurrentSeed() { return current_world_seed_; }
+
   std::shared_ptr<const AllCraftRecipes> GetAllCraftRecipes() const;
 
   bool CanSpawnMobAt(QPointF pos, QPointF size) const;
@@ -74,6 +76,7 @@ class Model : public QObject {
   Model() : all_craft_recipes_(new AllCraftRecipes) {}
 
   QString current_save_file_name_;
+  uint32_t current_world_seed_;
   std::set<std::shared_ptr<Mob>> mobs_;
   std::shared_ptr<AbstractMap> map_;
   std::shared_ptr<Player> player_;

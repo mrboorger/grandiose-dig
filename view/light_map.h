@@ -15,7 +15,10 @@
 
 class LightMap {
  public:
-  explicit LightMap(std::shared_ptr<AbstractMap> map) : map_(std::move(map)) {}
+  explicit LightMap(const QString& save_file, std::shared_ptr<AbstractMap> map)
+      : data_(Container(save_file, constants::kDefaultClearTimeMSec,
+                        BufferConstructor(&invalidate_queue_))),
+        map_(std::move(map)) {}
 
   void UpdateLight(QPoint pos);
   Light GetLight(QPoint pos);
@@ -43,21 +46,28 @@ class LightMap {
     explicit BufferConstructor(std::queue<QPoint>* update_queue)
         : update_queue_(update_queue) {}
 
-    Buffer operator()(QPoint pos);
+    Buffer operator()(const QString& save_file, QPoint pos);
+
+   private:
+    std::queue<QPoint>* update_queue_;
+  };
+  class BufferSaver {
+   public:
+    BufferSaver() = default;
+    void operator()(const QString& save_file, const QPoint& pos, const Buffer& buffer);
 
    private:
     std::queue<QPoint>* update_queue_;
   };
   using Container = containers::RegionCache<Light, kBufferWidth, kBufferHeight,
-                                            Buffer, BufferConstructor>;
+                                            Buffer, BufferConstructor, BufferSaver>;
   static constexpr int kUpdateDepth = 2;
 
   void SetPointUpdated(QPoint pos, int iteration = kUpdateDepth);
 
   Light GetLuminosity(QPoint pos) const;
 
-  Container data_ = Container(constants::kDefaultClearTimeMSec,
-                              BufferConstructor(&invalidate_queue_));
+  Container data_;
   std::queue<QPoint> invalidate_queue_;
   std::set<QPoint, utils::QPointLexicographicalCompare> updated_;
   std::shared_ptr<AbstractMap> map_;

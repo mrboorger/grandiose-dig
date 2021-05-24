@@ -1,8 +1,9 @@
-#include "model/flat_map_generator.h"
+#include "model/flat_map_manager.h"
 
 #include "model/map.h"
 
-AbstractMap* FlatMapGenerator::GenerateMap() {
+AbstractMap* FlatMapGenerator::GenerateMap(const QString& save_file) {
+  Q_UNUSED(save_file);
   // TODO(Wind-Eagle): delete
   auto* map = new Map(300, 300);
   for (int y = 150; y < 300; ++y) {

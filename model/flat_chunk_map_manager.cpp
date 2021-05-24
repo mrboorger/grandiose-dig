@@ -1,23 +1,24 @@
-#include "model/flat_chunk_map_generator.h"
+#include "model/flat_chunk_map_manager.h"
 
 #include <random>
 
-AbstractMap* FlatChunkMapGenerator::GenerateMap() {
-  return new ChunkMap(new FlatRegionGenerator(seed_));
+AbstractMap* FlatChunkMapManager::GenerateMap(const QString& save_file) {
+  return new ChunkMap(save_file, new FlatRegionGenerator(seed_));
 }
 
-FlatChunkMapGenerator::FlatChunkMapGenerator(uint32_t seed) : seed_(seed) {}
+FlatChunkMapManager::FlatChunkMapManager(uint32_t seed) : seed_(seed) {}
 
-FlatChunkMapGenerator::FlatRegionGenerator::FlatRegionGenerator(uint32_t seed)
+FlatChunkMapManager::FlatRegionGenerator::FlatRegionGenerator(uint32_t seed)
     : seed_(seed) {}
 
-uint32_t FlatChunkMapGenerator::FlatRegionGenerator::GetChunkSeed(
+uint32_t FlatChunkMapManager::FlatRegionGenerator::GetChunkSeed(
     QPoint chunk_pos) const {
   return (seed_ + 57873833LL * chunk_pos.x() + 43947077LL * chunk_pos.y()) %
          kSeedMod;
 }
 
-Chunk FlatChunkMapGenerator::FlatRegionGenerator::Generate(QPoint chunk_pos) {
+Chunk FlatChunkMapManager::FlatRegionGenerator::Generate(
+    const QString& save_file, QPoint chunk_pos) {
   Chunk chunk;
   std::mt19937 gen(GetChunkSeed(chunk_pos));
   // TODO(Wind-Eagle): This is temporary code

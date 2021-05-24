@@ -10,9 +10,9 @@
 #include "view/gl_func.h"
 #include "view/texture_atlas.h"
 
-GLMapDrawer::GLMapDrawer(std::shared_ptr<AbstractMap> map,
+GLMapDrawer::GLMapDrawer(const QString& save_file, std::shared_ptr<AbstractMap> map,
                          std::shared_ptr<LightMap> light_map)
-    : buffers_(constants::kDefaultClearTimeMSec),
+    : buffers_(save_file, constants::kDefaultClearTimeMSec),
       index_buffer_(QOpenGLBuffer::Type::IndexBuffer),
       map_(std::move(map)),
       light_map_(std::move(light_map)) {}

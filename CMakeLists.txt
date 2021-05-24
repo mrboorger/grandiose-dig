@@ -44,8 +44,8 @@ set(SOURCES
         model/chunk_map.cpp
         model/craft_recipe.cpp
         model/effects.cpp
-        model/flat_chunk_map_generator.cpp
-        model/flat_map_generator.cpp
+        model/flat_chunk_map_manager.cpp
+        model/flat_map_manager.cpp
         model/inventory_item.cpp
         model/inventory.cpp
         model/map.cpp
@@ -53,7 +53,7 @@ set(SOURCES
         model/model.cpp
         model/move_vector.cpp
         model/moving_object.cpp
-        model/perlin_chunk_map_generator.cpp
+        model/perlin_chunk_map_manager.cpp
         model/perlin_noise1d.cpp
         model/perlin_noise2d.cpp
         model/player.cpp

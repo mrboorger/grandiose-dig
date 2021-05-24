@@ -1,6 +1,8 @@
 #ifndef MODEL_CLEARABLE_CACHE_H_
 #define MODEL_CLEARABLE_CACHE_H_
 
+#include <QCborValue>
+#include <QFile>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QTimer>
@@ -10,11 +12,25 @@
 
 namespace containers {
 
-template <typename Key, typename Value, typename Compare = std::less<>>
+template<typename Key, typename Value>
+class Nothing {
+ public:
+  void operator()(const QString& save_file, const Key& key, const Value& value) const {
+    Q_UNUSED(save_file);
+    Q_UNUSED(key);
+    Q_UNUSED(value);
+  }
+};
+
+template <typename Key, typename Value, typename Compare = std::less<>, typename Save = Nothing<Key, Value>>
 class ClearableCache {
  public:
-  explicit ClearableCache(int clear_time_msec, Compare compare = Compare())
-      : nodes_(compare), last_used_(nodes_.end()) {
+  explicit ClearableCache(QString save_file, int clear_time_msec,
+                          Compare compare = Compare(), Save save = Save())
+      : save_file_(std::move(save_file)),
+        nodes_(compare),
+        last_used_(nodes_.end()),
+        save_(std::move(save)) {
     timer_.callOnTimeout([this]() { ClearUnused(); });
     timer_.start(clear_time_msec);
   }
@@ -41,16 +57,12 @@ class ClearableCache {
       if (!i->second.is_used) {
         i = nodes_.erase(i);
       } else {
+        save_(save_file_, i->first, i->second.value);
         i->second.is_used = false;
         ++i;
       }
     }
   }
-
-  // TODO(yaroslaffb): implement saving
-  void Read(const QJsonObject& json) { Q_UNUSED(json); }
-
-  void Write(QJsonObject& json) const { Q_UNUSED(json); }
 
  private:
   struct Node {
@@ -61,9 +73,11 @@ class ClearableCache {
   using NodesContainer = std::map<Key, Node, Compare>;
   using NodesIterator = typename NodesContainer::iterator;
 
+  QString save_file_;
   NodesContainer nodes_;
   QTimer timer_;
   NodesIterator last_used_;
+  Save save_;
 };
 
 }  // namespace containers

@@ -27,9 +27,6 @@ class AbstractMap {
 
   bool HitBlock(QPoint pos, int hit_power);
 
-  virtual void Read(const QJsonObject& json) = 0;
-  virtual void Write(QJsonObject& json) const = 0;
-
  protected:
   virtual Block* GetBlockMutable(QPoint pos) = 0;
 

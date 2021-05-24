@@ -10,7 +10,7 @@
 #include <unordered_set>
 
 #include "controller/controller_types.h"
-#include "model/abstract_map_generator.h"
+#include "model/abstract_map_manager.h"
 #include "model/model.h"
 #include "model/player.h"
 #include "view/view.h"
@@ -29,7 +29,8 @@ class Controller : public QObject {
   Controller& operator=(const Controller&) = delete;
   Controller& operator=(Controller&&) = delete;
 
-  void SetGeneratedMap(AbstractMapGenerator* generator);
+  void SetGeneratedMap(AbstractMapManager* generator,
+                       const QString& save_file = "");
 
   void SetPlayer();
   void SetMob();

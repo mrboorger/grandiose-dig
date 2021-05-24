@@ -7,8 +7,8 @@
 #include "model/constants.h"
 #include "view/block_drawer.h"
 
-BufferedMapDrawer::BufferedMapDrawer(std::shared_ptr<AbstractMap> map)
-    : buffers_(constants::kDefaultClearTimeMSec), map_(std::move(map)) {}
+BufferedMapDrawer::BufferedMapDrawer(const QString& save_file, std::shared_ptr<AbstractMap> map)
+    : buffers_(save_file, constants::kDefaultClearTimeMSec), map_(std::move(map)) {}
 
 void BufferedMapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
                                           const QRect& screen_coords) {

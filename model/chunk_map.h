@@ -1,6 +1,7 @@
 #ifndef MODEL_CHUNK_MAP_H_
 #define MODEL_CHUNK_MAP_H_
 
+#include <QJsonDocument>
 #include <QPoint>
 #include <QPointF>
 #include <QTimer>
@@ -10,8 +11,8 @@
 
 #include "model/abstract_map.h"
 #include "model/abstract_region_generator.h"
-#include "model/region_cache.h"
 #include "model/chunk.h"
+#include "model/region_cache.h"
 #include "utils.h"
 
 class ChunkMap : public AbstractMap {
@@ -22,24 +23,41 @@ class ChunkMap : public AbstractMap {
   void SetBlock(QPoint pos, Block block) override;
   void CacheRegion(const QRect& region) override;
 
-  explicit ChunkMap(AbstractRegionGenerator* generator);
-
-  void Read(const QJsonObject &json) override;
-  void Write(QJsonObject &json) const override;
+  explicit ChunkMap(const QString& save_file, AbstractRegionGenerator* generator);
 
  private:
   class GenChunk {
    public:
     explicit GenChunk(AbstractRegionGenerator* generator)
         : generator_(generator) {}
-    Chunk operator()(QPoint pos) { return generator_->Generate(pos); }
+    Chunk operator()(const QString& save_file, QPoint pos) {
+      return generator_->Generate(save_file, pos);
+    }
 
    private:
     AbstractRegionGenerator* generator_;
   };
+  class SaveChunk {
+   public:
+    SaveChunk() = default;
+    void operator()(const QString& save_file, const QPoint& pos,
+                    const Chunk& chunk) {
+      QFile file(save_file + "chunk:" + QString::number(pos.x()) + ":" +
+                 QString::number(pos.y()));
+      if (!file.open(QIODevice::WriteOnly)) {
+        qDebug() << file.fileName();
+        qWarning("Couldn't open save file.");
+        return;
+      }
+      QJsonObject data;
+      chunk.Write(data);
+      // file.write(QJsonDocument(data).toJson());
+      file.write(QCborValue::fromJsonValue(data).toCbor());
+    }
+  };
   using NodesContainer =
-      containers::RegionCache<Block, Chunk::kWidth, Chunk::kHeight,
-                                         Chunk, GenChunk>;
+      containers::RegionCache<Block, Chunk::kWidth, Chunk::kHeight, Chunk,
+                              GenChunk, SaveChunk>;
 
   Block* GetBlockMutable(QPoint pos) override;
 

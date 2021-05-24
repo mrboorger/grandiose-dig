@@ -92,6 +92,7 @@ bool Model::CanSpawnMobAt(QPointF pos, QPointF size) const {
 void Model::Read(const QJsonObject& json) {
   player_ = std::make_shared<Player>(QPointF(0, 0));
   player_->Read(json["player"].toObject());
+  current_world_seed_ = json["seed"].toString().toUInt();
 }
 
 void Model::Write(QJsonObject& json) const {
@@ -105,11 +106,12 @@ void Model::Write(QJsonObject& json) const {
     mobs.append(mob_object);
   }
   json["mobs"] = mobs;
+  json["seed"] = QString(current_world_seed_);
 }
 
 bool Model::LoadFromFile(const QString& file_name) {
   Clear();
-  QFile save_file(QDir::currentPath() + "/saves/" + file_name);
+  QFile save_file(file_name + "/entities");
   if (!save_file.open(QIODevice::ReadOnly)) {
     qWarning("Couldn't open load file.");
     return false;
@@ -128,7 +130,7 @@ bool Model::SaveToFile(const QString& file_name) {
   if (file_name.isEmpty()) {
     return false;
   }
-  QFile save_file(QDir::currentPath() + "/saves/" + file_name);
+  QFile save_file(file_name + "/entities");
   if (!save_file.open(QIODevice::WriteOnly)) {
     qWarning("Couldn't open save file.");
     return false;

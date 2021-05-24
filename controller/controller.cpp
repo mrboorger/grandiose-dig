@@ -6,11 +6,11 @@
 #include <memory>
 #include <utility>
 
-#include "model/abstract_map_generator.h"
+#include "model/abstract_map_manager.h"
 #include "model/chunk_map.h"
 #include "model/constants.h"
 #include "model/model.h"
-#include "model/perlin_chunk_map_generator.h"
+#include "model/perlin_chunk_map_manager.h"
 #include "view/abstract_map_drawer.h"
 #include "view/buffered_map_drawer.h"
 #include "view/gl_map_drawer.h"
@@ -27,7 +27,8 @@ Controller::Controller() : tick_timer_(), save_timer_() {
   Model* model = Model::GetInstance();
   connect(view, &View::CreateNewWorldSignal, this, &Controller::CreateNewWorld);
   connect(view, &View::LoadWorldSignal, this, &Controller::LoadFromFile);
-  connect(view, &View::ChangeGameStateSignal, this, &Controller::ChangeGameState);
+  connect(view, &View::ChangeGameStateSignal, this,
+          &Controller::ChangeGameState);
 
   tick_timer_.callOnTimeout([this]() { TickEvent(); });
   tick_timer_.start(constants::kTickDurationMsec);
@@ -36,12 +37,16 @@ Controller::Controller() : tick_timer_(), save_timer_() {
       settings_.value("save_duration", constants::kSaveDurationMsec).toInt());
 }
 
-void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
-  auto map = std::shared_ptr<AbstractMap>(generator->GenerateMap());
+void Controller::SetGeneratedMap(AbstractMapManager* generator,
+                                 const QString& save_file) {
+  auto map =
+      std::shared_ptr<AbstractMap>(generator->GenerateMap(save_file + "/map/"));
   Model::GetInstance()->SetMap(map);
-  View::GetInstance()->SetLightMap(new LightMap(map));
-  View::GetInstance()->SetDrawer(
-      new GLMapDrawer(map, View::GetInstance()->GetLightMap()));
+  View::GetInstance()->SetLightMap(
+      new LightMap(save_file + "/light_map/", map));
+  View::GetInstance()->SetDrawer(new GLMapDrawer(
+      save_file + "/gl_map/", map, View::GetInstance()->GetLightMap()));
+  return;
 }
 
 void Controller::SetPlayer() {
@@ -314,27 +319,29 @@ void Controller::ButtonRelease(Qt::MouseButton button) {
 
 void Controller::CreateNewWorld(const QString& world_name, uint32_t seed) {
   Model::GetInstance()->Clear();
-  Model::GetInstance()->SetSaveFileName(world_name);
-  // Temporary code
-  PerlinChunkMapGenerator generator(seed);
-  SetGeneratedMap(&generator);
+  QDir dir;
+  QString save_file = QDir::currentPath() + "/saves/" + world_name;
+  dir.mkdir(save_file);
+  dir.mkdir(save_file + "/map");
+  dir.mkdir(save_file + "/light_map");
+  dir.mkdir(save_file + "/gl_map");
+
+  Model::GetInstance()->SetSaveFileName(save_file);
+  PerlinChunkMapManager generator(seed);
+  SetGeneratedMap(&generator, save_file);
   SetPlayer();
   SetMob();
 }
 
-void Controller::LoadFromFile(const QString& file_name) {
-  Model::GetInstance()->LoadFromFile(file_name);
+void Controller::LoadFromFile(const QString& world_name) {
+  QString save_file = QDir::currentPath() + "/saves/" + world_name;
+  Model::GetInstance()->LoadFromFile(save_file);
   View::GetInstance()->SetInventoryDrawer(
       new InventoryDrawer(Model::GetInstance()->GetPlayer()->GetInventory()));
 
-  // TODO(yaroslaffb): implement map saving instead of this temporary code {
-  PerlinChunkMapGenerator generator(42);
-  auto map = std::shared_ptr<AbstractMap>(generator.GenerateMap());
-  Model::GetInstance()->SetMap(map);
-  View::GetInstance()->SetLightMap(new LightMap(map));
-  View::GetInstance()->SetDrawer(
-      new GLMapDrawer(map, View::GetInstance()->GetLightMap()));
-  // }
+  Model::GetInstance()->SetSaveFileName(save_file);
+  PerlinChunkMapManager generator(Model::GetInstance()->GetCurrentSeed());
+  SetGeneratedMap(&generator, save_file);
 }
 
 void Controller::ParseInventoryKey(ControllerTypes::Key translated_key) {

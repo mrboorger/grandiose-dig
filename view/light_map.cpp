@@ -1,5 +1,10 @@
 #include "view/light_map.h"
 
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QCborMap>
+
 #include "utils.h"
 
 void LightMap::UpdateLight(QPoint pos) {
@@ -98,14 +103,49 @@ void LightMap::CalculateRegion(const QRect& region) {
   }
 }
 
-LightMap::Buffer LightMap::BufferConstructor::operator()(
+LightMap::Buffer LightMap::BufferConstructor::operator()(const QString& save_file,
     QPoint pos) {
-  for (int32_t y = pos.y(); y < pos.y() + LightMap::kBufferHeight; ++y) {
-    for (int32_t x = pos.x(); x < pos.x() + LightMap::kBufferWidth; ++x) {
-      update_queue_->push(QPoint(x, y));
+  QFile file(save_file + "chunk:" + QString::number(pos.x()) + ":" +
+      QString::number(pos.y()));
+  if (!file.open(QIODevice::ReadOnly)) {
+    for (int32_t y = pos.y(); y < pos.y() + LightMap::kBufferHeight; ++y) {
+      for (int32_t x = pos.x(); x < pos.x() + LightMap::kBufferWidth; ++x) {
+        update_queue_->push(QPoint(x, y));
+      }
     }
+    return Buffer{};
   }
-  return Buffer{};
+  QByteArray save_data = file.readAll();
+  QJsonDocument data(
+      QJsonDocument(QCborValue::fromCbor(save_data).toMap().toJsonObject()));
+  Buffer buffer;
+  QJsonArray arr = data["buffer"].toArray();
+  for (int index = 0; index < kBufferHeight * kBufferWidth; ++index) {
+    QJsonObject light = arr[index].toObject();
+    buffer[index].Read(light);
+  }
+  return buffer;
+}
+
+void LightMap::BufferSaver::operator()(const QString& save_file,
+    const QPoint& pos, const Buffer& buffer) {
+  QFile file(save_file + "chunk:" + QString::number(pos.x()) + ":" +
+      QString::number(pos.y()));
+  if (!file.open(QIODevice::WriteOnly)) {
+    qDebug() << file.fileName();
+    qWarning("Couldn't open save file.");
+    return;
+  }
+  QJsonObject data;
+  QJsonArray arr;
+  for (int index = 0; index < kBufferHeight * kBufferWidth; ++index) {
+    QJsonObject light;
+    buffer[index].Write(light);
+    arr.append(light);
+  }
+  data["buffer"] = arr;
+  // file.write(QJsonDocument(data).toJson());
+  file.write(QCborValue::fromJsonValue(data).toCbor());
 }
 
 void LightMap::SetPointUpdated(QPoint pos, int iteration) {
