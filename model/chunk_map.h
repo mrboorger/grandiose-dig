@@ -38,7 +38,7 @@ class ChunkMap : public AbstractMap {
   void SetBlockImpl(QPoint pos, Block block) override;
   void CacheRegionImpl(const QRect& region) override;
 
-  Block* GetBlockMutable(QPoint pos) override;
+  Block* GetBlockMutableImpl(QPoint pos) override;
 
   NodesContainer nodes_;
   std::unique_ptr<AbstractRegionGenerator> generator_;

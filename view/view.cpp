@@ -83,7 +83,9 @@ void View::paintGL() {
   }
   drawer_->DrawMapWithCenter(&painter, camera_pos_, rect());
 
-  inventory_drawer_->DrawInventory(&painter);
+  if (is_visible_inventory_) {
+    inventory_drawer_->DrawInventory(&painter);
+  }
 
   // TODO(Wind-Eagle): temporary code; need to make PlayerDrawer
   DrawPlayer(&painter);
@@ -170,6 +172,10 @@ void View::PlayMusic() {
 }
 
 void View::keyPressEvent(QKeyEvent* event) {
+  if (event->key() == Qt::Key_Escape) {
+    is_visible_inventory_ = !is_visible_inventory_;
+    inventory_drawer_->SetCraftMenuVisible(is_visible_inventory_);
+  }
   Controller::GetInstance()->KeyPress(event->key());
 }
 

@@ -41,12 +41,17 @@ class AbstractMap {
 
   bool HitBlock(QPoint pos, int hit_power);
 
+  virtual Block* GetBlockMutable(QPoint pos) {
+    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    return GetBlockMutableImpl(pos);
+  }
+
  protected:
-  virtual Block* GetBlockMutable(QPoint pos) = 0;
   virtual void SetBlockImpl(QPoint pos, Block block) = 0;
   virtual void CacheRegionImpl(const QRect& region) { Q_UNUSED(region); }
   virtual int32_t GroundLevelImpl() const { return kDefaultGroundLevel; }
   virtual int32_t SkyLevelImpl() const { return kDefaultSkyLevel; }
+  virtual Block* GetBlockMutableImpl(QPoint pos) = 0;
 
  private:
   static constexpr int32_t kDefaultGroundLevel = 128;

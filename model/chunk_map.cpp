@@ -8,7 +8,7 @@ ChunkMap::ChunkMap(AbstractRegionGenerator* generator)
     : nodes_(constants::kDefaultClearTimeMSec, GenChunk(generator)),
       generator_(generator) {}
 
-Block* ChunkMap::GetBlockMutable(QPoint pos) {
+Block* ChunkMap::GetBlockMutableImpl(QPoint pos) {
   return nodes_.GetMutableValue(pos);
 }
 

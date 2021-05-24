@@ -1,5 +1,16 @@
 <RCC>
     <qresource prefix="/">
+        <file>resources/textures/dirt.png</file>
+        <file>resources/textures/grass.png</file>
+        <file>resources/textures/inventory_cell.png</file>
+        <file>resources/textures/selection_box.png</file>
+        <file>resources/sounds/player_damage.mp3</file>
+        <file>resources/sounds/zombie_death.mp3</file>
+        <file>resources/sounds/zombie_damage2.mp3</file>
+        <file>resources/sounds/zombie_damage1.mp3</file>
+        <file>resources/sounds/zombie2.mp3</file>
+        <file>resources/sounds/zombie1.mp3</file>
+        <file>resources/shaders/vertex.glsl</file>
         <file>resources/shaders/fragment.glsl</file>
         <file>resources/shaders/vertex.glsl</file>
         <file>resources/textures/zombie_lord0.png</file>
@@ -39,6 +50,9 @@
         <file>resources/textures/cave_background.png</file>
         <file>resources/sounds/magic_quiox_damage1.mp3</file>
         <file>resources/sounds/magic_quiox_damage2.mp3</file>
+        <file>resources/textures/block_cracks_1.png</file>
+        <file>resources/textures/block_cracks_2.png</file>
+        <file>resources/textures/block_cracks_3.png</file>
         <file>resources/sounds/magic_quiox_death.mp3</file>
         <file>resources/sounds/magic_quiox1.mp3</file>
         <file>resources/sounds/magic_quiox2.mp3</file>

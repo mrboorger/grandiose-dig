@@ -24,6 +24,12 @@ constexpr int kBackgroundsFirst =
 constexpr int kBackgroundsCount =
     static_cast<int>(Backgrounds::kBackgroundsCount);
 
+static constexpr int kCracksStageCount = 3;
+
+static constexpr int kCrackBoundary1 = 90;
+static constexpr int kCrackBoundary2 = 60;
+static constexpr int kCrackBoundary3 = 30;
+
 constexpr int kBackgroundWidth = constants::kBlockSz * Chunk::kWidth;
 constexpr int kBackgroundHeight = constants::kBlockSz * Chunk::kHeight;
 

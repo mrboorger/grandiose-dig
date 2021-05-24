@@ -72,6 +72,8 @@ class Block {
 
   void SetFrontType(FrontType front_type) { front_type_ = front_type; }
   void SetBackType(BackType back_type) { back_type_ = back_type; }
+  bool IsAir() const { return front_type_ == FrontType::kAir; }
+  int GetRemainingDurabilityPercentage() const;
 
   // returns true, if block is broken
   bool DecreaseDurability(int delta);
@@ -97,7 +99,6 @@ class Block {
 
   FrontType front_type_;
   BackType back_type_;
-  // TODO(mrboorger): Make different durability_ of the blocks
   int durability_;
 };
 

@@ -71,6 +71,7 @@ class View : public QOpenGLWidget {
   std::unique_ptr<InventoryDrawer> inventory_drawer_;
   std::atomic<bool> need_continue_ = true;
   std::unique_ptr<std::thread> update_light_thread_;
+  bool is_visible_inventory_ = false;
 };
 
 #endif  // VIEW_VIEW_H_

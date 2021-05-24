@@ -7,7 +7,7 @@ void Map::SetBlockImpl(QPoint pos, Block block) {
   blocks_[pos.y() * width_ + pos.x()] = block;
 }
 
-Block* Map::GetBlockMutable(QPoint pos) {
+Block* Map::GetBlockMutableImpl(QPoint pos) {
   return &blocks_[pos.y() * width_ + pos.x()];
 }
 

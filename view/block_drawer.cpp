@@ -38,6 +38,10 @@ const QImage& GetBackground(int32_t id) {
   return backgrounds[id];
 }
 
+const std::array<QString, BlockDrawer::kCracksStageCount> kCracksNames = {
+    "block_cracks_1.png", "block_cracks_2.png", "block_cracks_3.png"};
+std::array<QImage, BlockDrawer::kCracksStageCount> cracks_images;
+
 }  // namespace
 
 Backgrounds BackIdToBackgroundId(Block block, QPoint pos) {
@@ -55,6 +59,25 @@ Backgrounds BackIdToBackgroundId(Block block, QPoint pos) {
       assert(false);
     }
   }
+}
+
+void DrawCracks(QPainter* painter, QPointF point, Block block) {
+  int durability_percentage = block.GetRemainingDurabilityPercentage();
+  int crack_num = 0;
+  if (durability_percentage < kCrackBoundary3) {
+    crack_num = 2;
+  } else if (durability_percentage < kCrackBoundary2) {
+    crack_num = 1;
+  } else if (durability_percentage < kCrackBoundary1) {
+    crack_num = 0;
+  } else {
+    return;
+  }
+  if (cracks_images[crack_num].isNull()) {
+    cracks_images[crack_num] =
+        QImage(":/resources/textures/" + kCracksNames[crack_num]);
+  }
+  painter->drawImage(point, cracks_images[crack_num]);
 }
 
 void DrawBlockFront(QPainter* painter, QPointF point, Block block) {
