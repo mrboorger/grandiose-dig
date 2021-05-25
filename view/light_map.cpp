@@ -115,7 +115,7 @@ LightMap::Buffer LightMap::BufferConstructor::operator()(
   if (!file.open(QIODevice::ReadOnly)) {
     for (int32_t y = pos.y(); y < pos.y() + LightMap::kBufferHeight; ++y) {
       for (int32_t x = pos.x(); x < pos.x() + LightMap::kBufferWidth; ++x) {
-        update_queue_->push(QPoint(x, y));
+        light_map_->UpdateLight(QPoint(x, y));
       }
     }
     return Buffer{};

@@ -119,7 +119,7 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   general_volume_slider_->setValue(
       settings_->value("general_volume", 100).toInt());
   auto on_general_volume_slider_change = [this](int value) {
-    temporary_settings_changes_["general_volume"] = value;
+    temporary_settings_changes_["general_volume"] = QString::number(value);
   };
   connect(general_volume_slider_.data(), &NamedMenuSlider::valueChanged, this,
           on_general_volume_slider_change);
@@ -128,7 +128,7 @@ SettingsMenu::SettingsMenu(QWidget* parent)
       new NamedMenuSlider("", Qt::Orientation::Horizontal, this));
   music_volume_slider_->setValue(settings_->value("music_volume", 100).toInt());
   auto on_music_volume_slider_change = [this](int value) {
-    temporary_settings_changes_["music_volume"] = value;
+    temporary_settings_changes_["music_volume"] = QString::number(value);
   };
   connect(music_volume_slider_.data(), &NamedMenuSlider::valueChanged, this,
           on_music_volume_slider_change);
@@ -138,7 +138,7 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   sounds_volume_slider_->setValue(
       settings_->value("sounds_volume", 100).toInt());
   auto on_sounds_volume_slider_change = [this](int value) {
-    temporary_settings_changes_["sounds_volume"] = value;
+    temporary_settings_changes_["sounds_volume"] = QString::number(value);
   };
   connect(sounds_volume_slider_.data(), &NamedMenuSlider::valueChanged, this,
           on_sounds_volume_slider_change);

@@ -18,7 +18,7 @@ class LightMap {
  public:
   explicit LightMap(const QString& save_file, std::shared_ptr<AbstractMap> map)
       : data_(Container(save_file, constants::kDefaultClearTimeMSec,
-                        BufferConstructor(&invalidate_queue_))),
+                        BufferConstructor(this))),
         map_(std::move(map)) {}
 
   void UpdateLight(QPoint pos);
@@ -47,13 +47,13 @@ class LightMap {
   using Buffer = std::array<Light, kBufferWidth * kBufferHeight>;
   class BufferConstructor {
    public:
-    explicit BufferConstructor(std::queue<QPoint>* update_queue)
-        : update_queue_(update_queue) {}
+    explicit BufferConstructor(LightMap* light_map)
+        : light_map_(light_map) {}
 
     Buffer operator()(const QString& save_file, QPoint pos);
 
    private:
-    std::queue<QPoint>* update_queue_;
+    LightMap* light_map_;
   };
   class BufferSaver {
    public:

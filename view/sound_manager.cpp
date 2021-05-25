@@ -37,7 +37,8 @@ SoundManager::SoundManager() : sounds_(kNames.size()) {
   UpdateVolumes();
 }
 
-void SoundManager::PlaySound(int id, int volume) { {
+void SoundManager::PlaySound(int id, int volume) {
+  {
     sounds_[id]->pause();
     sounds_[id]->setVolume(sounds_[id]->volume() * volume / 100);
     sounds_[id]->play();
