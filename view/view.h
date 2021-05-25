@@ -64,7 +64,7 @@ class View : public QOpenGLWidget {
   void ChangeGameStateSignal(GameState state);
 
  public slots:
-  void UpdateSettings();
+  void UpdateSettings(int general_volume, int music_volume, int sounds_volume);
 
  private slots:
   void DamageDealt(MovingObject* object);

@@ -1,8 +1,8 @@
 #include "view/settings_menu.h"
 
 #include <QApplication>
-#include <QKeySequence>
 #include <QDebug>
+#include <QKeySequence>
 #include <QPainter>
 #include <QSettings>
 
@@ -34,6 +34,10 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   if (!settings_->contains("controller_key14")) {
     settings_->setValue("controller_key14", Qt::Key::Key_Escape);
   }
+  emit(SettingsMenu::SettingsChanged(
+      settings_->value("general_volume", 100).toInt(),
+      settings_->value("music_volume", 100).toInt(),
+      settings_->value("sounds_volume", 100).toInt()));
 
   current_language_ = settings_->value("language", "en").toString();
   translator_.reset(new QTranslator);
@@ -97,7 +101,10 @@ SettingsMenu::SettingsMenu(QWidget* parent)
       settings_->setValue(key, value);
     }
     temporary_settings_changes_.clear();
-    emit(SettingsMenu::SettingsChanged());
+    emit(SettingsMenu::SettingsChanged(
+        settings_->value("general_volume", 100).toInt(),
+        settings_->value("music_volume", 100).toInt(),
+        settings_->value("sounds_volume", 100).toInt()));
     emit(AbstractMenu::GameStateChanged(GameState::kSwitchingToPrevious));
   };
   connect(save_and_close_button_.data(), &QPushButton::clicked, this,

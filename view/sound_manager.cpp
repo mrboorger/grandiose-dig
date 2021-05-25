@@ -34,7 +34,6 @@ SoundManager::SoundManager() : sounds_(kNames.size()) {
     sounds_[i] = std::make_shared<QMediaPlayer>();
     sounds_[i]->setMedia(QUrl("qrc:/resources/sounds/" + kNames[i]));
   }
-  UpdateVolumes();
 }
 
 void SoundManager::PlaySound(int id, int volume) {
@@ -78,11 +77,7 @@ bool SoundManager::IsMusic(const QString& name) {
   return name.startsWith("music");
 }
 
-void SoundManager::UpdateVolumes() {
-  QSettings settings;
-  int general_volume = settings.value("general_volume", 100).toInt();
-  int music_volume = settings.value("music_volume", 100).toInt();
-  int sounds_volume = settings.value("sounds_volume", 100).toInt();
+void SoundManager::UpdateVolumes(int general_volume, int music_volume, int sounds_volume) {
   for (size_t i = 0; i < kNames.size(); i++) {
     int volume =
         general_volume * (IsMusic(kNames[i]) ? music_volume : sounds_volume);

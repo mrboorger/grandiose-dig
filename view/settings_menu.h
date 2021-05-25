@@ -35,7 +35,7 @@ class SettingsMenu final : public AbstractMenu {
   }
 
  signals:
-  void SettingsChanged();
+  void SettingsChanged(int general_volume, int music_volume, int sounds_volume);
 
  private:
   enum class SettingsType { kGeneral, kControls };

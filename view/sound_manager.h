@@ -30,7 +30,7 @@ class SoundManager {
   void PauseAllSounds();
   void StopAllSounds();
 
-  void UpdateVolumes();
+  void UpdateVolumes(int general_volume, int music_volume, int sounds_volume);
 
  private:
   static bool IsMusic(const QString& name);

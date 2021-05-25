@@ -134,9 +134,8 @@ void View::ChangeGameState(GameState new_state) {
   repaint();
 }
 
-void View::UpdateSettings() {
-  sound_manager_->UpdateVolumes();
-  PlayMusic();
+void View::UpdateSettings(int general_volume, int music_volume, int sounds_volume) {
+  sound_manager_->UpdateVolumes(general_volume, music_volume, sounds_volume);
 }
 
 void View::SetInventoryDrawer(InventoryDrawer* drawer) {
