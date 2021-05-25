@@ -45,7 +45,7 @@ const Block::FrontCharacteristics& Block::GetFrontCharacteristics(int32_t id) {
     set(FrontType::kYellowLight,
         FrontCharacteristics{Light(255, 255, 144, 0), 500, true, false});
     set(FrontType::kGreenLight,
-        FrontCharacteristics{Light(255, 144, 255, 0), 500, true, false});
+        FrontCharacteristics{Light(144, 255, 144, 0), 500, true, false});
     set(FrontType::kBlueLight,
         FrontCharacteristics{Light(144, 255, 255, 0), 500, true, false});
   }

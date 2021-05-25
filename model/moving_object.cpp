@@ -117,6 +117,7 @@ void MovingObject::UpdateJump(
 
 void MovingObject::UpdateState(
     const std::unordered_set<ControllerTypes::Key>& pressed_keys, double time) {
+  double old_speed_y = move_vector_.GetSpeedY() + move_vector_.GetMomentumY();
   QPointF old_position = pos_;
   State old_state = state_;
   damage_time_ = std::max(damage_time_ - time, 0.0);
@@ -148,7 +149,7 @@ void MovingObject::UpdateState(
     SetDirection(utils::Direction::kLeft);
   }
   DecEffects(time);
-  MakeMovement(old_position, time);
+  MakeMovement(old_position, time, old_speed_y);
 }
 
 bool MovingObject::FindCollisionGround(
@@ -275,13 +276,14 @@ bool MovingObject::FindCollisionRight(
   return false;
 }
 
-void MovingObject::MakeMovement(QPointF old_position, double time) {
+void MovingObject::MakeMovement(QPointF old_position, double time,
+                                double old_speed_y) {
   pos_ += move_vector_.GetSpeed() * time;
   pos_ += move_vector_.GetMomentum() * time;
-  CheckCollisions(old_position);
+  CheckCollisions(old_position, old_speed_y);
 }
 
-void MovingObject::CheckCollisions(QPointF old_position) {
+void MovingObject::CheckCollisions(QPointF old_position, double old_speed_y) {
   auto map = Model::GetInstance()->GetMap();
   double ground_y = 0, ceiling_y = 0;
   double right_wall_x = 0, left_wall_x = 0;
@@ -323,7 +325,7 @@ void MovingObject::CheckCollisions(QPointF old_position) {
           -constants::kEps &&
       FindCollisionGround(old_position, &ground_y, map)) {
     pushes_ground_ = true;
-    CheckFallDamage();
+    CheckFallDamage(old_speed_y);
     pos_.setY(ground_y);
     move_vector_.SetSpeedY(0);
     move_vector_.SetMomentumY(0);
@@ -332,9 +334,7 @@ void MovingObject::CheckCollisions(QPointF old_position) {
   }
 }
 
-void MovingObject::CheckFallDamage() {
-  double fall_damage_speed =
-      move_vector_.GetSpeedY() + move_vector_.GetMomentumY();
+void MovingObject::CheckFallDamage(double fall_damage_speed) {
   if (fall_damage_speed > constants::kFallDamageMin) {
     Damage damage(Damage::Type::kFall,
                   std::ceil((fall_damage_speed - constants::kFallDamageMin) /
@@ -372,9 +372,8 @@ void MovingObject::DealDamage(const Damage& damage) {
     // in some cases there is too high speed of a damage push
     move_vector_.SetSpeedX(damage_push.x());
     move_vector_.TranslateSpeed({0, damage_push.y()});
-    MakeMovement(
-        pos_,
-        constants::kEps);  // recalculates many parameters, excluding position
+    MakeMovement(pos_, constants::kEps,
+                 0);  // recalculates many parameters, excluding position
   }
   qDebug() << "Damage: " << health_;
 }
