@@ -12,6 +12,7 @@
 int main(int argc, char* argv[]) {
   QApplication application(argc, argv);
   QSurfaceFormat format = QSurfaceFormat::defaultFormat();
+  application.setWindowIcon(QIcon(QString(":/resources/icons/icon.png")));
   format.setDepthBufferSize(24);
   QSurfaceFormat::setDefaultFormat(format);
 
