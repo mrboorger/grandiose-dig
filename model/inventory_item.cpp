@@ -20,8 +20,13 @@ const std::array<InventoryItem,
                         InventoryItem(InventoryItem::Type::kBlockIronOre),
                         InventoryItem(InventoryItem::Type::kBlockShimondOre),
                         InventoryItem(InventoryItem::Type::kBlockFiremondOre),
+                        InventoryItem(InventoryItem::Type::kBlockStoneBricks),
+                        InventoryItem(InventoryItem::Type::kBlockClayBlock),
+                        InventoryItem(InventoryItem::Type::kBlockBrickBlock),
                         InventoryItem(InventoryItem::Type::kBlockTechnical),
+                        InventoryItem(InventoryItem::Type::kBlockRedLight),
                         InventoryItem(InventoryItem::Type::kBlockYellowLight),
+                        InventoryItem(InventoryItem::Type::kBlockGreenLight),
                         InventoryItem(InventoryItem::Type::kBlockBlueLight)};
 
 const std::array<Block::FrontType, Block::kFrontTypesCount> kBlockTypeFromItem =
@@ -30,8 +35,11 @@ const std::array<Block::FrontType, Block::kFrontTypesCount> kBlockTypeFromItem =
      Block::FrontType::kSnowyGrass,  Block::FrontType::kSand,
      Block::FrontType::kSandstone,   Block::FrontType::kCoalOre,
      Block::FrontType::kIronOre,     Block::FrontType::kShimondOre,
-     Block::FrontType::kFiremondOre, Block::FrontType::kTechnical,
-     Block::FrontType::kYellowLight, Block::FrontType::kBlueLight};
+     Block::FrontType::kFiremondOre, Block::FrontType::kStoneBricks,
+     Block::FrontType::kClayBlock,   Block::FrontType::kBrickBlock,
+     Block::FrontType::kTechnical,   Block::FrontType::kRedLight,
+     Block::FrontType::kYellowLight, Block::FrontType::kGreenLight,
+     Block::FrontType::kBlueLight};
 
 }  // namespace
 

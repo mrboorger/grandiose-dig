@@ -6,6 +6,13 @@
 
 Inventory::Inventory() {
   // TODO(mrboorger): it is a temporary code
+  items_[0] = InventoryItem(InventoryItem::Type::kBlockRedLight, 999);
+  items_[1] = InventoryItem(InventoryItem::Type::kBlockYellowLight, 999);
+  items_[2] = InventoryItem(InventoryItem::Type::kBlockGreenLight, 999);
+  items_[3] = InventoryItem(InventoryItem::Type::kBlockBlueLight, 999);
+  items_[4] = InventoryItem(InventoryItem::Type::kBlockSandstone, 999);
+  items_[5] = InventoryItem(InventoryItem::Type::kBlockStoneBricks, 999);
+  items_[6] = InventoryItem(InventoryItem::Type::kBlockBrickBlock, 999);
 }
 
 void Inventory::AddItem(InventoryItem item) {

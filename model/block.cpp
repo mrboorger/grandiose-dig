@@ -29,7 +29,7 @@ const Block::FrontCharacteristics& Block::GetFrontCharacteristics(int32_t id) {
     set(FrontType::kSnowyGrass, kDefaultBlockCharactestics);
     set(FrontType::kSand, kDefaultBlockCharactestics);
     set(FrontType::kSandstone, kDefaultBlockCharactestics);
-    set(FrontType::kStone, {Light(0, 0, 0, 0), 400, true, true});
+    set(FrontType::kStone, {Light(0, 0, 0, 0), 4, true, true});
     set(FrontType::kCoalOre, {Light(0, 0, 0, 0), 300, true, true});
     set(FrontType::kIronOre, {Light(0, 0, 0, 0), 700, true, true});
     set(FrontType::kShimondOre,
