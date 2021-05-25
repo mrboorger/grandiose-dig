@@ -23,4 +23,3 @@ Grandiose Dig - 2D-игра, написанная на C++ с использов
 
 В программе используется музыка 
 [Hajime Hyakkoku - Pinch Daisuki!](https://open.spotify.com/track/5tuINYmRZlIctuiA4ZMv6p)
-
