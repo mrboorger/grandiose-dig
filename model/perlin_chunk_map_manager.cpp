@@ -1,7 +1,7 @@
 #include "model/perlin_chunk_map_manager.h"
 
-#include <QJsonObject>
 #include <QCborMap>
+#include <QJsonObject>
 #include <array>
 #include <cmath>
 
@@ -27,11 +27,11 @@ PerlinChunkMapManager::PerlinRegionGenerator::PerlinRegionGenerator(
       noise_shimond_(seed + 11),
       noise_shimond2_(seed + 12) {}
 
-Chunk PerlinChunkMapManager::PerlinRegionGenerator::Generate(const QString& save_file,
-    QPoint chunk_pos) {
+Chunk PerlinChunkMapManager::PerlinRegionGenerator::Generate(
+    const QString& save_file, QPoint chunk_pos) {
   Chunk chunk;
   QFile file(save_file + "chunk:" + QString::number(chunk_pos.x()) + ":" +
-      QString::number(chunk_pos.y()));
+             QString::number(chunk_pos.y()));
   if (!file.exists()) {
     chunk = LandscapeGeneration(chunk_pos);
     GenerateOres(&chunk, chunk_pos);
@@ -52,13 +52,11 @@ double PerlinChunkMapManager::PerlinRegionGenerator::PerlinBiomeNoise(
   return noise_biome_temperature_(seed / kBiomeLength);
 }
 
-double PerlinChunkMapManager::PerlinRegionGenerator::HeightNoise(
-    double noise) {
+double PerlinChunkMapManager::PerlinRegionGenerator::HeightNoise(double noise) {
   return (1.0 / (1 + exp(-noise * kHillsRapidness))) * 2 - 1;
 }
 
-double PerlinChunkMapManager::PerlinRegionGenerator::StoneNoise(
-    double noise) {
+double PerlinChunkMapManager::PerlinRegionGenerator::StoneNoise(double noise) {
   return (1.0 / (1 + exp(-noise * kStoneRapidness))) * kStoneMaxHeight;
 }
 
@@ -127,8 +125,7 @@ Chunk PerlinChunkMapManager::PerlinRegionGenerator::LandscapeGeneration(
     for (int32_t x = 0; x < Chunk::kWidth; ++x) {
       Biome biome = GetBiome(PerlinBiomeNoise(chunk_pos.x() + x));
       switch (biome) {
-        case PerlinChunkMapManager::PerlinRegionGenerator::Biome::
-          kIcePlains: {
+        case PerlinChunkMapManager::PerlinRegionGenerator::Biome::kIcePlains: {
           GenerateIcePlains(chunk_pos, &chunk, x, height_map);
           break;
         }
@@ -219,7 +216,7 @@ bool IsNearBlock(Chunk* chunk, int x, int y, Block::FrontType type) {
 }  // namespace
 
 void PerlinChunkMapManager::PerlinRegionGenerator::
-GenerateUndergroundDecoration(Chunk* chunk, QPoint chunk_pos) {
+    GenerateUndergroundDecoration(Chunk* chunk, QPoint chunk_pos) {
   for (int x = 0; x < Chunk::kWidth; ++x) {
     Biome biome = GetBiome(PerlinBiomeNoise(chunk_pos.x() + x));
     if (biome != Biome::kIcePlains && biome != Biome::kDesert) {
@@ -249,4 +246,3 @@ GenerateUndergroundDecoration(Chunk* chunk, QPoint chunk_pos) {
     }
   }
 }
-
