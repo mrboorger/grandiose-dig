@@ -36,9 +36,9 @@ const Block::FrontCharacteristics& Block::GetFrontCharacteristics(int32_t id) {
         FrontCharacteristics{Light(27, 108, 127, 0), 3000, true, false});
     set(FrontType::kFiremondOre,
         FrontCharacteristics{Light(127, 36, 22, 0), 3000, true, false});
-    set(FrontType::kStoneBricks, kDefaultBlockCharactestics);
+    set(FrontType::kStoneBricks, {Light(0, 0, 0, 0), 800, true, true});
     set(FrontType::kClayBlock, kDefaultBlockCharactestics);
-    set(FrontType::kBrickBlock, kDefaultBlockCharactestics);
+    set(FrontType::kBrickBlock, {Light(0, 0, 0, 0), 1000, true, true});
     set(FrontType::kTechnical, kDefaultBlockCharactestics);
     set(FrontType::kRedLight,
         FrontCharacteristics{Light(255, 64, 32, 0), 500, true, false});
