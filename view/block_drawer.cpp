@@ -24,8 +24,13 @@ const std::array<QString, Block::kFrontTypesCount> kFrontNames = {
     "iron_ore",
     "shimond_ore.png",
     "firemond_ore.png",
+    "stone_bricks.png",
+    "clay_block.png",
+    "brick_block.png",
     "technical.png",
+    "red_light.png",
     "yellow_light.png",
+    "green_light.png",
     "blue_light.png"};
 
 const std::array<QString, kBackgroundsCount> kBackgroundNames = {

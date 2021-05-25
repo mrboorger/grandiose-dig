@@ -18,19 +18,24 @@ class Inventory {
 
   void RemoveOneSelectedItem();
 
-  int GetSelectedItemNumber() const { return selected_item_; }
+  int GetSelectedColumn() const { return selected_column_; }
+  int GetSelectedRow() const { return selected_row_; }
   const InventoryItem& GetSelectedItem() const;
 
-  void ChangeSelectedItem(int selected_item) { selected_item_ = selected_item; }
+  void ChangeSelectedColumn(int col) { selected_column_ = col; }
 
   bool CanCraft(const CraftRecipe& recipe);
   void Craft(const CraftRecipe& recipe);
+
+  void SwitchToPrevRow();
+  void SwitchToNextRow();
 
  private:
   static constexpr int kInventorySize = kItemsInColumn * kItemsInRow;
 
   std::array<InventoryItem, kInventorySize> items_;
-  int selected_item_ = 0;  // 0-9
+  int selected_column_ = 0;
+  int selected_row_ = 0;
 };
 
 #endif  // MODEL_INVENTORY_H_

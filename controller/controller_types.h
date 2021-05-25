@@ -16,6 +16,8 @@ enum class Key {
   kInventory7,
   kInventory8,
   kInventory9,
+  kInventoryPrevRow,
+  kInventoryNextRow,
   kUnused
 };
 }  // namespace ControllerTypes
