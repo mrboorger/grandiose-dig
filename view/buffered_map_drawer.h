@@ -18,13 +18,6 @@ class BufferedMapDrawer : public AbstractMapDrawer {
   explicit BufferedMapDrawer(const QString& save_file,
                              std::shared_ptr<AbstractMap> map);
 
-  void DrawMapWithCenter(QPainter* painter, const QPointF& pos,
-                         const QRect& screen_coords) override;
-
-  void UpdateBlock(QPoint pos) override;
-
-  QRect GetDrawRegion(QPoint center) const override;
-
  private:
   // In blocks
   static constexpr int32_t kFieldOfView = 64;
@@ -36,6 +29,13 @@ class BufferedMapDrawer : public AbstractMapDrawer {
       constants::kBlockSz * kBufferHeight;
 
   static QPoint RoundToBufferPos(QPoint p);
+
+  void DrawMapWithCenterImpl(QPainter* painter, const QPointF& pos,
+                         const QRect& screen_coords) override;
+
+  void UpdateBlockImpl(QPoint pos) override;
+
+  QRect GetDrawRegionImpl(QPoint center) const override;
 
   const QPixmap& GetBufferPixmap(QPoint buffer_pos);
   static void RenderBlock(QPainter* painter, QPointF block_drawer_pos,

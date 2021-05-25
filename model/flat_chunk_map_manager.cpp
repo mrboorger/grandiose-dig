@@ -27,9 +27,9 @@ Chunk FlatChunkMapManager::FlatRegionGenerator::Generate(
     for (int32_t x = 0; x < Chunk::kWidth; ++x) {
       if (chunk_pos.y() > 1 || gen() % 20 == 0) {
         if (chunk_pos.y() == 2 && y == 0) {
-          chunk.SetBlock(QPoint(x, y), Block(Block::Type::kGrass));
+          chunk.SetBlock(QPoint(x, y), Block(Block::FrontType::kGrass));
         } else {
-          chunk.SetBlock(QPoint(x, y), Block(Block::Type::kDirt));
+          chunk.SetBlock(QPoint(x, y), Block(Block::FrontType::kDirt));
         }
       }
     }

@@ -9,11 +9,27 @@
 
 namespace {
 
-std::array<QString, InventoryItem::kTypesCount> kNames = {"", "dirt.png",
-                                                          "grass.png"};
+const std::array<QString, InventoryItem::kTypesCount> kNames = {
+    "",
+    "dirt.png",
+    "grass.png",
+    "stone.png",
+    "snowy_grass.png",
+    "sand.png",
+    "sandstone.png",
+    "coal_ore.png",
+    "iron_ore",
+    "shimond_ore.png",
+    "firemond_ore.png",
+    "technical.png",
+    "yellow_light.png",
+    "blue_light.png",
+    "",
+    "speed_potion.png",
+    "strength_potion.png"};
 std::array<QImage, InventoryItem::kTypesCount> images;
 
-QString selection_box_name = "selection_box.png";
+const QString kSelectionBoxName = "selection_box.png";
 QImage selection_box;
 
 }  // namespace
@@ -23,7 +39,7 @@ InventoryDrawer::InventoryDrawer(std::shared_ptr<const Inventory> inventory)
       craft_menu_(new QScrollArea(View::GetInstance())) {
   LoadInventoryBackground();
   CreateCraftScrollArea();
-  craft_menu_->setStyleSheet("background-color: rgba(0,0,0, 100)");
+  craft_menu_->setStyleSheet("background-color: rgba(0,0,0,100)");
 }
 
 void InventoryDrawer::DrawInventory(QPainter* painter) {
@@ -88,7 +104,7 @@ void InventoryDrawer::LoadInventoryBackground() {
 
 void InventoryDrawer::DrawSelectionBox(QPainter* painter) {
   if (selection_box.isNull()) {
-    selection_box.load(":/resources/textures/" + selection_box_name);
+    selection_box.load(":/resources/textures/" + kSelectionBoxName);
   }
   assert(!selection_box.isNull());
   painter->drawImage(
@@ -98,13 +114,13 @@ void InventoryDrawer::DrawSelectionBox(QPainter* painter) {
 
 void InventoryDrawer::CreateCraftScrollArea() {
   craft_menu_->setFocusPolicy(Qt::FocusPolicy::NoFocus);
-  craft_menu_->setGeometry(QRect(10, 200, 250, 150));
+  craft_menu_->setGeometry(kMenuRect);
   craft_menu_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   craft_menu_->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   craft_menu_->setVisible(false);
 
-  QVBoxLayout* layout = new QVBoxLayout(craft_menu_);
-  auto all_craft_recipes = Model::GetInstance()->GetAllCraftRecipes();
+  auto* layout = new QVBoxLayout(craft_menu_);
+  auto all_craft_recipes = Model::GetInstance()->GetCraftRecipeCollection();
   for (int i = 0; i < all_craft_recipes->Size(); i += kCraftsInRow) {
     auto row_layout = new QHBoxLayout();
     for (int j = 0; j < kCraftsInRow && i + j < all_craft_recipes->Size();
@@ -120,7 +136,7 @@ void InventoryDrawer::CreateCraftScrollArea() {
     }
     layout->addLayout(row_layout);
   }
-  QWidget* widget = new QWidget;
+  auto* widget = new QWidget;
   widget->setLayout(layout);
   craft_menu_->setWidget(widget);
 }

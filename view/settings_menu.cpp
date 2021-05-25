@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QKeySequence>
+#include <QDebug>
 #include <QPainter>
 #include <QSettings>
 

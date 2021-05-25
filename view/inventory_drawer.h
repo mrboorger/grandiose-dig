@@ -5,7 +5,6 @@
 #include <QScrollArea>
 #include <memory>
 
-#include "model/inventory.h"
 #include "model/model.h"
 
 class InventoryDrawer {
@@ -26,9 +25,12 @@ class InventoryDrawer {
   static constexpr int kIndentSize = 4;  // in pixels
   static constexpr int kFontSize = 8;
 
-  static constexpr int kCraftsInRow = 6;
 
   static constexpr QPoint kItemCorner{8, 4};  // in pixels
+
+  static constexpr QRect kMenuRect{10, 200, 250, 150};
+
+  static constexpr int kCraftsInRow = 5;
 
   void DrawItemSprite(QPainter* painter, QPoint pos, int id);
   void DrawItemCount(QPainter* painter, QPoint pos, int cnt);

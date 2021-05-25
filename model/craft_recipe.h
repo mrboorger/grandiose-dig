@@ -13,7 +13,11 @@ class CraftRecipe : public QObject {
   CraftRecipe(InventoryItem resulting_item,
               std::vector<InventoryItem> needed_items);
   CraftRecipe(CraftRecipe&& recipe) noexcept;
+  CraftRecipe(const CraftRecipe& recipe) = delete;
   virtual ~CraftRecipe() {}
+
+  CraftRecipe& operator=(CraftRecipe&& recipe) noexcept;
+  CraftRecipe& operator=(const CraftRecipe& recipe) = delete;
 
   const std::vector<InventoryItem>& GetNeededItems() const;
   const InventoryItem& GetResultingItem() const { return resulting_item_; }

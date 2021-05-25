@@ -1,18 +1,24 @@
 #include "view/light_map.h"
 
+
 #include <QCborMap>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <mutex>
 
 #include "utils.h"
 
-void LightMap::UpdateLight(QPoint pos) { invalidate_queue_.push(pos); }
+void LightMap::UpdateLight(QPoint pos) {
+  std::lock_guard<std::recursive_mutex> lock(mutex_);
+  invalidate_queue_.push(pos);
+}
 
 Light LightMap::GetLight(QPoint pos) {
+  std::unique_lock<std::recursive_mutex> lock(mutex_, std::try_to_lock);
   auto res = data_.TryGetValue(pos);
   if (!res) {
-    return Light();
+    return map_->GetBlock(pos).GetLuminosity();
   }
   return res.value();
 }
@@ -50,6 +56,7 @@ Light LightMap::GetLightRB(QPoint pos) {
 }
 
 void LightMap::CalculateRegion(const QRect& region) {
+  std::lock_guard<std::recursive_mutex> lock(mutex_);
   std::queue<QPoint> update_queue;
   std::set<QPoint, utils::QPointLexicographicalCompare> removed;
   data_.MarkUsedOrInsert(region);
@@ -147,6 +154,7 @@ void LightMap::BufferSaver::operator()(const QString& save_file,
 }
 
 void LightMap::SetPointUpdated(QPoint pos, int iteration) {
+  std::lock_guard<std::recursive_mutex> lock(mutex_);
   updated_.insert(pos);
   for (auto neighbour : utils::NeighbourPoints(pos)) {
     updated_.insert(neighbour);
@@ -157,10 +165,5 @@ void LightMap::SetPointUpdated(QPoint pos, int iteration) {
 }
 
 Light LightMap::GetLuminosity(QPoint pos) const {
-  Block block = map_->GetBlock(pos);
-  Light light = block.GetLuminosity();
-  if (pos.y() < map_->GroundLevel() && !block.IsOpaque()) {
-    light.SetSun(Light::kMaxLight);
-  }
-  return light;
+  return map_->GetBlock(pos).GetLuminosity();
 }

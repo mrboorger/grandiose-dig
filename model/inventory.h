@@ -12,7 +12,7 @@ class Inventory {
   static constexpr int kItemsInColumn = 5;
   static constexpr int kItemsInRow = 10;
 
-  Inventory();
+  Inventory() = default;
 
   const InventoryItem& operator[](int ind) const { return items_[ind]; }
   void AddItem(InventoryItem item);

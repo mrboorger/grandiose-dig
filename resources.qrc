@@ -7,9 +7,6 @@
         <file>resources/textures/dirt.png</file>
         <file>resources/textures/grass.png</file>
         <file>resources/textures/inventory_cell.png</file>
-        <file>resources/textures/dirt.png</file>
-        <file>resources/textures/grass.png</file>
-        <file>resources/textures/inventory_cell.png</file>
         <file>resources/textures/selection_box.png</file>
         <file>resources/sounds/player_damage.mp3</file>
         <file>resources/sounds/zombie_death.mp3</file>
@@ -19,48 +16,72 @@
         <file>resources/sounds/zombie1.mp3</file>
         <file>resources/shaders/vertex.glsl</file>
         <file>resources/shaders/fragment.glsl</file>
-        <file>resources/textures/player1.png</file>
-        <file>resources/textures/player2.png</file>
-        <file>resources/textures/player0.png</file>
-        <file>resources/textures/player3.png</file>
-        <file>resources/textures/player_attack0.png</file>
-        <file>resources/textures/player_attack1.png</file>
-        <file>resources/textures/player_attack2.png</file>
-        <file>resources/textures/player_attack3.png</file>
-        <file>resources/textures/zombie_lord2.png</file>
-        <file>resources/textures/zombie_lord1.png</file>
-        <file>resources/textures/zombie_lord3.png</file>
+        <file>resources/shaders/vertex.glsl</file>
         <file>resources/textures/zombie_lord0.png</file>
-        <file>resources/textures/zombie3.png</file>
-        <file>resources/textures/zombie2.png</file>
-        <file>resources/textures/zombie1.png</file>
+        <file>resources/textures/zombie_lord1.png</file>
+        <file>resources/textures/zombie_lord2.png</file>
+        <file>resources/textures/zombie_lord3.png</file>
         <file>resources/textures/zombie0.png</file>
-        <file>resources/textures/quiox0.png</file>
+        <file>resources/textures/zombie1.png</file>
+        <file>resources/textures/zombie2.png</file>
+        <file>resources/textures/zombie3.png</file>
+        <file>resources/textures/technical.png</file>
+        <file>resources/textures/stone.png</file>
+        <file>resources/textures/space_background.png</file>
+        <file>resources/textures/snowy_grass.png</file>
+        <file>resources/textures/sky_background.png</file>
+        <file>resources/textures/sandstone.png</file>
+        <file>resources/textures/sand.png</file>
         <file>resources/textures/quiox1.png</file>
+        <file>resources/textures/quiox0.png</file>
+        <file>resources/textures/player3.png</file>
+        <file>resources/textures/player2.png</file>
+        <file>resources/textures/player1.png</file>
+        <file>resources/textures/player0.png</file>
+        <file>resources/textures/player_attack3.png</file>
+        <file>resources/textures/player_attack2.png</file>
+        <file>resources/textures/player_attack1.png</file>
+        <file>resources/textures/player_attack0.png</file>
         <file>resources/textures/magic_quiox1.png</file>
         <file>resources/textures/magic_quiox0.png</file>
-        <file>resources/translations/translation_en.ts</file>
-        <file>resources/translations/translation_en.qm</file>
-        <file>resources/translations/translation_ru.ts</file>
-        <file>resources/translations/translation_ru.qm</file>
-        <file>resources/translations/translation_de.ts</file>
-        <file>resources/translations/translation_de.qm</file>
-        <file>resources/translations/translation_uk.ts</file>
-        <file>resources/translations/translation_uk.qm</file>
-        <file>resources/sounds/magic_quiox_death.mp3</file>
-        <file>resources/sounds/magic_quiox2.mp3</file>
-        <file>resources/sounds/magic_quiox1.mp3</file>
-        <file>resources/sounds/magic_quiox_damage2.mp3</file>
+        <file>resources/textures/iron_ore.png</file>
+        <file>resources/textures/inventory_cell.png</file>
+        <file>resources/textures/hills_background.png</file>
+        <file>resources/textures/grass.png</file>
+        <file>resources/textures/forest_background.png</file>
+        <file>resources/textures/dirt.png</file>
+        <file>resources/textures/coal_ore.png</file>
+        <file>resources/textures/cave_background.png</file>
         <file>resources/sounds/magic_quiox_damage1.mp3</file>
-        <file>resources/sounds/quiox2.mp3</file>
-        <file>resources/sounds/quiox1.mp3</file>
-        <file>resources/sounds/quiox_damage2.mp3</file>
+        <file>resources/sounds/magic_quiox_damage2.mp3</file>
+        <file>resources/textures/block_cracks_1.png</file>
+        <file>resources/textures/block_cracks_2.png</file>
+        <file>resources/textures/block_cracks_3.png</file>
+        <file>resources/sounds/magic_quiox_death.mp3</file>
+        <file>resources/sounds/magic_quiox1.mp3</file>
+        <file>resources/sounds/magic_quiox2.mp3</file>
+        <file>resources/sounds/player_damage.mp3</file>
         <file>resources/sounds/quiox_damage1.mp3</file>
-        <file>resources/sounds/zombie_lord_death.mp3</file>
-        <file>resources/sounds/zombie_lord_damage2.mp3</file>
-        <file>resources/sounds/zombie_lord_damage1.mp3</file>
-        <file>resources/sounds/zombie_lord2.mp3</file>
-        <file>resources/sounds/zombie_lord1.mp3</file>
+        <file>resources/sounds/quiox_damage2.mp3</file>
         <file>resources/sounds/quiox_death.mp3</file>
+        <file>resources/sounds/quiox1.mp3</file>
+        <file>resources/sounds/quiox2.mp3</file>
+        <file>resources/sounds/zombie_damage1.mp3</file>
+        <file>resources/sounds/zombie_damage2.mp3</file>
+        <file>resources/sounds/zombie_death.mp3</file>
+        <file>resources/sounds/zombie_lord_damage1.mp3</file>
+        <file>resources/sounds/zombie_lord_damage2.mp3</file>
+        <file>resources/sounds/zombie_lord_death.mp3</file>
+        <file>resources/sounds/zombie_lord1.mp3</file>
+        <file>resources/sounds/zombie_lord2.mp3</file>
+        <file>resources/sounds/zombie1.mp3</file>
+        <file>resources/sounds/zombie2.mp3</file>
+        <file>resources/sounds/music.mp3</file>
+        <file>resources/textures/shimond_ore.png</file>
+        <file>resources/textures/firemond_ore.png</file>
+        <file>resources/textures/speed_potion.png</file>
+        <file>resources/textures/strength_potion.png</file>
+        <file>resources/textures/blue_light.png</file>
+        <file>resources/textures/yellow_light.png</file>
     </qresource>
 </RCC>

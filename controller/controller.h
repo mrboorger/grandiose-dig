@@ -35,6 +35,8 @@ class Controller : public QObject {
   void SetPlayer();
   void SetMob();
 
+  void ManageMobs();
+
   static ControllerTypes::Key TranslateKeyCode(int key_code);
 
   void KeyPress(int key);
@@ -74,6 +76,9 @@ class Controller : public QObject {
   bool CanAttackMob(std::shared_ptr<MovingObject> mob, QPointF player_center,
                     double lower_angle, double upper_angle) const;
 
+  void SpawnMobs();
+  void DespawnMobs();
+
   void BreakBlock(double time);
   void UseItem();
 
@@ -90,6 +95,7 @@ class Controller : public QObject {
       std::chrono::high_resolution_clock::now();
   std::chrono::time_point<std::chrono::high_resolution_clock> last_menu_time_ =
       std::chrono::high_resolution_clock::now();
+  uint64_t sum_time_ = 0;
 };
 
 #endif  // CONTROLLER_CONTROLLER_H_

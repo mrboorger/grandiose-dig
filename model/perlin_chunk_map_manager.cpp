@@ -40,7 +40,7 @@ Chunk PerlinChunkMapManager::PerlinRegionGenerator::BasicGeneration(
     QPoint chunk_pos) {
   Chunk chunk;
   if (chunk_pos.y() > kUpperChunk) {
-    chunk.FillWith(Block(Block::Type::kDirt));
+    chunk.FillWith(Block(Block::FrontType::kDirt));
   } else if (chunk_pos.y() == kUpperChunk) {
     std::array<int32_t, Chunk::kWidth> height_map;
     for (int i = 0; i < Chunk::kWidth; ++i) {
@@ -51,9 +51,9 @@ Chunk PerlinChunkMapManager::PerlinRegionGenerator::BasicGeneration(
     for (int32_t y = 0; y < Chunk::kHeight; ++y) {
       for (int32_t x = 0; x < Chunk::kWidth; ++x) {
         if (height_map[x] < y) {
-          chunk.SetBlock(QPoint(x, y), Block(Block::Type::kDirt));
+          chunk.SetBlock(QPoint(x, y), Block(Block::FrontType::kDirt));
         } else if (height_map[x] == y) {
-          chunk.SetBlock(QPoint(x, y), Block(Block::Type::kGrass));
+          chunk.SetBlock(QPoint(x, y), Block(Block::FrontType::kGrass));
         }
       }
     }
@@ -70,7 +70,7 @@ void PerlinChunkMapManager::PerlinRegionGenerator::GenerateCaves(
     for (int x = 0; x < Chunk::kWidth; ++x) {
       if (noise2d_(kCavesScale * (chunk_pos.x() + x),
                    kCavesScale * (chunk_pos.y() + y)) > kCavesRate) {
-        chunk->SetBlock(QPoint(x, y), Block(Block::Type::kAir));
+        chunk->SetBlock(QPoint(x, y), Block(Block::FrontType::kAir));
       }
     }
   }

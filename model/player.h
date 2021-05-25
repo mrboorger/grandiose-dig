@@ -47,31 +47,32 @@ class Player : public MovingObject {
   }
 
   bool IsAttackFinished() const { return attack_tick_ <= constants::kEps; }
-
   bool CanStartAttack() const;
 
   void SetUseItemCooldownInterval();
-  void DecItemUsingCooldownInterval(double time);
+  void DecUseItemCooldownInterval(double time);
 
-  bool CanUseItem() const { return use_item_cooldown_interval == 0; }
+  bool CanUseItem() const { return use_item_cooldown_interval_ == 0; }
 
   void TryCraft(const CraftRecipe& recipe);
+
+  void UsePotion();
 
   void Read(const QJsonObject& json) override;
   void Write(QJsonObject* json) const override;
 
  private:
   static constexpr int kUseItemCooldown = 100;
+  static constexpr int kDeafultToolRadius = 8;  // in blocks
 
   std::shared_ptr<Inventory> inventory_;
   double attack_tick_ = 0;
   double attack_cooldown_interval_ = 0;
   utils::Direction attack_direction_ = utils::Direction::kLeft;
 
-  int use_item_cooldown_interval = 0;
+  int use_item_cooldown_interval_ = 0;
 
-  // TODO(mrboorger): It is temporary
-  int tool_radius = 8;  // in blocks
+  int tool_radius_ = kDeafultToolRadius;  // in blocks
 };
 
 #endif  // MODEL_PLAYER_H_

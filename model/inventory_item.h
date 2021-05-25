@@ -11,9 +11,23 @@ class InventoryItem {
   // Must be arranged in groups
   enum class Type {
     kEmptyItem,
+    kBlockMin = kEmptyItem,
     kBlockDirt,
     kBlockGrass,
     kBlockStone,
+    kBlockSnowyGrass,
+    kBlockSand,
+    kBlockSandstone,
+    kBlockCoalOre,
+    kBlockIronOre,
+    kBlockShimondOre,
+    kBlockFiremondOre,
+    kBlockTechnical,
+    kBlockYellowLight,
+    kBlockBlueLight,
+    kBlockMax,
+    kSpeedPotion,
+    kStrengthPotion,
     kTypesCount,
   };
 
@@ -22,6 +36,11 @@ class InventoryItem {
   InventoryItem() : type_(Type::kEmptyItem), count_(0) {}
   explicit InventoryItem(Type type, int count = 1)
       : type_(type), count_(count) {}
+  InventoryItem(const InventoryItem&) = default;
+  InventoryItem(InventoryItem&&) = default;
+
+  InventoryItem& operator=(const InventoryItem&) = default;
+  InventoryItem& operator=(InventoryItem&&) = default;
 
   bool operator==(const InventoryItem& rhs) const;
 
@@ -29,7 +48,8 @@ class InventoryItem {
 
   Type GetType() const { return type_; }
   int32_t GetId() const { return static_cast<int32_t>(type_); }
-  int32_t GetIdOfBlock() const { return static_cast<int32_t>(type_); }
+  int32_t GetIdOfBlock() const;
+
   int GetCount() const { return count_; }
 
   void ChangeCount(int new_count);
@@ -37,10 +57,10 @@ class InventoryItem {
   int ItemsLeft() const;
 
   static InventoryItem GetDropItem(Block block);
-
-  static Block GetBlockFromItem(InventoryItem item);
+  static Block::FrontType GetBlockFromItem(InventoryItem item);
 
   bool IsBlock() const;
+  bool IsPotion() const;
 
   void Read(const QJsonObject& json);
   void Write(QJsonObject* json) const;

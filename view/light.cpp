@@ -1,7 +1,5 @@
 #include "view/light.h"
 
-#include <algorithm>
-
 bool Light::IsDepenantOn(const Light& light) const {
   for (int i = 0; i < kNChannels; ++i) {
     if (static_cast<int>(light.data_[i]) - kDecreaseFactor == data_[i]) {

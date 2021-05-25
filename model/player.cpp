@@ -21,7 +21,7 @@ void Player::UseItem() { inventory_->RemoveOneSelectedItem(); }
 
 bool Player::IsBlockReachableForTool(QPoint block_coords) {
   return std::hypot((GetPosition().x() - block_coords.x()),
-                    (GetPosition().y() - block_coords.y())) <= tool_radius;
+                    (GetPosition().y() - block_coords.y())) <= tool_radius_;
 }
 
 bool Player::CanStartAttack() const {
@@ -29,17 +29,29 @@ bool Player::CanStartAttack() const {
 }
 
 void Player::SetUseItemCooldownInterval() {
-  use_item_cooldown_interval = kUseItemCooldown;
+  use_item_cooldown_interval_ = kUseItemCooldown;
 }
 
-void Player::DecItemUsingCooldownInterval(double time) {
-  use_item_cooldown_interval = std::max(use_item_cooldown_interval - time, 0.0);
+void Player::DecUseItemCooldownInterval(double time) {
+  use_item_cooldown_interval_ =
+      std::max(use_item_cooldown_interval_ - time, 0.0);
 }
 
 void Player::TryCraft(const CraftRecipe& recipe) {
   if (inventory_->CanCraft(recipe)) {
     inventory_->Craft(recipe);
   }
+}
+
+void Player::UsePotion() {
+  if (inventory_->GetSelectedItem().GetType() ==
+      InventoryItem::Type::kSpeedPotion) {
+    AddEffect(Effect(Effect::Type::kSpeed, 30000, 1.5));
+  } else if (inventory_->GetSelectedItem().GetType() ==
+      InventoryItem::Type::kSpeedPotion) {
+    AddEffect(Effect(Effect::Type::kStrength, 30000, 1.5));
+  }
+  inventory_->RemoveOneSelectedItem();
 }
 
 void Player::Read(const QJsonObject& json) {
@@ -50,8 +62,8 @@ void Player::Read(const QJsonObject& json) {
   attack_cooldown_interval_ = json["attack_cooldown_interval_"].toDouble();
   attack_direction_ =
       static_cast<utils::Direction>(json["attack_direction_"].toInt());
-  use_item_cooldown_interval = json["use_item_cooldown_interval"].toInt();
-  tool_radius = json["tool_radius"].toInt();
+  use_item_cooldown_interval_ = json["use_item_cooldown_interval"].toInt();
+  tool_radius_ = json["tool_radius"].toInt();
 }
 
 void Player::Write(QJsonObject* json) const {
@@ -63,6 +75,6 @@ void Player::Write(QJsonObject* json) const {
   (*json)["attack_tick_"] = attack_tick_;
   (*json)["attack_cooldown_interval_"] = attack_cooldown_interval_;
   (*json)["attack_direction_"] = static_cast<int>(attack_direction_);
-  (*json)["use_item_cooldown_interval"] = use_item_cooldown_interval;
-  (*json)["tool_radius"] = tool_radius;
+  (*json)["use_item_cooldown_interval"] = use_item_cooldown_interval_;
+  (*json)["tool_radius"] = tool_radius_;
 }

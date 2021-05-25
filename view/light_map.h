@@ -4,6 +4,7 @@
 #include <QRect>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <queue>
 #include <set>
 #include <utility>
@@ -30,12 +31,15 @@ class LightMap {
   Light GetLightRB(QPoint pos);
   void CalculateRegion(const QRect& region);
 
-  const std::set<QPoint, utils::QPointLexicographicalCompare>& TakeUpdateList()
-      const {
-    return updated_;
-  }
 
-  void ClearUpdateList() { updated_.clear(); }
+  std::set<QPoint, utils::QPointLexicographicalCompare> TakeUpdateList() {
+    std::set<QPoint, utils::QPointLexicographicalCompare> result;
+    std::unique_lock<std::recursive_mutex> lock(mutex_, std::try_to_lock);
+    if (lock.owns_lock()) {
+      result.swap(updated_);
+    }
+    return result;
+  }
 
  private:
   static constexpr int kBufferWidth = 64;
@@ -70,6 +74,7 @@ class LightMap {
   std::queue<QPoint> invalidate_queue_;
   std::set<QPoint, utils::QPointLexicographicalCompare> updated_;
   std::shared_ptr<AbstractMap> map_;
+  std::recursive_mutex mutex_;
 };
 
 #endif  // VIEW_LIGHT_MAP_H_

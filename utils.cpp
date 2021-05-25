@@ -43,6 +43,12 @@ double GetRandomDouble(double left_bound, double right_bound) {
   return distrib(random);
 }
 
+
+double GetDistance(QPointF lhs, QPointF rhs) {
+  return sqrt((lhs.x() - rhs.x()) * (lhs.x() - rhs.x()) +
+              (lhs.y() - rhs.y()) * (lhs.y() - rhs.y()));
+}
+
 std::array<QPoint, 4> NeighbourPoints(QPoint point) {
   return {QPoint(point.x(), point.y() - 1), QPoint(point.x(), point.y() + 1),
           QPoint(point.x() - 1, point.y()), QPoint(point.x() + 1, point.y())};

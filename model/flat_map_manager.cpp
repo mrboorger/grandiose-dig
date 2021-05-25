@@ -8,7 +8,7 @@ AbstractMap* FlatMapGenerator::GenerateMap(const QString& save_file) {
   auto* map = new Map(300, 300);
   for (int y = 150; y < 300; ++y) {
     for (int x = 0; x < 300; ++x) {
-      map->SetBlock(QPoint(x, y), Block(Block::Type::kDirt));
+      map->SetBlock(QPoint(x, y), Block(Block::FrontType::kDirt));
     }
   }
   // TODO(Wind-Eagle): make better map generation. This is temporary code!
@@ -19,7 +19,7 @@ AbstractMap* FlatMapGenerator::GenerateMap(const QString& save_file) {
       random ^= (random >> 11);
       random ^= (random << 9);
       if (random % 10 == 0) {
-        map->SetBlock(QPoint(x, y), Block(Block::Type::kDirt));
+        map->SetBlock(QPoint(x, y), Block(Block::FrontType::kDirt));
       }
     }
   }

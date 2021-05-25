@@ -44,14 +44,18 @@ class Model : public QObject {
 
   void PickItemToPlayer(InventoryItem item) { player_->PickItem(item); }
 
-  bool CanIPlaceBlock(QPoint block_coords);
-
   void SetCurrentSeed(uint32_t seed) { current_world_seed_ = seed; }
   uint32_t GetCurrentSeed() { return current_world_seed_; }
 
-  std::shared_ptr<const AllCraftRecipes> GetAllCraftRecipes() const;
+  bool CanPlaceBlock(QPoint block_coords);
+
+  std::shared_ptr<const CraftRecipeCollection> GetCraftRecipeCollection() const;
 
   bool CanSpawnMobAt(QPointF pos, QPointF size) const;
+
+  int GetMobsCount() const { return mobs_.size(); }
+
+  void DespawnMobs();
 
   void Read(const QJsonObject& json);
   void Write(QJsonObject& json) const;
@@ -74,14 +78,14 @@ class Model : public QObject {
  private:
   bool IsAnyMovingObjectInBlock(QPoint block_coords);
 
-  Model() : all_craft_recipes_(new AllCraftRecipes) {}
+  Model() : all_craft_recipes_(new CraftRecipeCollection) {}
 
   QString current_save_file_name_;
   uint32_t current_world_seed_;
   std::set<std::shared_ptr<Mob>> mobs_;
   std::shared_ptr<AbstractMap> map_;
   std::shared_ptr<Player> player_;
-  std::shared_ptr<AllCraftRecipes> all_craft_recipes_;
+  std::shared_ptr<CraftRecipeCollection> all_craft_recipes_;
 };
 
 #endif  // MODEL_MODEL_H_

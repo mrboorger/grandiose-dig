@@ -5,6 +5,7 @@
 #include <QOpenGLWidget>
 #include <QScopedPointer>
 #include <memory>
+#include <thread>
 
 #include "model/model.h"
 #include "view/abstract_map_drawer.h"
@@ -51,6 +52,8 @@ class View : public QOpenGLWidget {
 
   std::shared_ptr<LightMap> GetLightMap() { return light_map_; }
 
+  void PlayMusic();
+
   void SwitchInventory();
 
   void ChangeGameState(GameState new_state);
@@ -73,7 +76,6 @@ class View : public QOpenGLWidget {
 
   void initializeGL() override;
   void paintGL() override;
-
   void DrawPlayer(QPainter* painter);
 
   void changeEvent(QEvent* event) override;
@@ -84,17 +86,19 @@ class View : public QOpenGLWidget {
   void paintEvent(QPaintEvent* event) override;
   void resizeEvent(QResizeEvent* event) override;
 
-  void UpdateLight(QPoint camera_pos);
+  void UpdateLight();
 
   QPointF GetTopLeftWindowCoord() const;  // in blocks
 
-  Camera camera_;
+  QPointF camera_pos_;
   std::unique_ptr<SoundManager> sound_manager_;
   std::unique_ptr<AbstractMapDrawer> drawer_;
-  std::unique_ptr<InventoryDrawer> inventory_drawer_;
   std::shared_ptr<LightMap> light_map_;
+  std::unique_ptr<InventoryDrawer> inventory_drawer_;
   bool should_initialize_drawer_;
   bool is_visible_inventory_ = false;
+  std::atomic<bool> need_continue_ = true;
+  std::unique_ptr<std::thread> update_light_thread_;
 
   QScopedPointer<MainMenu> main_menu_;
   QScopedPointer<NewWorldMenu> new_world_menu_;

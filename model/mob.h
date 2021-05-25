@@ -24,6 +24,8 @@ class Mob : public MovingObject {
     strategy_ = std::move(strategy);
   }
 
+  static QPointF GetMobSize(int id);
+
   void Read(const QJsonObject& json) override;
   void Write(QJsonObject* json) const override;
 

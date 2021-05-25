@@ -13,7 +13,7 @@ class Chunk {
   static constexpr int32_t kWidth = 64;
   static constexpr int32_t kHeight = 64;
 
-  Chunk() : blocks_(kWidth * kHeight, Block(Block::Type::kAir)) {}
+  Chunk() : blocks_(kWidth * kHeight, Block(Block::FrontType::kAir)) {}
 
   Block& operator[](int32_t i) { return blocks_[i]; }
   const Block& operator[](int32_t i) const { return blocks_[i]; }
@@ -25,6 +25,11 @@ class Chunk {
   void SetBlock(QPoint pos, Block block) { blocks_[BlockIndex(pos)] = block; }
 
   void FillWith(Block block);
+
+  static bool IsPositionLegit(QPoint pos) {
+    return (0 <= pos.x() && pos.x() < kWidth) &&
+           (0 <= pos.y() && pos.y() < kHeight);
+  }
 
   void Read(const QJsonObject& json);
   void Write(QJsonObject* json) const;

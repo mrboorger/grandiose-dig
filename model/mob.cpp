@@ -34,6 +34,8 @@ Mob::Mob(QPointF pos, Type type)
   }
 }
 
+QPointF Mob::GetMobSize(int id) { return kMobParameters[id].size_; }
+
 void Mob::MoveMob(double time) {
   MobState mob_state;
   mob_state.SetPos(GetPosition());

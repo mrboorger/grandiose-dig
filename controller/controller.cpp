@@ -51,15 +51,15 @@ void Controller::SetGeneratedMap(AbstractMapManager* generator,
 void Controller::SetPlayer() {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->SetPlayer(
-      std::make_shared<Player>(QPointF(125.0, 115.0)));
+      std::make_shared<Player>(QPointF(-16.0, 96.0)));
   View::GetInstance()->SetInventoryDrawer(
       new InventoryDrawer(Model::GetInstance()->GetPlayer()->GetInventory()));
 }
 
 void Controller::SetMob() {
   // TODO(Wind-Eagle): this is temporary code.
-  Model::GetInstance()->AddMob(
-      std::make_shared<Mob>(QPointF(162.0, 104.0), Mob::Type::kQuiox));
+  /*Model::GetInstance()->AddMob(
+      std::make_shared<Mob>(QPointF(162.0, 104.0), Mob::Type::kQuiox));*/
 }
 
 void Controller::BreakBlock(double time) {
@@ -88,14 +88,17 @@ void Controller::UseItem() {
   if (item.IsBlock()) {
     if (Model::GetInstance()->GetPlayer()->IsBlockReachableForTool(
             block_coords) &&
-        Model::GetInstance()->CanIPlaceBlock(block_coords)) {
-      Model::GetInstance()->GetMap()->SetBlock(
-          block_coords, InventoryItem::GetBlockFromItem(item));
+        Model::GetInstance()->CanPlaceBlock(block_coords)) {
+      Model::GetInstance()
+          ->GetMap()
+          ->GetBlockMutable(block_coords)
+          ->SetFrontType(InventoryItem::GetBlockFromItem(item));
       View::GetInstance()->UpdateBlock(block_coords);
+      View::GetInstance()->GetLightMap()->UpdateLight(block_coords);
       Model::GetInstance()->GetPlayer()->UseItem();
     }
-  } else {
-    // UsePotion?
+  } else if (item.IsPotion()) {
+    Model::GetInstance()->GetPlayer()->UsePotion();
   }
   Model::GetInstance()->GetPlayer()->SetUseItemCooldownInterval();
 }
@@ -144,8 +147,8 @@ bool Controller::IsVisible(QPointF player_center, QPointF mob_point) const {
     for (double x = center_left_x + constants::kEps;; x += 1) {
       QPoint block_pos{static_cast<int>(std::floor(x)),
                        static_cast<int>(std::floor(y))};
-      if (Model::GetInstance()->GetMap()->GetBlock(block_pos).GetType() !=
-          Block::Type::kAir) {
+      if (Model::GetInstance()->GetMap()->GetBlock(block_pos).GetFrontType() !=
+          Block::FrontType::kAir) {
         return false;
       }
       if (x >= std::floor(center_right_x)) {
@@ -255,7 +258,8 @@ void Controller::TickEvent() {
                  .count();
     }
     prev_time_ = cur;
-    Model::GetInstance()->GetPlayer()->DecItemUsingCooldownInterval(time);
+    sum_time_ += time;
+    Model::GetInstance()->GetPlayer()->DecUseItemCooldownInterval(time);
     Model::GetInstance()->MoveObjects(pressed_keys_, time);
 
     if (is_pressed_left_mouse_button) {
@@ -266,6 +270,7 @@ void Controller::TickEvent() {
       UseItem();
     }
     PlayerAttack(time);
+    ManageMobs();
     View::GetInstance()->repaint();
   }
 }
@@ -289,6 +294,7 @@ ControllerTypes::Key Controller::TranslateKeyCode(int key_code) {
 }
 
 void Controller::KeyPress(int key) {
+  ParseInventoryKey(TranslateKeyCode(key));
   pressed_keys_.insert(TranslateKeyCode(key));
 }
 
@@ -343,6 +349,65 @@ void Controller::LoadFromFile(const QString& world_name) {
   PerlinChunkMapManager generator(Model::GetInstance()->GetCurrentSeed());
   SetGeneratedMap(&generator, save_file);
 }
+
+void Controller::ManageMobs() {
+  SpawnMobs();
+  DespawnMobs();
+}
+
+void Controller::SpawnMobs() {
+  if (sum_time_ < constants::kMobSpawnStartDelay) {
+    return;
+  }
+  std::uniform_real_distribution<double> distrib(0, 1);
+  if (distrib(utils::random) <
+      constants::kMobSpawnChance / Model::GetInstance()->GetMobsCount()) {
+    QPointF player_pos = Model::GetInstance()->GetPlayer()->GetPosition();
+    for (int op = constants::kMobSpawnAttempts; op > 0; op--) {
+      std::uniform_real_distribution<double> distrib_x(
+          player_pos.x() - constants::kMobMinSpawnDistance,
+          player_pos.x() + constants::kMobMinSpawnDistance);
+      std::uniform_real_distribution<double> distrib_y(
+          player_pos.y() - constants::kMobMinSpawnDistance,
+          player_pos.y() + constants::kMobMinSpawnDistance);
+      QPointF pos(distrib_x(utils::random), distrib_y(utils::random));
+      double distance = utils::GetDistance(player_pos, pos);
+      if (distance < constants::kMobMinSpawnDistance ||
+          distance > constants::kMobMaxSpawnDistance) {
+        continue;
+      }
+      QPoint pos_casted(pos.x(), pos.y());
+      int light = View::GetInstance()
+                      ->GetLightMap()
+                      ->GetLight(pos_casted)
+                      .GetCombinedLight();
+      if (light >= constants::kMobsSpawnLight) {
+        continue;
+      }
+      std::uniform_real_distribution<double> distrib_type(
+          0, constants::kMobsSumRate);
+      int type = 0;
+      double sum = 0;
+      double cur = distrib_type(utils::random);
+      for (int i = 0; i < Mob::kTypesCount; i++) {
+        sum += constants::kMobsSpawnRate[i];
+        if (cur < sum) {
+          type = i;
+          break;
+        }
+      }
+      if (Model::GetInstance()->CanSpawnMobAt(QPointF(pos.x(), pos.y()),
+                                              Mob::GetMobSize(type))) {
+        qDebug() << "Spawned: " << type;
+        Model::GetInstance()->AddMob(std::make_shared<Mob>(
+            QPointF(pos.x(), pos.y()), static_cast<Mob::Type>(type)));
+        return;
+      }
+    }
+  }
+}
+
+void Controller::DespawnMobs() { Model::GetInstance()->DespawnMobs(); }
 
 void Controller::ParseInventoryKey(ControllerTypes::Key translated_key) {
   if (translated_key >= ControllerTypes::Key::kInventory0 &&

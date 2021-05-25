@@ -43,6 +43,8 @@ class MovingObject {
     damage_acceleration_ = damage_acceleration;
   }
 
+  void SetPosition(QPointF pos) { pos_ = pos; }
+
   void SetParamaters(const MobParameters& parameters) {
     damage_ = parameters.damage_;
     damage_acceleration_ = parameters.damage_acceleration_;
@@ -103,6 +105,8 @@ class MovingObject {
   void AddEffect(Effect effect);
   void DeleteEffect(Effect::Type type);
 
+  void DeleteAllEffects() { effects_.clear(); }
+
   virtual void Read(const QJsonObject& json);
   virtual void Write(QJsonObject* json) const;
 
@@ -144,8 +148,9 @@ class MovingObject {
   std::vector<Effect> effects_;
 
   MoveVector move_vector_ = MoveVector(0, 0, 0, 0);
-  QPointF pos_;   // in bocks
-  QPointF size_;  // in bocks
+
+  QPointF pos_;   // in blocks
+  QPointF size_;  // in blocks
   State state_ = MovingObject::State::kStay;
 
   double walk_acceleration_ = constants::kPlayerWalkAcceleration;
