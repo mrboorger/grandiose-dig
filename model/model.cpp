@@ -15,13 +15,25 @@ Model* Model::GetInstance() {
   return &model;
 }
 
+int Model::CheckPlayerPosition() {
+  for (int y = -200; y <= 200; y++) {
+    if (Model::GetInstance()->GetMap()->GetBlock(QPoint(0, y)).IsAir() &&
+        Model::GetInstance()->GetMap()->GetBlock(QPoint(1, y)).IsAir() &&
+        (!Model::GetInstance()->GetMap()->GetBlock(QPoint(0, y + 1)).IsAir() ||
+         !Model::GetInstance()->GetMap()->GetBlock(QPoint(1, y + 1)).IsAir())) {
+      return y;
+    }
+  }
+  return -200;
+}
+
 void Model::MoveObjects(
     const std::unordered_set<ControllerTypes::Key>& pressed_keys, double time) {
   // TODO(Wind-Eagle): this is temporary code.
   if (player_->IsDead()) {
     player_->DeleteAllEffects();
     player_->SetHealth(constants::kPlayerHealth);
-    player_->SetPosition(QPointF(0.0, 90.0));
+    player_->SetPosition(QPointF(0.0, CheckPlayerPosition()));
   }
   for (auto i = mobs_.begin(), last = mobs_.end(); i != last;) {
     if ((*i)->IsDead()) {

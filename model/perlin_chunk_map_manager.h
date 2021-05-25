@@ -42,6 +42,10 @@ class PerlinChunkMapManager : public AbstractMapManager {
     void GenerateDesert(QPoint chunk_pos, Chunk* chunk, int x,
                         const std::array<int32_t, Chunk::kWidth>& height_map);
 
+    void GeneratePlainsSpecial(
+        QPoint chunk_pos, Chunk* chunk, int x,
+        const std::array<int32_t, Chunk::kWidth>& height_map);
+
     Chunk LandscapeGeneration(QPoint chunk_pos);
 
     void GenerateCaves(Chunk* chunk, QPoint chunk_pos);
@@ -61,6 +65,11 @@ class PerlinChunkMapManager : public AbstractMapManager {
     static constexpr double kStoneRapidness = 2;
     static constexpr double kStoneMaxHeight = 8;
 
+    static constexpr double kClayHeight = Chunk::kHeight / 2;
+    static constexpr double kClayMainRate = 0.3;
+    static constexpr double kClayRate = 0.2;
+    static constexpr double kClayScale = 10;
+
     static constexpr double kCoalMainRate = 0.18;  // vein precision
     static constexpr double kCoalRate = 0.50;      // amount in one vein
     static constexpr double kCoalScale = 10;
@@ -78,6 +87,8 @@ class PerlinChunkMapManager : public AbstractMapManager {
     PerlinNoise1D noise_hills_;
     PerlinNoise1D noise_stone_;
     PerlinNoise2D noise_caves_;
+    PerlinNoise2D noise_clay_;
+    PerlinNoise2D noise_clay2_;
     PerlinNoise2D noise_coal_;
     PerlinNoise2D noise_coal2_;
     PerlinNoise2D noise_iron_;

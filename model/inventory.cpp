@@ -5,10 +5,7 @@
 #include <map>
 #include <utility>
 
-Inventory::Inventory() {
-  items_[0] = InventoryItem(InventoryItem::Type::kSpeedPotion, 3);
-  items_[1] = InventoryItem(InventoryItem::Type::kSpeedPotion, 3);
-}
+Inventory::Inventory() {}
 
 void Inventory::AddItem(InventoryItem item) {
   for (InventoryItem& inventory_item : items_) {

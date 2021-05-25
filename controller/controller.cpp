@@ -48,7 +48,7 @@ void Controller::SetGeneratedMap(AbstractMapManager* generator,
 void Controller::SetPlayer() {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->SetPlayer(
-      std::make_shared<Player>(QPointF(-16.0, 96.0)));
+      std::make_shared<Player>(QPointF(0.0, Model::CheckPlayerPosition())));
   View::GetInstance()->SetInventoryDrawer(
       new InventoryDrawer(Model::GetInstance()->GetPlayer()->GetInventory()));
 }

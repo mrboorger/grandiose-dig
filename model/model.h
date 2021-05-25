@@ -31,6 +31,8 @@ class Model : public QObject {
 
   void SetMap(std::shared_ptr<AbstractMap> map) { map_ = std::move(map); }
 
+  static int CheckPlayerPosition();
+
   std::shared_ptr<Player> GetPlayer() { return player_; }
 
   void SetPlayer(const std::shared_ptr<Player>& player) { player_ = player; }
