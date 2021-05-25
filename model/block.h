@@ -70,6 +70,8 @@ class Block {
     return GetFrontCharacteristics(GetFrontId()).default_durability;
   }
 
+  void SetDurabilityToDefault() { durability_ = GetDefaultDurability(); }
+
   FrontType GetFrontType() const { return front_type_; }
   BackType GetBackType() const { return back_type_; }
 

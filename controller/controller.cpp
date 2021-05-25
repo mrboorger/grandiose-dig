@@ -75,10 +75,10 @@ void Controller::UseItem() {
     if (Model::GetInstance()->GetPlayer()->IsBlockReachableForTool(
             block_coords) &&
         Model::GetInstance()->CanPlaceBlock(block_coords)) {
-      Model::GetInstance()
-          ->GetMap()
-          ->GetBlockMutable(block_coords)
-          ->SetFrontType(InventoryItem::GetBlockFromItem(item));
+      auto* block =
+          Model::GetInstance()->GetMap()->GetBlockMutable(block_coords);
+      block->SetFrontType(InventoryItem::GetBlockFromItem(item));
+      block->SetDurabilityToDefault();
       View::GetInstance()->UpdateBlock(block_coords);
       View::GetInstance()->GetLightMap()->UpdateLight(block_coords);
       Model::GetInstance()->GetPlayer()->UseItem();

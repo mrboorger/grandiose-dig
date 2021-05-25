@@ -5,7 +5,8 @@
 namespace {
 
 constexpr std::array<int, static_cast<int>(InventoryItem::Type::kTypesCount)>
-    kMaximumCount = {0, 999, 999};
+    kMaximumCount = {0,   999, 999, 999, 999, 999, 999, 999, 999, 999, 999,
+                     999, 999, 999, 999, 999, 999, 999, 999, 999, 4,   4};
 
 const std::array<InventoryItem,
                  static_cast<int>(InventoryItem::Type::kTypesCount)>

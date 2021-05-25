@@ -12,7 +12,9 @@ Inventory::Inventory() {
   items_[3] = InventoryItem(InventoryItem::Type::kBlockBlueLight, 999);
   items_[4] = InventoryItem(InventoryItem::Type::kBlockSandstone, 999);
   items_[5] = InventoryItem(InventoryItem::Type::kBlockStoneBricks, 999);
-  items_[6] = InventoryItem(InventoryItem::Type::kBlockBrickBlock, 999);
+  items_[6] = InventoryItem(InventoryItem::Type::kBlockFiremondOre, 999);
+  items_[7] = InventoryItem(InventoryItem::Type::kBlockCoalOre, 999);
+  items_[8] = InventoryItem(InventoryItem::Type::kBlockShimondOre, 999);
 }
 
 void Inventory::AddItem(InventoryItem item) {
