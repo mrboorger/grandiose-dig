@@ -293,10 +293,6 @@ void View::changeEvent(QEvent* event) {
 }
 
 void View::keyPressEvent(QKeyEvent* event) {
-  if (event->key() == Qt::Key_Escape) {
-    is_visible_inventory_ = !is_visible_inventory_;
-    inventory_drawer_->SetCraftMenuVisible(is_visible_inventory_);
-  }
   Controller::GetInstance()->KeyPress(event->key());
 }
 
