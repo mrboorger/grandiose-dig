@@ -24,6 +24,8 @@ class Mob : public MovingObject {
     strategy_ = std::move(strategy);
   }
 
+  static QPointF GetMobSize(int id);
+
  private:
   MobState mob_state_;
   Type type_;

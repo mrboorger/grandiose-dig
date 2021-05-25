@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QSurfaceFormat>
 
 #include "controller/controller.h"
 #include "model/perlin_chunk_map_generator.h"
@@ -6,6 +7,11 @@
 
 int main(int argc, char* argv[]) {
   QApplication application(argc, argv);
+  QSurfaceFormat format = QSurfaceFormat::defaultFormat();
+  format.setDepthBufferSize(24);
+  //  format.setStencilBufferSize(8);
+  //  format.setProfile(QSurfaceFormat::CoreProfile);
+  QSurfaceFormat::setDefaultFormat(format);
   View view;
 
   // TODO(Wind-Eagle): delete. {
@@ -14,6 +20,7 @@ int main(int argc, char* argv[]) {
   controller->SetGeneratedMap(&generator);
   controller->SetPlayer();
   controller->SetMob();
+  view.PlayMusic();
   // }
   view.show();
   view.setWindowState(Qt::WindowMaximized);

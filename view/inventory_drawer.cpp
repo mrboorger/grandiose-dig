@@ -9,8 +9,24 @@
 
 namespace {
 
-const std::array<QString, InventoryItem::kTypesCount> kNames = {"", "dirt.png",
-                                                                "grass.png"};
+const std::array<QString, InventoryItem::kTypesCount> kNames = {
+    "",
+    "dirt.png",
+    "grass.png",
+    "stone.png",
+    "snowy_grass.png",
+    "sand.png",
+    "sandstone.png",
+    "coal_ore.png",
+    "iron_ore",
+    "shimond_ore.png",
+    "firemond_ore.png",
+    "technical.png",
+    "yellow_light.png",
+    "blue_light.png",
+    "",
+    "speed_potion.png",
+    "strength_potion.png"};
 std::array<QImage, InventoryItem::kTypesCount> images;
 
 const QString kSelectionBoxName = "selection_box.png";

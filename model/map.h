@@ -10,13 +10,13 @@ class Map : public AbstractMap {
   friend class AbstractMapGenerator;
   friend class FlatMapGenerator;
 
- public:
-  void SetBlock(QPoint pos, Block block) override;
-
  private:
   Map(int width, int height);
 
-  Block* GetBlockMutable(QPoint pos) override;
+  void SetBlockImpl(QPoint pos, Block block) override;
+
+
+  Block* GetBlockMutableImpl(QPoint pos) override;
 
   std::vector<Block> blocks_;
   int width_;

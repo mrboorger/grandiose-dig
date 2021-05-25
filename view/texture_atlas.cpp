@@ -2,57 +2,59 @@
 
 #include <QPainter>
 
+#include "model/constants.h"
 #include "view/block_drawer.h"
 
-TextureAtlas::TextureAtlas() : QOpenGLTexture(QOpenGLTexture::Target2D) {}
+TextureAtlas::TextureAtlas() : AbstractAtlas(QOpenGLTexture::Target2D) {}
 
 void TextureAtlas::Init() {
-  QPixmap buffer(kWidth * constants::kBlockSz, kHeight * constants::kBlockSz);
+  QPixmap buffer(kTextureWidth, kTextureHeight);
   QPainter painter(&buffer);
-  for (int i = Block::kFirstType; i != Block::kTypesCount; ++i) {
-    BlockDrawer::DrawBlock(&painter, GetBlockPC(i), Block(Block::Type(i)));
+  painter.fillRect(0, 0, kTextureWidth, kTextureHeight, Qt::white);
+  for (int i = Block::kFirstFrontType; i != Block::kFrontTypesCount; ++i) {
+    QPoint position(GetBlockPixmapXCoordinate(i), 0);
+    BlockDrawer::DrawBlockFront(&painter, position, Block(Block::FrontType(i)));
   }
 
   create();
   setMinMagFilters(QOpenGLTexture::Nearest, QOpenGLTexture::Nearest);
+  setWrapMode(DirectionT, MirroredRepeat);
 
-  setSize(kWidth * constants::kBlockSz, kHeight * constants::kBlockSz, 1);
+  setSize(kTextureWidth, kTextureHeight, 1);
   setFormat(QOpenGLTexture::RGBA8_UNorm);
   allocateStorage();
   setData(QOpenGLTexture::RGBA, QOpenGLTexture::UInt8,
           GetImage(buffer).constBits());
 }
 
-QImage TextureAtlas::GetImage(const QPixmap& pixmap) {
-  QImage image = pixmap.toImage();
-  if (image.format() != QImage::Format_RGBA8888) {
-    return image.convertToFormat(QImage::Format_RGBA8888);
-  }
-  return image;
-}
-
-QPointF TextureAtlas::GetBlockPC(int32_t id) {
-  return QPointF((id % kWidth), (id / kWidth)) * constants::kBlockSz;
+int32_t TextureAtlas::GetBlockPixmapXCoordinate(int32_t id) {
+  return id * constants::kBlockSz;
 }
 
 QPointF TextureAtlas::GetBlockTCLT(Block block) {
-  return QPointF(static_cast<double>((block.GetId() + 1) % kWidth) / kWidth,
-                 static_cast<double>(block.GetId() / kWidth) / kHeight);
+  QPointF position(GetBlockPixmapXCoordinate(block.GetFrontId()), 0.0);
+  position.rx() /= kTextureWidth;
+  return position;
 }
 
 QPointF TextureAtlas::GetBlockTCLB(Block block) {
-  return QPointF(static_cast<double>((block.GetId() + 1) % kWidth) / kWidth,
-                 static_cast<double>(block.GetId() / kWidth + 1) / kHeight);
+  QPointF position(GetBlockPixmapXCoordinate(block.GetFrontId()), 1.0);
+  position.rx() /= kTextureWidth;
+  return position;
 }
 
 QPointF TextureAtlas::GetBlockTCRT(Block block) {
-  return QPointF(
-      static_cast<double>(block.GetId() % kWidth + kRoundShift) / kWidth,
-      static_cast<double>(block.GetId() / kWidth) / kHeight);
+  QPointF position(
+      GetBlockPixmapXCoordinate(block.GetFrontId()) + constants::kBlockSz - 1,
+      0.0);
+  position.rx() /= kTextureWidth;
+  return position;
 }
 
 QPointF TextureAtlas::GetBlockTCRB(Block block) {
-  return QPointF(
-      static_cast<double>(block.GetId() % kWidth + kRoundShift) / kWidth,
-      static_cast<double>(block.GetId() / kWidth + 1) / kHeight);
+  QPointF position(
+      GetBlockPixmapXCoordinate(block.GetFrontId()) + constants::kBlockSz - 1,
+      1.0);
+  position.rx() /= kTextureWidth;
+  return position;
 }

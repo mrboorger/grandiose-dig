@@ -5,20 +5,45 @@
 #include <QPointF>
 
 #include "model/block.h"
+#include "model/chunk.h"
+#include "model/constants.h"
 
-class BlockDrawer {
- public:
-  static constexpr int kCracksStageCount = 3;
+namespace BlockDrawer {
 
-  static constexpr int kCrackBoundary1 = 90;
-  static constexpr int kCrackBoundary2 = 60;
-  static constexpr int kCrackBoundary3 = 30;
-
-  static void DrawBlock(QPainter* painter, QPointF point, Block block);
-  static void ClearBlock(QPainter* painter, QPointF point);
-
- private:
-  static void DrawCracks(QPainter* painter, QPointF point, Block block);
+enum class Backgrounds {
+  kFirst,
+  kForest = kFirst,
+  kSky,
+  kCave,
+  kBackgroundsCount
 };
+
+constexpr int kBackgroundsFirst =
+    static_cast<int>(Backgrounds::kFirst);
+
+constexpr int kBackgroundsCount =
+    static_cast<int>(Backgrounds::kBackgroundsCount);
+
+static constexpr int kCracksStageCount = 3;
+
+static constexpr int kCrackBoundary1 = 90;
+static constexpr int kCrackBoundary2 = 60;
+static constexpr int kCrackBoundary3 = 30;
+
+constexpr int kBackgroundWidth = constants::kBlockSz * Chunk::kWidth;
+constexpr int kBackgroundHeight = constants::kBlockSz * Chunk::kHeight;
+
+void DrawBlockFront(QPainter* painter, QPointF point, Block block);
+void DrawBlockFront(QPainter* painter, QPoint point, Block block);
+
+Backgrounds BackIdToBackgroundId(Block block, QPoint pos);
+void DrawBackground(QPainter* painter, QPointF point,
+                    Backgrounds background_type);
+void DrawBackground(QPainter* painter, QPoint point,
+                    Backgrounds background_type);
+
+void ClearBlock(QPainter* painter, QPointF point);
+
+}  // namespace BlockDrawer
 
 #endif  // VIEW_BLOCK_DRAWER_H_

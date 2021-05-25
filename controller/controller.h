@@ -29,6 +29,8 @@ class Controller {
   void SetPlayer();
   void SetMob();
 
+  void ManageMobs();
+
   static ControllerTypes::Key TranslateKeyCode(int key_code);
 
   void KeyPress(int key);
@@ -53,6 +55,9 @@ class Controller {
   void StartAttack();
   void PlayerAttack(double time);
 
+  void SpawnMobs();
+  void DespawnMobs();
+
   bool IsVisible(QPointF player_center, QPointF mob_point) const;
   bool CanAttackMobAtPoint(QPointF mob_point, QPointF player_center,
                            double lower_angle, double upper_angle) const;
@@ -68,6 +73,7 @@ class Controller {
 
   std::chrono::time_point<std::chrono::high_resolution_clock> prev_time_ =
       std::chrono::high_resolution_clock::now();
+  uint64_t sum_time_ = 0;
 };
 
 #endif  // CONTROLLER_CONTROLLER_H_

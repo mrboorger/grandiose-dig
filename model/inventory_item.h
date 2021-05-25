@@ -14,7 +14,19 @@ class InventoryItem {
     kBlockDirt,
     kBlockGrass,
     kBlockStone,
+    kBlockSnowyGrass,
+    kBlockSand,
+    kBlockSandstone,
+    kBlockCoalOre,
+    kBlockIronOre,
+    kBlockShimondOre,
+    kBlockFiremondOre,
+    kBlockTechnical,
+    kBlockYellowLight,
+    kBlockBlueLight,
     kBlockMax,
+    kSpeedPotion,
+    kStrengthPotion,
     kTypesCount,
   };
 
@@ -44,9 +56,10 @@ class InventoryItem {
   int ItemsLeft() const;
 
   static InventoryItem GetDropItem(Block block);
-  static Block GetBlockFromItem(InventoryItem item);
+  static Block::FrontType GetBlockFromItem(InventoryItem item);
 
   bool IsBlock() const;
+  bool IsPotion() const;
 
  private:
   Type type_;

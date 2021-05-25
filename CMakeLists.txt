@@ -29,6 +29,7 @@ set(QT_VERSION 5)
 set(REQUIRED_LIBS Core Widgets Multimedia)
 set(REQUIRED_LIBS_QUALIFIED Qt5::Core Qt5::Widgets Qt5::Multimedia)
 find_package(Qt${QT_VERSION} COMPONENTS ${REQUIRED_LIBS} REQUIRED)
+find_package(Threads REQUIRED)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -60,6 +61,7 @@ set(SOURCES
         model/player.cpp
         model/strategy.cpp
         utils.cpp
+        view/background_atlas.cpp
         view/block_drawer.cpp
         view/block_drawer.cpp
         view/buffered_map_drawer.cpp
@@ -80,5 +82,5 @@ set(SOURCES
         model/craft_recipe.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${RESOURCES})
-target_link_libraries(${PROJECT_NAME} ${REQUIRED_LIBS_QUALIFIED})
+target_link_libraries(${PROJECT_NAME} Threads::Threads ${REQUIRED_LIBS_QUALIFIED})
 

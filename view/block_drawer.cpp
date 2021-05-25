@@ -2,15 +2,51 @@
 
 #include <QString>
 #include <array>
+#include <cassert>
 
 #include "model/block.h"
 #include "model/constants.h"
+#include "model/model.h"
+
+namespace BlockDrawer {
 
 namespace {
 
-const std::array<QString, Block::kTypesCount> kNames = {"", "dirt.png",
-                                                        "grass.png"};
-std::array<QImage, Block::kTypesCount> images;
+const std::array<QString, Block::kFrontTypesCount> kFrontNames = {
+    "",
+    "dirt.png",
+    "grass.png",
+    "stone.png",
+    "snowy_grass.png",
+    "sand.png",
+    "sandstone.png",
+    "coal_ore.png",
+    "iron_ore",
+    "shimond_ore.png",
+    "firemond_ore.png",
+    "technical.png",
+    "yellow_light.png",
+    "blue_light.png"};
+
+const std::array<QString, kBackgroundsCount> kBackgroundNames = {
+    "forest_background.png", "sky_background.png", "cave_background.png"};
+
+std::array<QImage, Block::kFrontTypesCount> fronts;
+std::array<QImage, kBackgroundsCount> backgrounds;
+
+const QImage& GetFront(int32_t id) {
+  if (fronts[id].isNull()) {
+    fronts[id] = QImage(":/resources/textures/" + kFrontNames[id]);
+  }
+  return fronts[id];
+}
+
+const QImage& GetBackground(int32_t id) {
+  if (backgrounds[id].isNull()) {
+    backgrounds[id] = QImage(":/resources/textures/" + kBackgroundNames[id]);
+  }
+  return backgrounds[id];
+}
 
 const std::array<QString, BlockDrawer::kCracksStageCount> kCracksNames = {
     "block_cracks_1.png", "block_cracks_2.png", "block_cracks_3.png"};
@@ -18,18 +54,24 @@ std::array<QImage, BlockDrawer::kCracksStageCount> cracks_images;
 
 }  // namespace
 
-void BlockDrawer::DrawBlock(QPainter* painter, QPointF point, Block block) {
-  if (block.IsVisible()) {
-    if (images[block.GetId()].isNull()) {
-      images[block.GetId()] =
-          QImage(":/resources/textures/" + kNames[block.GetId()]);
+Backgrounds BackIdToBackgroundId(Block block, QPoint pos) {
+  switch (block.GetBackType()) {
+    case Block::BackType::kOverworld: {
+      if (pos.y() > Model::GetInstance()->GetMap()->SkyLevel()) {
+        return Backgrounds::kForest;
+      }
+      return Backgrounds::kSky;
     }
-    painter->drawImage(point, images[block.GetId()]);
-    DrawCracks(painter, point, block);
+    case Block::BackType::kCave: {
+      return Backgrounds::kCave;
+    }
+    default: {
+      assert(false);
+    }
   }
 }
 
-void BlockDrawer::DrawCracks(QPainter* painter, QPointF point, Block block) {
+void DrawCracks(QPainter* painter, QPointF point, Block block) {
   int durability_percentage = block.GetRemainingDurabilityPercentage();
   int crack_num = 0;
   if (durability_percentage < kCrackBoundary3) {
@@ -48,7 +90,39 @@ void BlockDrawer::DrawCracks(QPainter* painter, QPointF point, Block block) {
   painter->drawImage(point, cracks_images[crack_num]);
 }
 
-void BlockDrawer::ClearBlock(QPainter* painter, QPointF point) {
+void DrawBlockFront(QPainter* painter, QPointF point, Block block) {
+  if (block.IsVisible()) {
+    painter->drawImage(point, GetFront(block.GetFrontId()));
+  }
+}
+
+void DrawBlockFront(QPainter* painter, QPoint point, Block block) {
+  if (block.IsVisible()) {
+    painter->drawImage(point, GetFront(block.GetFrontId()));
+  }
+}
+
+void DrawBackground(QPainter* painter, QPointF point,
+                    Backgrounds background_type) {
+  const auto& background = GetBackground(static_cast<int>(background_type));
+  assert(!background.isNull());
+  painter->drawImage(QRectF(point.x(), point.y(), point.x() + kBackgroundWidth,
+                            point.y() + kBackgroundHeight),
+                     background);
+}
+
+void DrawBackground(QPainter* painter, QPoint point,
+                    Backgrounds background_type) {
+  const auto& background = GetBackground(static_cast<int>(background_type));
+  assert(!background.isNull());
+  painter->drawImage(QRect(point.x(), point.y(), point.x() + kBackgroundWidth,
+                           point.y() + kBackgroundHeight),
+                     background);
+}
+
+void ClearBlock(QPainter* painter, QPointF point) {
   painter->eraseRect(point.x(), point.y(), constants::kBlockSz,
                      constants::kBlockSz);
 }
+
+}  // namespace BlockDrawer

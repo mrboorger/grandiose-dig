@@ -42,3 +42,13 @@ void Player::TryCraft(const CraftRecipe& recipe) {
     inventory_->Craft(recipe);
   }
 }
+void Player::UsePotion() {
+  if (inventory_->GetSelectedItem().GetType() ==
+      InventoryItem::Type::kSpeedPotion) {
+    AddEffect(Effect(Effect::Type::kSpeed, 30000, 1.5));
+  } else if (inventory_->GetSelectedItem().GetType() ==
+             InventoryItem::Type::kSpeedPotion) {
+    AddEffect(Effect(Effect::Type::kStrength, 30000, 1.5));
+  }
+  inventory_->RemoveOneSelectedItem();
+}

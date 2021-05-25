@@ -19,9 +19,6 @@ class ChunkMap : public AbstractMap {
   friend class PerlinChunkMapGenerator;
 
  public:
-  void SetBlock(QPoint pos, Block block) override;
-  void CacheRegion(const QRect& region) override;
-
   explicit ChunkMap(AbstractRegionGenerator* generator);
 
  private:
@@ -38,7 +35,10 @@ class ChunkMap : public AbstractMap {
       containers::RegionCache<Block, Chunk::kWidth, Chunk::kHeight,
                                          Chunk, GenChunk>;
 
-  Block* GetBlockMutable(QPoint pos) override;
+  void SetBlockImpl(QPoint pos, Block block) override;
+  void CacheRegionImpl(const QRect& region) override;
+
+  Block* GetBlockMutableImpl(QPoint pos) override;
 
   NodesContainer nodes_;
   std::unique_ptr<AbstractRegionGenerator> generator_;
