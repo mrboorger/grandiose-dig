@@ -20,8 +20,13 @@ class Block {
     kIronOre,
     kShimondOre,
     kFiremondOre,
+    kStoneBricks,
+    kClayBlock,
+    kBrickBlock,
     kTechnical,
+    kRedLight,
     kYellowLight,
+    kGreenLight,
     kBlueLight,
     kTypesCount,
   };
