@@ -10,6 +10,7 @@ Grandiose Dig - 2D-игра, написанная на C++ с использов
 ![grandiose-dig](resources/screenshots/screen2.png)
 ![grandiose-dig](resources/screenshots/screen3.png)
 ![grandiose-dig](resources/screenshots/screen4.png)
+![grandiose-dig](resources/screenshots/screen5.png)
 
 Игра является учебным проектом студентов 5 группы 1 курса факультета
 прикладной математики и информатики БГУ (2 семестр 2020-2021): 
