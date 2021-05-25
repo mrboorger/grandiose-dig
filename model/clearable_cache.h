@@ -61,9 +61,9 @@ class ClearableCache {
     last_used_ = nodes_.end();
     for (auto i = nodes_.begin(); i != nodes_.end();) {
       if (!i->second.is_used) {
+        save_(save_file_, i->first, i->second.value);
         i = nodes_.erase(i);
       } else {
-        save_(save_file_, i->first, i->second.value);
         i->second.is_used = false;
         ++i;
       }

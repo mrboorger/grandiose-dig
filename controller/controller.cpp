@@ -22,7 +22,7 @@ Controller* Controller::GetInstance() {
   return &controller;
 }
 
-Controller::Controller() : tick_timer_(), save_timer_() {
+Controller::Controller() : tick_timer_() {
   View* view = View::GetInstance();
   connect(view, &View::CreateNewWorldSignal, this, &Controller::CreateNewWorld);
   connect(view, &View::LoadWorldSignal, this, &Controller::LoadFromFile);
@@ -31,9 +31,6 @@ Controller::Controller() : tick_timer_(), save_timer_() {
 
   tick_timer_.callOnTimeout([this]() { TickEvent(); });
   tick_timer_.start(constants::kTickDurationMsec);
-  save_timer_.callOnTimeout([this]() { SaveEvent(); });
-  save_timer_.start(
-      settings_.value("save_duration", constants::kSaveDurationMsec).toInt());
 }
 
 void Controller::SetGeneratedMap(AbstractMapManager* generator,
@@ -272,12 +269,6 @@ void Controller::TickEvent() {
     PlayerAttack(time);
     ManageMobs();
     View::GetInstance()->repaint();
-  }
-}
-
-void Controller::SaveEvent() {
-  if (View::GetInstance()->GetGameState() == GameState::kGame) {
-    SaveToFile();
   }
 }
 

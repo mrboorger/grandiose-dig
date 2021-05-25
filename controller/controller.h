@@ -64,7 +64,6 @@ class Controller : public QObject {
   Controller();
 
   void TickEvent();
-  void SaveEvent();
 
   // void BreakBlock();
   void StartAttack();
@@ -85,7 +84,6 @@ class Controller : public QObject {
   static void ParseInventoryKey(ControllerTypes::Key translated_key);
 
   QTimer tick_timer_;
-  QTimer save_timer_;
   QSettings settings_;
   std::unordered_set<ControllerTypes::Key> pressed_keys_;
   bool is_pressed_right_mouse_button = false;
