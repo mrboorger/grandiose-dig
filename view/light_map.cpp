@@ -112,7 +112,7 @@ LightMap::Buffer LightMap::BufferConstructor::operator()(
     const QString& save_file, QPoint pos) {
   QFile file(save_file + "chunk:" + QString::number(pos.x()) + ":" +
              QString::number(pos.y()));
-  if (!file.open(QIODevice::ReadOnly)) {
+  if (!file.exists()) {
     for (int32_t y = pos.y(); y < pos.y() + LightMap::kBufferHeight; ++y) {
       for (int32_t x = pos.x(); x < pos.x() + LightMap::kBufferWidth; ++x) {
         light_map_->UpdateLight(QPoint(x, y));
@@ -120,6 +120,7 @@ LightMap::Buffer LightMap::BufferConstructor::operator()(
     }
     return Buffer{};
   }
+  file.open(QIODevice::ReadOnly);
   QByteArray save_data = file.readAll();
   QJsonDocument data(
       QJsonDocument(QCborValue::fromCbor(save_data).toMap().toJsonObject()));
