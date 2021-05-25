@@ -11,8 +11,6 @@ int main(int argc, char* argv[]) {
   QSurfaceFormat format = QSurfaceFormat::defaultFormat();
   application.setWindowIcon(QIcon(QString(":/resources/icons/icon.png")));
   format.setDepthBufferSize(24);
-  //  format.setStencilBufferSize(8);
-  //  format.setProfile(QSurfaceFormat::CoreProfile);
   QSurfaceFormat::setDefaultFormat(format);
   View view;
 
