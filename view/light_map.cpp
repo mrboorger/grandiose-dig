@@ -128,7 +128,8 @@ LightMap::Buffer LightMap::BufferConstructor::operator()(
   for (int index = 0; index < kBufferHeight * kBufferWidth; ++index) {
     QJsonObject light = arr[index].toObject();
     buffer[index].Read(light);
-    light_map_->SetPointUpdated(pos + QPoint(index % kBufferWidth, index / kBufferWidth));
+    light_map_->SetPointUpdated(
+        pos + QPoint(index % kBufferWidth, index / kBufferWidth));
   }
   return buffer;
 }

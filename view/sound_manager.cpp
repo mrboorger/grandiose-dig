@@ -77,7 +77,8 @@ bool SoundManager::IsMusic(const QString& name) {
   return name.startsWith("music");
 }
 
-void SoundManager::UpdateVolumes(int general_volume, int music_volume, int sounds_volume) {
+void SoundManager::UpdateVolumes(int general_volume, int music_volume,
+                                 int sounds_volume) {
   for (size_t i = 0; i < kNames.size(); i++) {
     int volume =
         general_volume * (IsMusic(kNames[i]) ? music_volume : sounds_volume);
