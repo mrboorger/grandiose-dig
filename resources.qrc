@@ -79,5 +79,6 @@
         <file>resources/textures/zombie1.png</file>
         <file>resources/textures/zombie2.png</file>
         <file>resources/textures/zombie3.png</file>
+        <file>resources/icons/icon.png</file>
     </qresource>
 </RCC>

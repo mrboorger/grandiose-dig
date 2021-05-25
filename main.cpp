@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QIcon>
 #include <QSurfaceFormat>
 
 #include "controller/controller.h"
@@ -8,6 +9,7 @@
 int main(int argc, char* argv[]) {
   QApplication application(argc, argv);
   QSurfaceFormat format = QSurfaceFormat::defaultFormat();
+  application.setWindowIcon(QIcon(QString(":/resources/icons/icon.png")));
   format.setDepthBufferSize(24);
   //  format.setStencilBufferSize(8);
   //  format.setProfile(QSurfaceFormat::CoreProfile);
