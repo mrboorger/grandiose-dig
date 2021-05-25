@@ -56,8 +56,6 @@ class Controller : public QObject {
   }
   void SaveToFile() { Model::GetInstance()->SaveToFile(); }
 
-  // void PlaceBlock(QPoint block_coords, Block block);
-
   void TryCraft(const CraftRecipe& recipe);
 
  private:
@@ -65,21 +63,20 @@ class Controller : public QObject {
 
   void TickEvent();
 
-  // void BreakBlock();
+  void BreakBlock(double time);
+  void UseItem();
+
   void StartAttack();
   void PlayerAttack(double time);
+
+  void SpawnMobs();
+  void DespawnMobs();
 
   bool IsVisible(QPointF player_center, QPointF mob_point) const;
   bool CanAttackMobAtPoint(QPointF mob_point, QPointF player_center,
                            double lower_angle, double upper_angle) const;
   bool CanAttackMob(std::shared_ptr<MovingObject> mob, QPointF player_center,
                     double lower_angle, double upper_angle) const;
-
-  void SpawnMobs();
-  void DespawnMobs();
-
-  void BreakBlock(double time);
-  void UseItem();
 
   static void ParseInventoryKey(ControllerTypes::Key translated_key);
 

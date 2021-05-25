@@ -86,10 +86,10 @@ void Controller::UseItem() {
     if (Model::GetInstance()->GetPlayer()->IsBlockReachableForTool(
             block_coords) &&
         Model::GetInstance()->CanPlaceBlock(block_coords)) {
-      Model::GetInstance()
-          ->GetMap()
-          ->GetBlockMutable(block_coords)
-          ->SetFrontType(InventoryItem::GetBlockFromItem(item));
+      auto* block =
+          Model::GetInstance()->GetMap()->GetBlockMutable(block_coords);
+      block->SetFrontType(InventoryItem::GetBlockFromItem(item));
+      block->SetDurabilityToDefault();
       View::GetInstance()->UpdateBlock(block_coords);
       View::GetInstance()->GetLightMap()->UpdateLight(block_coords);
       Model::GetInstance()->GetPlayer()->UseItem();
@@ -245,6 +245,12 @@ void Controller::TickEvent() {
     for (const auto& key : pressed_keys_) {
       ParseInventoryKey(key);
     }
+    if (pressed_keys_.count(ControllerTypes::Key::kInventoryNextRow)) {
+      pressed_keys_.erase(ControllerTypes::Key::kInventoryNextRow);
+    }
+    if (pressed_keys_.count(ControllerTypes::Key::kInventoryPrevRow)) {
+      pressed_keys_.erase(ControllerTypes::Key::kInventoryPrevRow);
+    }
     auto cur = std::chrono::high_resolution_clock::now();
     double time =
         std::chrono::duration_cast<std::chrono::milliseconds>(cur - prev_time_)
@@ -285,7 +291,6 @@ ControllerTypes::Key Controller::TranslateKeyCode(int key_code) {
 }
 
 void Controller::KeyPress(int key) {
-  ParseInventoryKey(TranslateKeyCode(key));
   pressed_keys_.insert(TranslateKeyCode(key));
 }
 
@@ -403,9 +408,13 @@ void Controller::DespawnMobs() { Model::GetInstance()->DespawnMobs(); }
 void Controller::ParseInventoryKey(ControllerTypes::Key translated_key) {
   if (translated_key >= ControllerTypes::Key::kInventory0 &&
       translated_key <= ControllerTypes::Key::kInventory9) {
-    Model::GetInstance()->GetPlayer()->GetInventory()->ChangeSelectedItem(
+    Model::GetInstance()->GetPlayer()->GetInventory()->ChangeSelectedColumn(
         static_cast<int>(translated_key) -
         static_cast<int>(ControllerTypes::Key::kInventory0));
+  } else if (translated_key == ControllerTypes::Key::kInventoryPrevRow) {
+    Model::GetInstance()->GetPlayer()->GetInventory()->SwitchToPrevRow();
+  } else if (translated_key == ControllerTypes::Key::kInventoryNextRow) {
+    Model::GetInstance()->GetPlayer()->GetInventory()->SwitchToNextRow();
   }
 }
 

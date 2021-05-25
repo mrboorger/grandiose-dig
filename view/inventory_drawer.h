@@ -25,7 +25,6 @@ class InventoryDrawer {
   static constexpr int kIndentSize = 4;  // in pixels
   static constexpr int kFontSize = 8;
 
-
   static constexpr QPoint kItemCorner{8, 4};  // in pixels
 
   static constexpr QRect kMenuRect{10, 200, 250, 150};

@@ -14,7 +14,6 @@ class MapDrawer : public AbstractMapDrawer {
   void DrawMapWithCenterImpl(QPainter* painter, const QPointF& pos,
                          const QRect& screen_coords) override;
 
-
   QRect GetDrawRegionImpl(QPoint center) const override;
   static constexpr int kFieldOfView = 100;
   std::shared_ptr<AbstractMap> map_;

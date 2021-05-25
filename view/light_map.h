@@ -31,7 +31,6 @@ class LightMap {
   Light GetLightRB(QPoint pos);
   void CalculateRegion(const QRect& region);
 
-
   std::set<QPoint, utils::QPointLexicographicalCompare> TakeUpdateList() {
     std::set<QPoint, utils::QPointLexicographicalCompare> result;
     std::unique_lock<std::recursive_mutex> lock(mutex_, std::try_to_lock);

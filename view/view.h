@@ -49,7 +49,6 @@ class View : public QOpenGLWidget {
   QPointF GetCoordUnderCursor() const;      // in blocks
 
   void UpdateBlock(QPoint pos) { drawer_->UpdateBlock(pos); }
-
   std::shared_ptr<LightMap> GetLightMap() { return light_map_; }
 
   void PlayMusic();
@@ -66,7 +65,6 @@ class View : public QOpenGLWidget {
  public slots:
   void UpdateSettings(int general_volume, int music_volume, int sounds_volume);
 
- private slots:
   void DamageDealt(MovingObject* object);
   void BecameDead(MovingObject* object);
   void MobSound(MovingObject* object);

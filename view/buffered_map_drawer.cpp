@@ -29,7 +29,6 @@ void BufferedMapDrawer::DrawMapWithCenterImpl(QPainter* painter,
   }
 }
 
-
 void BufferedMapDrawer::UpdateBlockImpl(QPoint pos) {
   auto buffer_pos = RoundToBufferPos(pos);
   auto buffer = buffers_.Get(buffer_pos);

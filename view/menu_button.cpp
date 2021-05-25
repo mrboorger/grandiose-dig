@@ -1,4 +1,5 @@
 #include "view/menu_button.h"
+#include <qpushbutton.h>
 
 MenuButton::MenuButton(QWidget* parent, MenuButtonType button_type)
     : QPushButton(parent) {
@@ -11,7 +12,7 @@ MenuButton::MenuButton(QWidget* parent, MenuButtonType button_type)
 }
 
 MenuButton::MenuButton(const QString& text, QWidget* parent,
-                       MenuButtonType button_type) {
+                       MenuButtonType button_type) : QPushButton(parent) {
   setText(text);
   if (button_type == MenuButtonType::kTransparentExpanding) {
     setFlat(true);

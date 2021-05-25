@@ -17,7 +17,6 @@ class AbstractMapDrawer {
   AbstractMapDrawer& operator=(const AbstractMapDrawer&) = delete;
   AbstractMapDrawer& operator=(AbstractMapDrawer&&) = delete;
 
-
   void Init() {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
     InitImpl();

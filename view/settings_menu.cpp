@@ -25,14 +25,20 @@ SettingsMenu::SettingsMenu(QWidget* parent)
   if (!settings_->contains("controller_key3")) {
     settings_->setValue("controller_key3", Qt::Key::Key_I);
   }
+  if (!settings_->contains("controller_key4")) {
+    settings_->setValue("controller_key4", Qt::Key::Key_BracketLeft);
+  }
+  if (!settings_->contains("controller_key5")) {
+    settings_->setValue("controller_key5", Qt::Key::Key_BracketRight);
+  }
   for (int index = 0; index < 10; ++index) {
-    if (!settings_->contains("controller_key" + QString::number(4 + index))) {
-      settings_->setValue("controller_key" + QString::number(4 + index),
+    if (!settings_->contains("controller_key" + QString::number(6 + index))) {
+      settings_->setValue("controller_key" + QString::number(6 + index),
                           Qt::Key::Key_1 + (index == 9 ? -1 : index));
     }
   }
-  if (!settings_->contains("controller_key14")) {
-    settings_->setValue("controller_key14", Qt::Key::Key_Escape);
+  if (!settings_->contains("controller_key16")) {
+    settings_->setValue("controller_key16", Qt::Key::Key_Escape);
   }
   emit(SettingsMenu::SettingsChanged(
       settings_->value("general_volume", 100).toInt(),
@@ -257,8 +263,10 @@ void SettingsMenu::ReTranslateButtons() {
   change_key_buttons_[1]->setText(tr("Move right"));
   change_key_buttons_[2]->setText(tr("Jump"));
   change_key_buttons_[3]->setText(tr("Show/Hide inventory"));
+  change_key_buttons_[4]->setText(tr("Inventory down"));
+  change_key_buttons_[5]->setText(tr("Inventory up"));
   for (int index = 0; index < 10; ++index) {
-    change_key_buttons_[4 + index]->setText(tr("Select slot ") +
+    change_key_buttons_[6 + index]->setText(tr("Select slot ") +
                                             QString::number(index + 1));
   }
   change_key_buttons_.back()->setText("Exit");

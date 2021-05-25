@@ -1,6 +1,5 @@
 #include "view/light_map.h"
 
-
 #include <QCborMap>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -151,7 +150,6 @@ void LightMap::BufferSaver::operator()(const QString& save_file,
     arr.append(light);
   }
   data["buffer"] = arr;
-  // file.write(QJsonDocument(data).toJson());
   file.write(QCborValue::fromJsonValue(data).toCbor());
 }
 

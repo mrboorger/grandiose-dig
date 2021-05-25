@@ -86,7 +86,7 @@ class MovingObject {
   bool IsPushesLeft() const { return pushes_left_; }
   bool IsPushesRight() const { return pushes_right_; }
 
-  void CheckFallDamage();
+  void CheckFallDamage(double fall_damage_speed);
   bool RecentlyDamaged() const { return damage_time_ > constants::kEps; }
   double GetDamageTime() const { return damage_time_; }
   void DealDamage(const Damage& damage);
@@ -122,8 +122,8 @@ class MovingObject {
                   double time);
   void UpdateJump(const std::unordered_set<ControllerTypes::Key>& pressed_keys,
                   double time);
-  void MakeMovement(QPointF old_position, double time);
-  void CheckCollisions(QPointF old_position);
+  void MakeMovement(QPointF old_position, double time, double old_speed_y);
+  void CheckCollisions(QPointF old_position, double old_speed_y);
   bool FindCollisionGround(QPointF old_position, double* ground_y,
                            const std::shared_ptr<AbstractMap>& map) const;
   bool FindCollisionCeiling(QPointF old_position, double* ceiling_y,
@@ -148,7 +148,6 @@ class MovingObject {
   std::vector<Effect> effects_;
 
   MoveVector move_vector_ = MoveVector(0, 0, 0, 0);
-
   QPointF pos_;   // in blocks
   QPointF size_;  // in blocks
   State state_ = MovingObject::State::kStay;

@@ -157,7 +157,7 @@ constexpr double kMobMinSpawnDistance = 24;
 constexpr double kMobMaxSpawnDistance = 120;
 constexpr int kMobSpawnAttempts = 1000;
 
-constexpr int kMobSpawnStartDelay = 5000;
+constexpr int kMobSpawnStartDelay = 10000;
 
 constexpr double kMobsSpawnRate[4] = {1, 0.2, 0.8, 0.4};
 constexpr double kMobsSumRate = kMobsSpawnRate[0] + kMobsSpawnRate[1] +

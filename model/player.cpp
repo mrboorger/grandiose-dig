@@ -42,7 +42,6 @@ void Player::TryCraft(const CraftRecipe& recipe) {
     inventory_->Craft(recipe);
   }
 }
-
 void Player::UsePotion() {
   if (inventory_->GetSelectedItem().GetType() ==
       InventoryItem::Type::kSpeedPotion) {

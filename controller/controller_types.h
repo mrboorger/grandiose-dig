@@ -4,12 +4,13 @@
 #include <QString>
 
 namespace ControllerTypes {
-
 enum class Key {
   kLeft,
   kRight,
   kJump,
   kShowInventory,
+  kInventoryPrevRow,
+  kInventoryNextRow,
   kInventory0,
   kInventory1,
   kInventory2,

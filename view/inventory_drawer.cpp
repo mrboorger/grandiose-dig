@@ -21,8 +21,13 @@ const std::array<QString, InventoryItem::kTypesCount> kNames = {
     "iron_ore",
     "shimond_ore.png",
     "firemond_ore.png",
+    "stone_bricks.png",
+    "clay_block.png",
+    "brick_block.png",
     "technical.png",
+    "red_light.png",
     "yellow_light.png",
+    "green_light.png",
     "blue_light.png",
     "",
     "speed_potion.png",
@@ -108,8 +113,8 @@ void InventoryDrawer::DrawSelectionBox(QPainter* painter) {
   }
   assert(!selection_box.isNull());
   painter->drawImage(
-      inventory_->GetSelectedItemNumber() * (kCellSize + kIndentSize), 0,
-      selection_box);
+      inventory_->GetSelectedColumn() * (kCellSize + kIndentSize),
+      inventory_->GetSelectedRow() * (kCellSize + kIndentSize), selection_box);
 }
 
 void InventoryDrawer::CreateCraftScrollArea() {
