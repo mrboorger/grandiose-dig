@@ -19,6 +19,7 @@ PerlinChunkMapGenerator::PerlinRegionGenerator::PerlinRegionGenerator(
       noise_stone_(seed + 2),
       noise_caves_(seed + 5),
       noise_clay_(seed + 7),
+      noise_clay2_(seed + 14),
       noise_coal_(seed + 3),
       noise_coal2_(seed + 4),
       noise_iron_(seed + 8),
@@ -102,10 +103,10 @@ void PerlinChunkMapGenerator::PerlinRegionGenerator::GeneratePlainsSpecial(
   for (int y = kClayHeight; y < Chunk::kHeight; ++y) {
     if (chunk->GetBlock(QPoint(x, y)).GetFrontType() ==
         Block::FrontType::kDirt) {
-      double clay = abs(noise_coal_(kClayScale * (chunk_pos.x() + x),
+      double clay = abs(noise_clay_(kClayScale * (chunk_pos.x() + x),
                                     kClayScale * (chunk_pos.y() + y)));
       if (clay > kClayMainRate) {
-        double clay2 = abs(noise_coal2_(kClayScale * (chunk_pos.x() + x),
+        double clay2 = abs(noise_clay2_(kClayScale * (chunk_pos.x() + x),
                                         kClayScale * (chunk_pos.y() + y)));
         if (clay2 > kClayRate) {
           chunk->SetBlock(QPoint(x, y), Block(Block::FrontType::kClayBlock));

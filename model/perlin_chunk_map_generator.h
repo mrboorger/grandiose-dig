@@ -88,6 +88,7 @@ class PerlinChunkMapGenerator : public AbstractMapGenerator {
     PerlinNoise1D noise_stone_;
     PerlinNoise2D noise_caves_;
     PerlinNoise2D noise_clay_;
+    PerlinNoise2D noise_clay2_;
     PerlinNoise2D noise_coal_;
     PerlinNoise2D noise_coal2_;
     PerlinNoise2D noise_iron_;
