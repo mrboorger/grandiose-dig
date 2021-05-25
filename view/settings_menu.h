@@ -11,6 +11,7 @@
 #include <QStackedWidget>
 #include <QTranslator>
 #include <map>
+#include <vector>
 
 #include "controller/controller_types.h"
 #include "view/abstract_menu.h"

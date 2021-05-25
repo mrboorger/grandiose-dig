@@ -45,9 +45,9 @@ void MoveVector::Read(const QJsonObject& json) {
   momentum_.setY(json["momentum_y"].toDouble());
 }
 
-void MoveVector::Write(QJsonObject& json) const {
-  json["speed_x"] = speed_.x();
-  json["speed_y"] = speed_.y();
-  json["momentum_x"] = momentum_.x();
-  json["momentum_y"] = momentum_.y();
+void MoveVector::Write(QJsonObject* json) const {
+  (*json)["speed_x"] = speed_.x();
+  (*json)["speed_y"] = speed_.y();
+  (*json)["momentum_x"] = momentum_.x();
+  (*json)["momentum_y"] = momentum_.y();
 }

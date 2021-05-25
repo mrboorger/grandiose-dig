@@ -575,41 +575,41 @@ void MovingObject::Read(const QJsonObject& json) {
   direction_ = static_cast<utils::Direction>(json["direction"].toInt());
 }
 
-void MovingObject::Write(QJsonObject& json) const {
+void MovingObject::Write(QJsonObject* json) const {
   QJsonArray effects;
   for (const auto& effect : effects_) {
     QJsonObject effect_object;
-    effect.Write(effect_object);
+    effect.Write(&effect_object);
     effects.append(effect_object);
   }
-  json["effects"] = effects;
+  (*json)["effects"] = effects;
 
   QJsonObject move_vector;
-  move_vector_.Write(move_vector);
-  json["move_vector"] = move_vector;
+  move_vector_.Write(&move_vector);
+  (*json)["move_vector"] = move_vector;
 
-  json["pos_x"] = pos_.x();
-  json["pos_y"] = pos_.y();
-  json["size_x"] = size_.x();
-  json["size_y"] = size_.y();
-  json["state"] = static_cast<int>(state_);
-  json["walk_acceleration"] = walk_acceleration_;
-  json["walk_max_speed"] = walk_max_speed_;
-  json["walk_air_acceleration"] = walk_air_acceleration_;
-  json["walk_max_air_acceleration"] = walk_max_air_acceleration_;
-  json["gravity_speed"] = gravity_speed_;
-  json["jump_speed"] = jump_speed_;
-  json["damage_acceleration_x"] = damage_acceleration_.x();
-  json["damage_acceleration_y"] = damage_acceleration_.y();
-  json["type"] = static_cast<int>(type_);
-  json["health"] = health_;
-  json["damage"] = damage_;
-  json["state_time"] = state_time_;
-  json["damage_time"] = damage_time_;
-  json["pushes_ground"] = pushes_ground_;
-  json["pushes_ceil"] = pushes_ceil_;
-  json["pushes_left"] = pushes_left_;
-  json["pushes_right"] = pushes_right_;
+  (*json)["pos_x"] = pos_.x();
+  (*json)["pos_y"] = pos_.y();
+  (*json)["size_x"] = size_.x();
+  (*json)["size_y"] = size_.y();
+  (*json)["state"] = static_cast<int>(state_);
+  (*json)["walk_acceleration"] = walk_acceleration_;
+  (*json)["walk_max_speed"] = walk_max_speed_;
+  (*json)["walk_air_acceleration"] = walk_air_acceleration_;
+  (*json)["walk_max_air_acceleration"] = walk_max_air_acceleration_;
+  (*json)["gravity_speed"] = gravity_speed_;
+  (*json)["jump_speed"] = jump_speed_;
+  (*json)["damage_acceleration_x"] = damage_acceleration_.x();
+  (*json)["damage_acceleration_y"] = damage_acceleration_.y();
+  (*json)["type"] = static_cast<int>(type_);
+  (*json)["health"] = health_;
+  (*json)["damage"] = damage_;
+  (*json)["state_time"] = state_time_;
+  (*json)["damage_time"] = damage_time_;
+  (*json)["pushes_ground"] = pushes_ground_;
+  (*json)["pushes_ceil"] = pushes_ceil_;
+  (*json)["pushes_left"] = pushes_left_;
+  (*json)["pushes_right"] = pushes_right_;
 
-  json["direction"] = static_cast<int>(direction_);
+  (*json)["direction"] = static_cast<int>(direction_);
 }

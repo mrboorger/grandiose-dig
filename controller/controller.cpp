@@ -24,7 +24,6 @@ Controller* Controller::GetInstance() {
 
 Controller::Controller() : tick_timer_(), save_timer_() {
   View* view = View::GetInstance();
-  Model* model = Model::GetInstance();
   connect(view, &View::CreateNewWorldSignal, this, &Controller::CreateNewWorld);
   connect(view, &View::LoadWorldSignal, this, &Controller::LoadFromFile);
   connect(view, &View::ChangeGameStateSignal, this,
@@ -326,6 +325,7 @@ void Controller::CreateNewWorld(const QString& world_name, uint32_t seed) {
   dir.mkdir(save_file + "/light_map");
   dir.mkdir(save_file + "/gl_map");
 
+  Model::GetInstance()->SetCurrentSeed(seed);
   Model::GetInstance()->SetSaveFileName(save_file);
   PerlinChunkMapManager generator(seed);
   SetGeneratedMap(&generator, save_file);

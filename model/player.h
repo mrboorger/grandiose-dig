@@ -58,7 +58,7 @@ class Player : public MovingObject {
   void TryCraft(const CraftRecipe& recipe);
 
   void Read(const QJsonObject& json) override;
-  void Write(QJsonObject& json) const override;
+  void Write(QJsonObject* json) const override;
 
  private:
   static constexpr int kUseItemCooldown = 100;

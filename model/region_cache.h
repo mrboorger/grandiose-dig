@@ -38,8 +38,8 @@ class RegionCache {
   explicit RegionCache(const QString& save_file,
                        int clear_time_msec = constants::kDefaultClearTimeMSec,
                        F gen_buffer = F())
-      : save_file_(save_file),
-        data_(save_file, clear_time_msec),
+      : data_(save_file, clear_time_msec),
+        save_file_(save_file),
         gen_buffer_(std::move(gen_buffer)) {}
 
   std::optional<std::reference_wrapper<const T>> TryGetValue(QPoint pos) {

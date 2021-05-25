@@ -35,7 +35,7 @@ class Effect {
   bool IsActive() const { return is_active_; }
 
   void Read(const QJsonObject& json);
-  void Write(QJsonObject& json) const;
+  void Write(QJsonObject* json) const;
 
  private:
   Type type_;

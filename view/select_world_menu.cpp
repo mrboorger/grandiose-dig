@@ -28,10 +28,11 @@ void SelectWorldMenu::ReTranslateButtons() {}
 void SelectWorldMenu::UpdateAvailableSaves() {
   worlds_->Clear();
   QDir save_directory(QDir::currentPath() + "/saves");
-  QStringList saves =
-      save_directory.entryList(QStringList() << "*", QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot);
-  for (const auto& save_name : saves) {
-    auto* button = new MenuButton(save_name, this);
+  QStringList saves = save_directory.entryList(
+      QStringList() << "*",
+      QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot);
+  for (const auto &save_name : saves) {
+    auto *button = new MenuButton(save_name, this);
     auto on_button_click = [this, save_name]() {
       emit(LoadWorldSignal(save_name));
       emit(GameStateChanged(GameState::kGame));

@@ -12,9 +12,9 @@ void Effect::Read(const QJsonObject& json) {
   is_active_ = json["is_active"].toBool();
 }
 
-void Effect::Write(QJsonObject& json) const {
-  json["type"] = static_cast<int>(type_);
-  json["time"] = time_;
-  json["strength"] = strength_;
-  json["is_active"] = is_active_;
+void Effect::Write(QJsonObject* json) const {
+  (*json)["type"] = static_cast<int>(type_);
+  (*json)["time"] = time_;
+  (*json)["strength"] = strength_;
+  (*json)["is_active"] = is_active_;
 }

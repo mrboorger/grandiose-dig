@@ -17,12 +17,12 @@ void Chunk::Read(const QJsonObject& json) {
   }
 }
 
-void Chunk::Write(QJsonObject& json) const {
+void Chunk::Write(QJsonObject* json) const {
   QJsonArray items;
   for (size_t index = 0; index < blocks_.size(); ++index) {
     QJsonObject item;
-    blocks_[index].Write(item);
+    blocks_[index].Write(&item);
     items.append(item);
   }
-  json["blocks"] = items;
+  (*json)["blocks"] = items;
 }

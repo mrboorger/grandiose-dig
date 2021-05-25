@@ -53,7 +53,7 @@ void InventoryItem::Read(const QJsonObject& json) {
   count_ = json["count"].toInt();
 }
 
-void InventoryItem::Write(QJsonObject& json) const {
-  json["type"] = static_cast<int>(type_);
-  json["count"] = count_;
+void InventoryItem::Write(QJsonObject* json) const {
+  (*json)["type"] = static_cast<int>(type_);
+  (*json)["count"] = count_;
 }

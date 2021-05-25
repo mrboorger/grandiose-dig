@@ -17,7 +17,8 @@
 
 class GLMapDrawer : public AbstractMapDrawer {
  public:
-  explicit GLMapDrawer(const QString& save_file, std::shared_ptr<AbstractMap> map,
+  explicit GLMapDrawer(const QString& save_file,
+                       std::shared_ptr<AbstractMap> map,
                        std::shared_ptr<LightMap> light_map);
 
   void Init() override;

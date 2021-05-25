@@ -36,7 +36,7 @@ void Block::Read(const QJsonObject& json) {
   durability_ = json["durability"].toDouble();
 }
 
-void Block::Write(QJsonObject& json) const {
-  json["type"] = static_cast<int>(type_);
-  json["durability"] = durability_;
+void Block::Write(QJsonObject* json) const {
+  (*json)["type"] = static_cast<int>(type_);
+  (*json)["durability"] = durability_;
 }

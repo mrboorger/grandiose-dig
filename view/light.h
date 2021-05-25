@@ -41,8 +41,8 @@ class Light {
   void UpdateMax(const Light& light);
   void Reset();
 
-  void Read(QJsonObject& json);
-  void Write(QJsonObject& json) const;
+  void Read(const QJsonObject& json);
+  void Write(QJsonObject* json) const;
 
  private:
   std::array<uint8_t, kNChannels> data_;

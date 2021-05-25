@@ -43,7 +43,7 @@ class InventoryItem {
   bool IsBlock() const;
 
   void Read(const QJsonObject& json);
-  void Write(QJsonObject& json) const;
+  void Write(QJsonObject* json) const;
 
  private:
   Type type_;

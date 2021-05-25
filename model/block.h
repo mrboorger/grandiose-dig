@@ -40,7 +40,7 @@ class Block {
   bool DecreaseDurability(int delta);
 
   void Read(const QJsonObject& json);
-  void Write(QJsonObject& json) const;
+  void Write(QJsonObject* json) const;
 
  private:
   struct Characteristics {

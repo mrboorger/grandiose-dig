@@ -46,6 +46,7 @@ class Model : public QObject {
 
   bool CanIPlaceBlock(QPoint block_coords);
 
+  void SetCurrentSeed(uint32_t seed) { current_world_seed_ = seed; }
   uint32_t GetCurrentSeed() { return current_world_seed_; }
 
   std::shared_ptr<const AllCraftRecipes> GetAllCraftRecipes() const;

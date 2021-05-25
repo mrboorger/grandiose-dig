@@ -54,15 +54,15 @@ void Player::Read(const QJsonObject& json) {
   tool_radius = json["tool_radius"].toInt();
 }
 
-void Player::Write(QJsonObject& json) const {
+void Player::Write(QJsonObject* json) const {
   MovingObject::Write(json);
 
   QJsonObject inventory;
-  inventory_->Write(inventory);
-  json["inventory"] = inventory;
-  json["attack_tick_"] = attack_tick_;
-  json["attack_cooldown_interval_"] = attack_cooldown_interval_;
-  json["attack_direction_"] = static_cast<int>(attack_direction_);
-  json["use_item_cooldown_interval"] = use_item_cooldown_interval;
-  json["tool_radius"] = tool_radius;
+  inventory_->Write(&inventory);
+  (*json)["inventory"] = inventory;
+  (*json)["attack_tick_"] = attack_tick_;
+  (*json)["attack_cooldown_interval_"] = attack_cooldown_interval_;
+  (*json)["attack_direction_"] = static_cast<int>(attack_direction_);
+  (*json)["use_item_cooldown_interval"] = use_item_cooldown_interval;
+  (*json)["tool_radius"] = tool_radius;
 }

@@ -1,15 +1,13 @@
 #include "view/light_map.h"
 
-#include <QJsonObject>
+#include <QCborMap>
 #include <QJsonArray>
 #include <QJsonDocument>
-#include <QCborMap>
+#include <QJsonObject>
 
 #include "utils.h"
 
-void LightMap::UpdateLight(QPoint pos) {
-  invalidate_queue_.push(pos);
-}
+void LightMap::UpdateLight(QPoint pos) { invalidate_queue_.push(pos); }
 
 Light LightMap::GetLight(QPoint pos) {
   auto res = data_.TryGetValue(pos);
@@ -103,10 +101,10 @@ void LightMap::CalculateRegion(const QRect& region) {
   }
 }
 
-LightMap::Buffer LightMap::BufferConstructor::operator()(const QString& save_file,
-    QPoint pos) {
+LightMap::Buffer LightMap::BufferConstructor::operator()(
+    const QString& save_file, QPoint pos) {
   QFile file(save_file + "chunk:" + QString::number(pos.x()) + ":" +
-      QString::number(pos.y()));
+             QString::number(pos.y()));
   if (!file.open(QIODevice::ReadOnly)) {
     for (int32_t y = pos.y(); y < pos.y() + LightMap::kBufferHeight; ++y) {
       for (int32_t x = pos.x(); x < pos.x() + LightMap::kBufferWidth; ++x) {
@@ -128,11 +126,11 @@ LightMap::Buffer LightMap::BufferConstructor::operator()(const QString& save_fil
 }
 
 void LightMap::BufferSaver::operator()(const QString& save_file,
-    const QPoint& pos, const Buffer& buffer) {
+                                       const QPoint& pos,
+                                       const Buffer& buffer) {
   QFile file(save_file + "chunk:" + QString::number(pos.x()) + ":" +
-      QString::number(pos.y()));
+             QString::number(pos.y()));
   if (!file.open(QIODevice::WriteOnly)) {
-    qDebug() << file.fileName();
     qWarning("Couldn't open save file.");
     return;
   }
@@ -140,7 +138,7 @@ void LightMap::BufferSaver::operator()(const QString& save_file,
   QJsonArray arr;
   for (int index = 0; index < kBufferHeight * kBufferWidth; ++index) {
     QJsonObject light;
-    buffer[index].Write(light);
+    buffer[index].Write(&light);
     arr.append(light);
   }
   data["buffer"] = arr;

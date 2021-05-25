@@ -28,7 +28,7 @@ class Inventory {
   void Craft(const CraftRecipe& recipe);
 
   void Read(const QJsonObject& json);
-  void Write(QJsonObject& json) const;
+  void Write(QJsonObject* json) const;
 
  private:
   static constexpr int kInventorySize = kItemsInColumn * kItemsInRow;

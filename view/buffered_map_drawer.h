@@ -15,7 +15,8 @@
 
 class BufferedMapDrawer : public AbstractMapDrawer {
  public:
-  explicit BufferedMapDrawer(const QString& save_file, std::shared_ptr<AbstractMap> map);
+  explicit BufferedMapDrawer(const QString& save_file,
+                             std::shared_ptr<AbstractMap> map);
 
   void DrawMapWithCenter(QPainter* painter, const QPointF& pos,
                          const QRect& screen_coords) override;

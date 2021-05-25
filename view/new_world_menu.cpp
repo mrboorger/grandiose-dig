@@ -2,6 +2,7 @@
 
 #include <QIntValidator>
 #include <QPainter>
+#include <limits>
 
 #include "utils.h"
 

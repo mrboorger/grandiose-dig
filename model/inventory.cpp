@@ -2,7 +2,6 @@
 
 #include <QJsonArray>
 #include <algorithm>
-#include <algorithm>
 #include <map>
 #include <utility>
 
@@ -85,12 +84,12 @@ void Inventory::Read(const QJsonObject& json) {
   }
 }
 
-void Inventory::Write(QJsonObject& json) const {
+void Inventory::Write(QJsonObject* json) const {
   QJsonArray items;
   for (int index = 0; index < kInventorySize; ++index) {
     QJsonObject item;
-    items_[index].Write(item);
+    items_[index].Write(&item);
     items.append(item);
   }
-  json["items"] = items;
+  (*json)["items"] = items;
 }

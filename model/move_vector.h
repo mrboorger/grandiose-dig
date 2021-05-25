@@ -42,7 +42,7 @@ class MoveVector {
   double GetMomentumY() const { return momentum_.y(); }
 
   void Read(const QJsonObject& json);
-  void Write(QJsonObject& json) const;
+  void Write(QJsonObject* json) const;
 
  private:
   QPointF speed_;

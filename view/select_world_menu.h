@@ -36,4 +36,4 @@ class SelectWorldMenu final : public AbstractMenu {
   QScopedPointer<ScrollableVBoxWidget> worlds_;
 };
 
-#endif  // VIEW_SELECT_WORLD_MEU_H_
+#endif  // VIEW_SELECT_WORLD_MENU_H_

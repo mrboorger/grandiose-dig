@@ -54,13 +54,12 @@ class LightMap {
   class BufferSaver {
    public:
     BufferSaver() = default;
-    void operator()(const QString& save_file, const QPoint& pos, const Buffer& buffer);
-
-   private:
-    std::queue<QPoint>* update_queue_;
+    void operator()(const QString& save_file, const QPoint& pos,
+                    const Buffer& buffer);
   };
-  using Container = containers::RegionCache<Light, kBufferWidth, kBufferHeight,
-                                            Buffer, BufferConstructor, BufferSaver>;
+  using Container =
+      containers::RegionCache<Light, kBufferWidth, kBufferHeight, Buffer,
+                              BufferConstructor, BufferSaver>;
   static constexpr int kUpdateDepth = 2;
 
   void SetPointUpdated(QPoint pos, int iteration = kUpdateDepth);

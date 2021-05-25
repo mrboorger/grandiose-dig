@@ -45,12 +45,11 @@ class ChunkMap : public AbstractMap {
       QFile file(save_file + "chunk:" + QString::number(pos.x()) + ":" +
                  QString::number(pos.y()));
       if (!file.open(QIODevice::WriteOnly)) {
-        qDebug() << file.fileName();
         qWarning("Couldn't open save file.");
         return;
       }
       QJsonObject data;
-      chunk.Write(data);
+      chunk.Write(&data);
       // file.write(QJsonDocument(data).toJson());
       file.write(QCborValue::fromJsonValue(data).toCbor());
     }

@@ -19,6 +19,7 @@ uint32_t FlatChunkMapManager::FlatRegionGenerator::GetChunkSeed(
 
 Chunk FlatChunkMapManager::FlatRegionGenerator::Generate(
     const QString& save_file, QPoint chunk_pos) {
+  Q_UNUSED(save_file);
   Chunk chunk;
   std::mt19937 gen(GetChunkSeed(chunk_pos));
   // TODO(Wind-Eagle): This is temporary code

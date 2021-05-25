@@ -44,17 +44,17 @@ void Light::Reset() {
   }
 }
 
-void Light::Read(QJsonObject& json) {
+void Light::Read(const QJsonObject& json) {
   QJsonArray items = json["channels"].toArray();
   for (int index = 0; index < kNChannels; ++index) {
     data_[index] = items[index].toInt();
   }
 }
 
-void Light::Write(QJsonObject& json) const {
+void Light::Write(QJsonObject* json) const {
   QJsonArray items;
   for (int index = 0; index < kNChannels; ++index) {
     items.append(data_[index]);
   }
-  json["channels"] = items;
+  (*json)["channels"] = items;
 }

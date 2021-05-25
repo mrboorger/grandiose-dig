@@ -10,7 +10,8 @@
 #include "view/gl_func.h"
 #include "view/texture_atlas.h"
 
-GLMapDrawer::GLMapDrawer(const QString& save_file, std::shared_ptr<AbstractMap> map,
+GLMapDrawer::GLMapDrawer(const QString& save_file,
+                         std::shared_ptr<AbstractMap> map,
                          std::shared_ptr<LightMap> light_map)
     : buffers_(save_file, constants::kDefaultClearTimeMSec),
       index_buffer_(QOpenGLBuffer::Type::IndexBuffer),
@@ -32,9 +33,9 @@ void GLMapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
   shader_.bind();
 
   QPoint start = RoundToMeshPos(QPoint(pos.x(), pos.y()) -
-                                  QPoint(kFieldOfView, kFieldOfView));
+                                QPoint(kFieldOfView, kFieldOfView));
   QPoint finish = RoundToMeshPos(QPoint(pos.x(), pos.y()) +
-                                   QPoint(kFieldOfView, kFieldOfView));
+                                 QPoint(kFieldOfView, kFieldOfView));
   map_->CacheRegion(QRect(start, finish));
   {
     QMatrix4x4 proj_matrix;
@@ -45,8 +46,7 @@ void GLMapDrawer::DrawMapWithCenter(QPainter* painter, const QPointF& pos,
         (screen_coords.width() / 2 + 1) / (1.0F * constants::kBlockSz);
     float up =
         -((screen_coords.height() + 1) / 2) / (1.0F * constants::kBlockSz);
-    float down =
-        (screen_coords.height() / 2) / (1.0F * constants::kBlockSz);
+    float down = (screen_coords.height() / 2) / (1.0F * constants::kBlockSz);
     proj_matrix.ortho(left, right, up, down, 1.0F, 100.0F);
     proj_matrix.lookAt({0.0F, 0.0F, 0.0F}, {0.0F, 0.0F, 1.0F},
                        {0.0F, -1.0F, 0.0F});
@@ -96,7 +96,8 @@ void GLMapDrawer::UpdateBlock(QPoint position) {
   }
   QOpenGLBuffer& casted = buffer.value();
   casted.bind();
-  const QPoint mesh_position = position - buffer_pos;;
+  const QPoint mesh_position = position - buffer_pos;
+  ;
   auto data = GetBlockData(position, mesh_position);
   casted.write(
       (mesh_position.y() * kMeshWidth + mesh_position.x()) * sizeof(BlockData),
@@ -229,16 +230,16 @@ GLMapDrawer::BlockData GLMapDrawer::GetBlockData(QPoint world_pos,
   }
   BlockData data{};
   data.left_top = GenData(mesh_pos, TextureAtlas::GetBlockTCLT(block),
-                         light_map_->GetLightLT(world_pos));
+                          light_map_->GetLightLT(world_pos));
   data.right_top = GenData(QPoint(mesh_pos.x() + 1, mesh_pos.y()),
-                          TextureAtlas::GetBlockTCRT(block),
-                          light_map_->GetLightRT(world_pos));
+                           TextureAtlas::GetBlockTCRT(block),
+                           light_map_->GetLightRT(world_pos));
   data.left_bottom = GenData(QPoint(mesh_pos.x(), mesh_pos.y() + 1),
-                          TextureAtlas::GetBlockTCLB(block),
-                          light_map_->GetLightLB(world_pos));
+                             TextureAtlas::GetBlockTCLB(block),
+                             light_map_->GetLightLB(world_pos));
   data.right_bottom = GenData(QPoint(mesh_pos.x() + 1, mesh_pos.y() + 1),
-                          TextureAtlas::GetBlockTCRB(block),
-                          light_map_->GetLightRB(world_pos));
+                              TextureAtlas::GetBlockTCRB(block),
+                              light_map_->GetLightRB(world_pos));
   data.center = Average(data.left_top, data.left_bottom, data.right_top,
                         data.right_bottom);
   return data;

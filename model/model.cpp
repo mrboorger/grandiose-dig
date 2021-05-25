@@ -92,17 +92,24 @@ bool Model::CanSpawnMobAt(QPointF pos, QPointF size) const {
 void Model::Read(const QJsonObject& json) {
   player_ = std::make_shared<Player>(QPointF(0, 0));
   player_->Read(json["player"].toObject());
+  QJsonArray mobs = json["mobs"].toArray();
+  mobs_.clear();
+  for (auto mob_json : mobs) {
+    auto* mob = new Mob(QPointF(0, 0), Mob::Type::kZombie);
+    mob->Read(mob_json.toObject());
+    mobs_.emplace(mob);
+  }
   current_world_seed_ = json["seed"].toString().toUInt();
 }
 
 void Model::Write(QJsonObject& json) const {
   QJsonObject player;
-  player_->Write(player);
+  player_->Write(&player);
   json["player"] = player;
   QJsonArray mobs;
   for (const auto& mob : mobs_) {
     QJsonObject mob_object;
-    mob->Write(mob_object);
+    mob->Write(&mob_object);
     mobs.append(mob_object);
   }
   json["mobs"] = mobs;
