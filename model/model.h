@@ -58,7 +58,7 @@ class Model : public QObject {
   void DespawnMobs();
 
   void Read(const QJsonObject& json);
-  void Write(QJsonObject& json) const;
+  void Write(QJsonObject* json) const;
 
   void SetSaveFileName(const QString& save_file_name) {
     current_save_file_name_ = save_file_name;

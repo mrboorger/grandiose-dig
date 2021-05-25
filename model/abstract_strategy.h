@@ -59,21 +59,21 @@ class MobState {
     pushes_right_ = json["pushes_right_"].toBool();
   }
 
-  void Write(QJsonObject& json) const {
-    json["pos_x"] = pos_.x();
-    json["pos_y"] = pos_.y();
-    json["size_x"] = size_.x();
-    json["size_y"] = size_.y();
-    json["damage_acceleration_x"] = damage_acceleration_.x();
-    json["damage_acceleration_y"] = damage_acceleration_.y();
-    json["jump_x"] = jump_.x();
-    json["jump_y"] = jump_.y();
-    json["damage_time"] = damage_time_;
-    json["damage"] = damage_;
-    json["on_ground"] = on_ground_;
-    json["on_ceil_"] = on_ceil_;
-    json["pushes_left_"] = pushes_left_;
-    json["pushes_right_"] = pushes_right_;
+  void Write(QJsonObject* json) const {
+    (*json)["pos_x"] = pos_.x();
+    (*json)["pos_y"] = pos_.y();
+    (*json)["size_x"] = size_.x();
+    (*json)["size_y"] = size_.y();
+    (*json)["damage_acceleration_x"] = damage_acceleration_.x();
+    (*json)["damage_acceleration_y"] = damage_acceleration_.y();
+    (*json)["jump_x"] = jump_.x();
+    (*json)["jump_y"] = jump_.y();
+    (*json)["damage_time"] = damage_time_;
+    (*json)["damage"] = damage_;
+    (*json)["on_ground"] = on_ground_;
+    (*json)["on_ceil_"] = on_ceil_;
+    (*json)["pushes_left_"] = pushes_left_;
+    (*json)["pushes_right_"] = pushes_right_;
   }
 
  private:
@@ -110,10 +110,10 @@ class AbstractStrategy {
     mob_state_.Read(json["mob_state"].toObject());
   }
 
-  virtual void Write(QJsonObject& json) const {
+  virtual void Write(QJsonObject* json) const {
     QJsonObject mob_state;
-    mob_state_.Write(mob_state);
-    json["mob_state"] = mob_state;
+    mob_state_.Write(&mob_state);
+    (*json)["mob_state"] = mob_state;
   }
 
  private:

@@ -105,18 +105,18 @@ void Model::Read(const QJsonObject& json) {
   current_world_seed_ = json["seed"].toString().toUInt();
 }
 
-void Model::Write(QJsonObject& json) const {
+void Model::Write(QJsonObject* json) const {
   QJsonObject player;
   player_->Write(&player);
-  json["player"] = player;
+  (*json)["player"] = player;
   QJsonArray mobs;
   for (const auto& mob : mobs_) {
     QJsonObject mob_object;
     mob->Write(&mob_object);
     mobs.append(mob_object);
   }
-  json["mobs"] = mobs;
-  json["seed"] = QString(current_world_seed_);
+  (*json)["mobs"] = mobs;
+  (*json)["seed"] = QString(current_world_seed_);
 }
 
 bool Model::LoadFromFile(const QString& file_name) {
@@ -148,7 +148,7 @@ bool Model::SaveToFile(const QString& file_name) {
 
   current_save_file_name_ = file_name;
   QJsonObject world;
-  Write(world);
+  Write(&world);
   // save_file.write(QJsonDocument(world).toJson());
   save_file.write(QCborValue::fromJsonValue(world).toCbor());
   return true;
