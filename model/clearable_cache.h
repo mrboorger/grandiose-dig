@@ -30,10 +30,10 @@ class ClearableCache {
  public:
   explicit ClearableCache(QString save_file, int clear_time_msec,
                           Compare compare = Compare(), Save save = Save())
-      : save_file_(std::move(save_file)),
-        nodes_(compare),
-        last_used_(nodes_.end()),
-        save_(std::move(save)) {
+      : nodes_(compare),
+        save_(std::move(save)),
+        save_file_(std::move(save_file)),
+        last_used_(nodes_.end()) {
     timer_.callOnTimeout([this]() { ClearUnused(); });
     timer_.start(clear_time_msec);
   }

@@ -77,11 +77,11 @@ void Mob::Write(QJsonObject* json) const {
   MovingObject::Write(json);
 
   QJsonObject mob_state;
-  mob_state_.Write(mob_state);
+  mob_state_.Write(&mob_state);
   (*json)["mob_state"] = mob_state;
   (*json)["type"] = static_cast<int>(type_);
 
   QJsonObject strategy;
-  strategy_->Write(strategy);
+  strategy_->Write(&strategy);
   (*json)["strategy"] = strategy;
 }

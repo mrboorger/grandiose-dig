@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
 
   QDir dir;
   dir.mkdir(QDir::currentPath() + "/saves");
-  Controller* controller(Controller::GetInstance());
+  Controller::GetInstance();
   view.PlayMusic();
   view.show();
   view.setWindowState(Qt::WindowMaximized);
