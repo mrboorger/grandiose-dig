@@ -253,6 +253,10 @@ ControllerTypes::Key Controller::TranslateKeyCode(int key_code) {
       return ControllerTypes::Key::kInventory8;
     case Qt::Key::Key_0:
       return ControllerTypes::Key::kInventory9;
+    case Qt::Key::Key_BracketLeft:
+      return ControllerTypes::Key::kInventoryPrevRow;
+    case Qt::Key::Key_BracketRight:
+      return ControllerTypes::Key::kInventoryNextRow;
     default:
       return ControllerTypes::Key::kUnused;
   }
@@ -349,9 +353,13 @@ void Controller::DespawnMobs() { Model::GetInstance()->DespawnMobs(); }
 void Controller::ParseInventoryKey(ControllerTypes::Key translated_key) {
   if (translated_key >= ControllerTypes::Key::kInventory0 &&
       translated_key <= ControllerTypes::Key::kInventory9) {
-    Model::GetInstance()->GetPlayer()->GetInventory()->ChangeSelectedItem(
+    Model::GetInstance()->GetPlayer()->GetInventory()->ChangeSelectedColumn(
         static_cast<int>(translated_key) -
         static_cast<int>(ControllerTypes::Key::kInventory0));
+  } else if (translated_key == ControllerTypes::Key::kInventoryPrevRow) {
+    Model::GetInstance()->GetPlayer()->GetInventory()->SwitchToPrevRow();
+  } else if (translated_key == ControllerTypes::Key::kInventoryNextRow) {
+    Model::GetInstance()->GetPlayer()->GetInventory()->SwitchToNextRow();
   }
 }
 

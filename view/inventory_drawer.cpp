@@ -113,8 +113,8 @@ void InventoryDrawer::DrawSelectionBox(QPainter* painter) {
   }
   assert(!selection_box.isNull());
   painter->drawImage(
-      inventory_->GetSelectedItemNumber() * (kCellSize + kIndentSize), 0,
-      selection_box);
+      inventory_->GetSelectedColumn() * (kCellSize + kIndentSize),
+      inventory_->GetSelectedRow() * (kCellSize + kIndentSize), selection_box);
 }
 
 void InventoryDrawer::CreateCraftScrollArea() {

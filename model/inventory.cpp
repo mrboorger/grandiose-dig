@@ -4,13 +4,7 @@
 #include <map>
 #include <utility>
 
-Inventory::Inventory() {
-  // TODO(mrboorger): it is a temporary code
-  items_[0] = InventoryItem(InventoryItem::Type::kBlockRedLight, 999);
-  items_[1] = InventoryItem(InventoryItem::Type::kBlockYellowLight, 999);
-  items_[2] = InventoryItem(InventoryItem::Type::kBlockGreenLight, 999);
-  items_[3] = InventoryItem(InventoryItem::Type::kBlockBlueLight, 999);
-}
+Inventory::Inventory() {}
 
 void Inventory::AddItem(InventoryItem item) {
   for (InventoryItem& inventory_item : items_) {
@@ -38,13 +32,15 @@ void Inventory::AddItem(InventoryItem item) {
 }
 
 void Inventory::RemoveOneSelectedItem() {
-  if (!items_[selected_item_].IsEmpty()) {
-    items_[selected_item_].ChangeCount(items_[selected_item_].GetCount() - 1);
+  int selected_item_num = selected_row_ * kItemsInRow + selected_column_;
+  if (!items_[selected_item_num].IsEmpty()) {
+    items_[selected_item_num].ChangeCount(items_[selected_item_num].GetCount() -
+                                          1);
   }
 }
 
 const InventoryItem& Inventory::GetSelectedItem() const {
-  return items_[selected_item_];
+  return items_[selected_row_ * kItemsInRow + selected_column_];
 }
 
 bool Inventory::CanCraft(const CraftRecipe& recipe) {
@@ -74,4 +70,18 @@ void Inventory::Craft(const CraftRecipe& recipe) {
     }
   }
   AddItem(recipe.GetResultingItem());
+}
+
+void Inventory::SwitchToPrevRow() {
+  --selected_row_;
+  if (selected_row_ < 0) {
+    selected_row_ = kItemsInColumn - 1;
+  }
+}
+
+void Inventory::SwitchToNextRow() {
+  ++selected_row_;
+  if (selected_row_ == kItemsInColumn) {
+    selected_row_ = 0;
+  }
 }
