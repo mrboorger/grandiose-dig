@@ -17,7 +17,7 @@ constexpr double kAbsoluteMaxSpeedX = 5.0;  // in blocks per ms
 constexpr double kAbsoluteMaxSpeedY = 5.0;  // in blocks per ms
 constexpr int kDamageCooldown = 500;        // in ms
 constexpr double kFallDamageMin = 0.05;
-constexpr double kFallDamagePoint = 0.002;
+constexpr double kFallDamagePoint = 0.0015;
 
 constexpr QPointF kPlayerSize{1.25, 2.5};               // in blocks
 constexpr double kPlayerWalkAcceleration = 0.001 / 10;  // in blocks per ms

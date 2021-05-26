@@ -30,7 +30,7 @@ Mob::Mob(QPointF pos, Type type)
       SetStrategy(std::make_shared<MagicStrategy>());
       break;
     default:
-      assert(false);
+      break;
   }
 }
 

@@ -98,13 +98,10 @@ class RegionCache {
   }
 
   static int32_t BufferIndex(QPoint local_pos) {
-    assert(0 <= local_pos.x() && local_pos.x() < width && 0 <= local_pos.y() &&
-           local_pos.y() < height);
     return local_pos.y() * width + local_pos.x();
   }
 
   Buffer& GetOrInsertBufferRounded(QPoint buffer_pos) {
-    assert(RoundToBufferPos(buffer_pos).second == QPoint(0, 0));
     auto found = data_.Get(buffer_pos);
     if (!found) {
       return data_.Insert(buffer_pos, gen_buffer_(save_file_, buffer_pos));

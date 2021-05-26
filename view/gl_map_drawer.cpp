@@ -35,21 +35,19 @@ void GLMapDrawer::DrawMapWithCenterImpl(QPainter* painter, const QPointF& pos,
   shader_.bind();
 
   QPoint start = RoundToMeshPos(QPoint(pos.x(), pos.y()) -
-                                  QPoint(kFieldOfView, kFieldOfView));
+                                QPoint(kFieldOfView, kFieldOfView));
   QPoint finish = RoundToMeshPos(QPoint(pos.x(), pos.y()) +
-                                   QPoint(kFieldOfView, kFieldOfView));
+                                 QPoint(kFieldOfView, kFieldOfView));
   map_->CacheRegion(QRect(start, finish));
   {
     QMatrix4x4 proj_matrix;
-    assert(proj_matrix.isIdentity());
     float left =
         -((screen_coords.width() + 1) / 2) / (1.0F * constants::kBlockSz);
     float right =
         (screen_coords.width() / 2 + 1) / (1.0F * constants::kBlockSz);
     float up =
         -((screen_coords.height() + 1) / 2) / (1.0F * constants::kBlockSz);
-    float down =
-        (screen_coords.height() / 2) / (1.0F * constants::kBlockSz);
+    float down = (screen_coords.height() / 2) / (1.0F * constants::kBlockSz);
     proj_matrix.ortho(left, right, up, down, 1.0F, 100.0F);
     proj_matrix.lookAt({0.0F, 0.0F, 0.0F}, {0.0F, 0.0F, 1.0F},
                        {0.0F, -1.0F, 0.0F});
@@ -123,7 +121,8 @@ void GLMapDrawer::UpdateBlockImpl(QPoint position) {
   }
   QOpenGLBuffer& casted = buffer.value();
   casted.bind();
-  const QPoint mesh_position = position - buffer_pos;;
+  const QPoint mesh_position = position - buffer_pos;
+  ;
   auto data = GetBlockData(position, mesh_position);
   casted.write(
       (mesh_position.y() * kMeshWidth + mesh_position.x()) * sizeof(BlockData),
@@ -214,8 +213,7 @@ void GLMapDrawer::LoadShader(QOpenGLShaderProgram* shader) {
                                   ":/resources/shaders/vertex.glsl");
   shader->addShaderFromSourceFile(QOpenGLShader::Fragment,
                                   ":/resources/shaders/fragment.glsl");
-  bool link_result = shader->link();
-  assert(link_result);
+  shader->link();
   for (int i = 0; i < kAttribsCount; ++i) {
     shader->bindAttributeLocation(kAttribNames[i], i);
   }

@@ -85,7 +85,6 @@ void BasicStrategy::SelectNewState() {
       UpdateAttack();
       break;
     default:
-      assert(false);
       break;
   }
 }
