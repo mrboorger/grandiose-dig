@@ -1,6 +1,8 @@
 #ifndef MODEL_MODEL_H_
 #define MODEL_MODEL_H_
 
+#include <QDir>
+#include <QFile>
 #include <memory>
 #include <set>
 #include <unordered_set>
@@ -29,6 +31,8 @@ class Model : public QObject {
 
   void SetMap(std::shared_ptr<AbstractMap> map) { map_ = std::move(map); }
 
+  static int CheckPlayerPosition();
+
   std::shared_ptr<Player> GetPlayer() { return player_; }
 
   void SetPlayer(const std::shared_ptr<Player>& player) { player_ = player; }
@@ -42,6 +46,9 @@ class Model : public QObject {
 
   void PickItemToPlayer(InventoryItem item) { player_->PickItem(item); }
 
+  void SetCurrentSeed(uint32_t seed) { current_world_seed_ = seed; }
+  uint32_t GetCurrentSeed() { return current_world_seed_; }
+
   bool CanPlaceBlock(QPoint block_coords);
 
   std::shared_ptr<const CraftRecipeCollection> GetCraftRecipeCollection() const;
@@ -51,6 +58,19 @@ class Model : public QObject {
   int GetMobsCount() const { return mobs_.size(); }
 
   void DespawnMobs();
+
+  void Read(const QJsonObject& json);
+  void Write(QJsonObject* json) const;
+
+  void SetSaveFileName(const QString& save_file_name) {
+    current_save_file_name_ = save_file_name;
+  }
+
+  bool LoadFromFile(const QString& file_name);
+  bool SaveToFile(const QString& file_name);
+  bool SaveToFile() { return SaveToFile(current_save_file_name_); }
+
+  void Clear();
 
  signals:
   void DamageDealt(MovingObject* object);
@@ -62,6 +82,8 @@ class Model : public QObject {
 
   Model() : all_craft_recipes_(new CraftRecipeCollection) {}
 
+  QString current_save_file_name_;
+  uint32_t current_world_seed_;
   std::set<std::shared_ptr<Mob>> mobs_;
   std::shared_ptr<AbstractMap> map_;
   std::shared_ptr<Player> player_;

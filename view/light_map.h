@@ -16,7 +16,10 @@
 
 class LightMap {
  public:
-  explicit LightMap(std::shared_ptr<AbstractMap> map) : map_(std::move(map)) {}
+  explicit LightMap(const QString& save_file, std::shared_ptr<AbstractMap> map)
+      : data_(Container(save_file, constants::kDefaultClearTimeMSec,
+                        BufferConstructor(this))),
+        map_(std::move(map)) {}
 
   void UpdateLight(QPoint pos);
   Light GetLight(QPoint pos);
@@ -28,14 +31,7 @@ class LightMap {
   Light GetLightRB(QPoint pos);
   void CalculateRegion(const QRect& region);
 
-  std::set<QPoint, utils::QPointLexicographicalCompare> TakeUpdateList() {
-    std::set<QPoint, utils::QPointLexicographicalCompare> result;
-    std::unique_lock<std::recursive_mutex> lock(mutex_, std::try_to_lock);
-    if (lock.owns_lock()) {
-      result.swap(updated_);
-    }
-    return result;
-  }
+  std::set<QPoint, utils::QPointLexicographicalCompare> TakeUpdateList();
 
  private:
   static constexpr int kBufferWidth = 64;
@@ -46,21 +42,27 @@ class LightMap {
     explicit BufferConstructor(LightMap* light_map)
         : light_map_(light_map) {}
 
-    Buffer operator()(QPoint pos);
+    Buffer operator()(const QString& save_file, QPoint pos);
 
    private:
     LightMap* light_map_;
   };
-  using Container = containers::RegionCache<Light, kBufferWidth, kBufferHeight,
-                                            Buffer, BufferConstructor>;
+  class BufferSaver {
+   public:
+    BufferSaver() = default;
+    void operator()(const QString& save_file, const QPoint& pos,
+                    const Buffer& buffer);
+  };
+  using Container =
+      containers::RegionCache<Light, kBufferWidth, kBufferHeight, Buffer,
+                              BufferConstructor, BufferSaver>;
   static constexpr int kUpdateDepth = 2;
 
   void SetPointUpdated(QPoint pos, int iteration = kUpdateDepth);
 
   Light GetLuminosity(QPoint pos) const;
 
-  Container data_ = Container(constants::kDefaultClearTimeMSec,
-                              BufferConstructor(this));
+  Container data_;
   std::queue<QPoint> invalidate_queue_;
   std::set<QPoint, utils::QPointLexicographicalCompare> updated_;
   std::shared_ptr<AbstractMap> map_;

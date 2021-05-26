@@ -1,5 +1,9 @@
 <RCC>
     <qresource prefix="/">
+        <file>resources/images/main_menu_background.png</file>
+        <file>resources/images/seed_icon.png</file>
+        <file>resources/images/world_name_icon.png</file>
+        <file>resources/fonts/ComicSansMS3.ttf</file>
         <file>resources/sounds/player_damage.mp3</file>
         <file>resources/sounds/zombie_death.mp3</file>
         <file>resources/sounds/zombie_damage2.mp3</file>
@@ -78,7 +82,14 @@
         <file>resources/textures/zombie0.png</file>
         <file>resources/textures/zombie1.png</file>
         <file>resources/textures/zombie2.png</file>
-        <file>resources/textures/zombie3.png</file>
+        <file>resources/translations/translation_en.ts</file>
+        <file>resources/translations/translation_en.qm</file>
+        <file>resources/translations/translation_ru.ts</file>
+        <file>resources/translations/translation_ru.qm</file>
+        <file>resources/translations/translation_de.ts</file>
+        <file>resources/translations/translation_de.qm</file>
+        <file>resources/translations/translation_uk.ts</file>
+        <file>resources/translations/translation_uk.qm</file>       <file>resources/textures/zombie3.png</file>
         <file>resources/icons/icon.png</file>
     </qresource>
 </RCC>

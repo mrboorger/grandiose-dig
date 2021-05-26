@@ -1,5 +1,6 @@
 #include "model/map.h"
 
+#include <QJsonArray>
 #include <algorithm>
 #include <utility>
 

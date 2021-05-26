@@ -1,6 +1,8 @@
 #ifndef VIEW_LIGHT_H_
 #define VIEW_LIGHT_H_
 
+#include <QJsonArray>
+#include <QJsonObject>
 #include <algorithm>
 #include <array>
 #include <cstdint>
@@ -44,6 +46,9 @@ class Light {
   bool Combine(const Light& light);
   void UpdateMax(const Light& light);
   void Reset();
+
+  void Read(const QJsonObject& json);
+  void Write(QJsonObject* json) const;
 
  private:
   std::array<uint8_t, kNChannels> data_;

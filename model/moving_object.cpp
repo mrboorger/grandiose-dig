@@ -535,3 +535,80 @@ void MovingObject::CheckSingularEffects() {
     }
   }
 }
+
+void MovingObject::Read(const QJsonObject& json) {
+  QJsonArray effects = json["effects"].toArray();
+  effects_.clear();
+  effects_.reserve(effects.size());
+  for (int index = 0; index < effects.size(); ++index) {
+    effects_.emplace_back(Effect::Type::kHeaviness);
+    effects_.back().Read(effects[index].toObject());
+  }
+  json["effects"] = effects;
+
+  move_vector_.Read(json["move_vector"].toObject());
+
+  pos_.setX(json["pos_x"].toDouble());
+  pos_.setY(json["pos_y"].toDouble());
+  size_.setX(json["size_x"].toDouble());
+  size_.setY(json["size_y"].toDouble());
+  state_ = static_cast<State>(json["state"].toInt());
+  walk_acceleration_ = json["walk_acceleration"].toDouble();
+  walk_max_speed_ = json["walk_max_speed"].toDouble();
+  walk_air_acceleration_ = json["walk_air_acceleration"].toDouble();
+  walk_max_air_acceleration_ = json["walk_max_air_acceleration"].toDouble();
+  gravity_speed_ = json["gravity_speed"].toDouble();
+  jump_speed_ = json["jump_speed"].toDouble();
+  damage_acceleration_.setX(json["damage_acceleration_x"].toDouble());
+  damage_acceleration_.setY(json["damage_acceleration_y"].toDouble());
+  type_ = static_cast<Type>(json["type"].toInt());
+  health_ = json["health"].toInt();
+  damage_ = json["damage"].toInt();
+  state_time_ = json["state_time"].toDouble();
+  damage_time_ = json["damage_time"].toDouble();
+  pushes_ground_ = json["pushes_ground"].toBool();
+  pushes_ceil_ = json["pushes_ceil"].toBool();
+  pushes_left_ = json["pushes_left"].toBool();
+  pushes_right_ = json["pushes_right"].toBool();
+
+  direction_ = static_cast<utils::Direction>(json["direction"].toInt());
+}
+
+void MovingObject::Write(QJsonObject* json) const {
+  QJsonArray effects;
+  for (const auto& effect : effects_) {
+    QJsonObject effect_object;
+    effect.Write(&effect_object);
+    effects.append(effect_object);
+  }
+  (*json)["effects"] = effects;
+
+  QJsonObject move_vector;
+  move_vector_.Write(&move_vector);
+  (*json)["move_vector"] = move_vector;
+
+  (*json)["pos_x"] = pos_.x();
+  (*json)["pos_y"] = pos_.y();
+  (*json)["size_x"] = size_.x();
+  (*json)["size_y"] = size_.y();
+  (*json)["state"] = static_cast<int>(state_);
+  (*json)["walk_acceleration"] = walk_acceleration_;
+  (*json)["walk_max_speed"] = walk_max_speed_;
+  (*json)["walk_air_acceleration"] = walk_air_acceleration_;
+  (*json)["walk_max_air_acceleration"] = walk_max_air_acceleration_;
+  (*json)["gravity_speed"] = gravity_speed_;
+  (*json)["jump_speed"] = jump_speed_;
+  (*json)["damage_acceleration_x"] = damage_acceleration_.x();
+  (*json)["damage_acceleration_y"] = damage_acceleration_.y();
+  (*json)["type"] = static_cast<int>(type_);
+  (*json)["health"] = health_;
+  (*json)["damage"] = damage_;
+  (*json)["state_time"] = state_time_;
+  (*json)["damage_time"] = damage_time_;
+  (*json)["pushes_ground"] = pushes_ground_;
+  (*json)["pushes_ceil"] = pushes_ceil_;
+  (*json)["pushes_left"] = pushes_left_;
+  (*json)["pushes_right"] = pushes_right_;
+
+  (*json)["direction"] = static_cast<int>(direction_);
+}

@@ -2,9 +2,9 @@
 #define MODEL_REGION_CACHE_H_
 
 #include <QPoint>
-#include <functional>
 #include <QRect>
 #include <array>
+#include <functional>
 #include <optional>
 #include <utility>
 
@@ -14,18 +14,20 @@
 
 namespace containers {
 
-template<typename T>
+template <typename T>
 class GenEmptyBuffer {
  public:
-  T operator()(QPoint buffer_pos) const {
+  T operator()(const QString& save_file, QPoint buffer_pos) const {
+    Q_UNUSED(save_file);
     Q_UNUSED(buffer_pos);
     return T{};
   }
 };
 
-template<typename T, int32_t width, int32_t height,
-         typename BufferType = std::array<T, width * height>,
-         typename F = GenEmptyBuffer<BufferType>>
+template <typename T, int32_t width, int32_t height,
+          typename BufferType = std::array<T, width * height>,
+          typename F = GenEmptyBuffer<BufferType>,
+          typename Save = NotSave<QPoint, BufferType>>
 class RegionCache {
  public:
   using Buffer = BufferType;
@@ -33,10 +35,12 @@ class RegionCache {
   static constexpr int32_t kBufferWidth = width;
   static constexpr int32_t kBufferHeight = height;
 
-  explicit RegionCache(
-      int clear_time_msec = constants::kDefaultClearTimeMSec,
-      F gen_buffer = F())
-      : data_(clear_time_msec), gen_buffer_(std::move(gen_buffer)) {}
+  explicit RegionCache(const QString& save_file,
+                       int clear_time_msec = constants::kDefaultClearTimeMSec,
+                       F gen_buffer = F())
+      : data_(save_file, clear_time_msec),
+        save_file_(save_file),
+        gen_buffer_(std::move(gen_buffer)) {}
 
   std::optional<std::reference_wrapper<const T>> TryGetValue(QPoint pos) {
     auto [buffer_pos, local_pos] = RoundToBufferPos(pos);
@@ -64,7 +68,7 @@ class RegionCache {
 
   T* GetMutableValue(QPoint pos) { return const_cast<T*>(&GetValue(pos)); }
 
-  template<typename V>
+  template <typename V>
   T& SetValue(QPoint pos, V&& value) {
     auto [buffer_pos, local_pos] = RoundToBufferPos(pos);
     return GetOrInsertBufferRounded(buffer_pos)[BufferIndex(local_pos)] =
@@ -103,12 +107,14 @@ class RegionCache {
     assert(RoundToBufferPos(buffer_pos).second == QPoint(0, 0));
     auto found = data_.Get(buffer_pos);
     if (!found) {
-      return data_.Insert(buffer_pos, gen_buffer_(buffer_pos));
+      return data_.Insert(buffer_pos, gen_buffer_(save_file_, buffer_pos));
     }
     return found.value();
   }
 
-  ClearableCache<QPoint, Buffer, utils::QPointLexicographicalCompare> data_;
+  ClearableCache<QPoint, Buffer, utils::QPointLexicographicalCompare, Save>
+      data_;
+  QString save_file_;
   F gen_buffer_;
 };
 

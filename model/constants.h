@@ -163,7 +163,7 @@ constexpr double kMobsSpawnRate[4] = {1, 0.2, 0.8, 0.4};
 constexpr double kMobsSumRate = kMobsSpawnRate[0] + kMobsSpawnRate[1] +
                                 kMobsSpawnRate[2] + kMobsSpawnRate[3];
 
-constexpr int kDefaultClearTimeMSec = 1'000;
+constexpr int kDefaultClearTimeMSec = 5'000;
 
 }  // namespace constants
 

@@ -1,13 +1,11 @@
 #include "inventory.h"
 
+#include <QJsonArray>
 #include <algorithm>
 #include <map>
 #include <utility>
 
-Inventory::Inventory() {
-  items_[0] = InventoryItem(InventoryItem::Type::kSpeedPotion, 3);
-  items_[1] = InventoryItem(InventoryItem::Type::kSpeedPotion, 3);
-}
+Inventory::Inventory() = default;
 
 void Inventory::AddItem(InventoryItem item) {
   for (InventoryItem& inventory_item : items_) {
@@ -73,6 +71,23 @@ void Inventory::Craft(const CraftRecipe& recipe) {
     }
   }
   AddItem(recipe.GetResultingItem());
+}
+
+void Inventory::Read(const QJsonObject& json) {
+  QJsonArray items = json["items"].toArray();
+  for (int index = 0; index < kInventorySize; ++index) {
+    items_[index].Read(items[index].toObject());
+  }
+}
+
+void Inventory::Write(QJsonObject* json) const {
+  QJsonArray items;
+  for (int index = 0; index < kInventorySize; ++index) {
+    QJsonObject item;
+    items_[index].Write(&item);
+    items.append(item);
+  }
+  (*json)["items"] = items;
 }
 
 void Inventory::SwitchToPrevRow() {

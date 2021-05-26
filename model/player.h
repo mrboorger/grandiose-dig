@@ -1,6 +1,7 @@
 #ifndef MODEL_PLAYER_H_
 #define MODEL_PLAYER_H_
 
+#include <QJsonObject>
 #include <QPoint>
 #include <algorithm>
 #include <memory>
@@ -56,6 +57,9 @@ class Player : public MovingObject {
   void TryCraft(const CraftRecipe& recipe);
 
   void UsePotion();
+
+  void Read(const QJsonObject& json) override;
+  void Write(QJsonObject* json) const override;
 
  private:
   static constexpr int kUseItemCooldown = 100;

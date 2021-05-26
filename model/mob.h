@@ -26,6 +26,9 @@ class Mob : public MovingObject {
 
   static QPointF GetMobSize(int id);
 
+  void Read(const QJsonObject& json) override;
+  void Write(QJsonObject* json) const override;
+
  private:
   MobState mob_state_;
   Type type_;

@@ -1,6 +1,7 @@
 #ifndef MODEL_BLOCK_H_
 #define MODEL_BLOCK_H_
 
+#include <QJsonObject>
 #include <cstdint>
 
 #include "view/light.h"
@@ -85,6 +86,9 @@ class Block {
 
   // returns true, if block is broken
   bool DecreaseDurability(int delta);
+
+  void Read(const QJsonObject& json);
+  void Write(QJsonObject* json) const;
 
  private:
   struct FrontCharacteristics {

@@ -15,7 +15,6 @@ class Map : public AbstractMap {
 
   void SetBlockImpl(QPoint pos, Block block) override;
 
-
   Block* GetBlockMutableImpl(QPoint pos) override;
 
   std::vector<Block> blocks_;

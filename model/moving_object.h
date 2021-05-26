@@ -104,7 +104,11 @@ class MovingObject {
 
   void AddEffect(Effect effect);
   void DeleteEffect(Effect::Type type);
+
   void DeleteAllEffects() { effects_.clear(); }
+
+  virtual void Read(const QJsonObject& json);
+  virtual void Write(QJsonObject* json) const;
 
  protected:
   MovingObject(QPointF pos, QPointF size);

@@ -1,6 +1,7 @@
 #ifndef MODEL_ABSTRACT_MAP_H_
 #define MODEL_ABSTRACT_MAP_H_
 
+#include <QJsonObject>
 #include <QPoint>
 #include <QRect>
 #include <mutex>

@@ -31,6 +31,9 @@ class Chunk {
            (0 <= pos.y() && pos.y() < kHeight);
   }
 
+  void Read(const QJsonObject& json);
+  void Write(QJsonObject* json) const;
+
  private:
   static int BlockIndex(QPoint pos) {
     assert(0 <= pos.x() && pos.x() < kWidth);

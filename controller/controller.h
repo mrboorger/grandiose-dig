@@ -1,18 +1,23 @@
 #ifndef CONTROLLER_CONTROLLER_H_
 #define CONTROLLER_CONTROLLER_H_
 
+#include <QJsonObject>
 #include <QKeyEvent>
+#include <QObject>
+#include <QSettings>
 #include <QTimer>
 #include <memory>
 #include <unordered_set>
 
 #include "controller/controller_types.h"
-#include "model/abstract_map_generator.h"
+#include "model/abstract_map_manager.h"
 #include "model/model.h"
 #include "model/player.h"
 #include "view/view.h"
 
-class Controller {
+class Controller : public QObject {
+  Q_OBJECT
+
  public:
   static Controller* GetInstance();
 
@@ -24,7 +29,8 @@ class Controller {
   Controller& operator=(const Controller&) = delete;
   Controller& operator=(Controller&&) = delete;
 
-  void SetGeneratedMap(AbstractMapGenerator* generator);
+  void SetGeneratedMap(AbstractMapManager* generator,
+                       const QString& save_file = "");
 
   void SetPlayer();
   void SetMob();
@@ -40,7 +46,15 @@ class Controller {
 
   void PickItemToPlayer(InventoryItem item);
 
-  void PlaceBlock(QPoint block_coords, Block block);
+  void ChangeGameState(GameState state);
+
+ public slots:
+  void CreateNewWorld(const QString& world_name, uint32_t generator_seed);
+  void LoadFromFile(const QString& file_name);
+  void SaveToFile(const QString& file_name) {
+    Model::GetInstance()->SaveToFile(file_name);
+  }
+  void SaveToFile() { Model::GetInstance()->SaveToFile(); }
 
   void TryCraft(const CraftRecipe& recipe);
 
@@ -48,6 +62,9 @@ class Controller {
   Controller();
 
   void TickEvent();
+
+  void ProcessExit();
+  void ProcessGame();
 
   void BreakBlock(double time);
   void UseItem();
@@ -67,11 +84,14 @@ class Controller {
   static void ParseInventoryKey(ControllerTypes::Key translated_key);
 
   QTimer tick_timer_;
+  QSettings settings_;
   std::unordered_set<ControllerTypes::Key> pressed_keys_;
   bool is_pressed_right_mouse_button = false;
   bool is_pressed_left_mouse_button = false;
 
   std::chrono::time_point<std::chrono::high_resolution_clock> prev_time_ =
+      std::chrono::high_resolution_clock::now();
+  std::chrono::time_point<std::chrono::high_resolution_clock> last_menu_time_ =
       std::chrono::high_resolution_clock::now();
   uint64_t sum_time_ = 0;
 };

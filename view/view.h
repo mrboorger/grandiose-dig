@@ -3,6 +3,7 @@
 
 #include <QHBoxLayout>
 #include <QOpenGLWidget>
+#include <QScopedPointer>
 #include <memory>
 #include <thread>
 
@@ -12,6 +13,11 @@
 #include "view/gl_map_drawer.h"
 #include "view/inventory_drawer.h"
 #include "view/light_map.h"
+#include "view/main_menu.h"
+#include "view/new_world_menu.h"
+#include "view/pause_menu.h"
+#include "view/select_world_menu.h"
+#include "view/settings_menu.h"
 #include "view/sound_manager.h"
 
 class View : public QOpenGLWidget {
@@ -29,9 +35,14 @@ class View : public QOpenGLWidget {
   View& operator=(const View&) = delete;
   View& operator=(View&&) = delete;
 
-  void SetDrawer(AbstractMapDrawer* drawer) { drawer_.reset(drawer); }
+  void SetDrawer(AbstractMapDrawer* drawer) {
+    drawer_.reset(drawer);
+    should_initialize_drawer_ = true;
+  }
   void SetLightMap(LightMap* light_map) { light_map_.reset(light_map); }
   void SetInventoryDrawer(InventoryDrawer* drawer);
+
+  GameState GetGameState() { return game_state_; }
 
   QPoint GetCursorPos() const;              // in pixels
   QPoint GetBlockCoordUnderCursor() const;  // in blocks
@@ -42,7 +53,18 @@ class View : public QOpenGLWidget {
 
   void PlayMusic();
 
- private slots:
+  void SwitchInventory();
+
+  void ChangeGameState(GameState new_state);
+
+ signals:
+  void CreateNewWorldSignal(const QString& name, uint32_t seed);
+  void LoadWorldSignal(const QString& world_name);
+  void ChangeGameStateSignal(GameState state);
+
+ public slots:
+  void UpdateSettings(int general_volume, int music_volume, int sounds_volume);
+
   void DamageDealt(MovingObject* object);
   void BecameDead(MovingObject* object);
   void MobSound(MovingObject* object);
@@ -52,13 +74,15 @@ class View : public QOpenGLWidget {
 
   void initializeGL() override;
   void paintGL() override;
-
   void DrawPlayer(QPainter* painter);
 
+  void changeEvent(QEvent* event) override;
   void keyPressEvent(QKeyEvent* event) override;
   void keyReleaseEvent(QKeyEvent* event) override;
   void mousePressEvent(QMouseEvent* event) override;
   void mouseReleaseEvent(QMouseEvent* event) override;
+  void paintEvent(QPaintEvent* event) override;
+  void resizeEvent(QResizeEvent* event) override;
 
   void UpdateLight();
 
@@ -69,9 +93,18 @@ class View : public QOpenGLWidget {
   std::unique_ptr<AbstractMapDrawer> drawer_;
   std::shared_ptr<LightMap> light_map_;
   std::unique_ptr<InventoryDrawer> inventory_drawer_;
+  bool should_initialize_drawer_;
+  bool is_visible_inventory_ = false;
   std::atomic<bool> need_continue_ = true;
   std::unique_ptr<std::thread> update_light_thread_;
-  bool is_visible_inventory_ = false;
+
+  QScopedPointer<MainMenu> main_menu_;
+  QScopedPointer<NewWorldMenu> new_world_menu_;
+  QScopedPointer<SelectWorldMenu> select_world_menu_;
+  QScopedPointer<PauseMenu> pause_menu_;
+  QScopedPointer<SettingsMenu> settings_menu_;
+  GameState game_state_;
+  GameState previous_game_state_;
 };
 
 #endif  // VIEW_VIEW_H_
