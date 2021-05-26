@@ -1,6 +1,7 @@
 #ifndef MODEL_INVENTORY_H_
 #define MODEL_INVENTORY_H_
 
+#include <QJsonObject>
 #include <array>
 
 #include "model/craft_recipe.h"
@@ -27,6 +28,8 @@ class Inventory {
   bool CanCraft(const CraftRecipe& recipe);
   void Craft(const CraftRecipe& recipe);
 
+  void Read(const QJsonObject& json);
+  void Write(QJsonObject* json) const;
   void SwitchToPrevRow();
   void SwitchToNextRow();
 

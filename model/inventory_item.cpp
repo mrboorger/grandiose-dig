@@ -76,6 +76,16 @@ void InventoryItem::ChangeCount(int new_count) {
   }
 }
 
+void InventoryItem::Read(const QJsonObject& json) {
+  type_ = static_cast<Type>(json["type"].toInt());
+  count_ = json["count"].toInt();
+}
+
+void InventoryItem::Write(QJsonObject* json) const {
+  (*json)["type"] = static_cast<int>(type_);
+  (*json)["count"] = count_;
+}
+
 int32_t InventoryItem::GetIdOfBlock() const {
   return static_cast<int32_t>(type_) - static_cast<int32_t>(Type::kBlockMin);
 }

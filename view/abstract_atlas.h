@@ -23,4 +23,3 @@ class AbstractAtlas : public QOpenGLTexture {
 };
 
 #endif  // VIEW_ABSTRACT_ATLAS_H_
-

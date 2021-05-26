@@ -6,10 +6,11 @@
 #include <memory>
 #include <utility>
 
-#include "model/abstract_map_generator.h"
+#include "model/abstract_map_manager.h"
 #include "model/chunk_map.h"
 #include "model/constants.h"
 #include "model/model.h"
+#include "model/perlin_chunk_map_manager.h"
 #include "view/abstract_map_drawer.h"
 #include "view/buffered_map_drawer.h"
 #include "view/gl_map_drawer.h"
@@ -21,23 +22,33 @@ Controller* Controller::GetInstance() {
   return &controller;
 }
 
-void Controller::SetGeneratedMap(AbstractMapGenerator* generator) {
-  auto map = std::shared_ptr<AbstractMap>(generator->GenerateMap());
-  Model::GetInstance()->SetMap(map);
-  View::GetInstance()->SetLightMap(new LightMap(map));
-  View::GetInstance()->SetDrawer(
-      new GLMapDrawer(map, View::GetInstance()->GetLightMap()));
-}
-
 Controller::Controller() : tick_timer_() {
+  View* view = View::GetInstance();
+  connect(view, &View::CreateNewWorldSignal, this, &Controller::CreateNewWorld);
+  connect(view, &View::LoadWorldSignal, this, &Controller::LoadFromFile);
+  connect(view, &View::ChangeGameStateSignal, this,
+          &Controller::ChangeGameState);
+
   tick_timer_.callOnTimeout([this]() { TickEvent(); });
   tick_timer_.start(constants::kTickDurationMsec);
+}
+
+void Controller::SetGeneratedMap(AbstractMapManager* generator,
+                                 const QString& save_file) {
+  auto map =
+      std::shared_ptr<AbstractMap>(generator->GenerateMap(save_file + "/map/"));
+  Model::GetInstance()->SetMap(map);
+  View::GetInstance()->SetLightMap(
+      new LightMap(save_file + "/light_map/", map));
+  View::GetInstance()->SetDrawer(new GLMapDrawer(
+      save_file + "/gl_map/", map, View::GetInstance()->GetLightMap()));
+  return;
 }
 
 void Controller::SetPlayer() {
   // TODO(Wind-Eagle): this is temporary code.
   Model::GetInstance()->SetPlayer(
-      std::make_shared<Player>(QPointF(-16.0, 96.0)));
+      std::make_shared<Player>(QPointF(0.0, Model::CheckPlayerPosition())));
   View::GetInstance()->SetInventoryDrawer(
       new InventoryDrawer(Model::GetInstance()->GetPlayer()->GetInventory()));
 }
@@ -203,67 +214,27 @@ void Controller::PlayerAttack(double time) {
 }
 
 void Controller::TickEvent() {
-  auto cur = std::chrono::high_resolution_clock::now();
-  double time =
-      std::chrono::duration_cast<std::chrono::milliseconds>(cur - prev_time_)
-          .count();
-  prev_time_ = cur;
-  sum_time_ += time;
-  Model::GetInstance()->GetPlayer()->DecUseItemCooldownInterval(time);
-  Model::GetInstance()->MoveObjects(pressed_keys_, time);
-
-  if (is_pressed_left_mouse_button) {
-    BreakBlock(time);
-    StartAttack();
+  if (pressed_keys_.count(ControllerTypes::Key::kExit)) {
+    pressed_keys_.erase(ControllerTypes::Key::kExit);
+    ProcessExit();
+  } else if (View::GetInstance()->GetGameState() == GameState::kGame) {
+    ProcessGame();
   }
-  if (is_pressed_right_mouse_button) {
-    UseItem();
-  }
-  PlayerAttack(time);
-  ManageMobs();
-  View::GetInstance()->repaint();
-  View::GetInstance()->PlayMusic();
 }
 
 ControllerTypes::Key Controller::TranslateKeyCode(int key_code) {
-  switch (key_code) {
-    case Qt::Key::Key_Left:
-      return ControllerTypes::Key::kLeft;
-    case Qt::Key::Key_Right:
-      return ControllerTypes::Key::kRight;
-    case Qt::Key::Key_Space:
-      return ControllerTypes::Key::kJump;
-    case Qt::Key::Key_1:
-      return ControllerTypes::Key::kInventory0;
-    case Qt::Key::Key_2:
-      return ControllerTypes::Key::kInventory1;
-    case Qt::Key::Key_3:
-      return ControllerTypes::Key::kInventory2;
-    case Qt::Key::Key_4:
-      return ControllerTypes::Key::kInventory3;
-    case Qt::Key::Key_5:
-      return ControllerTypes::Key::kInventory4;
-    case Qt::Key::Key_6:
-      return ControllerTypes::Key::kInventory5;
-    case Qt::Key::Key_7:
-      return ControllerTypes::Key::kInventory6;
-    case Qt::Key::Key_8:
-      return ControllerTypes::Key::kInventory7;
-    case Qt::Key::Key_9:
-      return ControllerTypes::Key::kInventory8;
-    case Qt::Key::Key_0:
-      return ControllerTypes::Key::kInventory9;
-    case Qt::Key::Key_BracketLeft:
-      return ControllerTypes::Key::kInventoryPrevRow;
-    case Qt::Key::Key_BracketRight:
-      return ControllerTypes::Key::kInventoryNextRow;
-    default:
-      return ControllerTypes::Key::kUnused;
+  for (int key = 0; key < ControllerTypes::kKeysCount; ++key) {
+    if (key_code ==
+        GetInstance()
+            ->settings_.value("controller_key" + QString::number(key))
+            .toInt()) {
+      return static_cast<ControllerTypes::Key>(key);
+    }
   }
+  return ControllerTypes::Key::kUnused;
 }
 
 void Controller::KeyPress(int key) {
-  ParseInventoryKey(TranslateKeyCode(key));
   pressed_keys_.insert(TranslateKeyCode(key));
 }
 
@@ -289,6 +260,34 @@ void Controller::ButtonRelease(Qt::MouseButton button) {
   } else if (button == Qt::MouseButton::RightButton) {
     is_pressed_right_mouse_button = false;
   }
+}
+
+void Controller::CreateNewWorld(const QString& world_name, uint32_t seed) {
+  Model::GetInstance()->Clear();
+  QDir dir;
+  QString save_file = QDir::currentPath() + "/saves/" + world_name;
+  dir.mkdir(save_file);
+  dir.mkdir(save_file + "/map");
+  dir.mkdir(save_file + "/light_map");
+  dir.mkdir(save_file + "/gl_map");
+
+  Model::GetInstance()->SetCurrentSeed(seed);
+  Model::GetInstance()->SetSaveFileName(save_file);
+  PerlinChunkMapManager generator(seed);
+  SetGeneratedMap(&generator, save_file);
+  SetPlayer();
+  SetMob();
+}
+
+void Controller::LoadFromFile(const QString& world_name) {
+  QString save_file = QDir::currentPath() + "/saves/" + world_name;
+  Model::GetInstance()->LoadFromFile(save_file);
+  View::GetInstance()->SetInventoryDrawer(
+      new InventoryDrawer(Model::GetInstance()->GetPlayer()->GetInventory()));
+
+  Model::GetInstance()->SetSaveFileName(save_file);
+  PerlinChunkMapManager generator(Model::GetInstance()->GetCurrentSeed());
+  SetGeneratedMap(&generator, save_file);
 }
 
 void Controller::ManageMobs() {
@@ -365,4 +364,75 @@ void Controller::ParseInventoryKey(ControllerTypes::Key translated_key) {
 
 void Controller::TryCraft(const CraftRecipe& recipe) {
   Model::GetInstance()->GetPlayer()->TryCraft(recipe);
+}
+
+void Controller::ChangeGameState(GameState state) {
+  if (state != GameState::kGame) {
+    last_menu_time_ = std::chrono::high_resolution_clock::now();
+  }
+  View::GetInstance()->ChangeGameState(state);
+}
+
+void Controller::ProcessExit() {
+  switch (View::GetInstance()->GetGameState()) {
+    case GameState::kGame:
+      View::GetInstance()->ChangeGameState(GameState::kPaused);
+      break;
+    case GameState::kNewWorldMenu:
+      View::GetInstance()->ChangeGameState(GameState::kMainMenu);
+      break;
+    case GameState::kSelectWorldMenu:
+      View::GetInstance()->ChangeGameState(GameState::kMainMenu);
+      break;
+    case GameState::kMainMenu:
+      View::GetInstance()->close();
+      break;
+    case GameState::kPaused:
+      View::GetInstance()->ChangeGameState(GameState::kMainMenu);
+      break;
+    case GameState::kSettings:
+      View::GetInstance()->ChangeGameState(GameState::kSwitchingToPrevious);
+    default:
+      break;
+  }
+}
+
+void Controller::ProcessGame() {
+  if (pressed_keys_.count(ControllerTypes::Key::kShowInventory)) {
+    View::GetInstance()->SwitchInventory();
+    pressed_keys_.erase(ControllerTypes::Key::kShowInventory);
+  }
+  for (const auto& key : pressed_keys_) {
+    ParseInventoryKey(key);
+  }
+  if (pressed_keys_.count(ControllerTypes::Key::kInventoryNextRow)) {
+    pressed_keys_.erase(ControllerTypes::Key::kInventoryNextRow);
+  }
+  if (pressed_keys_.count(ControllerTypes::Key::kInventoryPrevRow)) {
+    pressed_keys_.erase(ControllerTypes::Key::kInventoryPrevRow);
+  }
+  auto cur = std::chrono::high_resolution_clock::now();
+  double time =
+      std::chrono::duration_cast<std::chrono::milliseconds>(cur - prev_time_)
+          .count();
+  if (last_menu_time_ > prev_time_) {
+    time = std::chrono::duration_cast<std::chrono::milliseconds>(
+               last_menu_time_ - prev_time_)
+               .count();
+  }
+  prev_time_ = cur;
+  sum_time_ += time;
+  Model::GetInstance()->GetPlayer()->DecUseItemCooldownInterval(time);
+  Model::GetInstance()->MoveObjects(pressed_keys_, time);
+
+  if (is_pressed_left_mouse_button) {
+    BreakBlock(time);
+    StartAttack();
+  }
+  if (is_pressed_right_mouse_button) {
+    UseItem();
+  }
+  PlayerAttack(time);
+  ManageMobs();
+  View::GetInstance()->repaint();
 }

@@ -1,6 +1,7 @@
 #ifndef MODEL_INVENTORY_ITEM_H_
 #define MODEL_INVENTORY_ITEM_H_
 
+#include <QJsonObject>
 #include <cstdint>
 
 #include "model/block.h"
@@ -65,6 +66,9 @@ class InventoryItem {
 
   bool IsBlock() const;
   bool IsPotion() const;
+
+  void Read(const QJsonObject& json);
+  void Write(QJsonObject* json) const;
 
  private:
   Type type_;

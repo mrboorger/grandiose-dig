@@ -1,16 +1,16 @@
-#ifndef MODEL_PERLIN_CHUNK_MAP_GENERATOR_H_
-#define MODEL_PERLIN_CHUNK_MAP_GENERATOR_H_
+#ifndef MODEL_PERLIN_CHUNK_MAP_MANAGER_H_
+#define MODEL_PERLIN_CHUNK_MAP_MANAGER_H_
 
-#include "model/abstract_map_generator.h"
+#include "model/abstract_map_manager.h"
 #include "model/abstract_region_generator.h"
 #include "model/chunk_map.h"
 #include "model/perlin_noise1d.h"
 #include "model/perlin_noise2d.h"
 
-class PerlinChunkMapGenerator : public AbstractMapGenerator {
+class PerlinChunkMapManager : public AbstractMapManager {
  public:
-  explicit PerlinChunkMapGenerator(uint32_t seed);
-  AbstractMap* GenerateMap() override;
+  explicit PerlinChunkMapManager(uint32_t seed);
+  AbstractMap* GenerateMap(const QString& save_file) override;
 
  private:
   class PerlinRegionGenerator : public AbstractRegionGenerator {
@@ -22,7 +22,7 @@ class PerlinChunkMapGenerator : public AbstractMapGenerator {
 
     explicit PerlinRegionGenerator(uint32_t seed);
 
-    Chunk Generate(QPoint chunk_pos) override;
+    Chunk Generate(const QString& save_file, QPoint chunk_pos) override;
 
    private:
     static constexpr double kCavesRate = 0.3;
@@ -99,4 +99,4 @@ class PerlinChunkMapGenerator : public AbstractMapGenerator {
 
   uint32_t seed_;
 };
-#endif  // MODEL_PERLIN_CHUNK_MAP_GENERATOR_H_
+#endif  // MODEL_PERLIN_CHUNK_MAP_MANAGER_H_

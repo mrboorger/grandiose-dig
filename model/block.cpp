@@ -82,3 +82,15 @@ bool Block::DecreaseDurability(int delta) {
   }
   return durability_ == 0;
 }
+
+void Block::Read(const QJsonObject& json) {
+  front_type_ = static_cast<FrontType>(json["front_type"].toInt());
+  back_type_ = static_cast<BackType>(json["back_type"].toInt());
+  durability_ = json["durability"].toDouble();
+}
+
+void Block::Write(QJsonObject* json) const {
+  (*json)["front_type"] = static_cast<int>(front_type_);
+  (*json)["back_type"] = static_cast<int>(back_type_);
+  (*json)["durability"] = durability_;
+}

@@ -1,5 +1,9 @@
 #include "view/light_map.h"
 
+#include <QCborMap>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <mutex>
 
 #include "utils.h"
@@ -103,13 +107,51 @@ void LightMap::CalculateRegion(const QRect& region) {
   }
 }
 
-LightMap::Buffer LightMap::BufferConstructor::operator()(QPoint pos) {
-  for (int32_t y = pos.y(); y < pos.y() + LightMap::kBufferHeight; ++y) {
-    for (int32_t x = pos.x(); x < pos.x() + LightMap::kBufferWidth; ++x) {
-      light_map_->UpdateLight(QPoint(x, y));
+LightMap::Buffer LightMap::BufferConstructor::operator()(
+    const QString& save_file, QPoint pos) {
+  QFile file(save_file + "chunk:" + QString::number(pos.x()) + ":" +
+             QString::number(pos.y()));
+  if (!file.exists()) {
+    for (int32_t y = pos.y(); y < pos.y() + LightMap::kBufferHeight; ++y) {
+      for (int32_t x = pos.x(); x < pos.x() + LightMap::kBufferWidth; ++x) {
+        light_map_->UpdateLight(QPoint(x, y));
+      }
     }
+    return Buffer{};
   }
-  return Buffer{};
+  file.open(QIODevice::ReadOnly);
+  QByteArray save_data = file.readAll();
+  QJsonDocument data(
+      QJsonDocument(QCborValue::fromCbor(save_data).toMap().toJsonObject()));
+  Buffer buffer;
+  QJsonArray arr = data["buffer"].toArray();
+  for (int index = 0; index < kBufferHeight * kBufferWidth; ++index) {
+    QJsonObject light = arr[index].toObject();
+    buffer[index].Read(light);
+    light_map_->SetPointUpdated(
+        pos + QPoint(index % kBufferWidth, index / kBufferWidth));
+  }
+  return buffer;
+}
+
+void LightMap::BufferSaver::operator()(const QString& save_file,
+                                       const QPoint& pos,
+                                       const Buffer& buffer) {
+  QFile file(save_file + "chunk:" + QString::number(pos.x()) + ":" +
+             QString::number(pos.y()));
+  if (!file.open(QIODevice::WriteOnly)) {
+    qWarning("Couldn't open save file.");
+    return;
+  }
+  QJsonObject data;
+  QJsonArray arr;
+  for (int index = 0; index < kBufferHeight * kBufferWidth; ++index) {
+    QJsonObject light;
+    buffer[index].Write(&light);
+    arr.append(light);
+  }
+  data["buffer"] = arr;
+  file.write(QCborValue::fromJsonValue(data).toCbor());
 }
 
 void LightMap::SetPointUpdated(QPoint pos, int iteration) {
@@ -125,4 +167,14 @@ void LightMap::SetPointUpdated(QPoint pos, int iteration) {
 
 Light LightMap::GetLuminosity(QPoint pos) const {
   return map_->GetBlock(pos).GetLuminosity();
+}
+std::set<QPoint, utils::QPointLexicographicalCompare>
+
+LightMap::TakeUpdateList() {
+  std::set<QPoint, utils::QPointLexicographicalCompare> result;
+  std::unique_lock<std::recursive_mutex> lock(mutex_, std::try_to_lock);
+  if (lock.owns_lock()) {
+    result.swap(updated_);
+  }
+  return result;
 }

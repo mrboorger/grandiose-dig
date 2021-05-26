@@ -18,7 +18,8 @@
 
 class GLMapDrawer : public AbstractMapDrawer {
  public:
-  explicit GLMapDrawer(std::shared_ptr<AbstractMap> map,
+  explicit GLMapDrawer(const QString& save_file,
+                       std::shared_ptr<AbstractMap> map,
                        std::shared_ptr<LightMap> light_map);
 
  private:
@@ -55,7 +56,6 @@ class GLMapDrawer : public AbstractMapDrawer {
 
   QRect GetDrawRegionImpl(QPoint center) const override;
 
-
   // In blocks
   static constexpr int32_t kFieldOfView = 64;
   static constexpr int32_t kMeshWidth = 32;
@@ -84,8 +84,7 @@ class GLMapDrawer : public AbstractMapDrawer {
       sizeof(BlockData) / sizeof(VertexData);
 
   static VertexData GenData(QPoint pos, double z, QPointF tex_coords,
-                            QPointF back_coords, Light light,
-                            double pos_shift);
+                            QPointF back_coords, Light light, double pos_shift);
 
   static QPoint RoundToMeshPos(QPoint p);
   static VertexData Average(const VertexData& a, const VertexData& b,

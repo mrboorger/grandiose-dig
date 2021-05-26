@@ -6,6 +6,9 @@ enum class Key {
   kLeft,
   kRight,
   kJump,
+  kShowInventory,
+  kInventoryPrevRow,
+  kInventoryNextRow,
   kInventory0,
   kInventory1,
   kInventory2,
@@ -16,10 +19,12 @@ enum class Key {
   kInventory7,
   kInventory8,
   kInventory9,
-  kInventoryPrevRow,
-  kInventoryNextRow,
+  kExit,
   kUnused
 };
+
+static constexpr int kKeysCount = static_cast<int>(Key::kUnused);
+
 }  // namespace ControllerTypes
 
 #endif  // CONTROLLER_CONTROLLER_TYPES_H_

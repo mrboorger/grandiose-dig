@@ -14,7 +14,7 @@ class AbstractRegionGenerator {
   AbstractRegionGenerator& operator=(const AbstractRegionGenerator&) = default;
   AbstractRegionGenerator& operator=(AbstractRegionGenerator&&) = default;
 
-  virtual Chunk Generate(QPoint chunk_pos) = 0;
+  virtual Chunk Generate(const QString& save_file, QPoint chunk_pos) = 0;
 };
 
 #endif  // MODEL_ABSTRACT_REGION_GENERATOR_H_

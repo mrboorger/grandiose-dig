@@ -1,5 +1,9 @@
 #include "model/model.h"
 
+#include <QCborMap>
+#include <QCborValue>
+#include <QJsonArray>
+#include <QJsonDocument>
 #include <ctime>
 #include <random>
 #include <vector>
@@ -11,13 +15,25 @@ Model* Model::GetInstance() {
   return &model;
 }
 
+int Model::CheckPlayerPosition() {
+  for (int y = -200; y <= 200; y++) {
+    if (Model::GetInstance()->GetMap()->GetBlock(QPoint(0, y)).IsAir() &&
+        Model::GetInstance()->GetMap()->GetBlock(QPoint(1, y)).IsAir() &&
+        (!Model::GetInstance()->GetMap()->GetBlock(QPoint(0, y + 1)).IsAir() ||
+         !Model::GetInstance()->GetMap()->GetBlock(QPoint(1, y + 1)).IsAir())) {
+      return y;
+    }
+  }
+  return -200;
+}
+
 void Model::MoveObjects(
     const std::unordered_set<ControllerTypes::Key>& pressed_keys, double time) {
   // TODO(Wind-Eagle): this is temporary code.
   if (player_->IsDead()) {
     player_->DeleteAllEffects();
     player_->SetHealth(constants::kPlayerHealth);
-    player_->SetPosition(QPointF(0.0, 90.0));
+    player_->SetPosition(QPointF(0.0, CheckPlayerPosition()));
   }
   for (auto i = mobs_.begin(), last = mobs_.end(); i != last;) {
     if ((*i)->IsDead()) {
@@ -86,6 +102,75 @@ bool Model::CanSpawnMobAt(QPointF pos, QPointF size) const {
     }
   }
   return true;
+}
+
+void Model::Read(const QJsonObject& json) {
+  player_ = std::make_shared<Player>(QPointF(0, 0));
+  player_->Read(json["player"].toObject());
+  QJsonArray mobs = json["mobs"].toArray();
+  mobs_.clear();
+  for (auto mob_json : mobs) {
+    auto* mob = new Mob(QPointF(0, 0), Mob::Type::kZombie);
+    mob->Read(mob_json.toObject());
+    mobs_.emplace(mob);
+  }
+  current_world_seed_ = json["seed"].toString().toUInt();
+}
+
+void Model::Write(QJsonObject* json) const {
+  QJsonObject player;
+  player_->Write(&player);
+  (*json)["player"] = player;
+  QJsonArray mobs;
+  for (const auto& mob : mobs_) {
+    QJsonObject mob_object;
+    mob->Write(&mob_object);
+    mobs.append(mob_object);
+  }
+  (*json)["mobs"] = mobs;
+  (*json)["seed"] = QString(current_world_seed_);
+}
+
+bool Model::LoadFromFile(const QString& file_name) {
+  Clear();
+  QFile save_file(file_name + "/entities");
+  if (!save_file.open(QIODevice::ReadOnly)) {
+    qWarning("Couldn't open load file.");
+    return false;
+  }
+
+  current_save_file_name_ = file_name;
+  QByteArray save_data = save_file.readAll();
+  QJsonDocument world(
+      QJsonDocument(QCborValue::fromCbor(save_data).toMap().toJsonObject()));
+  Read(world.object());
+  return true;
+}
+
+bool Model::SaveToFile(const QString& file_name) {
+  if (file_name.isEmpty()) {
+    return false;
+  }
+  QFile save_file(file_name + "/entities");
+  if (!save_file.open(QIODevice::WriteOnly)) {
+    qWarning("Couldn't open save file.");
+    return false;
+  }
+
+  current_save_file_name_ = file_name;
+  QJsonObject world;
+  Write(&world);
+  save_file.write(QCborValue::fromJsonValue(world).toCbor());
+  return true;
+}
+
+void Model::Clear() {
+  if (!current_save_file_name_.isEmpty()) {
+    SaveToFile();
+    map_.reset();
+    player_.reset();
+    mobs_.clear();
+  }
 }
 
 void Model::DespawnMobs() {

@@ -22,18 +22,121 @@ View* View::GetInstance() { return instance_; }
 View::View()
     : QOpenGLWidget(nullptr),
       sound_manager_(new SoundManager()),
-      drawer_(nullptr) {
+      drawer_(nullptr),
+      should_initialize_drawer_(false),
+      game_state_(GameState::kMainMenu),
+      previous_game_state_(GameState::kMainMenu) {
   assert(!instance_);
   instance_ = this;
   connect(Model::GetInstance(), &Model::DamageDealt, this, &View::DamageDealt);
   connect(Model::GetInstance(), &Model::BecameDead, this, &View::BecameDead);
   connect(Model::GetInstance(), &Model::MobSound, this, &View::MobSound);
+
+  main_menu_.reset(new MainMenu(this));
+  connect(main_menu_.data(), &AbstractMenu::GameStateChanged, this,
+          &View::ChangeGameStateSignal);
+  main_menu_->setVisible(true);
+
+  new_world_menu_.reset(new NewWorldMenu(this));
+  connect(new_world_menu_.data(), &AbstractMenu::GameStateChanged, this,
+          &View::ChangeGameStateSignal);
+  connect(new_world_menu_.data(), &NewWorldMenu::CreateNewWorldSignal, this,
+          &View::CreateNewWorldSignal);
+  new_world_menu_->setVisible(false);
+
+  select_world_menu_.reset(new SelectWorldMenu(this));
+  connect(select_world_menu_.data(), &AbstractMenu::GameStateChanged, this,
+          &View::ChangeGameStateSignal);
+  connect(select_world_menu_.data(), &SelectWorldMenu::LoadWorldSignal, this,
+          &View::LoadWorldSignal);
+  select_world_menu_->setVisible(false);
+
+  pause_menu_.reset(new PauseMenu(this));
+  connect(pause_menu_.data(), &AbstractMenu::GameStateChanged, this,
+          &View::ChangeGameStateSignal);
+  pause_menu_->setVisible(false);
+
+  settings_menu_.reset(new SettingsMenu(this));
+  connect(settings_menu_.data(), &AbstractMenu::GameStateChanged, this,
+          &View::ChangeGameStateSignal);
+  connect(settings_menu_.data(), &SettingsMenu::SettingsChanged, this,
+          &View::UpdateSettings);
+  settings_menu_->setVisible(false);
+
+  PlayMusic();
 }
 
 View::~View() {
   need_continue_ = false;
   update_light_thread_->join();
   instance_ = nullptr;
+}
+
+void View::ChangeGameState(GameState new_state) {
+  switch (game_state_) {
+    case GameState::kMainMenu:
+      main_menu_->setVisible(false);
+      break;
+    case GameState::kNewWorldMenu:
+      new_world_menu_->setVisible(false);
+      break;
+    case GameState::kSelectWorldMenu:
+      select_world_menu_->setVisible(false);
+      break;
+    case GameState::kPaused:
+      pause_menu_->setVisible(false);
+      break;
+    case GameState::kSettings:
+      settings_menu_->setVisible(false);
+      break;
+    case GameState::kGame:
+      if (is_visible_inventory_) {
+        SwitchInventory();
+        paintGL();
+      }
+      break;
+    default:
+      break;
+  }
+  switch (new_state) {
+    case GameState::kMainMenu:
+      main_menu_->setVisible(true);
+      main_menu_->setFocus();
+      break;
+    case GameState::kNewWorldMenu:
+      new_world_menu_->setVisible(true);
+      new_world_menu_->setFocus();
+      break;
+    case GameState::kSelectWorldMenu:
+      select_world_menu_->UpdateAvailableSaves();
+      select_world_menu_->setVisible(true);
+      select_world_menu_->setFocus();
+      break;
+    case GameState::kGame:
+      setFocus();
+      break;
+    case GameState::kPaused:
+      pause_menu_->setVisible(true);
+      pause_menu_->setFocus();
+      break;
+    case GameState::kSettings:
+      settings_menu_->setVisible(true);
+      settings_menu_->setFocus();
+      break;
+    case GameState::kSwitchingToPrevious:
+      ChangeGameState(previous_game_state_);
+      return;
+    default:
+      break;
+  }
+  previous_game_state_ = game_state_;
+  game_state_ = new_state;
+  repaint();
+}
+
+void View::UpdateSettings(int general_volume, int music_volume,
+                          int sounds_volume) {
+  sound_manager_->UpdateVolumes(general_volume, music_volume, sounds_volume);
 }
 
 void View::SetInventoryDrawer(InventoryDrawer* drawer) {
@@ -59,8 +162,9 @@ void View::initializeGL() {
   gl->glDepthFunc(GL_LESS);
   gl->glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-  if (drawer_) {
+  if (should_initialize_drawer_) {
     drawer_->Init();
+    should_initialize_drawer_ = false;
   }
   if (auto player = Model::GetInstance()->GetPlayer()) {
     camera_pos_ = Model::GetInstance()->GetPlayer()->GetPosition();
@@ -70,6 +174,10 @@ void View::initializeGL() {
 
 void View::paintGL() {
   auto* gl = GLFunctions::GetInstance();
+  if (should_initialize_drawer_) {
+    drawer_->Init();
+    should_initialize_drawer_ = false;
+  }
   QPainter painter(this);
   painter.beginNativePainting();
 
@@ -86,7 +194,6 @@ void View::paintGL() {
   if (is_visible_inventory_) {
     inventory_drawer_->DrawInventory(&painter);
   }
-
   // TODO(Wind-Eagle): temporary code; need to make PlayerDrawer
   DrawPlayer(&painter);
   auto mobs = Model::GetInstance()->GetMobs();
@@ -170,20 +277,48 @@ void View::MobSound(MovingObject* object) {
 
 void View::PlayMusic() {
   sound_manager_->PlaySound(
-      SoundManager::SoundIndex(SoundManager::Sound::kMusic),
-      constants::kMusicVolume);
+      SoundManager::SoundIndex(SoundManager::Sound::kMusic));
+}
+
+void View::changeEvent(QEvent* event) {
+  if (event->type() == QEvent::LanguageChange) {
+    main_menu_->ReTranslateButtons();
+    new_world_menu_->ReTranslateButtons();
+    select_world_menu_->ReTranslateButtons();
+    pause_menu_->ReTranslateButtons();
+    settings_menu_->ReTranslateButtons();
+  } else {
+    QWidget::changeEvent(event);
+  }
 }
 
 void View::keyPressEvent(QKeyEvent* event) {
-  if (event->key() == Qt::Key_Escape) {
-    is_visible_inventory_ = !is_visible_inventory_;
-    inventory_drawer_->SetCraftMenuVisible(is_visible_inventory_);
-  }
   Controller::GetInstance()->KeyPress(event->key());
 }
 
 void View::keyReleaseEvent(QKeyEvent* event) {
   Controller::GetInstance()->KeyRelease(event->key());
+}
+
+void View::resizeEvent(QResizeEvent* event) {
+  QOpenGLWidget::resizeEvent(event);
+  main_menu_->Resize(event->size());
+  new_world_menu_->Resize(event->size());
+  select_world_menu_->Resize(event->size());
+  pause_menu_->Resize(event->size());
+  settings_menu_->Resize(event->size());
+}
+
+void View::paintEvent(QPaintEvent* event) {
+  Q_UNUSED(event);
+  if (game_state_ == GameState::kGame) {
+    paintGL();
+  }
+}
+
+void View::SwitchInventory() {
+  is_visible_inventory_ = !is_visible_inventory_;
+  inventory_drawer_->SetCraftMenuVisible(is_visible_inventory_);
 }
 
 void View::mousePressEvent(QMouseEvent* event) {
@@ -210,8 +345,10 @@ QPoint View::GetBlockCoordUnderCursor() const {
 
 void View::UpdateLight() {
   while (need_continue_) {
-    light_map_->CalculateRegion(
-        drawer_->GetDrawRegion(QPoint(camera_pos_.x(), camera_pos_.y())));
+    if (light_map_ != nullptr) {
+      light_map_->CalculateRegion(
+          drawer_->GetDrawRegion(QPoint(camera_pos_.x(), camera_pos_.y())));
+    }
     std::this_thread::sleep_for(
         std::chrono::milliseconds(2 * constants::kTickDurationMsec));
   }

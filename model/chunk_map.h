@@ -1,6 +1,7 @@
 #ifndef MODEL_CHUNK_MAP_H_
 #define MODEL_CHUNK_MAP_H_
 
+#include <QJsonDocument>
 #include <QPoint>
 #include <QPointF>
 #include <QTimer>
@@ -10,8 +11,8 @@
 
 #include "model/abstract_map.h"
 #include "model/abstract_region_generator.h"
-#include "model/region_cache.h"
 #include "model/chunk.h"
+#include "model/region_cache.h"
 #include "utils.h"
 
 class ChunkMap : public AbstractMap {
@@ -19,21 +20,28 @@ class ChunkMap : public AbstractMap {
   friend class PerlinChunkMapGenerator;
 
  public:
-  explicit ChunkMap(AbstractRegionGenerator* generator);
+  explicit ChunkMap(const QString& save_file,
+                    AbstractRegionGenerator* generator);
 
  private:
   class GenChunk {
    public:
     explicit GenChunk(AbstractRegionGenerator* generator)
         : generator_(generator) {}
-    Chunk operator()(QPoint pos) { return generator_->Generate(pos); }
+    Chunk operator()(const QString& save_file, QPoint pos);
 
    private:
     AbstractRegionGenerator* generator_;
   };
+  class SaveChunk {
+   public:
+    SaveChunk() = default;
+    void operator()(const QString& save_file, const QPoint& pos,
+                    const Chunk& chunk);
+  };
   using NodesContainer =
-      containers::RegionCache<Block, Chunk::kWidth, Chunk::kHeight,
-                                         Chunk, GenChunk>;
+      containers::RegionCache<Block, Chunk::kWidth, Chunk::kHeight, Chunk,
+                              GenChunk, SaveChunk>;
 
   void SetBlockImpl(QPoint pos, Block block) override;
   void CacheRegionImpl(const QRect& region) override;

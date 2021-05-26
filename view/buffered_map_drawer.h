@@ -15,7 +15,8 @@
 
 class BufferedMapDrawer : public AbstractMapDrawer {
  public:
-  explicit BufferedMapDrawer(std::shared_ptr<AbstractMap> map);
+  explicit BufferedMapDrawer(const QString& save_file,
+                             std::shared_ptr<AbstractMap> map);
 
  private:
   // In blocks

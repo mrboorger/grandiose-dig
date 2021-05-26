@@ -1,22 +1,35 @@
 #ifndef MODEL_CLEARABLE_CACHE_H_
 #define MODEL_CLEARABLE_CACHE_H_
 
+#include <QCborValue>
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonObject>
 #include <QTimer>
 #include <functional>
 #include <map>
-#include <utility>
 #include <mutex>
+#include <utility>
 
 namespace containers {
 
-template <typename Key, typename Value, typename Compare = std::less<>>
+template <typename Key, typename Value>
+class NotSave {
+ public:
+  void operator()(const QString& save_file, const Key& key,
+                  const Value& value) const {
+    Q_UNUSED(save_file);
+    Q_UNUSED(key);
+    Q_UNUSED(value);
+  }
+};
+
+template <typename Key, typename Value, typename Compare = std::less<>,
+          typename Save = NotSave<Key, Value>>
 class ClearableCache {
  public:
-  explicit ClearableCache(int clear_time_msec, Compare compare = Compare())
-      : nodes_(compare), last_used_(nodes_.end()) {
-    timer_.callOnTimeout([this]() { ClearUnused(); });
-    timer_.start(clear_time_msec);
-  }
+  explicit ClearableCache(QString save_file, int clear_time_msec,
+                          Compare compare = Compare(), Save save = Save());
 
   Value& Insert(const Key& key, Value&& value) {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
@@ -41,6 +54,7 @@ class ClearableCache {
     last_used_ = nodes_.end();
     for (auto i = nodes_.begin(); i != nodes_.end();) {
       if (!i->second.is_used) {
+        save_(save_file_, i->first, i->second.value);
         i = nodes_.erase(i);
       } else {
         i->second.is_used = false;
@@ -59,10 +73,25 @@ class ClearableCache {
   using NodesIterator = typename NodesContainer::iterator;
 
   NodesContainer nodes_;
+  Save save_;
+  QString save_file_;
   QTimer timer_;
   NodesIterator last_used_;
   std::recursive_mutex mutex_;
 };
+
+template <typename Key, typename Value, typename Compare, typename Save>
+ClearableCache<Key, Value, Compare, Save>::ClearableCache(QString save_file,
+                                                          int clear_time_msec,
+                                                          Compare compare,
+                                                          Save save)
+    : nodes_(compare),
+      save_(std::move(save)),
+      save_file_(std::move(save_file)),
+      last_used_(nodes_.end()) {
+  timer_.callOnTimeout([this]() { ClearUnused(); });
+  timer_.start(clear_time_msec);
+}
 
 }  // namespace containers
 

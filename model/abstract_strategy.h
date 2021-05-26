@@ -1,6 +1,7 @@
 #ifndef MODEL_ABSTRACT_STRATEGY_H_
 #define MODEL_ABSTRACT_STRATEGY_H_
 
+#include <QJsonObject>
 #include <QPointF>
 #include <unordered_set>
 
@@ -40,6 +41,41 @@ class MobState {
   bool IsPushesLeft() const { return pushes_left_; }
   bool IsPushesRight() const { return pushes_right_; }
 
+  void Read(const QJsonObject& json) {
+    pos_.setX(json["pos_x"].toDouble());
+    pos_.setY(json["pos_y"].toDouble());
+    size_.setX(json["size_x"].toDouble());
+    size_.setY(json["size_y"].toDouble());
+    damage_acceleration_.setX(json["damage_acceleration_x"].toDouble());
+    damage_acceleration_.setY(json["damage_acceleration_y"].toDouble());
+    jump_.setX(json["jump_x"].toDouble());
+    jump_.setY(json["jump_y"].toDouble());
+
+    damage_time_ = json["damage_time"].toDouble();
+    damage_ = json["damage"].toInt();
+    on_ground_ = json["on_ground"].toBool();
+    on_ceil_ = json["on_ceil_"].toBool();
+    pushes_left_ = json["pushes_left_"].toBool();
+    pushes_right_ = json["pushes_right_"].toBool();
+  }
+
+  void Write(QJsonObject* json) const {
+    (*json)["pos_x"] = pos_.x();
+    (*json)["pos_y"] = pos_.y();
+    (*json)["size_x"] = size_.x();
+    (*json)["size_y"] = size_.y();
+    (*json)["damage_acceleration_x"] = damage_acceleration_.x();
+    (*json)["damage_acceleration_y"] = damage_acceleration_.y();
+    (*json)["jump_x"] = jump_.x();
+    (*json)["jump_y"] = jump_.y();
+    (*json)["damage_time"] = damage_time_;
+    (*json)["damage"] = damage_;
+    (*json)["on_ground"] = on_ground_;
+    (*json)["on_ceil_"] = on_ceil_;
+    (*json)["pushes_left_"] = pushes_left_;
+    (*json)["pushes_right_"] = pushes_right_;
+  }
+
  private:
   QPointF pos_ = {0, 0};
   QPointF size_ = {0, 0};
@@ -69,6 +105,16 @@ class AbstractStrategy {
   virtual const std::unordered_set<ControllerTypes::Key>& GetKeys() const = 0;
   void SetMobState(const MobState& mob_state) { mob_state_ = mob_state; }
   const MobState& GetMobState() const { return mob_state_; }
+
+  virtual void Read(const QJsonObject& json) {
+    mob_state_.Read(json["mob_state"].toObject());
+  }
+
+  virtual void Write(QJsonObject* json) const {
+    QJsonObject mob_state;
+    mob_state_.Write(&mob_state);
+    (*json)["mob_state"] = mob_state;
+  }
 
  private:
   MobState mob_state_;
