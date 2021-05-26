@@ -128,7 +128,7 @@ void Model::Write(QJsonObject* json) const {
     mobs.append(mob_object);
   }
   (*json)["mobs"] = mobs;
-  (*json)["seed"] = QString(current_world_seed_);
+  (*json)["seed"] = QString::number(current_world_seed_);
 }
 
 bool Model::LoadFromFile(const QString& file_name) {
@@ -167,9 +167,6 @@ bool Model::SaveToFile(const QString& file_name) {
 void Model::Clear() {
   if (!current_save_file_name_.isEmpty()) {
     SaveToFile();
-    map_.reset();
-    player_.reset();
-    mobs_.clear();
   }
 }
 

@@ -91,6 +91,7 @@ void View::ChangeGameState(GameState new_state) {
         SwitchInventory();
         paintGL();
       }
+      Model::GetInstance()->Clear();
       break;
     default:
       break;
