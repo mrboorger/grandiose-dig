@@ -49,7 +49,6 @@ const Block::FrontCharacteristics& Block::GetFrontCharacteristics(int32_t id) {
     set(FrontType::kBlueLight,
         FrontCharacteristics{Light(144, 255, 255, 0), 500, true, false});
   }
-  assert(is_set[id]);
   return characteristics[id];
 }
 
@@ -67,7 +66,6 @@ const Block::BackCharacteristics& Block::GetBackCharacteristics(int32_t id) {
         BackCharacteristics{Light(0, 0, 0, Light::kMaxLight), false});
     set(BackType::kCave, BackCharacteristics{Light(0, 0, 0, 0), false});
   }
-  assert(is_set[id]);
   return characteristics[id];
 }
 

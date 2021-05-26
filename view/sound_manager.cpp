@@ -36,14 +36,6 @@ SoundManager::SoundManager() : sounds_(kNames.size()) {
   }
 }
 
-void SoundManager::PlaySound(int id, int volume) {
-  {
-    sounds_[id]->pause();
-    sounds_[id]->setVolume(sounds_[id]->volume() * volume / 100);
-    sounds_[id]->play();
-  }
-}
-
 void SoundManager::PauseAllSounds() {
   for (int i = 0; i < kSoundsCount; i++) {
     sounds_[i]->pause();
@@ -69,7 +61,7 @@ int SoundManager::SoundIndex(Sound sound, int mob_id, MobSound mob_sound) {
       return static_cast<int>(kNames.size()) - 1;
     }
     default:
-      assert(false);
+      return 1;
   }
 }
 

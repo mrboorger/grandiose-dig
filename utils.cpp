@@ -9,7 +9,6 @@ std::mt19937 random(
     std::chrono::steady_clock::now().time_since_epoch().count());
 
 std::pair<int64_t, int64_t> ArithmeticalDivMod(int64_t a, int64_t b) {
-  assert(b > 0);
   if (a > 0) {
     return std::make_pair(a / b, a % b);
   }

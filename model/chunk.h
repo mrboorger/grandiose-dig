@@ -35,11 +35,7 @@ class Chunk {
   void Write(QJsonObject* json) const;
 
  private:
-  static int BlockIndex(QPoint pos) {
-    assert(0 <= pos.x() && pos.x() < kWidth);
-    assert(0 <= pos.y() && pos.y() < kHeight);
-    return kWidth * pos.y() + pos.x();
-  }
+  static int BlockIndex(QPoint pos) { return kWidth * pos.y() + pos.x(); }
 
   std::vector<Block> blocks_;
 };
