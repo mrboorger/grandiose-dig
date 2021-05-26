@@ -2,15 +2,9 @@
 #define MODEL_BUFFERED_CLEARABLE_CACHE_H_
 
 #include <QPoint>
-<<<<<<< HEAD
 #include <functional>
 #include <QRect>
 #include <array>
-=======
-#include <QRect>
-#include <array>
-#include <functional>
->>>>>>> a27144ec1ea5dc037db1dae161b5026f21af6d23
 #include <optional>
 #include <utility>
 
@@ -20,11 +14,7 @@
 
 namespace containers {
 
-<<<<<<< HEAD
 template<typename T>
-=======
-template <typename T>
->>>>>>> a27144ec1ea5dc037db1dae161b5026f21af6d23
 class GenEmptyBuffer {
  public:
   T operator()(QPoint buffer_pos) const {
@@ -33,15 +23,9 @@ class GenEmptyBuffer {
   }
 };
 
-<<<<<<< HEAD
-template<typename T, int32_t width, int32_t height,
-         typename BufferType = std::array<T, width * height>,
-         typename F = GenEmptyBuffer<BufferType>>
-=======
 template <typename T, int32_t width, int32_t height,
           typename BufferType = std::array<T, width * height>,
           typename F = GenEmptyBuffer<BufferType>>
->>>>>>> a27144ec1ea5dc037db1dae161b5026f21af6d23
 class BufferedClearableCache {
  public:
   using Buffer = BufferType;
@@ -56,20 +40,11 @@ class BufferedClearableCache {
   }
 
   static int32_t BufferIndex(QPoint local_pos) {
-<<<<<<< HEAD
-    assert(0 <= local_pos.x() && local_pos.x() < width && 0 <= local_pos.y() &&
-           local_pos.y() < height);
-=======
->>>>>>> a27144ec1ea5dc037db1dae161b5026f21af6d23
     return local_pos.y() * width + local_pos.x();
   }
 
   BufferedClearableCache(int clear_time_msec = constants::kDefaultClearTimeMSec,
-<<<<<<< HEAD
-              F gen_buffer = F())
-=======
                          F gen_buffer = F())
->>>>>>> a27144ec1ea5dc037db1dae161b5026f21af6d23
       : data_(clear_time_msec), gen_buffer_(std::move(gen_buffer)) {}
 
   std::optional<std::reference_wrapper<const T>> GetValueOpt(QPoint pos) {
@@ -122,10 +97,6 @@ class BufferedClearableCache {
 
  private:
   Buffer& GetOrInsertBuffer(QPoint buffer_pos) {
-<<<<<<< HEAD
-    assert(RoundToBufferPos(buffer_pos).second == QPoint(0, 0));
-=======
->>>>>>> a27144ec1ea5dc037db1dae161b5026f21af6d23
     auto found = data_.Get(buffer_pos);
     if (!found) {
       return data_.Insert(buffer_pos, gen_buffer_(buffer_pos));
