@@ -2,9 +2,9 @@
 #define MODEL_BUFFERED_CLEARABLE_CACHE_H_
 
 #include <QPoint>
-#include <functional>
 #include <QRect>
 #include <array>
+#include <functional>
 #include <optional>
 #include <utility>
 
@@ -14,7 +14,7 @@
 
 namespace containers {
 
-template<typename T>
+template <typename T>
 class GenEmptyBuffer {
  public:
   T operator()(QPoint buffer_pos) const {
