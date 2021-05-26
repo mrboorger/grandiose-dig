@@ -122,7 +122,6 @@ void GLMapDrawer::UpdateBlockImpl(QPoint position) {
   QOpenGLBuffer& casted = buffer.value();
   casted.bind();
   const QPoint mesh_position = position - buffer_pos;
-  ;
   auto data = GetBlockData(position, mesh_position);
   casted.write(
       (mesh_position.y() * kMeshWidth + mesh_position.x()) * sizeof(BlockData),
