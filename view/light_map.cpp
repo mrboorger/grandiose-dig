@@ -168,3 +168,13 @@ void LightMap::SetPointUpdated(QPoint pos, int iteration) {
 Light LightMap::GetLuminosity(QPoint pos) const {
   return map_->GetBlock(pos).GetLuminosity();
 }
+std::set<QPoint, utils::QPointLexicographicalCompare>
+
+LightMap::TakeUpdateList() {
+  std::set<QPoint, utils::QPointLexicographicalCompare> result;
+  std::unique_lock<std::recursive_mutex> lock(mutex_, std::try_to_lock);
+  if (lock.owns_lock()) {
+    result.swap(updated_);
+  }
+  return result;
+}

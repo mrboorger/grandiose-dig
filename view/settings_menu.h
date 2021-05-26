@@ -40,6 +40,8 @@ class SettingsMenu final : public AbstractMenu {
  private:
   enum class SettingsType { kGeneral, kControls };
 
+  void SetBaseSettings();
+
   void ChangeLanguage(const QString& language);
 
   void paintEvent(QPaintEvent* event) final;

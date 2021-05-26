@@ -1,8 +1,6 @@
 #ifndef CONTROLLER_CONTROLLER_TYPES_H_
 #define CONTROLLER_CONTROLLER_TYPES_H_
 
-#include <QString>
-
 namespace ControllerTypes {
 enum class Key {
   kLeft,

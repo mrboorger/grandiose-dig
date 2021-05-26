@@ -28,9 +28,7 @@ class ChunkMap : public AbstractMap {
    public:
     explicit GenChunk(AbstractRegionGenerator* generator)
         : generator_(generator) {}
-    Chunk operator()(const QString& save_file, QPoint pos) {
-      return generator_->Generate(save_file, pos);
-    }
+    Chunk operator()(const QString& save_file, QPoint pos);
 
    private:
     AbstractRegionGenerator* generator_;
@@ -39,18 +37,7 @@ class ChunkMap : public AbstractMap {
    public:
     SaveChunk() = default;
     void operator()(const QString& save_file, const QPoint& pos,
-                    const Chunk& chunk) {
-      QFile file(save_file + "chunk:" + QString::number(pos.x()) + ":" +
-                 QString::number(pos.y()));
-      if (!file.open(QIODevice::WriteOnly)) {
-        qWarning("Couldn't open save file.");
-        return;
-      }
-      QJsonObject data;
-      chunk.Write(&data);
-      // file.write(QJsonDocument(data).toJson());
-      file.write(QCborValue::fromJsonValue(data).toCbor());
-    }
+                    const Chunk& chunk);
   };
   using NodesContainer =
       containers::RegionCache<Block, Chunk::kWidth, Chunk::kHeight, Chunk,

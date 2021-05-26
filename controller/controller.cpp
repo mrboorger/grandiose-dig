@@ -216,65 +216,9 @@ void Controller::PlayerAttack(double time) {
 void Controller::TickEvent() {
   if (pressed_keys_.count(ControllerTypes::Key::kExit)) {
     pressed_keys_.erase(ControllerTypes::Key::kExit);
-    switch (View::GetInstance()->GetGameState()) {
-      case GameState::kGame:
-        View::GetInstance()->ChangeGameState(GameState::kPaused);
-        break;
-      case GameState::kNewWorldMenu:
-        View::GetInstance()->ChangeGameState(GameState::kMainMenu);
-        break;
-      case GameState::kSelectWorldMenu:
-        View::GetInstance()->ChangeGameState(GameState::kMainMenu);
-        break;
-      case GameState::kMainMenu:
-        View::GetInstance()->close();
-        break;
-      case GameState::kPaused:
-        View::GetInstance()->ChangeGameState(GameState::kMainMenu);
-        break;
-      case GameState::kSettings:
-        View::GetInstance()->ChangeGameState(GameState::kSwitchingToPrevious);
-      default:
-        break;
-    }
+    ProcessExit();
   } else if (View::GetInstance()->GetGameState() == GameState::kGame) {
-    if (pressed_keys_.count(ControllerTypes::Key::kShowInventory)) {
-      View::GetInstance()->SwitchInventory();
-      pressed_keys_.erase(ControllerTypes::Key::kShowInventory);
-    }
-    for (const auto& key : pressed_keys_) {
-      ParseInventoryKey(key);
-    }
-    if (pressed_keys_.count(ControllerTypes::Key::kInventoryNextRow)) {
-      pressed_keys_.erase(ControllerTypes::Key::kInventoryNextRow);
-    }
-    if (pressed_keys_.count(ControllerTypes::Key::kInventoryPrevRow)) {
-      pressed_keys_.erase(ControllerTypes::Key::kInventoryPrevRow);
-    }
-    auto cur = std::chrono::high_resolution_clock::now();
-    double time =
-        std::chrono::duration_cast<std::chrono::milliseconds>(cur - prev_time_)
-            .count();
-    if (last_menu_time_ > prev_time_) {
-      time = std::chrono::duration_cast<std::chrono::milliseconds>(
-                 last_menu_time_ - prev_time_)
-                 .count();
-    }
-    prev_time_ = cur;
-    sum_time_ += time;
-    Model::GetInstance()->GetPlayer()->DecUseItemCooldownInterval(time);
-    Model::GetInstance()->MoveObjects(pressed_keys_, time);
-
-    if (is_pressed_left_mouse_button) {
-      BreakBlock(time);
-      StartAttack();
-    }
-    if (is_pressed_right_mouse_button) {
-      UseItem();
-    }
-    PlayerAttack(time);
-    ManageMobs();
-    View::GetInstance()->repaint();
+    ProcessGame();
   }
 }
 
@@ -427,4 +371,68 @@ void Controller::ChangeGameState(GameState state) {
     last_menu_time_ = std::chrono::high_resolution_clock::now();
   }
   View::GetInstance()->ChangeGameState(state);
+}
+
+void Controller::ProcessExit() {
+  switch (View::GetInstance()->GetGameState()) {
+    case GameState::kGame:
+      View::GetInstance()->ChangeGameState(GameState::kPaused);
+      break;
+    case GameState::kNewWorldMenu:
+      View::GetInstance()->ChangeGameState(GameState::kMainMenu);
+      break;
+    case GameState::kSelectWorldMenu:
+      View::GetInstance()->ChangeGameState(GameState::kMainMenu);
+      break;
+    case GameState::kMainMenu:
+      View::GetInstance()->close();
+      break;
+    case GameState::kPaused:
+      View::GetInstance()->ChangeGameState(GameState::kMainMenu);
+      break;
+    case GameState::kSettings:
+      View::GetInstance()->ChangeGameState(GameState::kSwitchingToPrevious);
+    default:
+      break;
+  }
+}
+
+void Controller::ProcessGame() {
+  if (pressed_keys_.count(ControllerTypes::Key::kShowInventory)) {
+    View::GetInstance()->SwitchInventory();
+    pressed_keys_.erase(ControllerTypes::Key::kShowInventory);
+  }
+  for (const auto& key : pressed_keys_) {
+    ParseInventoryKey(key);
+  }
+  if (pressed_keys_.count(ControllerTypes::Key::kInventoryNextRow)) {
+    pressed_keys_.erase(ControllerTypes::Key::kInventoryNextRow);
+  }
+  if (pressed_keys_.count(ControllerTypes::Key::kInventoryPrevRow)) {
+    pressed_keys_.erase(ControllerTypes::Key::kInventoryPrevRow);
+  }
+  auto cur = std::chrono::high_resolution_clock::now();
+  double time =
+      std::chrono::duration_cast<std::chrono::milliseconds>(cur - prev_time_)
+          .count();
+  if (last_menu_time_ > prev_time_) {
+    time = std::chrono::duration_cast<std::chrono::milliseconds>(
+               last_menu_time_ - prev_time_)
+               .count();
+  }
+  prev_time_ = cur;
+  sum_time_ += time;
+  Model::GetInstance()->GetPlayer()->DecUseItemCooldownInterval(time);
+  Model::GetInstance()->MoveObjects(pressed_keys_, time);
+
+  if (is_pressed_left_mouse_button) {
+    BreakBlock(time);
+    StartAttack();
+  }
+  if (is_pressed_right_mouse_button) {
+    UseItem();
+  }
+  PlayerAttack(time);
+  ManageMobs();
+  View::GetInstance()->repaint();
 }

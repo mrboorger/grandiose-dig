@@ -14,7 +14,7 @@
 namespace containers {
 
 template <typename Key, typename Value>
-class Nothing {
+class NotSave {
  public:
   void operator()(const QString& save_file, const Key& key,
                   const Value& value) const {
@@ -25,18 +25,11 @@ class Nothing {
 };
 
 template <typename Key, typename Value, typename Compare = std::less<>,
-          typename Save = Nothing<Key, Value>>
+          typename Save = NotSave<Key, Value>>
 class ClearableCache {
  public:
   explicit ClearableCache(QString save_file, int clear_time_msec,
-                          Compare compare = Compare(), Save save = Save())
-      : nodes_(compare),
-        save_(std::move(save)),
-        save_file_(std::move(save_file)),
-        last_used_(nodes_.end()) {
-    timer_.callOnTimeout([this]() { ClearUnused(); });
-    timer_.start(clear_time_msec);
-  }
+                          Compare compare = Compare(), Save save = Save());
 
   Value& Insert(const Key& key, Value&& value) {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
@@ -86,6 +79,19 @@ class ClearableCache {
   NodesIterator last_used_;
   std::recursive_mutex mutex_;
 };
+
+template <typename Key, typename Value, typename Compare, typename Save>
+ClearableCache<Key, Value, Compare, Save>::ClearableCache(QString save_file,
+                                                          int clear_time_msec,
+                                                          Compare compare,
+                                                          Save save)
+    : nodes_(compare),
+      save_(std::move(save)),
+      save_file_(std::move(save_file)),
+      last_used_(nodes_.end()) {
+  timer_.callOnTimeout([this]() { ClearUnused(); });
+  timer_.start(clear_time_msec);
+}
 
 }  // namespace containers
 

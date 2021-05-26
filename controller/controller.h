@@ -63,6 +63,9 @@ class Controller : public QObject {
 
   void TickEvent();
 
+  void ProcessExit();
+  void ProcessGame();
+
   void BreakBlock(double time);
   void UseItem();
 

@@ -13,33 +13,7 @@ SettingsMenu::SettingsMenu(QWidget* parent)
       transparent_background_(false),
       listening_to_press_event_(false) {
   settings_.reset(new QSettings);
-  if (!settings_->contains("controller_key0")) {
-    settings_->setValue("controller_key0", Qt::Key::Key_Left);
-  }
-  if (!settings_->contains("controller_key1")) {
-    settings_->setValue("controller_key1", Qt::Key::Key_Right);
-  }
-  if (!settings_->contains("controller_key2")) {
-    settings_->setValue("controller_key2", Qt::Key::Key_Space);
-  }
-  if (!settings_->contains("controller_key3")) {
-    settings_->setValue("controller_key3", Qt::Key::Key_I);
-  }
-  if (!settings_->contains("controller_key4")) {
-    settings_->setValue("controller_key4", Qt::Key::Key_BracketLeft);
-  }
-  if (!settings_->contains("controller_key5")) {
-    settings_->setValue("controller_key5", Qt::Key::Key_BracketRight);
-  }
-  for (int index = 0; index < 10; ++index) {
-    if (!settings_->contains("controller_key" + QString::number(6 + index))) {
-      settings_->setValue("controller_key" + QString::number(6 + index),
-                          Qt::Key::Key_1 + (index == 9 ? -1 : index));
-    }
-  }
-  if (!settings_->contains("controller_key16")) {
-    settings_->setValue("controller_key16", Qt::Key::Key_Escape);
-  }
+  SetBaseSettings();
   emit(SettingsMenu::SettingsChanged(
       settings_->value("general_volume", 100).toInt(),
       settings_->value("music_volume", 100).toInt(),
@@ -309,5 +283,35 @@ void SettingsMenu::keyPressEvent(QKeyEvent* event) {
     temporary_settings_changes_[controller_key_to_change_] = event->key();
     listening_to_press_event_ = false;
     ReTranslateButtons();
+  }
+}
+
+void SettingsMenu::SetBaseSettings() {
+  if (!settings_->contains("controller_key0")) {
+    settings_->setValue("controller_key0", Qt::Key::Key_Left);
+  }
+  if (!settings_->contains("controller_key1")) {
+    settings_->setValue("controller_key1", Qt::Key::Key_Right);
+  }
+  if (!settings_->contains("controller_key2")) {
+    settings_->setValue("controller_key2", Qt::Key::Key_Space);
+  }
+  if (!settings_->contains("controller_key3")) {
+    settings_->setValue("controller_key3", Qt::Key::Key_I);
+  }
+  if (!settings_->contains("controller_key4")) {
+    settings_->setValue("controller_key4", Qt::Key::Key_BracketLeft);
+  }
+  if (!settings_->contains("controller_key5")) {
+    settings_->setValue("controller_key5", Qt::Key::Key_BracketRight);
+  }
+  for (int index = 0; index < 10; ++index) {
+    if (!settings_->contains("controller_key" + QString::number(6 + index))) {
+      settings_->setValue("controller_key" + QString::number(6 + index),
+                          Qt::Key::Key_1 + (index == 9 ? -1 : index));
+    }
+  }
+  if (!settings_->contains("controller_key16")) {
+    settings_->setValue("controller_key16", Qt::Key::Key_Escape);
   }
 }

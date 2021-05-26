@@ -15,8 +15,8 @@ int main(int argc, char* argv[]) {
   format.setDepthBufferSize(24);
   QSurfaceFormat::setDefaultFormat(format);
 
-  QCoreApplication::setOrganizationName("ШУБКА");
-  QCoreApplication::setApplicationName("Grandiose dig");
+  QCoreApplication::setOrganizationName("ShUBKa");
+  QCoreApplication::setApplicationName("Grandiose Dig");
 
   QDir dir;
   dir.mkdir(QDir::currentPath() + "/saves");

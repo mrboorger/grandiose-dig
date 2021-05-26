@@ -5,7 +5,7 @@
 #include <map>
 #include <utility>
 
-Inventory::Inventory() {}
+Inventory::Inventory() = default;
 
 void Inventory::AddItem(InventoryItem item) {
   for (InventoryItem& inventory_item : items_) {

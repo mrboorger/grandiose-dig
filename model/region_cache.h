@@ -27,7 +27,7 @@ class GenEmptyBuffer {
 template <typename T, int32_t width, int32_t height,
           typename BufferType = std::array<T, width * height>,
           typename F = GenEmptyBuffer<BufferType>,
-          typename Save = Nothing<QPoint, BufferType>>
+          typename Save = NotSave<QPoint, BufferType>>
 class RegionCache {
  public:
   using Buffer = BufferType;

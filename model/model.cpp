@@ -143,7 +143,6 @@ bool Model::LoadFromFile(const QString& file_name) {
   QByteArray save_data = save_file.readAll();
   QJsonDocument world(
       QJsonDocument(QCborValue::fromCbor(save_data).toMap().toJsonObject()));
-  // QJsonDocument world(QJsonDocument::fromJson(save_data));
   Read(world.object());
   return true;
 }
@@ -161,7 +160,6 @@ bool Model::SaveToFile(const QString& file_name) {
   current_save_file_name_ = file_name;
   QJsonObject world;
   Write(&world);
-  // save_file.write(QJsonDocument(world).toJson());
   save_file.write(QCborValue::fromJsonValue(world).toCbor());
   return true;
 }
