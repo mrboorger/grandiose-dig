@@ -71,9 +71,10 @@ Backgrounds BackIdToBackgroundId(Block block, QPoint pos) {
       return Backgrounds::kCave;
     }
     default: {
-      assert(false);
+      break;
     }
   }
+  return Backgrounds::kSky;
 }
 
 void DrawCracks(QPainter* painter, QPointF point, Block block) {
@@ -110,7 +111,6 @@ void DrawBlockFront(QPainter* painter, QPoint point, Block block) {
 void DrawBackground(QPainter* painter, QPointF point,
                     Backgrounds background_type) {
   const auto& background = GetBackground(static_cast<int>(background_type));
-  assert(!background.isNull());
   painter->drawImage(QRectF(point.x(), point.y(), point.x() + kBackgroundWidth,
                             point.y() + kBackgroundHeight),
                      background);
@@ -119,7 +119,6 @@ void DrawBackground(QPainter* painter, QPointF point,
 void DrawBackground(QPainter* painter, QPoint point,
                     Backgrounds background_type) {
   const auto& background = GetBackground(static_cast<int>(background_type));
-  assert(!background.isNull());
   painter->drawImage(QRect(point.x(), point.y(), point.x() + kBackgroundWidth,
                            point.y() + kBackgroundHeight),
                      background);

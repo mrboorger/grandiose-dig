@@ -26,7 +26,6 @@ View::View()
       should_initialize_drawer_(false),
       game_state_(GameState::kMainMenu),
       previous_game_state_(GameState::kMainMenu) {
-  assert(!instance_);
   instance_ = this;
   connect(Model::GetInstance(), &Model::DamageDealt, this, &View::DamageDealt);
   connect(Model::GetInstance(), &Model::BecameDead, this, &View::BecameDead);
@@ -62,8 +61,6 @@ View::View()
   connect(settings_menu_.data(), &SettingsMenu::SettingsChanged, this,
           &View::UpdateSettings);
   settings_menu_->setVisible(false);
-
-  PlayMusic();
 }
 
 View::~View() {
@@ -154,7 +151,6 @@ void View::DrawPlayer(QPainter* painter) {
 }
 
 void View::initializeGL() {
-  assert(context());
   makeCurrent();
   auto* gl = GLFunctions::GetInstance();
   gl->initializeOpenGLFunctions();
@@ -243,7 +239,7 @@ void View::DamageDealt(MovingObject* object) {
       break;
     }
     default: {
-      assert(false);
+      break;
     }
   }
 }
@@ -276,6 +272,9 @@ void View::MobSound(MovingObject* object) {
 }
 
 void View::PlayMusic() {
+  if (sound_manager_->MusicIsPlaying()) {
+    return;
+  }
   sound_manager_->PlaySound(
       SoundManager::SoundIndex(SoundManager::Sound::kMusic));
 }

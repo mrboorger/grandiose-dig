@@ -2,9 +2,9 @@
 #define MODEL_BUFFERED_CLEARABLE_CACHE_H_
 
 #include <QPoint>
-#include <functional>
 #include <QRect>
 #include <array>
+#include <functional>
 #include <optional>
 #include <utility>
 
@@ -14,7 +14,7 @@
 
 namespace containers {
 
-template<typename T>
+template <typename T>
 class GenEmptyBuffer {
  public:
   T operator()(QPoint buffer_pos) const {
@@ -23,9 +23,9 @@ class GenEmptyBuffer {
   }
 };
 
-template<typename T, int32_t width, int32_t height,
-         typename BufferType = std::array<T, width * height>,
-         typename F = GenEmptyBuffer<BufferType>>
+template <typename T, int32_t width, int32_t height,
+          typename BufferType = std::array<T, width * height>,
+          typename F = GenEmptyBuffer<BufferType>>
 class BufferedClearableCache {
  public:
   using Buffer = BufferType;
@@ -40,13 +40,11 @@ class BufferedClearableCache {
   }
 
   static int32_t BufferIndex(QPoint local_pos) {
-    assert(0 <= local_pos.x() && local_pos.x() < width && 0 <= local_pos.y() &&
-           local_pos.y() < height);
     return local_pos.y() * width + local_pos.x();
   }
 
   BufferedClearableCache(int clear_time_msec = constants::kDefaultClearTimeMSec,
-              F gen_buffer = F())
+                         F gen_buffer = F())
       : data_(clear_time_msec), gen_buffer_(std::move(gen_buffer)) {}
 
   std::optional<std::reference_wrapper<const T>> GetValueOpt(QPoint pos) {
@@ -75,7 +73,7 @@ class BufferedClearableCache {
 
   T* GetMutableValue(QPoint pos) { return const_cast<T*>(&GetValue(pos)); }
 
-  template<typename V>
+  template <typename V>
   T& SetValue(QPoint pos, V&& value) {
     auto [buffer_pos, local_pos] = RoundToBufferPos(pos);
     return GetOrInsertBuffer(buffer_pos)[BufferIndex(local_pos)] =
@@ -99,7 +97,6 @@ class BufferedClearableCache {
 
  private:
   Buffer& GetOrInsertBuffer(QPoint buffer_pos) {
-    assert(RoundToBufferPos(buffer_pos).second == QPoint(0, 0));
     auto found = data_.Get(buffer_pos);
     if (!found) {
       return data_.Insert(buffer_pos, gen_buffer_(buffer_pos));

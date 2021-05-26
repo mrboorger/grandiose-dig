@@ -61,7 +61,7 @@ int SoundManager::SoundIndex(Sound sound, int mob_id, MobSound mob_sound) {
       return static_cast<int>(kNames.size()) - 1;
     }
     default:
-      assert(false);
+      return 1;
   }
 }
 

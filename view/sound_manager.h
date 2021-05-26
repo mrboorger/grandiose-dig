@@ -38,6 +38,11 @@ class SoundManager {
 
   void UpdateVolumes(int general_volume, int music_volume, int sounds_volume);
 
+  bool MusicIsPlaying() {
+    return sounds_[SoundIndex(Sound::kMusic)]->state() ==
+           QMediaPlayer::PlayingState;
+  }
+
  private:
   static bool IsMusic(const QString& name);
 

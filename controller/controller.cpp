@@ -434,5 +434,6 @@ void Controller::ProcessGame() {
   }
   PlayerAttack(time);
   ManageMobs();
+  View::GetInstance()->PlayMusic();
   View::GetInstance()->repaint();
 }
