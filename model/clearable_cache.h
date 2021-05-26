@@ -53,8 +53,8 @@ class ClearableCache {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
     last_used_ = nodes_.end();
     for (auto i = nodes_.begin(); i != nodes_.end();) {
+      save_(save_file_, i->first, i->second.value);
       if (!i->second.is_used) {
-        save_(save_file_, i->first, i->second.value);
         i = nodes_.erase(i);
       } else {
         i->second.is_used = false;
